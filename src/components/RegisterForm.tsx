@@ -1,17 +1,18 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { CustomForm } from './Form';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { CustomForm } from './Form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 
@@ -22,9 +23,12 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters',
   }),
+  username: z.string().min(6, {
+    message: 'username must be at least 6 characters',
+  }),
 });
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,18 +48,41 @@ export default function LoginForm() {
       >
         <CustomForm.Header
           image={LogoImage}
-          title='Login'
-          subtitle='Welcome back 👋'
+          title='Sign Up'
+          subtitle='Unique annotations 🌟'
         />
         <CustomForm.ThirdPartLogin
-          type='login'
+        type='signup'
           image={
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
           }
           name='Google'
         />
         <CustomForm.Separator />
-        <div className='gap-8 flex flex-col mb-12'>
+        <div className='gap-6 flex flex-col mb-12'>
+          <FormField
+            control={form.control}
+            name='username'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className='text-lg text-neutral-200'>
+                  Username
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type='text'
+                    placeholder='johnsmith123'
+                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className='text-base text-white/50'>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name='email'
@@ -97,11 +124,11 @@ export default function LoginForm() {
             )}
           />
         </div>
-        <CustomForm.Button title='Login' />
+        <CustomForm.Button title='Register' />
         <CustomForm.Redirect
-          text='Not registered yet?'
-          path='/register'
-          link='Create an account'
+          text='Have an account?'
+          path='/login'
+          link='Log in now'
         />
       </form>
     </Form>
