@@ -9,7 +9,7 @@ export default function Resizable({ children }: { children: ReactNode }) {
         <Sidebar />
       </ResizablePanel>
       <ResizableHandle className='bg-neutral-950' />
-      <ResizablePanel className='w-full h-screen p-12' minSize={75} defaultSize={75}>
+      <ResizablePanel className='w-full h-screen px-14 py-12' minSize={75} defaultSize={75}>
         {children}
       </ResizablePanel>
     </ResizablePanelGroup>

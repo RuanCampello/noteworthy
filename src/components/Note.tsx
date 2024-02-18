@@ -5,24 +5,25 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 interface NoteProps {
+  id?:number
   name: string;
   text: string;
   colour: ColourType;
   date: string;
 }
 
-export default function Note({ name, text, colour, date }: NoteProps) {
+export default function Note({ name, text, colour, date, id }: NoteProps) {
   const [hovered, setHovered] = useState(false);
 
   const backgroundColour = Colours[colour];
   return (
     <Link
-      href='/'
+      href={`/notes/${id}`}
       className='rounded-sm p-5'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
-          ? lightenColour(backgroundColour, 6)
+          ? lightenColour(backgroundColour, 10)
           : backgroundColour,
       }}
       onMouseEnter={() => setHovered(true)}

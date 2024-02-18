@@ -24,6 +24,8 @@ const config = {
       colors: {
         black: '#181818',
         midnight: '#252525',
+        night: '#333333',
+        silver: '#A3A3A3',
         tiffany: '#80CBC4',
         blue: '#80DEEA',
         mindaro: '#E6EE9B',
