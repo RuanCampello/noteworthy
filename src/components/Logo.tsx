@@ -9,11 +9,11 @@ export default function Logo() {
   return (
     <Link
       href='/'
-      className='p-2 flex items-center text-xl text-neutral-300 font-semibold group w-fit'
+      className='p-2 px-5 flex items-center text-xl text-neutral-300 font-semibold group w-fit'
     >
       <Image
         alt='noteworthy'
-        className='group-hover:scale-110 transition-transform duration-300'
+        className='group-hover:-translate-x-1 group-hover:rotate-12 transition-transform duration-300'
         src={LogoImage}
         width={42}
         height={42}
