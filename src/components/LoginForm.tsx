@@ -14,6 +14,7 @@ import {
 import { CustomForm } from './Form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
+import { useState } from 'react';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -25,6 +26,8 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,6 +37,7 @@ export default function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     console.log(values);
   }
   return (
@@ -48,6 +52,7 @@ export default function LoginForm() {
           subtitle='Welcome back 👋'
         />
         <CustomForm.ThirdPartLogin
+          disableWhen={isLoading}
           type='login'
           image={
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
@@ -67,7 +72,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     type='email'
-                    placeholder='johnsmith@gmail.com'
+                    placeholder='johnsmith@example.com'
                     className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
                     {...field}
                   />
@@ -97,8 +102,9 @@ export default function LoginForm() {
             )}
           />
         </div>
-        <CustomForm.Button title='Login' />
+        <CustomForm.Button disableWhen={isLoading} title='Login' />
         <CustomForm.Redirect
+          disableWhen={isLoading}
           text='Not registered yet?'
           path='/register'
           link='Create an account'

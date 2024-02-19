@@ -5,15 +5,17 @@ interface FormRedirectProps {
   text: string;
   path: string;
   link: string;
+  disableWhen: boolean;
 }
 
-export default function FormRedirect({text, path, link}: FormRedirectProps) {
+export default function FormRedirect({ text, path, link, disableWhen }: FormRedirectProps) {
   return (
     <div className='flex my-10 justify-center gap-1 text-neutral-400'>
       <span>{text}</span>
       <Link
+        aria-disabled={disableWhen}
         href={path}
-        className='text-tickle hover:underline underline-offset-2 flex items-center group'
+        className={`flex items-center group ${disableWhen ? 'text-tickle/80 pointer-events-none' : 'text-tickle hover:underline underline-offset-2 '}`}
       >
         {link} <ArrowUpRight size={20} />
       </Link>

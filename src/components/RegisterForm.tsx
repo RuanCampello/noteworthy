@@ -15,6 +15,9 @@ import {
 } from './ui/form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '@/firebase';
+import { useState } from 'react';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -24,21 +27,31 @@ const formSchema = z.object({
     message: 'Password must be at least 6 characters',
   }),
   username: z.string().min(6, {
-    message: 'username must be at least 6 characters',
+    message: 'Username must be at least 6 characters',
   }),
 });
 
 export default function RegisterForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
     },
   });
 
+  async function usernameExists(username: string): Promise<boolean> {
+    const usernameQuery = await getDocs(
+      query(collection(db, 'users'), where('displayName', '==', username))
+    );
+    return usernameQuery.size > 0;
+  }
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    setIsLoading(true);
   }
   return (
     <Form {...form}>
@@ -52,7 +65,8 @@ export default function RegisterForm() {
           subtitle='Unique annotations 🌟'
         />
         <CustomForm.ThirdPartLogin
-        type='signup'
+          disableWhen={isLoading}
+          type='signup'
           image={
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
           }
@@ -94,7 +108,7 @@ export default function RegisterForm() {
                 <FormControl>
                   <Input
                     type='email'
-                    placeholder='johnsmith@gmail.com'
+                    placeholder='johnsmith@example.com'
                     className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
                     {...field}
                   />
@@ -124,8 +138,9 @@ export default function RegisterForm() {
             )}
           />
         </div>
-        <CustomForm.Button title='Register' />
+        <CustomForm.Button disableWhen={isLoading} title='Register' />
         <CustomForm.Redirect
+          disableWhen={isLoading}
           text='Have an account?'
           path='/login'
           link='Log in now'
