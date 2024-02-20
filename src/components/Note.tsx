@@ -19,7 +19,7 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
   return (
     <Link
       href={`/notes/${id}`}
-      className='rounded-sm p-5'
+      className='rounded-sm lg:p-5 p-2'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -29,10 +29,10 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <h3 className='text-lg font-semibold truncate text-black'>{name}</h3>
+      <h3 className='text-lg font-semibold truncate text-black' title={name}>{name}</h3>
       <div className='flex gap-2.5'>
-        <span className='text-black/60'>{date}</span>
-        <p className='truncate text-black/80'>{text}</p>
+        <span className='text-black/60 lg:inline-block hidden'>{date}</span>
+        <p className='truncate text-black/80 lg:inline-block hidden'>{text}</p>
       </div>
     </Link>
   );

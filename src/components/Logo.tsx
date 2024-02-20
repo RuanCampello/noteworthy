@@ -9,7 +9,7 @@ export default function Logo() {
   return (
     <Link
       href='/'
-      className='p-2 px-5 flex items-center text-xl text-neutral-300 font-semibold group w-fit'
+      className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full'
     >
       <Image
         alt='noteworthy'
@@ -18,7 +18,7 @@ export default function Logo() {
         width={42}
         height={42}
       />
-      <h1 className={lora.className}>
+      <h1 className={`sm:inline hidden ${lora.className}`}>
         Note<span className='text-neutral-100'>worthy</span>
       </h1>
     </Link>
