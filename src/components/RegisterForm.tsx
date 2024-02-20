@@ -15,9 +15,18 @@ import {
 } from './ui/form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/firebase';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
+import { auth, db } from '@/firebase';
 import { useState } from 'react';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { redirect } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -43,15 +52,41 @@ export default function RegisterForm() {
     },
   });
 
-  async function usernameExists(username: string): Promise<boolean> {
+  async function checkUsernameAvailability(username: string): Promise<boolean> {
     const usernameQuery = await getDocs(
       query(collection(db, 'users'), where('displayName', '==', username))
     );
     return usernameQuery.size > 0;
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { username, email, password } = values;
+
+    const usernameExists = await checkUsernameAvailability(username);
+    if (!usernameExists) {
+      setIsLoading(true);
+      try {
+        const response = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await updateProfile(response.user, {
+          displayName: username,
+        });
+        await setDoc(doc(db, 'users', response.user.uid), {
+          uid: response.user.uid,
+          name: response.user.displayName,
+          email: response.user.email,
+        });
+        redirect('/');
+      } catch (error) {
+        console.error('Here is the error: ', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   }
   return (
     <Form {...form}>
