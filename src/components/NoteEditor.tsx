@@ -4,10 +4,18 @@ import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import EditorMenuBar from './EditorMenuBar';
 import Strike from '@tiptap/extension-strike';
-import Underline from '@tiptap/extension-underline'
+import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight';
+import TextAlign from '@tiptap/extension-text-align';
 
 export default function NoteEditor() {
-  const extensions = [StarterKit, Strike, Underline];
+  const extensions = [
+    StarterKit,
+    Strike,
+    Underline,
+    Highlight,
+    TextAlign.configure({ types: ['heading', 'paragraph'] }),
+  ];
   const editorProps = {
     attributes: {
       class:
@@ -20,7 +28,7 @@ export default function NoteEditor() {
   <h2>there</h2>
 <p>
   this is a basic <em>basic</em> example of <b>tiptap</b>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists
-  Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the listsSure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the listsSure, are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
+  Sure, there are all kind of basic text styles <mark>you’d probably expect from a text editor</mark>. But wait until you see the listsSure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the listsSure, are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
 </p>
 <strike>there</strike>
 <ul>

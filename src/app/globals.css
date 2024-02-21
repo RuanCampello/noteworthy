@@ -74,3 +74,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+mark {
+  background-color: #CF93D9;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+  padding: 0.125em 0;
+}
