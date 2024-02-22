@@ -3,7 +3,6 @@
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import EditorMenuBar from './EditorMenuBar';
-import Strike from '@tiptap/extension-strike';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
@@ -12,7 +11,6 @@ import { helloWorld } from '@/utils/hello-world';
 export default function NoteEditor() {
   const extensions = [
     StarterKit,
-    Strike,
     Underline,
     Highlight,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),

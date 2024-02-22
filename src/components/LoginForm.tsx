@@ -15,7 +15,7 @@ import { CustomForm } from './Form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { User, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase';
 import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

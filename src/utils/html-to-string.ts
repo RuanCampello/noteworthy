@@ -1,4 +1,3 @@
-export function stripHTMLTags(html: string): string {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+export function stripHTMLTags(htmlString: string): string {
+  return htmlString.replace(/(<([^>]+)>)/gi, '');
 }
