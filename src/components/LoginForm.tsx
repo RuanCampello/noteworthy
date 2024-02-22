@@ -31,7 +31,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,9 +45,10 @@ export default function LoginForm() {
     const { email, password } = values;
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      sessionStorage.setItem('user_id', response.user.uid);
-      setCookie('isAuthenticated', true);
-      router.push('/')
+      setCookie('user_id', response.user.uid, {
+        sameSite: 'strict',
+      });
+      router.push('/');
     } catch (error) {
       console.error(error);
     } finally {

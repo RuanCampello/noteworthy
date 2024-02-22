@@ -35,3 +35,15 @@ export function lightenColour(colour: string, percent: number) {
       .slice(1)
   );
 }
+
+interface ColourInfo {
+  name: string;
+  hex: string;
+}
+
+export function getRandomColour(): ColourInfo {
+  const keys = Object.keys(Colours);
+  const randomIndex = Math.floor(Math.random() * keys.length);
+  const randomColourKey = keys[randomIndex];
+  return { name: randomColourKey, hex: Colours[randomColourKey] };
+}

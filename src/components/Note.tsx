@@ -1,15 +1,19 @@
 'use client';
 
 import { ColourType, Colours, lightenColour } from '@/utils/colours';
+import { timestampToLocateDate } from '@/utils/date';
+import { stripHTMLTags } from '@/utils/html-to-string';
+import { HTMLContent } from '@tiptap/react';
+import { Timestamp } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 
 interface NoteProps {
-  id?:number
+  id: string;
   name: string;
-  text: string;
+  text: HTMLContent;
   colour: ColourType;
-  date: string;
+  date: Timestamp;
 }
 
 export default function Note({ name, text, colour, date, id }: NoteProps) {
@@ -29,10 +33,14 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <h3 className='text-lg font-semibold truncate text-black' title={name}>{name}</h3>
+      <h3 className='text-lg font-semibold truncate text-black' title={name}>
+        {name}
+      </h3>
       <div className='flex gap-2.5'>
-        <span className='text-black/60 lg:inline-block hidden'>{date}</span>
-        <p className='truncate text-black/80 lg:inline-block hidden'>{text}</p>
+        <span className='text-black/60 lg:inline-block hidden'>
+          {timestampToLocateDate(date)}
+        </span>
+        <p className='truncate text-black/80 lg:inline-block hidden'>{stripHTMLTags(text)}</p>
       </div>
     </Link>
   );

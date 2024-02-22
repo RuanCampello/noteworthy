@@ -16,17 +16,23 @@ import {
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 import {
+  Timestamp,
+  arrayUnion,
   collection,
   doc,
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { redirect } from 'next/navigation';
+import { getRandomColour } from '@/utils/colours';
+import { helloWorld } from '@/utils/hello-world';
+import { useRouter } from 'next/navigation';
+import { v4 as uuid } from 'uuid';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -42,6 +48,7 @@ const formSchema = z.object({
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +78,6 @@ export default function RegisterForm() {
           email,
           password
         );
-
         await updateProfile(response.user, {
           displayName: username,
         });
@@ -80,7 +86,18 @@ export default function RegisterForm() {
           name: response.user.displayName,
           email: response.user.email,
         });
-        redirect('/');
+        await setDoc(doc(db, 'userNotes', response.user.uid), {});
+        await updateDoc(doc(db, 'userNotes', response.user.uid), {
+          notes: arrayUnion({
+            uid: uuid(),
+            title: 'Hello world!',
+            content: helloWorld,
+            owner: 'RuanCampello',
+            date: Timestamp.now(),
+            colour: getRandomColour().name,
+          }),
+        });
+        router.push('/');
       } catch (error) {
         console.error('Here is the error: ', error);
       } finally {

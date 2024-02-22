@@ -1,68 +1,47 @@
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import Note from './Note';
 import SectionTitle from './SectionTitle';
+import { db } from '@/firebase';
+import { cookies } from 'next/headers';
+import { NoteType } from '@/types/note-type';
 
-export default function Notes() {
+export default async function Notes() {
+  const id = cookies().get('user_id')?.value;
+  if (!id) return null;
+
+  const notesRef = doc(db, 'userNotes', id);
+  const notesQuery = await getDoc(notesRef);
+  const notesData = notesQuery.data();
+  if (!notesData) return null;
+  const notesArray = notesData['notes'] as NoteType[];
+
+  const notes = notesArray.map((note) => {
+    const { uid, title, colour, content, date, owner } = note;
+    return {
+      id: uid,
+      title: title,
+      colour: colour,
+      content: content,
+      date: date,
+      owner: owner,
+    };
+  });
   return (
     <div>
       <SectionTitle title='Notes' />
-      <div className='flex flex-col gap-2 overflow-y-scroll max-h-[400px] px-5'>
-        <Note
-          id={123}
-          colour='mindaro'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='sunset'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='tickle'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          id={123}
-          colour='tiffany'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='sunset'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='tickle'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          id={123}
-          colour='mindaro'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='sunset'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
-        <Note
-          colour='tickle'
-          name='Reflection on the Month of June'
-          text='Its hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me. One of the best things that happened was getting promoted at work. Ive been working really hard and its great to see that effort recognized. Its also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. Im looking forward to taking on new challenges and learning as much as I can in my new role.'
-          date='21/06/2022'
-        />
+      <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
+        {notes.map((note) => {
+          return (
+            <Note
+              key={note.id}
+              id={note.id}
+              colour={note.colour}
+              name={note.title}
+              text={note.content}
+              date={note.date}
+            />
+          );
+        })}
       </div>
     </div>
   );

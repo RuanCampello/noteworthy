@@ -21,12 +21,15 @@ const config = {
       typography: {
         DEFAULT: {
           css: {
-            maxWidth: '100%'
-          }
-        }
+            maxWidth: '100%',
+            overflowY: 'scroll',
+            maxHeight: '70vh',
+            paddingBottom: '24px'
+          },
+        },
       },
       spacing: {
-        '2.5': '10px'
+        '2.5': '10px',
       },
       colors: {
         black: '#181818',
@@ -97,7 +100,11 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('@tailwindcss/typography'),
+    require('tailwind-scrollbar')({ noncompatible: true }),
+  ],
 } satisfies Config;
 
 export default config;

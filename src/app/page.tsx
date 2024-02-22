@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export default function Home() {
-  const auth = cookies().get('isAuthenticated')?.value
-  if(auth === 'true') {
+  const auth = cookies().get('user_id')?.value
+  if(auth) {
     return (
       <Resizable>
         <Placeholder />
