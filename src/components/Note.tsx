@@ -1,6 +1,6 @@
 'use client';
 
-import { ColourType, Colours, lightenColour } from '@/utils/colours';
+import { ColourType, Colours, darkenColour } from '@/utils/colours';
 import { timestampToLocateDate } from '@/utils/date';
 import { stripHTMLTags } from '@/utils/html-to-string';
 import { HTMLContent } from '@tiptap/react';
@@ -27,7 +27,7 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
-          ? lightenColour(backgroundColour, 10)
+          ? darkenColour(backgroundColour, 10)
           : backgroundColour,
       }}
       onMouseEnter={() => setHovered(true)}
@@ -40,7 +40,9 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
         <span className='text-black/60 lg:inline-block hidden'>
           {timestampToLocateDate(date)}
         </span>
-        <p className='truncate text-black/80 lg:inline-block hidden'>{stripHTMLTags(text)}</p>
+        <p className='truncate text-black/80 lg:inline-block hidden'>
+          {stripHTMLTags(text)}
+        </p>
       </div>
     </Link>
   );
