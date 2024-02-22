@@ -1,12 +1,11 @@
 import { CalendarDays, MoreHorizontal, SquareUserRound } from 'lucide-react';
 import Dropdown from './Dropdown';
 import { Separator } from './ui/separator';
-import { Timestamp } from 'firebase/firestore';
-import { timestampToLocateDate } from '@/utils/date';
+import { secondsToLocaleDate } from '@/utils/date';
 
 interface NoteHeaderProps {
   title: string;
-  date: Timestamp;
+  date: number;
   owner: string;
 }
 
@@ -28,7 +27,7 @@ export default async function NoteHeader({ title, date, owner }: NoteHeaderProps
         <div className='flex gap-3 items-center'>
           <CalendarDays size={24} strokeWidth={2} />
           <span className='w-24'>Date</span>
-          <span className='text-neutral-100'>{timestampToLocateDate(date)}</span>
+          <span className='text-neutral-100'>{secondsToLocaleDate(date)}</span>
         </div>
         <Separator className='bg-white/10' />
         <div className='flex gap-3 items-center'>

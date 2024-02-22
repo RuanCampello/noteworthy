@@ -33,6 +33,7 @@ import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
 import { v4 as uuid } from 'uuid';
+import { addNote } from '@/utils/add-note';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -87,15 +88,12 @@ export default function RegisterForm() {
           email: response.user.email,
         });
         await setDoc(doc(db, 'userNotes', response.user.uid), {});
-        await updateDoc(doc(db, 'userNotes', response.user.uid), {
-          notes: arrayUnion({
-            uid: uuid(),
-            title: 'Hello world!',
-            content: helloWorld,
-            owner: 'RuanCampello',
-            date: Timestamp.now(),
-            colour: getRandomColour().name,
-          }),
+        await addNote({
+          userId: response.user.uid,
+          title: 'Hello world!',
+          content: helloWorld,
+          owner: 'RuanCampello',
+          colour: getRandomColour().name,
         });
         router.push('/');
       } catch (error) {

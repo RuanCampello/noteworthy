@@ -1,6 +1,6 @@
-import { Timestamp } from "firebase/firestore";
-
-export function timestampToLocateDate(timestamp: Timestamp): string {
-  const localeDateString = new Date(timestamp.seconds*1000).toLocaleDateString('en-GB')
-  return localeDateString
+export function secondsToLocaleDate(seconds: number): string {
+  const localeDateString = new Date(seconds * 1000).toLocaleDateString(
+    'en-GB'
+  );
+  return localeDateString;
 }

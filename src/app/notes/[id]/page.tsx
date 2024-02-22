@@ -22,7 +22,7 @@ export default async function NotePage({ params }: { params: { id: string } }) {
       <div className='px-14 py-12 flex flex-col gap-4 h-full overflow-y-clip'>
         <NoteHeader
           title={note.title}
-          date={note.date}
+          date={note.date.seconds}
           owner={note.owner}
         />
         <NoteEditor />

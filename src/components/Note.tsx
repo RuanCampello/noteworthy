@@ -1,7 +1,7 @@
 'use client';
 
 import { ColourType, Colours, darkenColour } from '@/utils/colours';
-import { timestampToLocateDate } from '@/utils/date';
+import { secondsToLocaleDate } from '@/utils/date';
 import { stripHTMLTags } from '@/utils/html-to-string';
 import { HTMLContent } from '@tiptap/react';
 import { Timestamp } from 'firebase/firestore';
@@ -13,7 +13,7 @@ interface NoteProps {
   name: string;
   text: HTMLContent;
   colour: ColourType;
-  date: Timestamp;
+  date: number;
 }
 
 export default function Note({ name, text, colour, date, id }: NoteProps) {
@@ -38,7 +38,7 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
       </h3>
       <div className='flex gap-2.5'>
         <span className='text-black/60 lg:inline-block hidden'>
-          {timestampToLocateDate(date)}
+          {secondsToLocaleDate(date)}
         </span>
         <p className='truncate text-black/80 lg:inline-block hidden'>
           {stripHTMLTags(text)}

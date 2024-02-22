@@ -4,6 +4,7 @@ import SectionTitle from './SectionTitle';
 import { db } from '@/firebase';
 import { cookies } from 'next/headers';
 import { NoteType } from '@/types/note-type';
+import { revalidateTag } from 'next/cache';
 
 export default async function Notes() {
   const id = cookies().get('user_id')?.value;
@@ -26,6 +27,7 @@ export default async function Notes() {
       owner: owner,
     };
   });
+  revalidateTag('update-notes')
   return (
     <div>
       <SectionTitle title='Notes' />
@@ -38,7 +40,7 @@ export default async function Notes() {
               colour={note.colour}
               name={note.title}
               text={note.content}
-              date={note.date}
+              date={note.date.seconds}
             />
           );
         })}
