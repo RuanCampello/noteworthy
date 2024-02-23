@@ -11,7 +11,7 @@ export default function AddNoteButton() {
         >
           <Plus
             size={20}
-            className='text-white group-active:scale-105 group-active:rotate-90 transition-transform duration-200'
+            className='text-white group-active:scale-105 group-active:rotate-90 group-focus:rotate-90 group-focus:scale-105 group-hover:rotate-90 group-hover:scale-105 transition-transform duration-200'
           />
           <span className='md:inline hidden'>New Note</span>
         </button>
