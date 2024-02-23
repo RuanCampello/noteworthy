@@ -4,6 +4,7 @@ import SectionTitle from './SectionTitle';
 import { db } from '@/firebase';
 import { cookies } from 'next/headers';
 import { NoteType } from '@/types/note-type';
+import Counter from './Counter';
 
 export default async function Notes() {
   const id = cookies().get('user_id')?.value;
@@ -28,7 +29,9 @@ export default async function Notes() {
   });
   return (
     <div>
-      <SectionTitle title='Notes' />
+      <SectionTitle title='Notes'>
+        <Counter />
+      </SectionTitle>
       <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
         {notes.map((note) => {
           return (

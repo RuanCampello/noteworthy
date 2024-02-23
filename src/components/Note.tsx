@@ -25,7 +25,7 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
     <Link
       href={`/notes/${id}`}
       onClick={() => setOpenNote(id)}
-      className='rounded-sm lg:p-5 p-2 first:mt-1 last:mb-1 focus:outline-none'
+      className='rounded-sm lg:p-5 p-2 first:mt-1 last:mb-1 focus:outline-none z-10'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
