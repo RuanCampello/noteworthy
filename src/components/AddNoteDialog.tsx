@@ -69,7 +69,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             <Label htmlFor='name' className='text-base text-right'>
               Name
             </Label>
-            <Input minLength={4} id='name' name='name' className='col-span-3 dark bg-black invalid:focus:outline-red-600' />
+            <Input required minLength={4} id='name' name='name' className='col-span-3 dark bg-black invalid:focus:outline-red-600' />
           </div>
           <div className='grid grid-cols-4 gap-4 items-center'>
             <Label className='text-base text-right'>Colour</Label>
