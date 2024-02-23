@@ -36,6 +36,7 @@ export default async function Notes() {
         {notes.map((note) => {
           return (
             <Note
+            href='notes'
               key={note.id}
               id={note.id}
               colour={note.colour}

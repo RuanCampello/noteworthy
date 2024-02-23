@@ -15,24 +15,27 @@ interface NoteProps {
   text: HTMLContent;
   colour: ColourType;
   date: number;
+  href: 'notes' | 'favourites'
 }
 
-export default function Note({ name, text, colour, date, id }: NoteProps) {
+export default function Note({ name, text, colour, date, id, href }: NoteProps) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const pathname = usePathname().replace('/notes/', '');
+  const pathname = usePathname()
+  const currentId = pathname.replace('/notes/', '')
   useEffect(() => {
-    if (pathname === id) setFocused(true);
-  }, [pathname, id, focused]);
+    if (currentId === id) setFocused(true);
+  }, [currentId, id, focused]);
 
+  const redirectUrl = pathname.includes('notes') ? id : `${href}/${id}`
   const backgroundColour = Colours[colour];
   const setOpenNote = (id: string) => setCookie('open_note', id);
   return (
     <Link
-      href={`/notes/${id}`}
+      href={redirectUrl}
       onClick={() => setOpenNote(id)}
-      className='rounded-sm lg:p-5 p-2 first:mt-1 last:mb-1 focus:outline-none z-10 select-none'
+      className='rounded-sm lg:p-5 p-2 w-full first:mt-1 last:mb-1 focus:outline-none z-10 select-none'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
