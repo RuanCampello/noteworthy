@@ -29,7 +29,7 @@ export default async function Notes() {
   return (
     <div>
       <SectionTitle title='Notes' />
-      <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[420px] px-5'>
+      <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
         {notes.map((note) => {
           return (
             <Note

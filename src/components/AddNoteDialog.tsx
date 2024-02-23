@@ -15,8 +15,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { getRandomColour } from '@/utils/colours';
 import { addNote } from '@/utils/add-note';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -24,7 +25,7 @@ interface AddNoteDialogProps {
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const user_id = cookies().get('user_id')?.value;
-
+  
   async function handleAddNote(formData: FormData) {
     'use server';
     const name = formData.get('name') as string;
@@ -44,7 +45,11 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
         colour: colourName,
       });
       cookies().set('open_note', uid);
-      redirect(`notes/${uid}`);
+      
+      const header = headers().get('pathname')
+      //redirect the user based on its pathname (in some notes or in home)
+      if(header?.includes('notes')) redirect(uid) 
+      else redirect(`/notes/${uid}`)
     }
   }
   return (
