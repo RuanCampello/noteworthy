@@ -44,8 +44,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
         colour: colourName,
       });
       cookies().set('open_note', uid);
-      console.log(uid);
-      redirect(uid);
+      redirect(`notes/${uid}`);
     }
   }
   return (
@@ -65,7 +64,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             <Label htmlFor='name' className='text-base text-right'>
               Name
             </Label>
-            <Input id='name' name='name' className='col-span-3 dark bg-black' />
+            <Input minLength={4} id='name' name='name' className='col-span-3 dark bg-black invalid:focus:outline-red-600' />
           </div>
           <div className='grid grid-cols-4 gap-4 items-center'>
             <Label className='text-base text-right'>Colour</Label>
@@ -73,10 +72,10 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
           </div>
           <DialogFooter>
             <button
-              className='p-2 px-3 bg-night hover:bg-midnight transition-colors font-medium rounded-lg'
+              className='p-2 px-3 bg-tiffany hover:bg-tiffany/90 focus:outline-2 focus:outline-white focus:outline focus:outline-offset-2 text-black transition-colors duration-200 font-medium rounded-lg'
               type='submit'
             >
-              Create note
+              Create Note
             </button>
           </DialogFooter>
         </form>

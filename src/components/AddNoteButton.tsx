@@ -7,7 +7,7 @@ export default function AddNoteButton() {
       <AddNoteDialog>
         <button
           type='button'
-          className='w-full bg-midnight hover:bg-white/10 transition-colors duration-200 py-2.5 rounded-sm flex justify-center items-center gap-2 font-semibold group'
+          className='w-full bg-midnight hover:bg-white/10 transition-colors duration-200 py-2.5 rounded-sm flex justify-center items-center gap-2 font-semibold group focus:outline focus:outline-white focus:outline-offset-2 focus:outline-2'
         >
           <Plus
             size={20}

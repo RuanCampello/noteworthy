@@ -25,15 +25,19 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
     <Link
       href={`/notes/${id}`}
       onClick={() => setOpenNote(id)}
-      className='rounded-sm lg:p-5 p-2'
+      className='rounded-sm lg:p-5 p-2 first:mt-1 last:mb-1 focus:outline-none'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
           ? darkenColour(backgroundColour, 10)
           : backgroundColour,
+        outline: hovered ? `${Colours[colour]} solid 2px` : '',
+        outlineOffset: hovered ? '2px' : '',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
     >
       <h3 className='text-lg font-semibold truncate text-black' title={name}>
         {name}
