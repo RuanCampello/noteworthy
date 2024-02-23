@@ -82,3 +82,7 @@ mark {
   padding-top: 0.125em;
   padding-inline: 0.15em;
 }
+
+button:focus, a:focus {
+  outline: #fff solid 2px;
+}
