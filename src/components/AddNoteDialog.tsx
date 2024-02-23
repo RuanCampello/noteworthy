@@ -1,6 +1,4 @@
-'use client';
-
-import { FormEvent, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,63 +11,48 @@ import {
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import ColourSelect from './ColourSelect';
-import { getCookie, setCookie } from 'cookies-next';
-import {
-  Timestamp,
-  arrayUnion,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { getRandomColour } from '@/utils/colours';
-import { v4 as uuid } from 'uuid';
 import { addNote } from '@/utils/add-note';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 interface AddNoteDialogProps {
   children: ReactNode;
 }
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
-  const user_id = getCookie('user_id');
-  const router = useRouter();
+  const user_id = cookies().get('user_id')?.value;
 
-  async function handleAddNote(e: any) {
-    e.preventDefault();
-
-    const name = e.target.name.value;
-    const colour = e.target.colour.value;
+  async function handleAddNote(formData: FormData) {
+    'use server';
+    const name = formData.get('name') as string;
+    const colour = formData.get('colour') as string;
     const colourName = colour === 'random' ? getRandomColour().name : colour;
 
     if (user_id) {
-      try {
-        const response = await getDoc(doc(db, 'users', user_id));
-        const data = response.data();
-        if (!data) return;
-        const username = data['name'];
-        const uid = await addNote({
-          userId: user_id,
-          title: name,
-          content: '',
-          owner: username,
-          colour: colourName,
-        });
-        setCookie('open_note', uid);
-        router.push(uid);
-      } catch (error) {
-        console.error(error);
-      }
+      const response = await getDoc(doc(db, 'users', user_id));
+      const data = response.data();
+      if (!data) return;
+      const username = data['name'];
+      const uid = await addNote({
+        userId: user_id,
+        title: name,
+        content: '',
+        owner: username,
+        colour: colourName,
+      });
+      cookies().set('open_note', uid);
+      console.log(uid);
+      redirect(uid);
     }
   }
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
-        <form
-          onSubmit={(e) => handleAddNote(e)}
-          className='flex flex-col gap-3'
-        >
+        <form action={handleAddNote} className='flex flex-col gap-3'>
           <DialogHeader className='flex flex-col gap-3'>
             <DialogTitle className='text-2xl'>Add New Note</DialogTitle>
             <DialogDescription>
@@ -82,7 +65,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             <Label htmlFor='name' className='text-base text-right'>
               Name
             </Label>
-            <Input id='name' className='col-span-3 dark bg-black' />
+            <Input id='name' name='name' className='col-span-3 dark bg-black' />
           </div>
           <div className='grid grid-cols-4 gap-4 items-center'>
             <Label className='text-base text-right'>Colour</Label>
