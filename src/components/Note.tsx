@@ -4,7 +4,7 @@ import { ColourType, Colours, darkenColour } from '@/utils/colours';
 import { secondsToLocaleDate } from '@/utils/date';
 import { stripHTMLTags } from '@/utils/html-to-string';
 import { HTMLContent } from '@tiptap/react';
-import { Timestamp } from 'firebase/firestore';
+import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -20,9 +20,11 @@ export default function Note({ name, text, colour, date, id }: NoteProps) {
   const [hovered, setHovered] = useState(false);
 
   const backgroundColour = Colours[colour];
+  const setOpenNote = (id: string) => setCookie('open_note', id);
   return (
     <Link
       href={`/notes/${id}`}
+      onClick={() => setOpenNote(id)}
       className='rounded-sm lg:p-5 p-2'
       style={{
         transition: 'background-color 0.5s ease',

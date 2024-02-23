@@ -5,9 +5,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Archive, Star } from 'lucide-react';
+import { Archive, Star, Trash } from 'lucide-react';
+import { Separator } from './ui/separator';
+import DeleteNoteDialog from './DeleteNoteDialog';
 
-export default function Dropdown({ children }: { children: ReactNode }) {
+interface DropdownProps {
+  children: ReactNode;
+}
+
+export default function Dropdown({ children }: DropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -30,6 +36,16 @@ export default function Dropdown({ children }: { children: ReactNode }) {
           />
           Archive
         </DropdownMenuItem>
+        <Separator className='bg-white/40' />
+        <DeleteNoteDialog>
+          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black hover:bg-melon hover:text-black group'>
+            <Trash
+              size={20}
+              className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
+            />
+            <span>Delete</span>
+          </button>
+        </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -7,15 +7,16 @@ interface NoteHeaderProps {
   title: string;
   date: number;
   owner: string;
+  id: string
 }
 
-export default async function NoteHeader({ title, date, owner }: NoteHeaderProps) {
+export default async function NoteHeader({ title, date, owner, id }: NoteHeaderProps) {
   return (
     <div className='sticky'>
       <div className='flex justify-between mb-8'>
         <h1 className='text-4xl font-semibold'>{title}</h1>
         <Dropdown>
-          <button>
+          <button className='focus:border-white border-transparent border-2 focus:rounded-full p-1 focus:outline-none'>
             <MoreHorizontal
               size={38}
               className='text-white/60 border-2 border-white/60 hover:text-neutral-200 hover:border-neutral-100 transition-colors duration-200 rounded-full focus:outline-none p-2'

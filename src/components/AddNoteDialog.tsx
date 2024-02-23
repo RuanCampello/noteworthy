@@ -13,7 +13,7 @@ import {
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import ColourSelect from './ColourSelect';
-import { getCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next';
 import {
   Timestamp,
   arrayUnion,
@@ -25,6 +25,7 @@ import { db } from '@/firebase';
 import { getRandomColour } from '@/utils/colours';
 import { v4 as uuid } from 'uuid';
 import { addNote } from '@/utils/add-note';
+import { useRouter } from 'next/navigation';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -32,6 +33,7 @@ interface AddNoteDialogProps {
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const user_id = getCookie('user_id');
+  const router = useRouter();
 
   async function handleAddNote(e: any) {
     e.preventDefault();
@@ -46,13 +48,15 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
         const data = response.data();
         if (!data) return;
         const username = data['name'];
-        addNote({
+        const uid = await addNote({
           userId: user_id,
           title: name,
           content: '',
           owner: username,
           colour: colourName,
         });
+        setCookie('open_note', uid);
+        router.push(uid);
       } catch (error) {
         console.error(error);
       }

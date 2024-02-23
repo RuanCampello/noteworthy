@@ -17,9 +17,10 @@ export async function addNote({
   owner,
   colour,
 }: addNoteProps) {
+  const uid = uuid()
   await updateDoc(doc(db, 'userNotes', userId), {
     notes: arrayUnion({
-      uid: uuid(),
+      uid: uid,
       title: title,
       content: content,
       owner: owner,
@@ -27,4 +28,5 @@ export async function addNote({
       colour: colour,
     }),
   });
+  return uid
 }
