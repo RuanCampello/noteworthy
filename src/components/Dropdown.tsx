@@ -9,44 +9,70 @@ import { Archive, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import { db } from '@/firebase';
-import { NoteType } from '@/types/note-type';
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
+import findNote from '@/utils/find-note';
+import getNotes from '@/utils/get-notes';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
 }
 
-export default function Dropdown({ children, noteId }: DropdownProps) {
+export default async function Dropdown({ children, noteId }: DropdownProps) {
   const user_id = cookies().get('user_id')?.value;
   async function addFavourites() {
     'use server';
     if (!user_id || !noteId) return;
-    const noteRef = doc(db, 'userNotes', user_id);
-    const noteDoc = await getDoc(noteRef);
-    if (!noteDoc.exists()) return;
-    const noteData = noteDoc.data();
-    const notes: NoteType[] = noteData.notes;
+    const notes = await getNotes(user_id, 'userNotes');
+    if (!notes) return;
     const noteIndex = notes.findIndex((note) => note.uid === noteId);
-    const note = notes[noteIndex]
-    await updateDoc(noteRef, { notes });
-    await setDoc(doc(db, 'userFavourites', user_id), {})
+    const note = notes[noteIndex];
+    const { uid, title, owner, colour, content, date } = note;
     await updateDoc(doc(db, 'userFavourites', user_id), {
       notes: arrayUnion({
-        uid: note.uid,
-        title: note.title,
-        owner: note.owner,
-        colour: note.colour,
-        content: note.content,
-        date: note.date
-      })
-    })
+        uid: uid,
+        title: title,
+        owner: owner,
+        colour: colour,
+        content: content,
+        date: date,
+      }),
+    });
     notes.splice(noteIndex, 1);
-    await updateDoc(noteRef, { notes });
+    console.log(`${title} favourited!`);
+    await updateDoc(doc(db, 'userNotes', user_id), { notes });
     redirect(`/favourites/${note.uid}`);
   }
+  async function isFavourite() {
+    if (!user_id) return;
+    const favouriteNote = await findNote(user_id, 'userFavourites', noteId);
+    if (favouriteNote) return true;
+    else return false;
+  }
+  async function unfavourite() {
+    'use server';
+    if (!user_id) return;
+    const notes = await getNotes(user_id, 'userFavourites');
+    if (!notes) return;
+    const favouriteNoteIndex = notes.findIndex((note) => note.uid === noteId);
+    const favouriteNote = notes[favouriteNoteIndex];
+    const { uid, title, owner, colour, content, date } = favouriteNote;
+    await updateDoc(doc(db, 'userNotes', user_id), {
+      notes: arrayUnion({
+        uid: uid,
+        title: title,
+        owner: owner,
+        colour: colour,
+        content: content,
+        date: date,
+      }),
+    });
+    notes.splice(favouriteNoteIndex, 1);
+    await updateDoc(doc(db, 'userFavourites', user_id), { notes });
+    redirect(`/notes/${favouriteNote.uid}`);
+  }
+  const favourite = await isFavourite();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -55,16 +81,29 @@ export default function Dropdown({ children, noteId }: DropdownProps) {
         sideOffset={14}
         className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
       >
-        <DropdownMenuItem className='text-base active:bg-sunset group'>
-          <form action={addFavourites}>
-            <button type='submit' className='w-full flex items-center gap-3'>
-              <Star
-                size={20}
-                className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
-              />
-              Favourite
-            </button>
-          </form>
+        <DropdownMenuItem
+          className={`text-base active:bg-sunset group ${
+            favourite && 'bg-sunset focus:bg-sunset text-black'
+          }`}
+        >
+          {favourite ? (
+            <form className='w-full' action={unfavourite}>
+              <button type='submit' className='w-full flex items-center gap-3 focus:outline-none'>
+                <Star />
+                Unfavourite
+              </button>
+            </form>
+          ) : (
+            <form className='w-full' action={addFavourites}>
+              <button type='submit' className='w-full flex items-center gap-3 focus:outline-none'>
+                <Star
+                  size={20}
+                  className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
+                />
+                Favourite
+              </button>
+            </form>
+          )}
         </DropdownMenuItem>
         <DropdownMenuItem className='gap-3 text-base active:bg-mindaro group'>
           <Archive

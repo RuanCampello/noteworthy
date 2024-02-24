@@ -16,14 +16,11 @@ import {
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 import {
-  Timestamp,
-  arrayUnion,
   collection,
   doc,
   getDocs,
   query,
   setDoc,
-  updateDoc,
   where,
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
@@ -32,7 +29,6 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
-import { v4 as uuid } from 'uuid';
 import { addNote } from '@/utils/add-note';
 
 const formSchema = z.object({
@@ -95,6 +91,7 @@ export default function RegisterForm() {
           owner: 'RuanCampello',
           colour: getRandomColour().name,
         });
+        await setDoc(doc(db, 'userFavourites', response.user.uid), {});
         router.push('/');
       } catch (error) {
         console.error('Here is the error: ', error);
