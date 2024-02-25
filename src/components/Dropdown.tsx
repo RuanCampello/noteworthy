@@ -14,6 +14,7 @@ import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import findNote from '@/utils/find-note';
 import getNotes from '@/utils/get-notes';
+import SubmitButton from './SubmitButton';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
@@ -91,6 +92,8 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
   const favourite = await isFavourite();
   const noteName = await getNoteName();
   if (!noteName) return;
+  const iconStyle =
+    'group-active:scale-95 transition-transform group-hover:scale-110 group-focus:scale-110 duration-200';
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -100,48 +103,37 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
       >
         <DropdownMenuItem
-          className={`text-base active:bg-sunset group ${
-            favourite && 'bg-sunset focus:bg-sunset text-black'
+          className={`text-base active:bg-sunset focus:bg-sunset hover:bg-sunset group ${
+            favourite &&
+            'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 text-black'
           }`}
         >
           {favourite ? (
             <form className='w-full' action={unfavourite}>
-              <button
-                type='submit'
-                className='w-full flex items-center gap-3 focus:outline-none'
-              >
-                <Star fill='#333333' size={20} />
+              <SubmitButton>
+                <Star fill='#333333' className={iconStyle} size={20} />
                 Unfavourite
-              </button>
+              </SubmitButton>
             </form>
           ) : (
             <form className='w-full' action={addFavourites}>
-              <button
-                type='submit'
-                className='w-full flex items-center gap-3 focus:outline-none'
-              >
-                <Star
-                  size={20}
-                  className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
-                />
+              <SubmitButton>
+                <Star size={20} className={iconStyle} />
                 Favourite
-              </button>
+              </SubmitButton>
             </form>
           )}
         </DropdownMenuItem>
-        <DropdownMenuItem className='gap-3 text-base active:bg-mindaro group'>
-          <Archive
-            size={20}
-            className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
-          />
+        <DropdownMenuItem className='gap-3 text-base focus:bg-mindaro active:bg-mindaro active:text-black group'>
+          <Archive size={20} className={iconStyle} />
           Archive
         </DropdownMenuItem>
         <Separator className='bg-white/40' />
         <DeleteNoteDialog noteName={noteName}>
-          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black hover:bg-melon hover:text-black group'>
+          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>
             <Trash
               size={20}
-              className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
+              className='group-hover:scale-110 transition-transform duration-200 group-active:scale-95'
             />
             <span>Delete</span>
           </button>

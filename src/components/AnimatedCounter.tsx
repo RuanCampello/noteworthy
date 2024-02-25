@@ -12,7 +12,7 @@ export default function AnimatedCounter({ value }: AnimatedCounterProps) {
       initial={{ y: y }}
       exit={{ y: y }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.3, delay: 0.4 }}
+      transition={{ duration: 0.15, delay: 0.3 }}
     >
       {value}
     </motion.div>

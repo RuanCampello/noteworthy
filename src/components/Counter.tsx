@@ -19,7 +19,7 @@ export default async function Counter() {
   const notesNumber = await getNumberNotes();
   if (!notesNumber) return null;
   return (
-    <div className='bg-silver text-black select-none px-2 h-6 text-center items-center flex rounded-md'>
+    <div className='bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center flex rounded-sm'>
       <AnimatedCounter value={notesNumber.length} />
     </div>
   );
