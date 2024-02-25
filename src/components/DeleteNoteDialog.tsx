@@ -15,6 +15,7 @@ import { db } from '@/firebase';
 import { NoteType } from '@/types/note-type';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import DeleteNoteSubmit from './DeleteNoteSubmit';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
@@ -55,13 +56,7 @@ export default function DeleteNoteDialog({
         <AlertDialogFooter>
           <AlertDialogCancel className='light'>Cancel</AlertDialogCancel>
           <form action={handleDeleteNote}>
-            <AlertDialogAction
-              name='button'
-              type='submit'
-              className='bg-red-600 focus:bg-red-700 hover:bg-red-700 active:bg-red-700 text-neutral-200 font-bold'
-            >
-              Delete Note
-            </AlertDialogAction>
+            <DeleteNoteSubmit />
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>

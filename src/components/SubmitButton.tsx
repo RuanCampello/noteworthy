@@ -12,8 +12,9 @@ export default function SubmitButton({ children }: SubmitButtonProps) {
   return (
     <button
       disabled={pending}
+      aria-disabled={pending}
       type='submit'
-      className='w-full flex items-center gap-3 focus:outline-none group'
+      className='w-full flex items-center gap-3 focus:outline-none group disabled:text-silver'
     >
       {children}
     </button>

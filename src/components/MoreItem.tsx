@@ -17,7 +17,7 @@ export default function MoreItem({ href, name, icon }: MoreItemProps) {
   return (
     <Link
       href={href}
-      className='py-2.5 px-5 hover:bg-midnight w-full flex gap-4 md:justify-start justify-center'
+      className={`py-2.5 px-5 hover:bg-midnight w-full flex gap-4 md:justify-start justify-center`}
     >
       <Icon name={icon} size={24} className='shrink-0' />
       <span className='sm:inline truncate hidden'>{name}</span>
@@ -25,8 +25,8 @@ export default function MoreItem({ href, name, icon }: MoreItemProps) {
   );
 }
 
-function Icon({name, ...props}: IconProps) {
-  const DynamicIcon = dynamic(dynamicIconImports[name])
+function Icon({ name, ...props }: IconProps) {
+  const DynamicIcon = dynamic(dynamicIconImports[name]);
 
-  return <DynamicIcon {...props} />
+  return <DynamicIcon {...props} />;
 }

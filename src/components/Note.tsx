@@ -6,7 +6,7 @@ import { stripHTMLTags } from '@/utils/html-to-string';
 import { HTMLContent } from '@tiptap/react';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NoteProps {
@@ -31,7 +31,7 @@ export default function Note({
 
   const pathname = usePathname();
 
-  const currentId = pathname.replace('/notes/', '');
+  const currentId = pathname.replace(/^\/(?:notes|favourites)\//, '');
   useEffect(() => {
     if (currentId === id) setFocused(true);
   }, [currentId, id, focused]);
