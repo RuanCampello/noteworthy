@@ -19,16 +19,15 @@ export default async function Favourite({
   const favouriteNotes = await getDoc(doc(db, 'userFavourites', user_id));
   if (!favouriteNotes.exists()) return;
   const favouriteData = favouriteNotes.data();
-  const favouriteNote: NoteType = favouriteData.notes.find(
-    (note: NoteType) => note.uid === params.id
-  );
+  const favourites = favouriteData.notes as NoteType[];
+  const favouriteNote = favourites.find((note) => note.uid === params.id);
   if (!favouriteNote) return <NotFound />;
 
   const { title, date, owner, uid } = favouriteNote;
   return (
     <Resizable>
       <div className='flex h-full'>
-        <FavouriteSidebar />
+        <FavouriteSidebar favouriteNotes={favourites} />
         <div className='w-full px-8 py-6 overflow-y-clip flex flex-col gap-4'>
           <NoteHeader
             title={title}

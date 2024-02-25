@@ -2,7 +2,7 @@ import { db } from '@/firebase';
 import { NoteType } from '@/types/note-type';
 import { doc, getDoc } from 'firebase/firestore';
 
-export type Collections = 'userNotes' | 'userFavourites'
+export type Collections = 'userNotes' | 'userFavourites' | 'userArchived'
 
 export default async function findNote(
   userId: string,

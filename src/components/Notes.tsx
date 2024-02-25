@@ -34,7 +34,7 @@ export default async function Notes() {
   return (
     <div>
       <SectionTitle title='Notes'>
-        <Counter />
+        <Counter  type='userNotes'/>
       </SectionTitle>
       <SearchNote />
       <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
