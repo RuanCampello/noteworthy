@@ -6,6 +6,7 @@ import Resizable from '@/components/Resizable';
 import { db } from '@/firebase';
 import { NoteType } from '@/types/note-type';
 import { doc, getDoc } from 'firebase/firestore';
+import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 
 export default async function Favourite({
@@ -14,7 +15,7 @@ export default async function Favourite({
   params: { id: string };
 }) {
   const user_id = cookies().get('user_id')?.value;
-  if (!user_id) return;
+  if (!user_id) redirect('/login');
   const favouriteNotes = await getDoc(doc(db, 'userFavourites', user_id));
   if (!favouriteNotes.exists()) return;
   const favouriteData = favouriteNotes.data();
