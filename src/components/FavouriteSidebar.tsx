@@ -20,7 +20,7 @@ export default async function FavouriteSidebar() {
           <Note
             href='favourites'
             key={note.uid}
-            id={note.uid}
+            uid={note.uid}
             name={note.title}
             date={note.date.seconds}
             colour={note.colour}
