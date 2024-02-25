@@ -3,7 +3,7 @@ import { FileText } from 'lucide-react';
 export default function Placeholder() {
   return (
     <div className='flex flex-col gap-2.5 justify-center items-center h-full'>
-      <FileText size={80} />
+      <FileText size={80} strokeWidth={1} />
       <h1 className='text-[28px] leading-normal font-semibold'>
         Select a note to view
       </h1>

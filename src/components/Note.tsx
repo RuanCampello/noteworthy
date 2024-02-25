@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NoteProps {
-  id: string;
+  uid: string;
   name: string;
   text: HTMLContent;
   colour: ColourType;
@@ -23,7 +23,7 @@ export default function Note({
   text,
   colour,
   date,
-  id,
+  uid,
   href,
 }: NoteProps) {
   const [hovered, setHovered] = useState(false);
@@ -33,19 +33,19 @@ export default function Note({
 
   const currentId = pathname.replace(/^\/(?:notes|favourites)\//, '');
   useEffect(() => {
-    if (currentId === id) setFocused(true);
-  }, [currentId, id, focused]);
+    if (currentId === uid) setFocused(true);
+  }, [currentId, uid, focused]);
 
   function formatRedirectUrl(): string {
-    if (pathname.includes('notes')) return id;
-    if (pathname.includes('favourites/') && href === 'favourites') return id;
-    if (pathname.includes('favourites/')) return `/notes/${id}`;
-    else return `${href}/${id}`;
+    if (pathname.includes('notes')) return uid;
+    if (pathname.includes('favourites/') && href === 'favourites') return uid;
+    if (pathname.includes('favourites/')) return `/notes/${uid}`;
+    else return `${href}/${uid}`;
   }
   const redirectUrl = formatRedirectUrl();
 
   const backgroundColour = Colours[colour];
-  const setOpenNote = (id: string) => setCookie('open_note', id);
+  const setOpenNote = (id: string) => setCookie('open_note', uid);
   return (
     <Link
       href={
@@ -55,7 +55,7 @@ export default function Note({
           ? redirectUrl.replace('favourites', '')
           : redirectUrl
       }
-      onClick={() => setOpenNote(id)}
+      onClick={() => setOpenNote(uid)}
       className='rounded-sm lg:p-5 p-2 w-full first:mt-1 last:mb-1 focus:outline-none z-10 select-none'
       style={{
         transition: 'background-color 0.5s ease',
