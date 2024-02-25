@@ -1,3 +1,4 @@
+import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/NoteEditor';
 import NoteHeader from '@/components/NoteHeader';
 import Resizable from '@/components/Resizable';
@@ -11,7 +12,7 @@ export default async function NotePage({ params }: { params: { id: string } }) {
 
   const { id } = params;
   const note = await findNote(user_id, 'userNotes', params.id);
-  if (!note) return;
+  if (!note) return <NotFound />;
   const { title, date, owner } = note;
   return (
     <Resizable>
