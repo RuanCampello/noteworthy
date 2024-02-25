@@ -18,9 +18,13 @@ import { redirect } from 'next/navigation';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
+  noteName: string;
 }
 
-export default function DeleteNoteDialog({ children }: DeleteNoteDialogProps) {
+export default function DeleteNoteDialog({
+  children,
+  noteName,
+}: DeleteNoteDialogProps) {
   const user_id = cookies().get('user_id')?.value;
 
   async function handleDeleteNote() {
@@ -35,7 +39,7 @@ export default function DeleteNoteDialog({ children }: DeleteNoteDialogProps) {
     const noteIndex = notes.findIndex((note) => note.uid === note_id);
     notes.splice(noteIndex, 1);
     await updateDoc(noteRef, { notes });
-    redirect('/')
+    redirect('/');
   }
   return (
     <AlertDialog>
@@ -44,8 +48,8 @@ export default function DeleteNoteDialog({ children }: DeleteNoteDialogProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are absolutly sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your note
-            and remove all data from our servers.
+            This action cannot be undone. This will permanently delete your
+            note: <b>{noteName}</b> and remove all data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

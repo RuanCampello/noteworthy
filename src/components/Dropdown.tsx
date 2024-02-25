@@ -10,7 +10,7 @@ import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import { db } from '@/firebase';
 import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import findNote from '@/utils/find-note';
 import getNotes from '@/utils/get-notes';
@@ -21,6 +21,8 @@ interface DropdownProps {
 
 export default async function Dropdown({ children, noteId }: DropdownProps) {
   const user_id = cookies().get('user_id')?.value;
+
+  // server actions
   async function addFavourites() {
     'use server';
     if (!user_id || !noteId) return;
@@ -40,15 +42,8 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
       }),
     });
     notes.splice(noteIndex, 1);
-    console.log(`${title} favourited!`);
     await updateDoc(doc(db, 'userNotes', user_id), { notes });
     redirect(`/favourites/${note.uid}`);
-  }
-  async function isFavourite() {
-    if (!user_id) return;
-    const favouriteNote = await findNote(user_id, 'userFavourites', noteId);
-    if (favouriteNote) return true;
-    else return false;
   }
   async function unfavourite() {
     'use server';
@@ -72,7 +67,30 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
     await updateDoc(doc(db, 'userFavourites', user_id), { notes });
     redirect(`/notes/${favouriteNote.uid}`);
   }
+
+  // firebase queries
+  async function isFavourite(): Promise<boolean | null> {
+    if (!user_id) return null;
+    const favouriteNote = await findNote(user_id, 'userFavourites', noteId);
+    if (favouriteNote) return true;
+    else return false;
+  }
+  async function getNoteName(): Promise<string | null> {
+    if (!user_id) return null;
+    const pathname = headers().get('pathname');
+    if (pathname?.includes('favourites')) {
+      const note = await findNote(user_id, 'userFavourites', noteId);
+      if (note) return note.title;
+      return null;
+    } else {
+      const note = await findNote(user_id, 'userNotes', noteId);
+      if (note) return note.title;
+      return null;
+    }
+  }
   const favourite = await isFavourite();
+  const noteName = await getNoteName();
+  if (!noteName) return;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -88,14 +106,20 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         >
           {favourite ? (
             <form className='w-full' action={unfavourite}>
-              <button type='submit' className='w-full flex items-center gap-3 focus:outline-none'>
-                <Star />
+              <button
+                type='submit'
+                className='w-full flex items-center gap-3 focus:outline-none'
+              >
+                <Star fill='#333333' size={20} />
                 Unfavourite
               </button>
             </form>
           ) : (
             <form className='w-full' action={addFavourites}>
-              <button type='submit' className='w-full flex items-center gap-3 focus:outline-none'>
+              <button
+                type='submit'
+                className='w-full flex items-center gap-3 focus:outline-none'
+              >
                 <Star
                   size={20}
                   className='group-hover:scale-105 transition-transform duration-200 group-active:scale-95'
@@ -113,7 +137,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           Archive
         </DropdownMenuItem>
         <Separator className='bg-white/40' />
-        <DeleteNoteDialog>
+        <DeleteNoteDialog noteName={noteName}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black hover:bg-melon hover:text-black group'>
             <Trash
               size={20}
