@@ -7,7 +7,7 @@ const lora = Lora({ subsets: ['latin'] });
 
 export default function Logo() {
   return (
-    <Link
+    <Link 
       href='/'
       className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full'
     >

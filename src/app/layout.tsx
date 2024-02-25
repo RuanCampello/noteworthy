@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 
-const sourceSans = Source_Sans_3({ subsets: ['latin'] });
+const sourceSans = Source_Sans_3({
+  subsets: ['latin'],
+  weight: 'variable',
+});
 
 export const metadata: Metadata = {
   title: 'Noteworthy',

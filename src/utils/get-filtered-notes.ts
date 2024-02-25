@@ -1,12 +1,10 @@
 import { NoteType } from '@/types/note-type';
 import { headers } from 'next/headers';
+import { formatSearchParams } from './format';
 
 export default function getFilteredNotes(notes: NoteType[]) {
   const searchParams = headers().get('searchParams');
-  const searchParamsString = searchParams
-    ?.replace(/\+/g, ' ')
-    .replace(/^name=/, '');
-
+  const searchParamsString = formatSearchParams(searchParams || '');
   if (searchParamsString) {
     return notes.filter((note) =>
       note.title.toLowerCase().includes(searchParamsString.toLocaleLowerCase())
