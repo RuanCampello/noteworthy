@@ -18,6 +18,7 @@ export default async function Counter({ type }: CounterProps) {
   const noteDoc = (await getDoc(notesRef)).data();
   if (!noteDoc) return;
   const notes: NoteType[] = noteDoc['notes'];
+  if (!notes) return;
   const notesNumber = getFilteredNotes(notes).length;
   if (notesNumber <= 0) return;
   return (

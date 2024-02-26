@@ -92,6 +92,7 @@ export default function RegisterForm() {
           colour: getRandomColour().name,
         });
         await setDoc(doc(db, 'userFavourites', response.user.uid), {});
+        await setDoc(doc(db, 'userArchived', response.user.uid), {});
         router.push('/');
       } catch (error) {
         console.error('Here is the error: ', error);

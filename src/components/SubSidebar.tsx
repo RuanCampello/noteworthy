@@ -1,22 +1,25 @@
-import { db } from '@/firebase';
 import { NoteType } from '@/types/note-type';
-import { doc, getDoc } from 'firebase/firestore';
-import { cookies } from 'next/headers';
 import Note from './Note';
-import NoFavourite from './NoFavourite';
+import { ReactNode } from 'react';
 
-interface FavouriteSidebarProps {
-  favouriteNotes: NoteType[]
+interface SubSidebarProps {
+  notes: NoteType[];
+  children?: ReactNode;
+  title: string;
 }
 
-export default function FavouriteSidebar({favouriteNotes}:FavouriteSidebarProps) {
-  if(favouriteNotes.length <= 0 ) {
-    return <NoFavourite/>
+export default function SubSidebar({
+  notes,
+  children,
+  title,
+}: SubSidebarProps) {
+  if (notes.length <= 0) {
+    return children;
   }
   return (
     <div className='w-64 shrink-0 h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-silver scrollbar-track-black flex flex-col px-3 gap-2 border-r border-neutral-950'>
-      <h1 className='font-semibold text-2xl my-10'>Favourites</h1>
-      {favouriteNotes.map((note) => (
+      <h1 className='font-semibold text-2xl my-10'>{title}</h1>
+      {notes.map((note) => (
         <Note
           href='favourites'
           key={note.uid}

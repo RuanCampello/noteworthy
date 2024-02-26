@@ -1,12 +1,11 @@
 import NotFound from '@/app/not-found';
-import FavouriteSidebar from '@/components/FavouriteSidebar';
+import SubSidebar from '@/components/SubSidebar';
 import NoteEditor from '@/components/NoteEditor';
 import NoteHeader from '@/components/NoteHeader';
 import Resizable from '@/components/Resizable';
 import { db } from '@/firebase';
 import { NoteType } from '@/types/note-type';
 import { doc, getDoc } from 'firebase/firestore';
-import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 
 export default async function Favourite({
@@ -15,7 +14,7 @@ export default async function Favourite({
   params: { id: string };
 }) {
   const user_id = cookies().get('user_id')?.value;
-  if (!user_id) redirect('/login');
+  if (!user_id) return null;
   const favouriteNotes = await getDoc(doc(db, 'userFavourites', user_id));
   if (!favouriteNotes.exists()) return;
   const favouriteData = favouriteNotes.data();
@@ -27,7 +26,7 @@ export default async function Favourite({
   return (
     <Resizable>
       <div className='flex h-full'>
-        <FavouriteSidebar favouriteNotes={favourites} />
+        <SubSidebar title='Favourites' notes={favourites} />
         <div className='w-full px-8 py-6 overflow-y-clip flex flex-col gap-4'>
           <NoteHeader
             title={title}
