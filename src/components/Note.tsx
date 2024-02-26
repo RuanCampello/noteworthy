@@ -6,7 +6,7 @@ import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NoteProps {
@@ -30,6 +30,7 @@ export default function Note({
   const [focused, setFocused] = useState(false);
 
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const currentId = pathname.replace(/^\/(?:notes|favourites)\//, '');
   useEffect(() => {
@@ -42,7 +43,11 @@ export default function Note({
     if (pathname.includes('favourites/')) return `/notes/${uid}`;
     else return `${href}/${uid}`;
   }
-  const redirectUrl = formatRedirectUrl();
+
+  const redirectUrl =
+    searchParams.size > 0
+      ? `${formatRedirectUrl()}?${searchParams}`
+      : formatRedirectUrl();
 
   const backgroundColour = Colours[colour];
   const setOpenNote = (id: string) => setCookie('open_note', uid);

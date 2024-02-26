@@ -3,8 +3,8 @@ import { NoteType } from '@/types/note-type';
 import { doc, getDoc } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import AnimatedCounter from './AnimatedCounter';
-import getFilteredNotes from '@/utils/get-filtered-notes';
 import { Collections } from '@/utils/find-note';
+import { getFilteredNotes } from '@/utils/format-notes';
 
 interface CounterProps {
   type: Collections;

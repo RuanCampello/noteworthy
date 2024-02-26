@@ -1,0 +1,31 @@
+import { NoteType } from '@/types/note-type';
+import { headers } from 'next/headers';
+import { formatSearchParams } from './format';
+
+export function getFilteredNotes(notes: NoteType[]) {
+  const searchParams = headers().get('search-params');
+  if(!searchParams) return notes
+  const search = searchParams.match(/name=([^&]*)/)
+  if(!search) return notes
+  const searchParamsString = formatSearchParams(search[1]);
+  if (searchParamsString) {
+    return notes.filter((note) =>
+      note.title.toLowerCase().includes(searchParamsString.toLocaleLowerCase())
+    );
+  } else {
+    return notes;
+  }
+}
+
+type Filters = 'date-new' | 'date-old' | 'title';
+
+const allowedFilters: Filters[] = ['date-new', 'date-old', 'title'];
+
+export function getFilter() {
+  const searchParams = headers().get('search-params');
+  if (!searchParams) return;
+  const sortParamsMatch = searchParams.match(/filter=([^&]*)/);
+  if (!sortParamsMatch) return;
+  const sortParams = sortParamsMatch[1] as Filters;
+  if (Object.values(allowedFilters).includes(sortParams)) return sortParams;
+}

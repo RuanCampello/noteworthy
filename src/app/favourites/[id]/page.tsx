@@ -12,7 +12,7 @@ export default async function Favourite({
   params,
 }: {
   params: { id: string };
-}) {
+}) {  
   const user_id = cookies().get('user_id')?.value;
   if (!user_id) return null;
   const favouriteNotes = await getDoc(doc(db, 'userFavourites', user_id));
