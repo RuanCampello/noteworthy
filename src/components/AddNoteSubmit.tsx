@@ -2,7 +2,11 @@
 
 import { useFormStatus } from 'react-dom';
 
-export default function AddNoteSubmit() {
+interface AddNoteSubmitProps {
+  text: string
+}
+
+export default function AddNoteSubmit({text}: AddNoteSubmitProps) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -10,7 +14,7 @@ export default function AddNoteSubmit() {
       type='submit'
       disabled={pending}
     >
-      Create Note
+      {text}
     </button>
   );
 }

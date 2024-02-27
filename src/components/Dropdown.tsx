@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Archive, Star, Trash } from 'lucide-react';
+import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import { db } from '@/firebase';
@@ -15,6 +15,7 @@ import { redirect } from 'next/navigation';
 import findNote from '@/utils/find-note';
 import getNotes from '@/utils/get-notes';
 import SubmitButton from './SubmitButton';
+import EditNoteDialog from './EditNoteDialog';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
@@ -103,7 +104,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
       >
         <DropdownMenuItem
-          className={`text-base active:bg-sunset focus:bg-sunset hover:bg-sunset group ${
+          className={`text-base active:bg-sunset focus:bg-sunset hover:bg-sunset active:text-black group ${
             favourite &&
             'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 text-black'
           }`}
@@ -128,6 +129,12 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           <Archive size={20} className={iconStyle} />
           Archive
         </DropdownMenuItem>
+        <EditNoteDialog noteName={noteName}>
+          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-tiffany focus:bg-tiffany focus:text-black focus:outline-none hover:bg-tiffany hover:text-black group'>
+            <Pencil size={20} className={iconStyle} />
+            Edit
+          </button>
+        </EditNoteDialog>
         <Separator className='bg-white/40' />
         <DeleteNoteDialog noteName={noteName}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>

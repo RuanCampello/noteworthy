@@ -82,7 +82,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             <ColourSelect />
           </div>
           <DialogFooter>
-            <AddNoteSubmit />
+            <AddNoteSubmit text='Create note' />
           </DialogFooter>
         </form>
       </DialogContent>
