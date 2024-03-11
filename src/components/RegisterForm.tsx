@@ -29,7 +29,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
-import { addNote } from '@/utils/add-note';
+import { addNote } from '@/utils/api';
 
 const formSchema = z.object({
   email: z.string().email({
