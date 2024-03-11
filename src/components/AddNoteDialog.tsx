@@ -14,7 +14,7 @@ import ColourSelect from './ColourSelect';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { getRandomColour } from '@/utils/colours';
-import { addNote } from '@/utils/add-note';
+import { addNote } from '@/utils/api';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AddNoteSubmit from './AddNoteSubmit';
@@ -79,7 +79,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
           </div>
           <div className='grid grid-cols-4 gap-4 items-center'>
             <Label className='text-base text-right'>Colour</Label>
-            <ColourSelect />
+            <ColourSelect defaultColour={'random'} />
           </div>
           <DialogFooter>
             <AddNoteSubmit text='Create note' />

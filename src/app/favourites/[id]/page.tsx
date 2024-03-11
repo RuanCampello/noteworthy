@@ -12,7 +12,7 @@ export default async function Favourite({
   params,
 }: {
   params: { id: string };
-}) {  
+}) {
   const user_id = cookies().get('user_id')?.value;
   if (!user_id) return null;
   const favouriteNotes = await getDoc(doc(db, 'userFavourites', user_id));
@@ -28,13 +28,14 @@ export default async function Favourite({
       <div className='flex h-full'>
         <SubSidebar title='Favourites' notes={favourites} />
         <div className='w-full px-8 py-6 overflow-y-clip flex flex-col gap-4'>
-          <NoteHeader
-            title={title}
-            date={date.seconds}
-            owner={owner}
-            id={uid}
-          />
-          <NoteEditor content={content} />
+          <NoteEditor content={content}>
+            <NoteHeader
+              title={title}
+              date={date.seconds}
+              owner={owner}
+              id={uid}
+            />
+          </NoteEditor>
         </div>
       </div>
     </Resizable>

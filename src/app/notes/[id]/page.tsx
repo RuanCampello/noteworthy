@@ -2,7 +2,7 @@ import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/NoteEditor';
 import NoteHeader from '@/components/NoteHeader';
 import Resizable from '@/components/Resizable';
-import findNote from '@/utils/find-note';
+import { findNote } from '@/utils/api';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -18,12 +18,7 @@ export default async function NotePage({ params }: { params: { id: string } }) {
     <Resizable>
       <div className='px-14 py-12 flex flex-col gap-4 h-full overflow-y-clip'>
         <NoteEditor content={content}>
-          <NoteHeader
-            id={id}
-            title={title}
-            date={date.seconds}
-            owner={owner}
-          />
+          <NoteHeader id={id} title={title} date={date.seconds} owner={owner} />
         </NoteEditor>
       </div>
     </Resizable>
