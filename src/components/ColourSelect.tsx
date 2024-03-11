@@ -1,4 +1,4 @@
-import { Colours } from '@/utils/colours';
+import { ColourType, Colours } from '@/utils/colours';
 import {
   Select,
   SelectContent,
@@ -10,7 +10,11 @@ import {
 } from './ui/select';
 import HoverableSelectItem from './HoverableSelectItem';
 
-export default function ColourSelect() {
+interface ColourSelectProps {
+  defaultColour: 'random' | ColourType
+}
+
+export default function ColourSelect({defaultColour}: ColourSelectProps) {
   const colours = [
     { value: 'wisteria', name: 'wisteria' },
     { value: 'tickle', name: 'tickle me pick' },
@@ -22,9 +26,9 @@ export default function ColourSelect() {
   ];
 
   return (
-    <Select defaultValue='random' name='colour'>
+    <Select defaultValue={defaultColour} name='colour'>
       <SelectTrigger className='bg-black capitalize col-span-3'>
-        <SelectValue className='w-full' placeholder='Random' />
+        <SelectValue className='w-full' placeholder={defaultColour} />
       </SelectTrigger>
       <SelectContent
         side='right'

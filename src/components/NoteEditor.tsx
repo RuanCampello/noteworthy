@@ -6,9 +6,14 @@ import EditorMenuBar from './EditorMenuBar';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
-import { helloWorld } from '@/utils/hello-world';
+import { ReactNode } from 'react';
 
-export default function NoteEditor() {
+interface NoteEditorProps {
+  content: string;
+  children: ReactNode;
+}
+
+export default function NoteEditor({ content, children }: NoteEditorProps) {
   const extensions = [
     StarterKit,
     Underline,
@@ -18,16 +23,19 @@ export default function NoteEditor() {
   const editorProps = {
     attributes: {
       class:
-        'prose prose-neutral prose-invert focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black px-4',
+        'prose prose-neutral prose-invert focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black px-4 selection:bg-night selection:text-neutral-200',
     },
   };
-
-  const content = helloWorld;
   return (
     <>
       <EditorProvider
         content={content}
-        slotBefore={<EditorMenuBar />}
+        slotBefore={
+          <>
+            {children}
+            <EditorMenuBar />
+          </>
+        }
         extensions={extensions}
         editorProps={editorProps}
       >

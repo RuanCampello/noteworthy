@@ -16,6 +16,7 @@ import findNote from '@/utils/find-note';
 import getNotes from '@/utils/get-notes';
 import SubmitButton from './SubmitButton';
 import EditNoteDialog from './EditNoteDialog';
+import { ColourType } from '@/utils/colours';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
@@ -77,22 +78,26 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
     if (favouriteNote) return true;
     else return false;
   }
-  async function getNoteName(): Promise<string | null> {
+  async function getNoteProps(): Promise<{
+    name: string;
+    colour: ColourType;
+  } | null> {
     if (!user_id) return null;
     const pathname = headers().get('pathname');
     if (pathname?.includes('favourites')) {
       const note = await findNote(user_id, 'userFavourites', noteId);
-      if (note) return note.title;
+      if (note) return { name: note.title, colour: note.colour };
       return null;
     } else {
       const note = await findNote(user_id, 'userNotes', noteId);
-      if (note) return note.title;
+      if (note) return { name: note.title, colour: note.colour };
       return null;
     }
   }
   const favourite = await isFavourite();
-  const noteName = await getNoteName();
-  if (!noteName) return;
+  const noteProps = await getNoteProps();
+  if (!noteProps) return;
+  const { name, colour } = noteProps;
   const iconStyle =
     'group-active:scale-95 transition-transform group-hover:scale-110 group-focus:scale-110 duration-200';
   return (
@@ -129,14 +134,14 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           <Archive size={20} className={iconStyle} />
           Archive
         </DropdownMenuItem>
-        <EditNoteDialog noteName={noteName}>
+        <EditNoteDialog noteName={name} noteColour={colour}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-tiffany focus:bg-tiffany focus:text-black focus:outline-none hover:bg-tiffany hover:text-black group'>
             <Pencil size={20} className={iconStyle} />
             Edit
           </button>
         </EditNoteDialog>
         <Separator className='bg-white/40' />
-        <DeleteNoteDialog noteName={noteName}>
+        <DeleteNoteDialog noteName={name}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>
             <Trash
               size={20}

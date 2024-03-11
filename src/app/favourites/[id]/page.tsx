@@ -22,7 +22,7 @@ export default async function Favourite({
   const favouriteNote = favourites.find((note) => note.uid === params.id);
   if (!favouriteNote) return <NotFound />;
 
-  const { title, date, owner, uid } = favouriteNote;
+  const { title, date, owner, uid, content } = favouriteNote;
   return (
     <Resizable>
       <div className='flex h-full'>
@@ -34,7 +34,7 @@ export default async function Favourite({
             owner={owner}
             id={uid}
           />
-          <NoteEditor />
+          <NoteEditor content={content} />
         </div>
       </div>
     </Resizable>

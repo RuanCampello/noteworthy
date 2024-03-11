@@ -22,11 +22,13 @@ import { redirect } from 'next/navigation';
 interface EditNoteDialogProps {
   children: ReactNode;
   noteName: string;
+  noteColour: 'random' | ColourType
 }
 
 export default async function EditNoteDialog({
   children,
   noteName,
+  noteColour
 }: EditNoteDialogProps) {
   const user_id = cookies().get('user_id')?.value;
   const openNote = cookies().get('open_note')?.value;
@@ -87,7 +89,7 @@ export default async function EditNoteDialog({
           </div>
           <div className='grid grid-cols-4 gap-4 items-center'>
             <Label className='text-base text-right'>Colour</Label>
-            <ColourSelect />
+            <ColourSelect defaultColour={noteColour} />
           </div>
           <DialogFooter>
             <AddNoteSubmit text='Edit note' />
