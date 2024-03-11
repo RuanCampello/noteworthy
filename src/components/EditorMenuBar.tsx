@@ -12,15 +12,83 @@ import {
 } from 'lucide-react';
 import { useCurrentEditor } from '@tiptap/react';
 import MenuTooltip from './Tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { useState } from 'react';
+
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
+  const defaultValue = getDefaultValue();
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
   if (!editor) return null;
   const buttonStyle = 'p-2 rounded-md hover:bg-neutral-100 hover:text-night/80';
+  function handleClick(level: HeadingLevel) {
+    if (!editor) return;
+    editor.chain().focus().toggleHeading({ level: level }).run();
+    setSelectedValue(`Heading ${level}`);
+  }
+  function handleParagraph() {
+    if (!editor) return;
+    editor.chain().focus().setParagraph().run();
+    setSelectedValue('Paragraph');
+  }
+  function getDefaultValue() {
+    if (editor?.isActive('paragraph')) return 'Paragraph';
+    for (let i = 1; i <= 4; i++) {
+      if (editor?.isActive('heading', { level: i })) return `Heading ${i}`;
+    }
+  }
+
   return (
     <div className='flex flex-col gap-[6px]'>
       <Separator className='bg-white/10' />
       <div className='flex items-center gap-1'>
+        <Select value={selectedValue}>
+          <SelectTrigger className='bg-black border-none w-32'>
+            <SelectValue defaultValue={defaultValue}>
+              {selectedValue}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent sideOffset={4} className='bg-black border-midnight'>
+            <SelectGroup>
+              <button
+                onClick={handleParagraph}
+                className={`py-1.5 w-full text-sm px-1 ${
+                  editor.isActive('paragraph')
+                    ? 'bg-neutral-100 rounded-sm text-black'
+                    : 'text-neutral-200'
+                }`}
+                value='Paragraph'
+              >
+                Paragraph
+              </button>
+              <div className='flex flex-col'>
+                {Array.from({ length: 4 }, (_, index) => (
+                  <button
+                    key={`${index}`}
+                    value={`Heading ${index + 1}`}
+                    className={`py-1.5 text-sm px-1 ${
+                      editor.isActive('heading', { level: index + 1 })
+                        ? 'bg-neutral-100 rounded-sm text-black'
+                        : 'text-neutral-200'
+                    }`}
+                    onClick={() => handleClick((index + 1) as HeadingLevel)}
+                  >
+                    Heading {index + 1}
+                  </button>
+                ))}
+              </div>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Separator orientation='vertical' className='bg-white/10' />
         <MenuTooltip content='Align left (Ctrl+Shift+L)'>
           <button
             className={`${buttonStyle} ${

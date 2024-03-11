@@ -1,4 +1,4 @@
-import { ColourType, Colours } from '@/utils/colours';
+import { ColourType } from '@/utils/colours';
 import {
   Select,
   SelectContent,
