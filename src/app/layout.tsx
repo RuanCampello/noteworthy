@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -23,6 +24,7 @@ export default function RootLayout({
         className={`${sourceSans.className} bg-black text-neutral-100 text-base`}
       >
         {children}
+        <Toaster/>
       </body>
     </html>
   );
