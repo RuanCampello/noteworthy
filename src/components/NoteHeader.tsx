@@ -22,7 +22,7 @@ export default async function NoteHeader({
   id,
 }: NoteHeaderProps) {
   return (
-    <div className='sticky'>
+    <div className='sticky px-14 pt-12'>
       <div className='flex justify-between items-center mb-8'>
         <h1
           className='text-4xl font-semibold line-clamp-2 w-[90%]'

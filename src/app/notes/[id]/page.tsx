@@ -16,7 +16,7 @@ export default async function NotePage({ params }: { params: { id: string } }) {
   const { title, date, owner, content } = note;
   return (
     <Resizable>
-      <div className='px-14 py-12 flex flex-col gap-4 h-full overflow-y-clip'>
+      <div className='flex flex-col gap-4 h-full overflow-y-clip'>
         <NoteEditor content={content}>
           <NoteHeader id={id} title={title} date={date.seconds} owner={owner} />
         </NoteEditor>

@@ -2,29 +2,22 @@
 import { Check, Save } from 'lucide-react';
 import MenuTooltip from './Tooltip';
 import { useCurrentEditor } from '@tiptap/react';
-import { getCookie } from 'cookies-next';
 import { useState } from 'react';
-import { OverrideNote } from '@/utils/api';
+import { saveNote } from '@/utils/api';
 import { usePathname } from 'next/navigation';
 import { useToast } from './ui/use-toast';
-import { getCollection } from '@/utils/get-navigation-info';
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
-  const pathname = usePathname();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const user_id = getCookie('user_id');
-  const openNote = getCookie('open_note');
+  const pathname = usePathname();
   if (!currentEditor) return;
-  const collection = getCollection(pathname)
 
-  async function handleSave() {
+  async function handleSaveClick() {
     const currentContent = currentEditor.editor?.getHTML();
-    if (!user_id || !openNote || !currentContent) return;
+    if (!currentContent) return;
     setLoading(true);
-    await OverrideNote(user_id, openNote, collection, {
-      content: currentContent,
-    });
+    await saveNote(currentContent, pathname);
     setLoading(false);
     toast({
       title: 'Note Saved',
@@ -39,10 +32,10 @@ export default function SaveNote() {
     });
   }
   return (
-    <MenuTooltip content='Save changes' sideOffset={8}>
+    <MenuTooltip content='Save changes (Ctrl+Alt+S)' sideOffset={8}>
       <button
         disabled={loading}
-        onClick={handleSave}
+        onClick={handleSaveClick}
         className='text-silver h-fit p-2 border-2 border-silver rounded-full disabled:animate-pulse'
       >
         <Save size={22} strokeWidth={2} />

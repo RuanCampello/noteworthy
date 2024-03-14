@@ -75,15 +75,6 @@
   }
 }
 
-mark {
-  background-color: #CF93D9;
-  color:#252525;
-  border-radius: 0.25em;
-  box-decoration-break: clone;
-  padding-top: 0.125em;
-  padding-inline: 0.15em;
-}
-
 button:focus, a:focus {
   outline: #fff solid 2px;
 }

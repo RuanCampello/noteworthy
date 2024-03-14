@@ -8,7 +8,10 @@ import {
   getDoc,
   setDoc,
 } from 'firebase/firestore';
+import { cookies, headers } from 'next/headers';
 import { v4 as uuid } from 'uuid';
+import { getCollection } from './get-navigation-info';
+import { getCookie } from 'cookies-next';
 
 interface addNoteProps {
   userId: string;
@@ -85,4 +88,14 @@ export async function OverrideNote(
     ...noteProps,
   };
   await setDoc(doc(db, collection, userId), { notes: updatedNotes });
+}
+
+export async function saveNote(content: string, pathname: string) {
+  const userId = getCookie('user_id')
+  const openNote = getCookie('open_note')
+  const collection = getCollection(pathname)
+  if (!userId || !openNote) return;
+  await OverrideNote(userId, openNote, collection, {
+    content: content,
+  });
 }
