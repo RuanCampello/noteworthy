@@ -1,11 +1,14 @@
 export const Colours: { [key: string]: string } = {
   tiffany: '#80CBC4',
+  cambridge: '#93CBAE',
   blue: '#80DEEA',
   mindaro: '#E6EE9B',
+  mikado: '#FFC50F',
   sunset: '#FFCC80',
   melon: '#FAB099',
   tickle: '#F48FB1',
   wisteria: '#CF93D9',
+  slate: '#7D56D8',
 };
 
 export type ColourType =

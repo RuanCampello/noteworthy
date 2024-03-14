@@ -16,13 +16,16 @@ interface ColourSelectProps {
 
 export default function ColourSelect({defaultColour}: ColourSelectProps) {
   const colours = [
+    { value: 'slate', name: 'dark slate blue' },
     { value: 'wisteria', name: 'wisteria' },
     { value: 'tickle', name: 'tickle me pick' },
     { value: 'melon', name: 'melon' },
     { value: 'sunset', name: 'sunset' },
     { value: 'mindaro', name: 'mindaro' },
-    { value: 'blue', name: 'non photo blue' },
+    { value: 'cambridge', name: 'cambridge blue' },
     { value: 'tiffany', name: 'tiffany blue' },
+    { value: 'blue', name: 'non photo blue' },
+    { value: 'mikado', name: 'mikado yellow' },
   ];
 
   return (
