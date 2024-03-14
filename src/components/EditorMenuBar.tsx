@@ -86,11 +86,28 @@ export default function EditorMenuBar() {
           <SelectTrigger className='bg-black border-none w-32'>
             <SelectValue>{selectedValue}</SelectValue>
           </SelectTrigger>
-          <SelectContent sideOffset={4} className='bg-black border-midnight'>
+          <SelectContent sideOffset={6} className='bg-black border-midnight p-1'>
             <SelectGroup>
+              <div className='flex flex-col'>
+                {Array.from({ length: 4 }, (_, index) => (
+                  <button
+                    key={`${index}`}
+                    value={`Heading ${index + 1}`}
+                    className={`py-1.5 leading-none px-1 ${
+                      editor.isActive('heading', { level: index + 1 })
+                        ? 'bg-neutral-100 rounded-sm text-black'
+                        : 'text-neutral-200'
+                    }`}
+                    style={{fontSize: `${((4-index+1) * 12)}px`}}
+                    onClick={() => handleClick((index + 1) as HeadingLevel)}
+                  >
+                    Heading {index + 1}
+                  </button>
+                ))}
+              </div>
               <button
                 onClick={handleParagraph}
-                className={`py-1.5 w-full text-sm px-1 ${
+                className={`py-1.5 w-full text-base px-1 ${
                   editor.isActive('paragraph')
                     ? 'bg-neutral-100 rounded-sm text-black'
                     : 'text-neutral-200'
@@ -99,22 +116,6 @@ export default function EditorMenuBar() {
               >
                 Paragraph
               </button>
-              <div className='flex flex-col'>
-                {Array.from({ length: 4 }, (_, index) => (
-                  <button
-                    key={`${index}`}
-                    value={`Heading ${index + 1}`}
-                    className={`py-1.5 text-sm px-1 ${
-                      editor.isActive('heading', { level: index + 1 })
-                        ? 'bg-neutral-100 rounded-sm text-black'
-                        : 'text-neutral-200'
-                    }`}
-                    onClick={() => handleClick((index + 1) as HeadingLevel)}
-                  >
-                    Heading {index + 1}
-                  </button>
-                ))}
-              </div>
             </SelectGroup>
           </SelectContent>
         </Select>

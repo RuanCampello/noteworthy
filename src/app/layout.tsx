@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' spellCheck={false}>
       <body
         className={`${sourceSans.className} bg-black text-neutral-100 text-base`}
       >

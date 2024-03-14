@@ -59,7 +59,7 @@ export default async function EditNoteDialog({
         <form action={editNote} className='flex flex-col gap-3'>
           <DialogHeader className='flex flex-col gap-3'>
             <DialogTitle className='flex gap-2'>
-              Edit <h1 title={noteName} className='text-silver line-clamp-1'>{`"${noteName}"`}</h1>
+              Edit <p title={noteName} className='text-silver line-clamp-1'>{`"${noteName}"`}</p>
             </DialogTitle>
             <DialogDescription>
               📝 Let&apos;s capture inspiration and craft wonders together! Edit

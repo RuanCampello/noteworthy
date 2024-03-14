@@ -37,7 +37,7 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
   const editorProps = {
     attributes: {
       class:
-        'prose prose-neutral px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black selection:bg-night selection:text-neutral-200',
+        'prose prose-neutral px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black selection:bg-night selection:text-neutral-200',
     },
   };
   return (

@@ -3,7 +3,7 @@ export const Colours: { [key: string]: string } = {
   cambridge: '#93CBAE',
   blue: '#80DEEA',
   mindaro: '#E6EE9B',
-  mikado: '#FFC50F',
+  mikado: '#FFCF32',
   sunset: '#FFCC80',
   melon: '#FAB099',
   tickle: '#F48FB1',
