@@ -99,7 +99,7 @@ export default function EditProfileDialog({
     });
   }
   function handleImageChange(e: any) {
-    if (e.target) {
+    if (e.target && e.target.files && e.target.files.length > 0) {
       const preview = e.target.files[0];
       setSelectedImage(URL.createObjectURL(preview));
     }

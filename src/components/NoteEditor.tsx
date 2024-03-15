@@ -7,6 +7,7 @@ import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import { ReactNode } from 'react';
+import Placeholder from '@tiptap/extension-placeholder';
 
 interface NoteEditorProps {
   content: string;
@@ -19,6 +20,11 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
     Underline,
     Highlight,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    Placeholder.configure({
+      placeholder: 'Start typing your thoughts here...',
+      emptyNodeClass:
+        'first:before:content-[attr(data-placeholder)] first:before:text-silver first:before:float-left first:before:pointer-events-none first:before:h-0',
+    }),
     Extension.create({
       addKeyboardShortcuts() {
         return {
@@ -37,7 +43,7 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
   const editorProps = {
     attributes: {
       class:
-        'prose prose-neutral px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black selection:bg-night selection:text-neutral-200',
+        'prose prose-neutral px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black selection:bg-night selection:text-neutral-200 placeholder:text-black',
     },
   };
   return (

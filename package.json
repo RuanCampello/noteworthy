@@ -23,6 +23,7 @@
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tiptap/extension-highlight": "^2.2.3",
+    "@tiptap/extension-placeholder": "^2.2.4",
     "@tiptap/extension-strike": "^2.2.3",
     "@tiptap/extension-text-align": "^2.2.3",
     "@tiptap/extension-underline": "^2.2.3",
