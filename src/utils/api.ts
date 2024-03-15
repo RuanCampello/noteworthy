@@ -7,8 +7,11 @@ import {
   Timestamp,
   getDoc,
   setDoc,
+  collection,
+  getDocs,
+  query,
+  where,
 } from 'firebase/firestore';
-import { cookies, headers } from 'next/headers';
 import { v4 as uuid } from 'uuid';
 import { getCollection } from './get-navigation-info';
 import { getCookie } from 'cookies-next';
@@ -91,11 +94,18 @@ export async function OverrideNote(
 }
 
 export async function saveNote(content: string, pathname: string) {
-  const userId = getCookie('user_id')
-  const openNote = getCookie('open_note')
-  const collection = getCollection(pathname)
+  const userId = getCookie('user_id');
+  const openNote = getCookie('open_note');
+  const collection = getCollection(pathname);
   if (!userId || !openNote) return;
   await OverrideNote(userId, openNote, collection, {
     content: content,
   });
+}
+
+export async function checkUsernameAvailability(username: string): Promise<boolean> {
+  const usernameQuery = await getDocs(
+    query(collection(db, 'users'), where('displayName', '==', username))
+  );
+  return usernameQuery.size > 0;
 }

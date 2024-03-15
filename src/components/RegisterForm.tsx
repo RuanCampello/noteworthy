@@ -15,21 +15,13 @@ import {
 } from './ui/form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
-import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
-import { addNote } from '@/utils/api';
+import { addNote, checkUsernameAvailability } from '@/utils/api';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -44,7 +36,6 @@ const formSchema = z.object({
 });
 
 export default function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,19 +47,15 @@ export default function RegisterForm() {
     },
   });
 
-  async function checkUsernameAvailability(username: string): Promise<boolean> {
-    const usernameQuery = await getDocs(
-      query(collection(db, 'users'), where('displayName', '==', username))
-    );
-    return usernameQuery.size > 0;
-  }
+  const {
+    formState: { isSubmitting },
+  } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { username, email, password } = values;
 
     const usernameExists = await checkUsernameAvailability(username);
     if (!usernameExists) {
-      setIsLoading(true);
       try {
         const response = await createUserWithEmailAndPassword(
           auth,
@@ -97,7 +84,6 @@ export default function RegisterForm() {
       } catch (error) {
         console.error('Here is the error: ', error);
       } finally {
-        setIsLoading(false);
       }
     }
   }
@@ -113,7 +99,7 @@ export default function RegisterForm() {
           subtitle='Unique annotations 🌟'
         />
         <CustomForm.ThirdPartLogin
-          disableWhen={isLoading}
+          disableWhen={isSubmitting}
           type='signup'
           image={
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
@@ -186,9 +172,9 @@ export default function RegisterForm() {
             )}
           />
         </div>
-        <CustomForm.Button disableWhen={isLoading} title='Register' />
+        <CustomForm.Button disableWhen={isSubmitting} title='Register' />
         <CustomForm.Redirect
-          disableWhen={isLoading}
+          disableWhen={isSubmitting}
           text='Have an account?'
           path='/login'
           link='Log in now'

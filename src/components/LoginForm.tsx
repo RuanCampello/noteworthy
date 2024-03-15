@@ -14,7 +14,6 @@ import {
 import { CustomForm } from './Form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
-import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase';
 import { setCookie } from 'cookies-next';
@@ -30,7 +29,6 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,8 +38,11 @@ export default function LoginForm() {
     },
   });
 
+  const {
+    formState: { isSubmitting },
+  } = form;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
     const { email, password } = values;
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
@@ -51,8 +52,6 @@ export default function LoginForm() {
       router.push('/');
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   }
   return (
@@ -67,7 +66,7 @@ export default function LoginForm() {
           subtitle='Welcome back 👋'
         />
         <CustomForm.ThirdPartLogin
-          disableWhen={isLoading}
+          disableWhen={isSubmitting}
           type='login'
           image={
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
@@ -117,9 +116,9 @@ export default function LoginForm() {
             )}
           />
         </div>
-        <CustomForm.Button disableWhen={isLoading} title='Login' />
+        <CustomForm.Button disableWhen={isSubmitting} title='Login' />
         <CustomForm.Redirect
-          disableWhen={isLoading}
+          disableWhen={isSubmitting}
           text='Not registered yet?'
           path='/register'
           link='Create an account'
