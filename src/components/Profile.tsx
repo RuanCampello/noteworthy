@@ -1,11 +1,18 @@
 import { cookies } from 'next/headers';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { db } from '@/firebase';
+import { auth, db } from '@/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { Bolt } from 'lucide-react';
+import { Bolt, Edit, LogOut } from 'lucide-react';
 import EditProfileDialog from './EditProfileDialog';
 import { User } from '@/types/user-type';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 export default async function Profile() {
   const user_id = cookies().get('user_id')?.value;
@@ -14,6 +21,12 @@ export default async function Profile() {
   const user = (await getDoc(doc(db, 'users', user_id))).data() as User;
   const { name, email, photoURL } = user;
 
+  async function handleLogout() {
+    'use server';
+    cookies().delete('user_id');
+    cookies().delete('open_note');
+    auth.signOut();
+  }
   return (
     <div className='mt-auto p-5 ps-4 bg-midnight rounded-md m-1'>
       <div className='flex gap-4 items-center'>
@@ -27,9 +40,36 @@ export default async function Profile() {
           <h1 className='text-lg leading-none font-semibold trucate'>{name}</h1>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
-        <EditProfileDialog currentUser={user}>
-          <Bolt className='text-silver ms-auto cursor-pointer' />
-        </EditProfileDialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Bolt className='text-silver ms-auto cursor-pointer' />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className='dark bg-black'>
+            <EditProfileDialog currentUser={user}>
+              <button
+                type='button'
+                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-midnight flex items-center'
+              >
+                Edit profile
+                <DropdownMenuShortcut>
+                  <Edit size={16} />
+                </DropdownMenuShortcut>
+              </button>
+            </EditProfileDialog>
+            <DropdownMenuSeparator />
+            <form action={handleLogout}>
+              <button
+                type='submit'
+                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-red-600 hover:font-semibold group flex items-center'
+              >
+                Log out
+                <DropdownMenuShortcut>
+                  <LogOut size={16} className='group-hover:text-black' />
+                </DropdownMenuShortcut>
+              </button>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

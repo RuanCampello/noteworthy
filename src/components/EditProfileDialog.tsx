@@ -68,13 +68,30 @@ export default function EditProfileDialog({
   if (!userId) return null;
 
   async function handleEditProfile({ name, image }: FormSchema) {
+    const isNewNameAvailable = await checkUsernameAvailability(name);
+    if (!isNewNameAvailable) {
+      toast({
+        title: 'Name already taken',
+        description:
+          "Oops! It seems like the name you're trying to use is already taken. How about trying a unique twist? 🔄",
+        variant: 'edit',
+        action: (
+          <div className='bg-slate/20 p-2 rounded-md w-fit'>
+            <Check
+              size={24}
+              className='bg-slate text-midnight p-1 rounded-full'
+            />
+          </div>
+        ),
+      });
+      return;
+    }
     const profileImage = image[0];
     const storageRef = ref(storage, `${userId}`);
     await uploadBytesResumable(storageRef, profileImage);
     const downloadUrl = await getDownloadURL(storageRef);
 
-    const isNewNameAvailable = await checkUsernameAvailability(name);
-    const newName = name !== currentUser.name && isNewNameAvailable && name;
+    const newName = name !== currentUser.name && name;
 
     await updateDoc(doc(db, 'users', userId), {
       ...currentUser,
@@ -148,6 +165,7 @@ export default function EditProfileDialog({
             <Label className='text-right text-base'>Name</Label>
             <Input
               {...register('name')}
+              autoFocus={false}
               className='col-span-3 bg-black invalid:focus:outline-red-600'
               required
               defaultValue={name}
@@ -155,7 +173,9 @@ export default function EditProfileDialog({
             />
           </div>
           <DialogFooter className='mt-4'>
-            <Button disabled={isSubmitting} type='submit'>Save changes</Button>
+            <Button disabled={isSubmitting} type='submit'>
+              Save changes
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

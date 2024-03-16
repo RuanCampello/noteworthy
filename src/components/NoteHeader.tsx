@@ -7,7 +7,6 @@ import Dropdown from './Dropdown';
 import { Separator } from './ui/separator';
 import { secondsToLocaleDate } from '@/utils/date';
 import SaveNote from './SaveNote';
-import NoteEditor from './NoteEditor';
 
 interface NoteHeaderProps {
   title: string;
@@ -25,7 +24,7 @@ export default async function NoteHeader({
     <div className='sticky px-14 pt-12'>
       <div className='flex justify-between items-center mb-8'>
         <h1
-          className='text-4xl font-semibold line-clamp-2 w-[90%]'
+          className='text-4xl font-semibold line-clamp-1 w-[90%]'
           title={title}
         >
           {title}
