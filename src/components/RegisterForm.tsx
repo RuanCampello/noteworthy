@@ -22,6 +22,7 @@ import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
 import { addNote, checkUsernameAvailability } from '@/utils/api';
+import { setCookie } from 'cookies-next';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -80,10 +81,10 @@ export default function RegisterForm() {
         });
         await setDoc(doc(db, 'userFavourites', response.user.uid), {});
         await setDoc(doc(db, 'userArchived', response.user.uid), {});
+        setCookie('user_id', response.user.uid);
         router.push('/');
       } catch (error) {
         console.error('Here is the error: ', error);
-      } finally {
       }
     }
   }

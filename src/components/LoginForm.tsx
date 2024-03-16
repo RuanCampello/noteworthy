@@ -16,7 +16,7 @@ import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase';
-import { setCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
@@ -46,10 +46,14 @@ export default function LoginForm() {
     const { email, password } = values;
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      setCookie('user_id', response.user.uid, {
-        sameSite: 'strict',
-      });
-      router.push('/');
+
+      const { uid } = response.user;
+      if (uid) {
+        setCookie('user_id', response.user.uid);
+        if (getCookie('user_id')) {
+          router.refresh();
+        }
+      }
     } catch (error) {
       console.error(error);
     }

@@ -15,7 +15,7 @@ export default function FormRedirect({ text, path, link, disableWhen }: FormRedi
       <Link
         aria-disabled={disableWhen}
         href={path}
-        className={`flex items-center group ${disableWhen ? 'text-tickle/80 pointer-events-none' : 'text-tickle hover:underline underline-offset-2 '}`}
+        className={`flex items-center group ${disableWhen ? 'text-tickle/80 pointer-events-none' : 'text-tickle hover:underline underline-offset-2 focus:outline-none'}`}
       >
         {link} <ArrowUpRight size={20} />
       </Link>
