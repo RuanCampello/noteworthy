@@ -17,12 +17,18 @@ import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {
+  AuthError,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 import { useRouter } from 'next/navigation';
 import { addNote, checkUsernameAvailability } from '@/utils/api';
 import { setCookie } from 'cookies-next';
+import { useToast } from './ui/use-toast';
+import { X } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -38,6 +44,7 @@ const formSchema = z.object({
 
 export default function RegisterForm() {
   const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,8 +62,8 @@ export default function RegisterForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { username, email, password } = values;
 
-    const usernameExists = await checkUsernameAvailability(username);
-    if (!usernameExists) {
+    const isUsernameAvailable = await checkUsernameAvailability(username);
+    if (isUsernameAvailable) {
       try {
         const response = await createUserWithEmailAndPassword(
           auth,
@@ -83,9 +90,37 @@ export default function RegisterForm() {
         await setDoc(doc(db, 'userArchived', response.user.uid), {});
         setCookie('user_id', response.user.uid);
         router.push('/');
-      } catch (error) {
-        console.error('Here is the error: ', error);
+      } catch (e) {
+        const error = e as AuthError;
+        if (error.code === 'auth/email-already-in-use') {
+          toast({
+            title: 'E-mail Unavailable',
+            description:
+              "Oops! It seems like the e-mail you're trying to use is already taken.",
+            variant: 'error',
+            action: (
+              <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+                <X
+                  size={24}
+                  className='bg-tickle text-midnight p-1 rounded-full'
+                />
+              </div>
+            ),
+          });
+        }
       }
+    } else {
+      toast({
+        title: 'Name Unavailable',
+        description:
+          "Oops! It seems like the name you're trying to use is already taken.",
+        variant: 'error',
+        action: (
+          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          </div>
+        ),
+      });
     }
   }
   return (

@@ -14,10 +14,12 @@ import {
 import { CustomForm } from './Form';
 import { Input } from './ui/input';
 import LogoImage from '../../public/assets/logo.svg';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { AuthError, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
+import { useToast } from './ui/use-toast';
+import { X } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -30,6 +32,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,8 +57,24 @@ export default function LoginForm() {
           router.refresh();
         }
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      const error = e as AuthError;
+      if (error.code === 'auth/invalid-login-credentials') {
+        toast({
+          title: 'Login Failed',
+          description:
+            'Uh-oh! It seems there was a hiccup. Double-check your email and password and try again.',
+          variant: 'error',
+          action: (
+            <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+              <X
+                size={24}
+                className='bg-tickle text-midnight p-1 rounded-full'
+              />
+            </div>
+          ),
+        });
+      }
     }
   }
   return (
