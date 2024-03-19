@@ -108,9 +108,9 @@ export async function checkUsernameAvailability(
   username: string
 ): Promise<boolean> {
   const usernameQuery = await getDocs(
-    query(collection(db, 'users'), where('displayName', '==', username))
+    query(collection(db, 'users'), where('name', '==', username))
   );
-  return usernameQuery.size > 0;
+  return !(usernameQuery.size > 0);
 }
 
 export async function updateProfile(

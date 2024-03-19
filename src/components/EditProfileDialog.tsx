@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, Pencil, X } from 'lucide-react';
-import { updateProfile } from '@/utils/api';
+import { checkUsernameAvailability, updateProfile } from '@/utils/api';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -64,42 +64,59 @@ export default function EditProfileDialog({
 
   async function handleEditProfile({ name, image }: FormSchema) {
     const newName = name !== currentUser.name ? name : undefined;
+    const isUsernameAvailable = await checkUsernameAvailability(name);
 
-    if (newName === undefined && (image === undefined || image.length === 0))
+    if (newName === undefined && (image === undefined || image.length === 0)) {
       return;
+    }
 
-    if (image !== undefined && image.length > 0) {
-      const profileImage = image[0];
-      const storageRef = ref(storage, `${userId}`);
-      await uploadBytesResumable(storageRef, profileImage);
-      const downloadUrl = await getDownloadURL(storageRef);
+    if (isUsernameAvailable) {
+      if (image !== undefined && image.length > 0) {
+        const profileImage = image[0];
+        const storageRef = ref(storage, `${userId}`);
+        await uploadBytesResumable(storageRef, profileImage);
+        const downloadUrl = await getDownloadURL(storageRef);
 
-      if (newName !== undefined) {
-        await updateProfile(currentUser, {
-          name: newName,
-          photoURL: downloadUrl,
-        });
+        if (newName !== undefined && isUsernameAvailable) {
+          await updateProfile(currentUser, {
+            name: newName,
+            photoURL: downloadUrl,
+          });
+        } else {
+          await updateProfile(currentUser, { photoURL: downloadUrl });
+        }
       } else {
-        await updateProfile(currentUser, { photoURL: downloadUrl });
+        await updateProfile(currentUser, { name: newName });
       }
-    } else await updateProfile(currentUser, { name: newName });
-
-    setOpen(false);
-    router.refresh();
-    setSelectedImage(undefined);
-    toast({
-      title: 'Profile Updated',
-      description: 'Your digital identity shines brighter than ever! ✨',
-      variant: 'edit',
-      action: (
-        <div className='bg-slate/20 p-2 rounded-md w-fit'>
-          <Check
-            size={24}
-            className='bg-slate text-midnight p-1 rounded-full'
-          />
-        </div>
-      ),
-    });
+      toast({
+        title: 'Profile Updated',
+        description: 'Your digital identity shines brighter than ever! ✨',
+        variant: 'edit',
+        action: (
+          <div className='bg-slate/20 p-2 rounded-md w-fit'>
+            <Check
+              size={24}
+              className='bg-slate text-midnight p-1 rounded-full'
+            />
+          </div>
+        ),
+      });
+      setOpen(false);
+      router.refresh();
+      setSelectedImage(undefined);
+    } else {
+      toast({
+        title: 'Name Unavailable',
+        description:
+          "Oops! It seems like the name you're trying to use is already taken.",
+        variant: 'error',
+        action: (
+          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          </div>
+        ),
+      });
+    }
   }
   function handleImageChange(e: any) {
     if (e.target && e.target.files && e.target.files.length > 0) {
@@ -111,7 +128,7 @@ export default function EditProfileDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className='w-full rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between'>
+        <div className='w-full select-none rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between'>
           Edit profile
           <Pencil size={16} className='text-neutral-400' />
         </div>
