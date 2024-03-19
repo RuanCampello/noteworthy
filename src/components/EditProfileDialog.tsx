@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,36 +14,31 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import Image from 'next/image';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { db, storage } from '@/firebase';
+import { storage } from '@/firebase';
 import { User } from '@/types/user-type';
-import { doc, updateDoc } from 'firebase/firestore';
 import { getCookie } from 'cookies-next';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, X } from 'lucide-react';
-import { checkUsernameAvailability } from '@/utils/api';
+import { Check, Pencil, X } from 'lucide-react';
+import { updateProfile } from '@/utils/api';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
 
 interface EditProfileDialogProps {
-  children: ReactNode;
   currentUser: User;
 }
-
-const accepted_types = ['image/png', 'image/jpeg'];
 
 const formSchema = z.object({
   name: z
     .string()
     .min(6, { message: 'Username must be at least 6 characters' }),
-  image: z.any().refine((files) => accepted_types.includes(files?.[0]?.type)),
+  image: z.any().optional(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function EditProfileDialog({
-  children,
   currentUser,
 }: EditProfileDialogProps) {
   const {
@@ -68,36 +63,27 @@ export default function EditProfileDialog({
   if (!userId) return null;
 
   async function handleEditProfile({ name, image }: FormSchema) {
-    const isNewNameAvailable = await checkUsernameAvailability(name);
-    if (!isNewNameAvailable) {
-      toast({
-        title: 'Name already taken',
-        description:
-          "Oops! It seems like the name you're trying to use is already taken. How about trying a unique twist? 🔄",
-        variant: 'edit',
-        action: (
-          <div className='bg-slate/20 p-2 rounded-md w-fit'>
-            <Check
-              size={24}
-              className='bg-slate text-midnight p-1 rounded-full'
-            />
-          </div>
-        ),
-      });
+    const newName = name !== currentUser.name ? name : undefined;
+
+    if (newName === undefined && (image === undefined || image.length === 0))
       return;
-    }
-    const profileImage = image[0];
-    const storageRef = ref(storage, `${userId}`);
-    await uploadBytesResumable(storageRef, profileImage);
-    const downloadUrl = await getDownloadURL(storageRef);
 
-    const newName = name !== currentUser.name && name;
+    if (image !== undefined && image.length > 0) {
+      const profileImage = image[0];
+      const storageRef = ref(storage, `${userId}`);
+      await uploadBytesResumable(storageRef, profileImage);
+      const downloadUrl = await getDownloadURL(storageRef);
 
-    await updateDoc(doc(db, 'users', userId), {
-      ...currentUser,
-      name: newName || currentUser.name,
-      photoURL: downloadUrl,
-    });
+      if (newName !== undefined) {
+        await updateProfile(currentUser, {
+          name: newName,
+          photoURL: downloadUrl,
+        });
+      } else {
+        await updateProfile(currentUser, { photoURL: downloadUrl });
+      }
+    } else await updateProfile(currentUser, { name: newName });
+
     setOpen(false);
     router.refresh();
     setSelectedImage(undefined);
@@ -124,7 +110,12 @@ export default function EditProfileDialog({
   const { name, photoURL } = currentUser;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <div className='w-full rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between'>
+          Edit profile
+          <Pencil size={16} className='text-neutral-400' />
+        </div>
+      </DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
@@ -165,7 +156,6 @@ export default function EditProfileDialog({
             <Label className='text-right text-base'>Name</Label>
             <Input
               {...register('name')}
-              autoFocus={false}
               className='col-span-3 bg-black invalid:focus:outline-red-600'
               required
               defaultValue={name}

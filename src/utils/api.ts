@@ -15,6 +15,7 @@ import {
 import { v4 as uuid } from 'uuid';
 import { getCollection } from './get-navigation-info';
 import { getCookie } from 'cookies-next';
+import { User } from '@/types/user-type';
 
 interface addNoteProps {
   userId: string;
@@ -103,9 +104,24 @@ export async function saveNote(content: string, pathname: string) {
   });
 }
 
-export async function checkUsernameAvailability(username: string): Promise<boolean> {
+export async function checkUsernameAvailability(
+  username: string
+): Promise<boolean> {
   const usernameQuery = await getDocs(
     query(collection(db, 'users'), where('displayName', '==', username))
   );
   return usernameQuery.size > 0;
+}
+
+export async function updateProfile(
+  currentUser: User,
+  updateData: Partial<User>
+) {
+  const userId = getCookie('user_id');
+  if (!userId) return;
+  const userData = {
+    ...currentUser,
+    ...updateData,
+  };
+  await updateDoc(doc(db, 'users', userId), userData);
 }

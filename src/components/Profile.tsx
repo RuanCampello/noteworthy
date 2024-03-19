@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { auth, db } from '@/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { Bolt, Edit, LogOut } from 'lucide-react';
+import { Bolt, LogOut } from 'lucide-react';
 import EditProfileDialog from './EditProfileDialog';
 import { User } from '@/types/user-type';
 import {
@@ -45,20 +45,11 @@ export default async function Profile() {
             <Bolt className='text-silver ms-auto cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black'>
-            <EditProfileDialog currentUser={user}>
-              <button
-                type='button'
-                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-midnight flex items-center'
-              >
-                Edit profile
-                <DropdownMenuShortcut>
-                  <Edit size={16} />
-                </DropdownMenuShortcut>
-              </button>
-            </EditProfileDialog>
+            <EditProfileDialog currentUser={user} />
             <DropdownMenuSeparator />
-            <form action={handleLogout}>
+            <form id='logout' action={handleLogout}>
               <button
+                form='logout'
                 type='submit'
                 className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-red-600 hover:font-semibold group flex items-center'
               >
