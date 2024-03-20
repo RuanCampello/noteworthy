@@ -30,10 +30,19 @@ import { usePathname } from 'next/navigation';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
+const fontFamilies = [
+  { name: 'Garamond', value: 'Cormorant Garamond' },
+  { name: 'Montserrat', value: 'Montserrat' },
+  { name: 'Lobster', value: 'Lobster' },
+  { name: 'Didot', value: 'GFS Didot' },
+  { name: 'Merriweather', value: 'Merriweather' },
+];
+
 export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [fontFamily, setFontFamily] = useState('Source Sans 3');
   const pathname = usePathname();
 
   useEffect(() => {
@@ -77,12 +86,31 @@ export default function EditorMenuBar() {
         setSelectedValue('Paragraph');
       }
     };
-
     editor.on('transaction', handleEditorChange);
     return () => {
       editor.off('transaction', handleEditorChange);
     };
   }, [editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleFontChange = () => {
+      const activeFont = fontFamilies.find((fontFamily) =>
+        editor.isActive('textStyle', { fontFamily: fontFamily.value })
+      );
+      if (activeFont) setFontFamily(activeFont.value);
+      else setFontFamily('Source Sans 3');
+    };
+    editor.on('transaction', handleFontChange);
+    return () => {
+      editor.off('transaction', handleFontChange);
+    };
+  }, [editor]);
+
+  useEffect(() => {
+    console.log(fontFamily)
+  }, [fontFamily])
 
   if (!editor) return null;
   const buttonStyle =
@@ -125,7 +153,7 @@ export default function EditorMenuBar() {
   }
   return (
     <div className='flex flex-col gap-[6px] px-14'>
-      <Separator className='bg-white/10' />
+      <Separator />
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content='Styles' sideOffset={6}>
@@ -169,7 +197,45 @@ export default function EditorMenuBar() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Separator orientation='vertical' className='bg-white/10' />
+        <Separator orientation='vertical' />
+        <Select value={fontFamily}>
+          <MenuTooltip content='Font Family'>
+            <SelectTrigger className='bg-black border-none w-40'>
+              <SelectValue>{fontFamily}</SelectValue>
+            </SelectTrigger>
+          </MenuTooltip>
+          <SelectContent className='bg-black border-2 border-silver dark'>
+            <SelectGroup className='flex flex-col gap-1'>
+              <button
+                onClick={() => editor.chain().focus().unsetFontFamily().run()}
+                className={`py-1.5 leading-none text-start px-1 ${
+                  fontFamily === 'Source Sans 3'
+                    ? 'bg-neutral-100 text-black rounded-sm'
+                    : ''
+                }`}
+              >
+                Source Sans 3
+              </button>
+              {fontFamilies.map((fontFamily) => (
+                <button
+                  onClick={() =>
+                    editor.chain().focus().setFontFamily(fontFamily.value).run()
+                  }
+                  className={`py-1.5 leading-none text-start px-1 ${
+                    editor.isActive('textStyle', { fontFamily: fontFamily.value })
+                      ? 'bg-neutral-100 text-black rounded-sm'
+                      : ''
+                  }`}
+                  key={fontFamily.name}
+                  style={{ fontFamily: fontFamily.value }}
+                >
+                  {fontFamily.name}
+                </button>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Separator orientation='vertical' />
         <MenuTooltip content='Align left (Ctrl+Shift+L)'>
           <button
             className={`${buttonStyle} ${
@@ -269,7 +335,7 @@ export default function EditorMenuBar() {
             <Highlighter size={20} />
           </button>
         </MenuTooltip>
-        <Separator className='bg-white/10' orientation='vertical' />
+        <Separator orientation='vertical' />
         <MenuTooltip content='Superscript'>
           <button
             className={`${buttonStyle} ${
@@ -291,7 +357,7 @@ export default function EditorMenuBar() {
           </button>
         </MenuTooltip>
       </div>
-      <Separator className='bg-white/10' />
+      <Separator />
     </div>
   );
 }
