@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Separator } from './ui/separator';
 import {
   AlignCenter,
@@ -60,6 +61,28 @@ export default function EditorMenuBar() {
     window.addEventListener('keydown', handleSaveShortcut);
     return () => window.removeEventListener('keydown', handleSaveShortcut);
   }, []);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleEditorChange = () => {
+      const headingLevels = [1, 2, 3, 4];
+      const activeHeadingLevel = headingLevels.find((level) =>
+        editor.isActive('heading', { level })
+      );
+
+      if (activeHeadingLevel) {
+        setSelectedValue(`Heading ${activeHeadingLevel}`);
+      } else if (editor.isActive('paragraph')) {
+        setSelectedValue('Paragraph');
+      }
+    };
+
+    editor.on('transaction', handleEditorChange);
+    return () => {
+      editor.off('transaction', handleEditorChange);
+    };
+  }, [editor]);
 
   if (!editor) return null;
   const buttonStyle =
