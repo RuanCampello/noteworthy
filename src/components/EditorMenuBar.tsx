@@ -128,12 +128,14 @@ export default function EditorMenuBar() {
       <Separator className='bg-white/10' />
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
-          <SelectTrigger className='bg-black border-none w-32'>
-            <SelectValue>{selectedValue}</SelectValue>
-          </SelectTrigger>
+          <MenuTooltip content='Styles' sideOffset={6}>
+            <SelectTrigger className='bg-black border-none w-32'>
+              <SelectValue>{selectedValue}</SelectValue>
+            </SelectTrigger>
+          </MenuTooltip>
           <SelectContent
             sideOffset={6}
-            className='bg-black border-midnight p-1'
+            className='bg-black border-silver border-2 p-1'
           >
             <SelectGroup>
               <div className='flex flex-col'>
@@ -146,7 +148,7 @@ export default function EditorMenuBar() {
                         ? 'bg-neutral-100 rounded-sm text-black'
                         : 'text-neutral-200'
                     }`}
-                    style={{ fontSize: `${(4 - index + 1) * 12}px` }}
+                    style={{ fontSize: `${(4 - index + 1) * 8}px` }}
                     onClick={() => handleClick((index + 1) as HeadingLevel)}
                   >
                     Heading {index + 1}
