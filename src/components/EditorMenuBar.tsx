@@ -9,6 +9,8 @@ import {
   Highlighter,
   Italic,
   Strikethrough,
+  Subscript,
+  Superscript,
   Underline,
 } from 'lucide-react';
 import { useCurrentEditor } from '@tiptap/react';
@@ -60,7 +62,8 @@ export default function EditorMenuBar() {
   }, []);
 
   if (!editor) return null;
-  const buttonStyle = 'p-2 rounded-md hover:bg-neutral-100 hover:text-night/80';
+  const buttonStyle =
+    'p-2 rounded-md hover:bg-neutral-100 hover:text-night/80 transition-colors duration-150';
 
   function handleClick(level: HeadingLevel) {
     if (!editor) return;
@@ -73,9 +76,28 @@ export default function EditorMenuBar() {
     setSelectedValue('Paragraph');
   }
   function getDefaultValue() {
-    if (editor?.isActive('paragraph')) return 'Paragraph';
+    if (!editor) return;
+    if (editor.isActive('paragraph')) return 'Paragraph';
     for (let i = 1; i <= 4; i++) {
       if (editor?.isActive('heading', { level: i })) return `Heading ${i}`;
+    }
+  }
+  function handleSuperscript() {
+    if (!editor) return;
+    if (editor.isActive('subscript')) {
+      editor.chain().focus().unsetSubscript().run();
+      editor.chain().focus().toggleSuperscript().run();
+    } else {
+      editor.chain().focus().toggleSuperscript().run();
+    }
+  }
+  function handleSubscript() {
+    if (!editor) return;
+    if (editor.isActive('superscript')) {
+      editor.chain().focus().unsetSuperscript().run();
+      editor.chain().focus().toggleSubscript().run();
+    } else {
+      editor.chain().focus().toggleSubscript().run();
     }
   }
   return (
@@ -86,7 +108,10 @@ export default function EditorMenuBar() {
           <SelectTrigger className='bg-black border-none w-32'>
             <SelectValue>{selectedValue}</SelectValue>
           </SelectTrigger>
-          <SelectContent sideOffset={6} className='bg-black border-midnight p-1'>
+          <SelectContent
+            sideOffset={6}
+            className='bg-black border-midnight p-1'
+          >
             <SelectGroup>
               <div className='flex flex-col'>
                 {Array.from({ length: 4 }, (_, index) => (
@@ -98,7 +123,7 @@ export default function EditorMenuBar() {
                         ? 'bg-neutral-100 rounded-sm text-black'
                         : 'text-neutral-200'
                     }`}
-                    style={{fontSize: `${((4-index+1) * 12)}px`}}
+                    style={{ fontSize: `${(4 - index + 1) * 12}px` }}
                     onClick={() => handleClick((index + 1) as HeadingLevel)}
                   >
                     Heading {index + 1}
@@ -217,6 +242,27 @@ export default function EditorMenuBar() {
             onClick={() => editor.chain().focus().toggleHighlight().run()}
           >
             <Highlighter size={20} />
+          </button>
+        </MenuTooltip>
+        <Separator className='bg-white/10' orientation='vertical' />
+        <MenuTooltip content='Superscript'>
+          <button
+            className={`${buttonStyle} ${
+              editor.isActive('superscript') ? 'bg-neutral-100 text-black' : ''
+            }`}
+            onClick={handleSuperscript}
+          >
+            <Superscript size={20} />
+          </button>
+        </MenuTooltip>
+        <MenuTooltip content='Subscript'>
+          <button
+            className={`${buttonStyle} ${
+              editor.isActive('subscript') ? 'bg-neutral-100 text-black' : ''
+            }`}
+            onClick={handleSubscript}
+          >
+            <Subscript size={20} />
           </button>
         </MenuTooltip>
       </div>

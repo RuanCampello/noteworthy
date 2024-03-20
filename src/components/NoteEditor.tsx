@@ -6,8 +6,10 @@ import EditorMenuBar from './EditorMenuBar';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
-import { ReactNode } from 'react';
 import Placeholder from '@tiptap/extension-placeholder';
+import Superscript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
+import { ReactNode } from 'react';
 
 interface NoteEditorProps {
   content: string;
@@ -25,6 +27,8 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
       emptyNodeClass:
         'first:before:content-[attr(data-placeholder)] first:before:text-silver first:before:float-left first:before:pointer-events-none first:before:h-0',
     }),
+    Superscript,
+    Subscript,
     Extension.create({
       addKeyboardShortcuts() {
         return {
