@@ -48,7 +48,7 @@ export default function SearchNote() {
   return (
     <form
       onSubmit={handleSubmit(handleFilters)}
-      className='w-full my-1 flex bg-midnight text-silver rounded-sm items-center gap-2 p-2'
+      className='w-full my-1 flex bg-midnight text-silver rounded-sm items-center gap-2 p-2 focus-within:outline focus-within:outline-2 focus-within:outline-white'
     >
       <Search size={20} className='shrink-0' />
       <input

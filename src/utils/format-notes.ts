@@ -2,18 +2,30 @@ import { NoteType } from '@/types/note-type';
 import { headers } from 'next/headers';
 import { formatSearchParams } from './format';
 
-export function getFilteredNotes(notes: NoteType[]) {
+interface FilteredResults {
+  notes: NoteType[];
+  searchParam?: string;
+}
+
+export function getFilteredNotes(
+  notes: NoteType[]
+): FilteredResults {
   const searchParams = headers().get('search-params');
-  if(!searchParams) return notes
-  const search = searchParams.match(/name=([^&]*)/)
-  if(!search) return notes
+  if (!searchParams) return { notes: notes };
+  const search = searchParams.match(/name=([^&]*)/);
+  if (!search) return { notes: notes };
   const searchParamsString = formatSearchParams(search[1]);
   if (searchParamsString) {
-    return notes.filter((note) =>
-      note.title.toLowerCase().includes(searchParamsString.toLocaleLowerCase())
-    );
+    return {
+      notes: notes.filter((note) =>
+        note.title
+          .toLowerCase()
+          .includes(searchParamsString.toLocaleLowerCase())
+      ),
+      searchParam: searchParamsString,
+    };
   } else {
-    return notes;
+    return { notes: notes, searchParam: searchParamsString };
   }
 }
 

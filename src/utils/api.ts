@@ -56,11 +56,11 @@ export async function findNote(
   const noteRef = doc(db, collection, userId);
   const noteDoc = await getDoc(noteRef);
   if (!noteDoc.exists()) return null;
-  const noteData = noteDoc.data();
-  const note: NoteType = noteData.notes.find(
-    (note: NoteType) => note.uid === noteId
-  );
-  return note;
+  const noteData: NoteType[] = noteDoc.data().notes;
+  if (!noteData) return null;
+  const note = noteData.find((note: NoteType) => note.uid === noteId);
+  if (note) return note;
+  return null;
 }
 
 export async function getNotes(userId: string, collection: Collections) {

@@ -28,7 +28,7 @@ export default async function FavouritesPage() {
             paragraphIcon={<Sparkles size={16} fill='#A3A3A3' />}
           />
         </SubSidebar>
-        {favouriteNotes.length > 0 && (
+        {favouriteNotes && favouriteNotes.length > 0  && (
           <Placeholder
             paragraph='Choose a favourite note from the list on the left to view its contents, or favourite a note to add to your collection.'
             text='Select a favourite note to view'

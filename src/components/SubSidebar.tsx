@@ -13,6 +13,7 @@ export default function SubSidebar({
   children,
   title,
 }: SubSidebarProps) {
+  if (!notes) return children;
   if (notes.length <= 0) {
     return children;
   }

@@ -19,11 +19,11 @@ export default async function Counter({ type }: CounterProps) {
   if (!noteDoc) return;
   const notes: NoteType[] = noteDoc['notes'];
   if (!notes) return;
-  const notesNumber = getFilteredNotes(notes).length;
-  if (notesNumber <= 0) return;
+  const {notes: notesNumber} = getFilteredNotes(notes);
+  if (notesNumber.length <= 0) return;
   return (
     <div className='bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center flex rounded-sm'>
-      <AnimatedCounter value={notesNumber} />
+      <AnimatedCounter value={notesNumber.length} />
     </div>
   );
 }

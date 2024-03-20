@@ -30,7 +30,7 @@ export default async function Notes() {
       owner: owner,
     };
   });
-  const filteredNotes = getFilteredNotes(notes);
+  const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
 
   if (filter === 'date-new') {
@@ -59,19 +59,28 @@ export default async function Notes() {
         <SortDropdown />
       </div>
       <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
-        {filteredNotes.map((note) => {
-          return (
-            <Note
-              href='notes'
-              key={note.uid}
-              uid={note.uid}
-              colour={note.colour}
-              name={note.title}
-              text={note.content}
-              date={note.date.seconds}
-            />
-          );
-        })}
+        {filteredNotes.length === 0 && searchParam ? (
+          <div className='bg-midnight h-[100px] w-full rounded-sm lg:p-5 p-2 outline-2 outline-offset-2 outline-dashed outline-silver text-silver my-2 select-none'>
+            <h1 className='text-lg line-clamp-2 overflow-clip'>
+              No note with such name as{' '}
+              <span className='italic font-medium'>{searchParam}</span>
+            </h1>
+          </div>
+        ) : (
+          filteredNotes.map((note) => {
+            return (
+              <Note
+                href='notes'
+                key={note.uid}
+                uid={note.uid}
+                colour={note.colour}
+                name={note.title}
+                text={note.content}
+                date={note.date.seconds}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );
