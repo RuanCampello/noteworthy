@@ -11,6 +11,7 @@ import Superscript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
 import TextStyle from '@tiptap/extension-text-style';
 import FontFamily from '@tiptap/extension-font-family';
+import FontSize from 'tiptap-extension-font-size'
 import { ReactNode } from 'react';
 
 interface NoteEditorProps {
@@ -33,6 +34,7 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
     Subscript,
     TextStyle,
     FontFamily,
+    FontSize,
     Extension.create({
       addKeyboardShortcuts() {
         return {

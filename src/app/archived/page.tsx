@@ -14,7 +14,6 @@ export default async function ArchivedPage() {
 
   const response = await getDoc(doc(db, 'userArchived', user_id));
   if (!response.exists()) return null;
-  console.log(response.data())
 
   const archivedNotes = response.data()['notes'] as NoteType[];
   return (

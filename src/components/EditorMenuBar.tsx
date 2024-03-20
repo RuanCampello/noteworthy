@@ -42,7 +42,10 @@ export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
-  const [fontFamily, setFontFamily] = useState('Source Sans 3');
+  const [fontFamily, setFontFamily] = useState({
+    name: 'Source Sans 3',
+    value: 'Source Sans 3',
+  });
   const pathname = usePathname();
 
   useEffect(() => {
@@ -99,18 +102,14 @@ export default function EditorMenuBar() {
       const activeFont = fontFamilies.find((fontFamily) =>
         editor.isActive('textStyle', { fontFamily: fontFamily.value })
       );
-      if (activeFont) setFontFamily(activeFont.value);
-      else setFontFamily('Source Sans 3');
+      if (activeFont) setFontFamily(activeFont);
+      else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });
     };
     editor.on('transaction', handleFontChange);
     return () => {
       editor.off('transaction', handleFontChange);
     };
   }, [editor]);
-
-  useEffect(() => {
-    console.log(fontFamily)
-  }, [fontFamily])
 
   if (!editor) return null;
   const buttonStyle =
@@ -198,10 +197,10 @@ export default function EditorMenuBar() {
           </SelectContent>
         </Select>
         <Separator orientation='vertical' />
-        <Select value={fontFamily}>
+        <Select value={fontFamily.name}>
           <MenuTooltip content='Font Family'>
             <SelectTrigger className='bg-black border-none w-40'>
-              <SelectValue>{fontFamily}</SelectValue>
+              <SelectValue>{fontFamily.name}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>
           <SelectContent className='bg-black border-2 border-silver dark'>
@@ -209,7 +208,7 @@ export default function EditorMenuBar() {
               <button
                 onClick={() => editor.chain().focus().unsetFontFamily().run()}
                 className={`py-1.5 leading-none text-start px-1 ${
-                  fontFamily === 'Source Sans 3'
+                  fontFamily.name === 'Source Sans 3'
                     ? 'bg-neutral-100 text-black rounded-sm'
                     : ''
                 }`}
@@ -222,7 +221,9 @@ export default function EditorMenuBar() {
                     editor.chain().focus().setFontFamily(fontFamily.value).run()
                   }
                   className={`py-1.5 leading-none text-start px-1 ${
-                    editor.isActive('textStyle', { fontFamily: fontFamily.value })
+                    editor.isActive('textStyle', {
+                      fontFamily: fontFamily.value,
+                    })
                       ? 'bg-neutral-100 text-black rounded-sm'
                       : ''
                   }`}
