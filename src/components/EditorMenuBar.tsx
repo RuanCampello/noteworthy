@@ -156,7 +156,7 @@ export default function EditorMenuBar() {
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content='Styles' sideOffset={6}>
-            <SelectTrigger className='bg-black border-none w-32'>
+            <SelectTrigger className='bg-black border-none w-28'>
               <SelectValue>{selectedValue}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>
@@ -198,12 +198,15 @@ export default function EditorMenuBar() {
         </Select>
         <Separator orientation='vertical' />
         <Select value={fontFamily.name}>
-          <MenuTooltip content='Font Family'>
-            <SelectTrigger className='bg-black border-none w-40'>
+          <MenuTooltip content='Font Family' sideOffset={6}>
+            <SelectTrigger className='bg-black border-none w-[8.5rem]'>
               <SelectValue>{fontFamily.name}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>
-          <SelectContent className='bg-black border-2 border-silver dark'>
+          <SelectContent
+            sideOffset={6}
+            className='bg-black border-2 border-silver dark'
+          >
             <SelectGroup className='flex flex-col gap-1'>
               <button
                 onClick={() => editor.chain().focus().unsetFontFamily().run()}
@@ -215,22 +218,23 @@ export default function EditorMenuBar() {
               >
                 Source Sans 3
               </button>
-              {fontFamilies.map((fontFamily) => (
+              {fontFamilies.map((fFamily) => (
                 <button
                   onClick={() =>
-                    editor.chain().focus().setFontFamily(fontFamily.value).run()
+                    editor.chain().focus().setFontFamily(fFamily.value).run()
                   }
                   className={`py-1.5 leading-none text-start px-1 ${
+                    fontFamily.value !== 'Source Sans 3' &&
                     editor.isActive('textStyle', {
-                      fontFamily: fontFamily.value,
+                      fontFamily: fFamily.value,
                     })
                       ? 'bg-neutral-100 text-black rounded-sm'
                       : ''
                   }`}
-                  key={fontFamily.name}
-                  style={{ fontFamily: fontFamily.value }}
+                  key={fFamily.name}
+                  style={{ fontFamily: fFamily.value }}
                 >
-                  {fontFamily.name}
+                  {fFamily.name}
                 </button>
               ))}
             </SelectGroup>

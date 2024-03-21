@@ -25,13 +25,6 @@ const config = {
             overflowY: 'scroll',
             maxHeight: '70vh',
             paddingBottom: '24px',
-            mark: {
-              backgroundColor: '#CF93D9',
-              color: '#252525',
-              borderRadius: '0.25em',
-              boxDecorationBreak: 'clone',
-              paddingInline: '0.15em'
-            }
           },
         },
       },

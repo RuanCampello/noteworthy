@@ -81,3 +81,19 @@ button:focus,
 a:focus {
   outline: #fff solid 2px;
 }
+
+mark {
+  background-color: #cf93d9;
+  color: #252525;
+  box-decoration-break: clone;
+}
+mark::selection {
+  background-color: #252525 !important;
+  color: #cf93d9 !important;
+}
+s mark {
+  text-decoration: line-through;
+}
+u mark {
+  text-decoration: underline;
+}
