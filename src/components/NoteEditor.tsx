@@ -12,9 +12,11 @@ import Subscript from '@tiptap/extension-subscript';
 import TextStyle from '@tiptap/extension-text-style';
 import FontFamily from '@tiptap/extension-font-family';
 import CharacterCount from '@tiptap/extension-character-count';
+import Link from '@tiptap/extension-link';
 import FontSize from 'tiptap-extension-font-size';
 
 import { ReactNode } from 'react';
+import { DoubleClickLink } from '@/utils/double-click-link';
 
 interface NoteEditorProps {
   content: string;
@@ -38,6 +40,7 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
     FontFamily,
     FontSize,
     CharacterCount,
+    DoubleClickLink,
     Extension.create({
       addKeyboardShortcuts() {
         return {

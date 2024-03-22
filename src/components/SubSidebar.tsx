@@ -13,12 +13,9 @@ export default function SubSidebar({
   children,
   title,
 }: SubSidebarProps) {
-  if (!notes) return children;
-  if (notes.length <= 0) {
-    return children;
-  }
+  if (!notes || notes.length <= 0) return children;
   return (
-    <div className='w-64 shrink-0 h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-silver scrollbar-track-black flex flex-col px-3 gap-2 border-r border-neutral-950'>
+    <div className='w-64 shrink-0 h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-silver scrollbar-track-black flex flex-col px-3 gap-2 border-r border-midnight'>
       <h1 className='font-semibold text-2xl my-10'>{title}</h1>
       {notes.map((note) => (
         <Note
