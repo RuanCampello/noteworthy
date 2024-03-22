@@ -153,7 +153,7 @@ export default function EditorMenuBar() {
     }
   }
   return (
-    <div className='flex flex-col gap-1 px-14'>
+    <div className='flex flex-col gap-1 xl:px-11 px-4'>
       <Separator />
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>

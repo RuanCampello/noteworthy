@@ -9,6 +9,7 @@ import { Separator } from './ui/separator';
 import { secondsToLocaleDateLong } from '@/utils/date';
 import SaveNote from './SaveNote';
 import WordCounter from './WordCounter';
+import NoteHeaderItem from './NoteHeaderItem';
 
 interface NoteHeaderProps {
   title: string;
@@ -27,8 +28,8 @@ export default async function NoteHeader({
   const longLastUpdate = secondsToLocaleDateLong(lastUpdate);
   const longDate = secondsToLocaleDateLong(date);
   return (
-    <div className='sticky px-14 pt-12'>
-      <div className='flex justify-between items-center mb-12'>
+    <div className='sticky xl:px-11 px-6 xl:pt-14 pt-8'>
+      <div className='flex justify-between items-center xl:mb-14 mb-8'>
         <h1
           className='text-4xl font-semibold line-clamp-1 w-[90%]'
           title={title}
@@ -46,24 +47,16 @@ export default async function NoteHeader({
         </Dropdown>
       </div>
       <Separator className='mb-3' />
-      <div className='font-medium text-silver grid grid-cols-4 px-2'>
-        <div className='flex gap-2 items-center'>
+      <div className='font-medium text-silver xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'>
+        <NoteHeaderItem name='Created' value={longDate}>
           <CalendarDays size={22} strokeWidth={2} />
-          <span className='mr-6'>Created</span>
-          <span className='text-neutral-100'>{longDate}</span>
-        </div>
-        <div className='flex gap-2 items-center'>
+        </NoteHeaderItem>
+        <NoteHeaderItem name='Modified' value={lastUpdate ? longLastUpdate : longDate}>
           <CalendarClock size={22} strokeWidth={2} />
-          <span className='mr-6'>Modified</span>
-          <span className='text-neutral-100'>
-            {lastUpdate ? longLastUpdate : longDate}
-          </span>
-        </div>
-        <div className='flex gap-2 items-center'>
+        </NoteHeaderItem>
+        <NoteHeaderItem name='Owner' value={owner}>
           <SquareUserRound size={22} strokeWidth={2} />
-          <span className='mr-6'>Owner</span>
-          <span className='text-neutral-100'>{owner}</span>
-        </div>
+        </NoteHeaderItem>
         <WordCounter />
       </div>
     </div>
