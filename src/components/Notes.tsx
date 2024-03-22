@@ -20,7 +20,7 @@ export default async function Notes() {
   const notesArray = notesData['notes'] as NoteType[];
 
   const notes = notesArray.map((note) => {
-    const { uid, title, colour, content, date, owner } = note;
+    const { uid, title, colour, content, date, owner, lastUpdate } = note;
     return {
       uid: uid,
       title: title,
@@ -28,6 +28,7 @@ export default async function Notes() {
       content: content,
       date: date,
       owner: owner,
+      lastUpdate: lastUpdate,
     };
   });
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
