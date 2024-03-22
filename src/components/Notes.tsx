@@ -58,7 +58,7 @@ export default async function Notes() {
         <SearchNote />
         <SortDropdown />
       </div>
-      <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver max-h-[400px] px-5'>
+      <div className='flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver xl:max-h-[400px] lg:max-h-[300px] max-h-[230px] px-5'>
         {filteredNotes.length === 0 && searchParam ? (
           <div className='bg-midnight h-[100px] w-full rounded-sm lg:p-5 p-2 outline-2 outline-offset-2 outline-dashed outline-silver text-silver my-2 select-none'>
             <h1 className='text-lg line-clamp-2 overflow-clip'>

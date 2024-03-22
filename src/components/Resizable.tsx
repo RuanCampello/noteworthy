@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 export default function Resizable({ children }: { children: ReactNode }) {
   return (
     <ResizablePanelGroup direction='horizontal'>
-      <ResizablePanel className='w-full h-screen' minSize={20} defaultSize={20}>
+      <ResizablePanel className='w-full xl:min-w-[20%] h-screen min-w-[25%]' minSize={20} defaultSize={20}>
         <Sidebar />
       </ResizablePanel>
       <ResizableHandle className='bg-midnight' />

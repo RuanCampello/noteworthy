@@ -28,21 +28,21 @@ export default async function Profile() {
     auth.signOut();
   }
   return (
-    <div className='mt-auto p-5 ps-4 bg-midnight rounded-md m-1'>
-      <div className='flex gap-4 items-center'>
+    <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1'>
+      <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
           <AvatarImage src={photoURL} />
           <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
             {name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className='flex flex-col gap-1'>
-          <h1 className='text-lg leading-none font-semibold trucate'>{name}</h1>
+        <div className='overflow-hidden md:inline hidden'>
+          <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Bolt className='text-silver ms-auto cursor-pointer' />
+          <DropdownMenuTrigger asChild >
+            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black'>
             <EditProfileDialog currentUser={user} />

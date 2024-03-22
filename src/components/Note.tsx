@@ -28,6 +28,26 @@ export default function Note({
 }: NoteProps) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+    'portrait'
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      setIsMobile(screenWidth <= 768);
+      const mqPortrait = window.matchMedia('(orientation: portrait)');
+      if (mqPortrait.matches) setOrientation('portrait');
+      else setOrientation('landscape');
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -50,7 +70,10 @@ export default function Note({
       : formatRedirectUrl();
 
   const backgroundColour = Colours[colour];
-  const setOpenNote = (id: string) => setCookie('open_note', uid);
+  const setOpenNote = (id: string) => setCookie('open_note', id);
+
+  const formattedName: string =
+    isMobile && orientation === 'portrait' ? name[0].toUpperCase() : name;
   return (
     <Link
       href={
@@ -61,7 +84,7 @@ export default function Note({
           : redirectUrl
       }
       onClick={() => setOpenNote(uid)}
-      className='rounded-sm lg:p-5 p-2 w-full first:mt-1 last:mb-1 focus:outline-none z-10 select-none'
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 last:mb-1 focus:outline-none z-10 select-none'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -75,14 +98,17 @@ export default function Note({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <h3 className='text-lg font-semibold truncate text-black' title={name}>
-        {name}
+      <h3
+        className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'
+        title={name}
+      >
+        {formattedName}
       </h3>
-      <div className='flex gap-2.5'>
-        <span className='text-black/60 lg:inline-block hidden'>
+      <div className='flex gap-2.5 lg:text-base text-sm'>
+        <span className='text-black/60 md:inline-block hidden'>
           {secondsToLocaleDate(date)}
         </span>
-        <p className='truncate text-black/80 lg:inline-block hidden'>
+        <p className='truncate text-black/80 md:inline-block hidden'>
           {stripHTMLTags(text)}
         </p>
       </div>

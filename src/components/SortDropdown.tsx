@@ -38,7 +38,7 @@ export default function SortDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className='bg-midnight text-silver p-2 rounded-sm'>
+        <button className='bg-midnight text-silver p-2 rounded-sm md:inline hidden'>
           <List size={24} />
         </button>
       </DropdownMenuTrigger>

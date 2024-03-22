@@ -48,13 +48,13 @@ export default function SearchNote() {
   return (
     <form
       onSubmit={handleSubmit(handleFilters)}
-      className='w-full my-1 flex bg-midnight text-silver rounded-sm items-center gap-2 p-2 focus-within:outline focus-within:outline-2 focus-within:outline-white'
+      className='w-full my-1 md:flex hidden bg-midnight text-silver rounded-sm items-center gap-2 p-2 focus-within:outline focus-within:outline-2 focus-within:outline-white'
     >
       <Search size={20} className='shrink-0' />
       <input
         {...register('name')}
         defaultValue={formatSearchParams(searchParamsString || '')}
-        className='w-full rounded-sm text-base leading-5 bg-midnight text-silver focus:outline-none font-medium'
+        className='w-full rounded-sm text-base leading-5 bg-midnight text-silver focus:outline-none font-medium placeholder:truncate'
         placeholder='Search a note'
       />
       {searchParams && (

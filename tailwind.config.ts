@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        'lg': '1028px',
+      },
       typography: {
         DEFAULT: {
           css: {

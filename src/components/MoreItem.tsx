@@ -19,9 +19,9 @@ export default function MoreItem({ href, name, icon, children }: MoreItemProps) 
   return (
     <Link
       href={href}
-      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center justify-between`}
+      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center`}
     >
-      <div className='flex gap-4 md:justify-start justify-center'>
+      <div className='flex gap-4'>
         <Icon name={icon} size={24} className='shrink-0' />
         <span className='sm:inline truncate hidden'>{name}</span>
       </div>

@@ -22,7 +22,7 @@ export default async function Counter({ type }: CounterProps) {
   const {notes: notesNumber} = getFilteredNotes(notes);
   if (notesNumber.length <= 0) return;
   return (
-    <div className='bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center flex rounded-sm'>
+    <div className='bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm'>
       <AnimatedCounter value={notesNumber.length} />
     </div>
   );
