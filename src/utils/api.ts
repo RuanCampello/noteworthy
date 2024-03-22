@@ -16,6 +16,7 @@ import { v4 as uuid } from 'uuid';
 import { getCollection } from './get-navigation-info';
 import { getCookie } from 'cookies-next';
 import { User } from '@/types/user-type';
+import { revalidateTag } from 'next/cache';
 
 interface addNoteProps {
   userId: string;
@@ -101,6 +102,7 @@ export async function saveNote(content: string, pathname: string) {
   if (!userId || !openNote) return;
   await OverrideNote(userId, openNote, collection, {
     content: content,
+    lastUpdate: Timestamp.now(),
   });
 }
 

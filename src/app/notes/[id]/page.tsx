@@ -13,12 +13,18 @@ export default async function NotePage({ params }: { params: { id: string } }) {
   const { id } = params;
   const note = await findNote(user_id, 'userNotes', params.id);
   if (!note) return <NotFound />;
-  const { title, date, owner, content } = note;
+  const { title, date, owner, content, lastUpdate } = note;
   return (
     <Resizable>
-      <div className='flex flex-col gap-4 h-full overflow-y-clip'>
+      <div className='flex flex-col gap-3 h-full overflow-y-clip'>
         <NoteEditor content={content}>
-          <NoteHeader id={id} title={title} date={date.seconds} owner={owner} />
+          <NoteHeader
+            id={id}
+            title={title}
+            date={date.seconds}
+            owner={owner}
+            lastUpdate={lastUpdate?.seconds}
+          />
         </NoteEditor>
       </div>
     </Resizable>

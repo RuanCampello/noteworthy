@@ -4,13 +4,14 @@ import MenuTooltip from './Tooltip';
 import { useCurrentEditor } from '@tiptap/react';
 import { useState } from 'react';
 import { saveNote } from '@/utils/api';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from './ui/use-toast';
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   if (!currentEditor) return;
 
   async function handleSaveClick() {
@@ -19,6 +20,7 @@ export default function SaveNote() {
     setLoading(true);
     await saveNote(currentContent, pathname);
     setLoading(false);
+    router.refresh();
     toast({
       title: 'Note Saved',
       description:
@@ -36,7 +38,7 @@ export default function SaveNote() {
       <button
         disabled={loading}
         onClick={handleSaveClick}
-        className='text-silver h-fit p-2 border-2 border-silver rounded-full disabled:animate-pulse'
+        className='text-silver h-fit focus:outline-offset-2 p-2 border-2 border-silver rounded-full disabled:animate-pulse'
       >
         <Save size={22} strokeWidth={2} />
       </button>

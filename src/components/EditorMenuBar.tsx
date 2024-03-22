@@ -26,7 +26,8 @@ import {
 import { useEffect, useState } from 'react';
 import { toast } from './ui/use-toast';
 import { saveNote } from '@/utils/api';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -46,14 +47,15 @@ export default function EditorMenuBar() {
     name: 'Source Sans 3',
     value: 'Source Sans 3',
   });
+  const router = useRouter();
   const pathname = usePathname();
-
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
       if (event.ctrlKey && event.altKey && event.key === 's') {
         const currentContent = editor?.getHTML();
         if (!currentContent) return;
         await saveNote(currentContent, pathname);
+        router.refresh();
         toast({
           title: 'Note Saved',
           description:
@@ -151,12 +153,12 @@ export default function EditorMenuBar() {
     }
   }
   return (
-    <div className='flex flex-col gap-[6px] px-14'>
+    <div className='flex flex-col gap-1 px-14'>
       <Separator />
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content='Styles' sideOffset={6}>
-            <SelectTrigger className='bg-black border-none w-28'>
+            <SelectTrigger className='bg-black border-none w-28 font-semibold'>
               <SelectValue>{selectedValue}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>
@@ -199,7 +201,7 @@ export default function EditorMenuBar() {
         <Separator orientation='vertical' />
         <Select value={fontFamily.name}>
           <MenuTooltip content='Font Family' sideOffset={6}>
-            <SelectTrigger className='bg-black border-none w-[8.5rem]'>
+            <SelectTrigger className='bg-black border-none w-[8.5rem] font-semibold'>
               <SelectValue>{fontFamily.name}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>

@@ -9,4 +9,5 @@ export type NoteType = {
   content: HTMLContent;
   owner: string;
   colour: ColourType;
+  lastUpdate: Timestamp;
 };
