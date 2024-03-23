@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       screens: {
-        'lg': '1028px',
+        lg: '1028px',
       },
       typography: {
         DEFAULT: {
@@ -28,6 +28,7 @@ const config = {
             overflowY: 'scroll',
             maxHeight: '70vh',
             paddingBottom: '24px',
+            textUnderlineOffset: '2px',
           },
         },
       },

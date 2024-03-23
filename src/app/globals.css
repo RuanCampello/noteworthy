@@ -82,18 +82,19 @@ a:focus {
   outline: #fff solid 2px;
 }
 
-mark {
+mark, mark span {
   background-color: #cf93d9;
   color: #252525;
   box-decoration-break: clone;
 }
-mark::selection {
+mark::selection, mark span::selection {
   background-color: #252525 !important;
   color: #cf93d9 !important;
+  text-decoration-color: #cf93d9 !important;
 }
-s mark {
+s mark, s mark span {
   text-decoration: line-through;
 }
-u mark {
+u mark, u mark span {
   text-decoration: underline;
 }

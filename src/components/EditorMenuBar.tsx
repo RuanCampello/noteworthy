@@ -1,19 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Separator } from './ui/separator';
-import {
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  Check,
-  Highlighter,
-  Italic,
-  Strikethrough,
-  Subscript,
-  Superscript,
-  Underline,
-} from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useCurrentEditor } from '@tiptap/react';
 import MenuTooltip from './Tooltip';
 import {
@@ -27,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { toast } from './ui/use-toast';
 import { saveNote } from '@/utils/api';
 import { usePathname, useRouter } from 'next/navigation';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import MenuItems from './MenuItems';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -114,9 +101,7 @@ export default function EditorMenuBar() {
   }, [editor]);
 
   if (!editor) return null;
-  const buttonStyle =
-    'p-2 rounded-md hover:bg-neutral-100 hover:text-night/80 transition-colors duration-150';
-
+  
   function handleClick(level: HeadingLevel) {
     if (!editor) return;
     editor.chain().focus().toggleHeading({ level: level }).run();
@@ -132,24 +117,6 @@ export default function EditorMenuBar() {
     if (editor.isActive('paragraph')) return 'Paragraph';
     for (let i = 1; i <= 4; i++) {
       if (editor?.isActive('heading', { level: i })) return `Heading ${i}`;
-    }
-  }
-  function handleSuperscript() {
-    if (!editor) return;
-    if (editor.isActive('subscript')) {
-      editor.chain().focus().unsetSubscript().run();
-      editor.chain().focus().toggleSuperscript().run();
-    } else {
-      editor.chain().focus().toggleSuperscript().run();
-    }
-  }
-  function handleSubscript() {
-    if (!editor) return;
-    if (editor.isActive('superscript')) {
-      editor.chain().focus().unsetSuperscript().run();
-      editor.chain().focus().toggleSubscript().run();
-    } else {
-      editor.chain().focus().toggleSubscript().run();
     }
   }
   return (
@@ -243,126 +210,7 @@ export default function EditorMenuBar() {
           </SelectContent>
         </Select>
         <Separator orientation='vertical' />
-        <MenuTooltip content='Align left (Ctrl+Shift+L)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive({ textAlign: 'left' })
-                ? 'bg-neutral-100 text-black'
-                : ''
-            }`}
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          >
-            <AlignLeft size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Align center (Ctrl+Shift+E)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive({ textAlign: 'center' })
-                ? 'bg-neutral-100 text-black'
-                : ''
-            }`}
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          >
-            <AlignCenter size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Align right (Ctrl+Shift+R)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive({ textAlign: 'right' })
-                ? 'bg-neutral-100 text-black'
-                : ''
-            }`}
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          >
-            <AlignRight size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Justify (Ctrl+Shift+J)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive({ textAlign: 'justify' })
-                ? 'bg-neutral-100 text-black'
-                : ''
-            }`}
-            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-          >
-            <AlignJustify size={20} />
-          </button>
-        </MenuTooltip>
-        <Separator className='bg-white/10 h-9' orientation='vertical' />
-        <MenuTooltip content='Bold (Ctrl+B)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('bold') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={() => editor.chain().focus().toggleBold().run()}
-          >
-            <Bold size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Italic (Ctrl+I)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('italic') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-          >
-            <Italic size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Underline (Ctrl+U)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('underline') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-          >
-            <Underline size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Strike (Ctrl+Shift+S)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('strike') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-          >
-            <Strikethrough size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Highlight (Ctrl+Shift+H)'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('highlight') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-          >
-            <Highlighter size={20} />
-          </button>
-        </MenuTooltip>
-        <Separator orientation='vertical' />
-        <MenuTooltip content='Superscript'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('superscript') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={handleSuperscript}
-          >
-            <Superscript size={20} />
-          </button>
-        </MenuTooltip>
-        <MenuTooltip content='Subscript'>
-          <button
-            className={`${buttonStyle} ${
-              editor.isActive('subscript') ? 'bg-neutral-100 text-black' : ''
-            }`}
-            onClick={handleSubscript}
-          >
-            <Subscript size={20} />
-          </button>
-        </MenuTooltip>
+        <MenuItems />
       </div>
       <Separator />
     </div>
