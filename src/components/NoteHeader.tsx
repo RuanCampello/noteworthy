@@ -51,7 +51,10 @@ export default async function NoteHeader({
         <NoteHeaderItem name='Created' value={longDate}>
           <CalendarDays size={22} strokeWidth={2} />
         </NoteHeaderItem>
-        <NoteHeaderItem name='Modified' value={lastUpdate ? longLastUpdate : longDate}>
+        <NoteHeaderItem
+          name='Modified'
+          value={lastUpdate ? longLastUpdate : longDate}
+        >
           <CalendarClock size={22} strokeWidth={2} />
         </NoteHeaderItem>
         <NoteHeaderItem name='Owner' value={owner}>

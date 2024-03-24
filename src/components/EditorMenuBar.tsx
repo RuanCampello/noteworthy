@@ -1,3 +1,4 @@
+'use client';
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Separator } from './ui/separator';
 import { Check } from 'lucide-react';
@@ -15,27 +16,18 @@ import { toast } from './ui/use-toast';
 import { saveNote } from '@/utils/api';
 import { usePathname, useRouter } from 'next/navigation';
 import MenuItems from './MenuItems';
+import SelectFontSize from './SelectFontSize';
+import SelectFontFamily from './SelectFontFamily';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
-const fontFamilies = [
-  { name: 'Garamond', value: 'Cormorant Garamond' },
-  { name: 'Montserrat', value: 'Montserrat' },
-  { name: 'Lobster', value: 'Lobster' },
-  { name: 'Didot', value: 'GFS Didot' },
-  { name: 'Merriweather', value: 'Merriweather' },
-];
 
 export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
-  const [fontFamily, setFontFamily] = useState({
-    name: 'Source Sans 3',
-    value: 'Source Sans 3',
-  });
   const router = useRouter();
   const pathname = usePathname();
+
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
       if (event.ctrlKey && event.altKey && event.key === 's') {
@@ -84,24 +76,8 @@ export default function EditorMenuBar() {
     };
   }, [editor]);
 
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleFontChange = () => {
-      const activeFont = fontFamilies.find((fontFamily) =>
-        editor.isActive('textStyle', { fontFamily: fontFamily.value })
-      );
-      if (activeFont) setFontFamily(activeFont);
-      else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });
-    };
-    editor.on('transaction', handleFontChange);
-    return () => {
-      editor.off('transaction', handleFontChange);
-    };
-  }, [editor]);
-
   if (!editor) return null;
-  
+
   function handleClick(level: HeadingLevel) {
     if (!editor) return;
     editor.chain().focus().toggleHeading({ level: level }).run();
@@ -166,49 +142,9 @@ export default function EditorMenuBar() {
           </SelectContent>
         </Select>
         <Separator orientation='vertical' />
-        <Select value={fontFamily.name}>
-          <MenuTooltip content='Font Family' sideOffset={6}>
-            <SelectTrigger className='bg-black border-none w-[8.5rem] font-semibold'>
-              <SelectValue>{fontFamily.name}</SelectValue>
-            </SelectTrigger>
-          </MenuTooltip>
-          <SelectContent
-            sideOffset={6}
-            className='bg-black border-2 border-silver dark'
-          >
-            <SelectGroup className='flex flex-col gap-1'>
-              <button
-                onClick={() => editor.chain().focus().unsetFontFamily().run()}
-                className={`py-1.5 leading-none text-start px-1 ${
-                  fontFamily.name === 'Source Sans 3'
-                    ? 'bg-neutral-100 text-black rounded-sm'
-                    : ''
-                }`}
-              >
-                Source Sans 3
-              </button>
-              {fontFamilies.map((fFamily) => (
-                <button
-                  onClick={() =>
-                    editor.chain().focus().setFontFamily(fFamily.value).run()
-                  }
-                  className={`py-1.5 leading-none text-start px-1 ${
-                    fontFamily.value !== 'Source Sans 3' &&
-                    editor.isActive('textStyle', {
-                      fontFamily: fFamily.value,
-                    })
-                      ? 'bg-neutral-100 text-black rounded-sm'
-                      : ''
-                  }`}
-                  key={fFamily.name}
-                  style={{ fontFamily: fFamily.value }}
-                >
-                  {fFamily.name}
-                </button>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <SelectFontFamily />
+        <Separator orientation='vertical' />
+        <SelectFontSize />
         <Separator orientation='vertical' />
         <MenuItems />
       </div>
