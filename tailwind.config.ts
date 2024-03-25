@@ -49,7 +49,7 @@ const config = {
         melon: '#FAB099',
         tickle: '#F48FB1',
         wisteria: '#CF93D9',
-        slate: '#7D56D8',
+        slate: '#9672EA',
 
         //shadcn
         border: 'hsl(var(--border))',

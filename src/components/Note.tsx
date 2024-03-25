@@ -77,44 +77,40 @@ export default function Note({
     isMobile && orientation === 'portrait' ? name[0].toUpperCase() : name;
   const textWithoutHtml = stripHTMLTags(text);
   return (
-    <NoteTooltip
-      note={{ title: name, colour: backgroundColour }}
+    <Link
+      href={
+        //if the user is inside a favourite note and click on a non favourite note
+        // remove the favourite from redirect link and transform into a note link
+        href === 'favourites' && pathname.includes('favourites/')
+          ? redirectUrl.replace('favourites', '')
+          : redirectUrl
+      }
+      onClick={() => setOpenNote(uid)}
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none'
+      style={{
+        transition: 'background-color 0.5s ease',
+        background: hovered
+          ? darkenColour(backgroundColour, 10)
+          : backgroundColour,
+        outline: focused ? `${Colours[colour]} solid 2px` : '',
+        outlineOffset: focused ? '2px' : '',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
     >
-      <Link
-        href={
-          //if the user is inside a favourite note and click on a non favourite note
-          // remove the favourite from redirect link and transform into a note link
-          href === 'favourites' && pathname.includes('favourites/')
-            ? redirectUrl.replace('favourites', '')
-            : redirectUrl
-        }
-        onClick={() => setOpenNote(uid)}
-        className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none'
-        style={{
-          transition: 'background-color 0.5s ease',
-          background: hovered
-            ? darkenColour(backgroundColour, 10)
-            : backgroundColour,
-          outline: focused ? `${Colours[colour]} solid 2px` : '',
-          outlineOffset: focused ? '2px' : '',
-        }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-      >
-        <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
-          {formattedName}
-        </h3>
-        <div className='flex gap-2.5 lg:text-base text-sm'>
-          <span className='text-black/60 md:inline-block hidden'>
-            {secondsToLocaleDate(date)}
-          </span>
-          <p className='truncate text-black/80 md:inline-block hidden'>
-            {textWithoutHtml}
-          </p>
-        </div>
-      </Link>
-    </NoteTooltip>
+      <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
+        {formattedName}
+      </h3>
+      <div className='flex gap-2.5 lg:text-base text-sm'>
+        <span className='text-black/60 md:inline-block hidden'>
+          {secondsToLocaleDate(date)}
+        </span>
+        <p className='truncate text-black/80 md:inline-block hidden'>
+          {textWithoutHtml}
+        </p>
+      </div>
+    </Link>
   );
 }
