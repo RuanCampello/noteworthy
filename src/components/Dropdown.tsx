@@ -9,10 +9,10 @@ import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import { db } from '@/firebase';
-import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
+import { Timestamp, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { findNote, getNotes } from '@/utils/api';
+import { findNote, retrieveNotes } from '@/utils/api';
 import SubmitButton from './SubmitButton';
 import EditNoteDialog from './EditNoteDialog';
 import { ColourType } from '@/utils/colours';
@@ -22,18 +22,25 @@ interface DropdownProps {
 }
 
 export default async function Dropdown({ children, noteId }: DropdownProps) {
-  const user_id = cookies().get('user_id')?.value;
+  const userId = cookies().get('user_id')?.value;
 
   // server actions
   async function addFavourites() {
     'use server';
-    if (!user_id || !noteId) return;
-    const notes = await getNotes(user_id, 'userNotes');
-    if (!notes) return;
+    if (!userId || !noteId) return;
+    const result = await retrieveNotes({
+      userId,
+      noteId,
+      collection: 'userNotes',
+      returnAll: true,
+      returnSingleNote: true,
+    });
+    if (!result) return;
+    const { note, notes } = result;
+    if (!note || !notes) return;
     const noteIndex = notes.findIndex((note) => note.uid === noteId);
-    const note = notes[noteIndex];
     const { uid, title, owner, colour, content, date } = note;
-    await updateDoc(doc(db, 'userFavourites', user_id), {
+    await updateDoc(doc(db, 'userFavourites', userId), {
       notes: arrayUnion({
         uid: uid,
         title: title,
@@ -41,21 +48,29 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         colour: colour,
         content: content,
         date: date,
+        lastUpdate: Timestamp.now(),
       }),
     });
     notes.splice(noteIndex, 1);
-    await updateDoc(doc(db, 'userNotes', user_id), { notes });
+    await updateDoc(doc(db, 'userNotes', userId), { notes });
     redirect(`/favourites/${note.uid}`);
   }
   async function unfavourite() {
     'use server';
-    if (!user_id) return;
-    const notes = await getNotes(user_id, 'userFavourites');
-    if (!notes) return;
+    if (!userId) return;
+    const result = await retrieveNotes({
+      userId,
+      noteId,
+      collection: 'userFavourites',
+      returnAll: true,
+      returnSingleNote: true,
+    });
+    if (!result) return;
+    const { note, notes } = result;
+    if (!note || !notes) return;
     const favouriteNoteIndex = notes.findIndex((note) => note.uid === noteId);
-    const favouriteNote = notes[favouriteNoteIndex];
-    const { uid, title, owner, colour, content, date } = favouriteNote;
-    await updateDoc(doc(db, 'userNotes', user_id), {
+    const { uid, title, owner, colour, content, date } = note;
+    await updateDoc(doc(db, 'userNotes', userId), {
       notes: arrayUnion({
         uid: uid,
         title: title,
@@ -63,17 +78,18 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         colour: colour,
         content: content,
         date: date,
+        lastUpdate: Timestamp.now(),
       }),
     });
     notes.splice(favouriteNoteIndex, 1);
-    await updateDoc(doc(db, 'userFavourites', user_id), { notes });
-    redirect(`/notes/${favouriteNote.uid}`);
+    await updateDoc(doc(db, 'userFavourites', userId), { notes });
+    redirect(`/notes/${note.uid}`);
   }
 
   // firebase queries
   async function isFavourite(): Promise<boolean | null> {
-    if (!user_id) return null;
-    const favouriteNote = await findNote(user_id, 'userFavourites', noteId);
+    if (!userId) return null;
+    const favouriteNote = await findNote(userId, 'userFavourites', noteId);
     if (favouriteNote) return true;
     else return false;
   }
@@ -81,14 +97,14 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
     name: string;
     colour: ColourType;
   } | null> {
-    if (!user_id) return null;
+    if (!userId) return null;
     const pathname = headers().get('pathname');
     if (pathname?.includes('favourites')) {
-      const note = await findNote(user_id, 'userFavourites', noteId);
+      const note = await findNote(userId, 'userFavourites', noteId);
       if (note) return { name: note.title, colour: note.colour };
       return null;
     } else {
-      const note = await findNote(user_id, 'userNotes', noteId);
+      const note = await findNote(userId, 'userNotes', noteId);
       if (note) return { name: note.title, colour: note.colour };
       return null;
     }

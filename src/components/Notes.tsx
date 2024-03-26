@@ -70,9 +70,16 @@ export default async function Notes() {
           </div>
         ) : (
           filteredNotes.map((note) => {
-            const { uid, title, colour, content, date } = note;
+            const { uid, title, colour, content, date, owner, lastUpdate } =
+              note;
             return (
-              <NoteContextMenu title={title} colour={colour} key={uid}>
+              <NoteContextMenu
+                title={title}
+                colour={colour}
+                key={uid}
+                owner={owner}
+                lastUpdate={lastUpdate}
+              >
                 <Note
                   href='notes'
                   uid={uid}

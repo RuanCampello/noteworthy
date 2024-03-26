@@ -34,7 +34,7 @@ export default function SaveNote() {
     });
   }
   return (
-    <MenuTooltip content='Save changes (Ctrl+Alt+S)' sideOffset={8}>
+    <MenuTooltip content='Save changes (Ctrl+S)' sideOffset={8}>
       <button
         disabled={loading}
         onClick={handleSaveClick}

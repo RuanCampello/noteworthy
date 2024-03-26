@@ -16,7 +16,6 @@ import { v4 as uuid } from 'uuid';
 import { getCollection } from './get-navigation-info';
 import { getCookie } from 'cookies-next';
 import { User } from '@/types/user-type';
-import { revalidateTag } from 'next/cache';
 
 interface addNoteProps {
   userId: string;
@@ -49,6 +48,43 @@ export async function addNote({
 
 export type Collections = 'userNotes' | 'userFavourites' | 'userArchived';
 
+type RetriveNotes = {
+  userId: string;
+  collection: Collections;
+  returnAll?: boolean;
+  noteId?: string;
+  returnSingleNote?: boolean;
+};
+
+export async function retrieveNotes({
+  userId,
+  noteId,
+  collection,
+  returnAll,
+  returnSingleNote,
+}: RetriveNotes) {
+  if (!userId) return null;
+  const notesRef = doc(db, collection, userId);
+  const notesDoc = await getDoc(notesRef);
+  if (!notesDoc.exists()) return null;
+  const notes: NoteType[] = notesDoc.data().notes;
+  if (!notes) return null;
+
+  if (!returnAll && !noteId) {
+    throw new Error('Note ID must be provided when returnAll is false.');
+  }
+
+  if (returnAll) {
+    if (returnSingleNote) {
+      const singleNote = notes.find((note) => note.uid === noteId);
+      if (singleNote) return { note: singleNote, notes };
+      return null;
+    }
+    return { notes };
+  }
+  return null;
+}
+
 export async function findNote(
   userId: string,
   collection: Collections,
@@ -62,15 +98,6 @@ export async function findNote(
   const note = noteData.find((note: NoteType) => note.uid === noteId);
   if (note) return note;
   return null;
-}
-
-export async function getNotes(userId: string, collection: Collections) {
-  const noteRef = doc(db, collection, userId);
-  const noteDoc = await getDoc(noteRef);
-  if (!noteDoc.exists()) return;
-  const noteData = noteDoc.data();
-  const notes: NoteType[] = noteData.notes;
-  return notes;
 }
 
 export async function OverrideNote(

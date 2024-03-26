@@ -30,7 +30,8 @@ export default function EditorMenuBar() {
 
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
-      if (event.ctrlKey && event.altKey && event.key === 's') {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault()
         const currentContent = editor?.getHTML();
         if (!currentContent) return;
         await saveNote(currentContent, pathname);
