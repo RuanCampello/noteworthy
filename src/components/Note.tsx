@@ -1,7 +1,6 @@
 'use client';
 
 import { ColourType, Colours, darkenColour } from '@/utils/colours';
-import { secondsToLocaleDate } from '@/utils/date';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import { setCookie } from 'cookies-next';

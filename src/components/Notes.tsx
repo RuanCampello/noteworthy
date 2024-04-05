@@ -36,7 +36,7 @@ export default async function Notes() {
   return (
     <div>
       <SectionTitle title='Notes'>
-        <Counter type='userNotes' />
+        <Counter />
       </SectionTitle>
       <div className='px-5 flex gap-2 items-center'>
         <SearchNote />
