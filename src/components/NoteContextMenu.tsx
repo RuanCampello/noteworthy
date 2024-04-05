@@ -8,15 +8,13 @@ import {
 } from './ui/context-menu';
 import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { ColourType, Colours } from '@/utils/colours';
-import { Timestamp } from 'firebase/firestore';
-import { secondsToLocaleDateLong } from '@/utils/date';
 
 interface NoteContextMenuProps {
   children: ReactNode;
   title: string;
   colour: ColourType;
   owner: string;
-  lastUpdate: Timestamp;
+  lastUpdate: Date;
 }
 
 type Action = { name: string; action: () => Promise<void>; icon: JSX.Element };
@@ -36,7 +34,7 @@ export default async function NoteContextMenu({
   ];
 
   const colourValue = Colours[colour];
-  const lastUpdateDate = secondsToLocaleDateLong(lastUpdate?.seconds);
+  const lastUpdateDate = lastUpdate.toLocaleDateString('en-GB')
 
   async function handleFavourite() {
     'use server';

@@ -1,5 +1,8 @@
 export function stripHTMLTags(htmlString: string): string {
-  return htmlString.replace(/(<([^>]+)>|&nbsp;)/gi, '');
+  if (htmlString) {
+    return htmlString.replace(/(<([^>]+)>|&nbsp;)/gi, '');
+  }
+  return '';
 }
 export function formatSearchParams(searchParams: string): string {
   return searchParams.replace(/\+/g, ' ').replace(/^name=/, '');

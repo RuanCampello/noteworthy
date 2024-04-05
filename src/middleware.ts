@@ -31,7 +31,14 @@ export default auth((request) => {
   if (!isLoggedIn && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', nextUrl.origin));
   }
-  return undefined;
+
+  //default middleware return
+  const requestHeaders = request.headers;
+  requestHeaders.set('pathname', pathname);
+  requestHeaders.set('search-params', nextUrl.searchParams.toString());
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 });
 
 export const config = {

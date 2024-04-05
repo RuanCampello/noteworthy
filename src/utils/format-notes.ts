@@ -1,14 +1,15 @@
 import { NoteType } from '@/types/note-type';
 import { headers } from 'next/headers';
 import { formatSearchParams } from './format';
+import { Note } from '@prisma/client';
 
 interface FilteredResults {
-  notes: NoteType[];
+  notes: Note[];
   searchParam?: string;
 }
 
 export function getFilteredNotes(
-  notes: NoteType[]
+  notes: Note[]
 ): FilteredResults {
   const searchParams = headers().get('search-params');
   if (!searchParams) return { notes: notes };

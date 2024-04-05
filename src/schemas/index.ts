@@ -1,3 +1,4 @@
+import { ColourType } from '@/utils/colours';
 import { z } from 'zod';
 
 export const loginFormSchema = z.object({
@@ -19,4 +20,11 @@ export const registerFormSchema = z.object({
   username: z.string().min(6, {
     message: 'Username must be at least 6 characters',
   }),
+});
+
+export const noteDialogSchema = z.object({
+  name: z
+    .string({ required_error: 'Note must have a name' })
+    .min(4, { message: 'Note name must have at least 4 characters' }),
+  colour: z.string().transform((s) => s as ColourType | 'random'),
 });

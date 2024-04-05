@@ -8,14 +8,13 @@ import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import NoteTooltip from './NoteTooltip';
 
 interface NoteProps {
   uid: string;
   name: string;
   text: HTMLContent;
   colour: ColourType;
-  date: number;
+  date: Date;
   href: 'notes' | 'favourites';
 }
 
@@ -105,7 +104,7 @@ export default function Note({
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm'>
         <span className='text-black/60 md:inline-block hidden'>
-          {secondsToLocaleDate(date)}
+          {date.toLocaleDateString('en-GB')}
         </span>
         <p className='truncate text-black/80 md:inline-block hidden'>
           {textWithoutHtml}

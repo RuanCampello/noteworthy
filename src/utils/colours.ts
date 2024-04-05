@@ -43,7 +43,7 @@ export function darkenColour(colour: string, percent: number) {
 }
 
 interface ColourInfo {
-  name: string;
+  name: ColourType;
   hex: string;
 }
 

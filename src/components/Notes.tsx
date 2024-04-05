@@ -1,51 +1,33 @@
 import { doc, getDoc } from 'firebase/firestore';
 import Note from './Note';
 import SectionTitle from './SectionTitle';
-import { db } from '@/firebase';
-import { cookies } from 'next/headers';
-import { NoteType } from '@/types/note-type';
 import Counter from './Counter';
 import SearchNote from './SearchNote';
 import SortDropdown from './SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
 import NoteContextMenu from './NoteContextMenu';
+import { getAllUserNotes } from '@/data/note';
+import { auth } from '@/auth';
 
 export default async function Notes() {
-  const id = cookies().get('user_id')?.value;
-  if (!id) return null;
+  const session = await auth();
+  if (!session?.user || !session.user.id) return;
 
-  const notesRef = doc(db, 'userNotes', id);
-  const notesQuery = await getDoc(notesRef);
-  const notesData = notesQuery.data();
-  if (!notesData) return null;
-  const notesArray = notesData['notes'] as NoteType[];
-
-  const notes = notesArray.map((note) => {
-    const { uid, title, colour, content, date, owner, lastUpdate } = note;
-    return {
-      uid: uid,
-      title: title,
-      colour: colour,
-      content: content,
-      date: date,
-      owner: owner,
-      lastUpdate: lastUpdate,
-    };
-  });
+  const notes = await getAllUserNotes(session.user.id);
+  if (!notes) return;
+  const owner = session.user.name
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
 
   if (filter === 'date-new') {
     filteredNotes.sort(
       (a, b) =>
-        new Date(b.date.seconds * 1000).getTime() -
-        new Date(a.date.seconds * 1000).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   } else if (filter === 'date-old') {
     filteredNotes.sort(
       (a, b) =>
-        new Date(a.date.seconds * 1000).getTime() -
-        new Date(b.date.seconds * 1000).getTime()
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
   } else if (filter === 'title') {
     filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
@@ -70,23 +52,23 @@ export default async function Notes() {
           </div>
         ) : (
           filteredNotes.map((note) => {
-            const { uid, title, colour, content, date, owner, lastUpdate } =
+            const { id, title, colour, content, createdAt, lastUpdate } =
               note;
             return (
               <NoteContextMenu
                 title={title}
                 colour={colour}
-                key={uid}
-                owner={owner}
-                lastUpdate={lastUpdate}
+                key={id}
+                owner={owner || ''}
+                lastUpdate={lastUpdate || createdAt}
               >
                 <Note
                   href='notes'
-                  uid={uid}
+                  uid={id}
                   colour={colour}
                   name={title}
                   text={content}
-                  date={date.seconds}
+                  date={createdAt}
                 />
               </NoteContextMenu>
             );

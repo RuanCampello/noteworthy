@@ -6,17 +6,16 @@ import {
 } from 'lucide-react';
 import Dropdown from './Dropdown';
 import { Separator } from './ui/separator';
-import { secondsToLocaleDateLong } from '@/utils/date';
 import SaveNote from './SaveNote';
 import WordCounter from './WordCounter';
 import NoteHeaderItem from './NoteHeaderItem';
 
 interface NoteHeaderProps {
   title: string;
-  date: number;
+  date: Date;
   owner: string;
   id: string;
-  lastUpdate: number;
+  lastUpdate: Date;
 }
 export default async function NoteHeader({
   title,
@@ -25,8 +24,8 @@ export default async function NoteHeader({
   id,
   lastUpdate,
 }: NoteHeaderProps) {
-  const longLastUpdate = secondsToLocaleDateLong(lastUpdate);
-  const longDate = secondsToLocaleDateLong(date);
+  const longLastUpdate = date.toLocaleDateString('en-GB');
+  const longDate = date.toLocaleDateString('en-GB');
   return (
     <div className='sticky xl:px-11 px-6 xl:pt-14 pt-8'>
       <div className='flex justify-between items-center xl:mb-14 mb-8'>
