@@ -1,26 +1,10 @@
-import SubSidebar from '@/components/SubSidebar';
-import NoNotes from '@/components/NoNotes';
-import Placeholder from '@/components/Placeholder';
 import Resizable from '@/components/Resizable';
-import { db } from '@/firebase';
-import { NoteType } from '@/types/note-type';
-import { getDoc, doc } from 'firebase/firestore';
-import { Sparkles, StarOff } from 'lucide-react';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export default async function FavouritesPage() {
-  const user_id = cookies().get('user_id')?.value;
-  if (!user_id) return redirect('/login');
-
-  const response = await getDoc(doc(db, 'userFavourites', user_id));
-  if (!response.exists()) return null;
-
-  const favouriteNotes = response.data()['notes'] as NoteType[];
   return (
     <Resizable>
       <div className='flex h-full'>
-        <SubSidebar title='Favourites' notes={favouriteNotes}>
+        {/* <SubSidebar title='Favourites' notes={favouriteNotes}>
           <NoNotes
             headerIcon={<StarOff size={80} strokeWidth={1} />}
             text="You don't have any favourite note"
@@ -35,7 +19,7 @@ export default async function FavouritesPage() {
           >
             <Sparkles size={80} strokeWidth={1} />
           </Placeholder>
-        )}
+        )} */}
       </div>
     </Resizable>
   );

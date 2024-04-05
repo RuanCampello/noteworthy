@@ -5,47 +5,40 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Archive, Pencil, Star, Trash } from 'lucide-react';
+import { Archive, Pencil, Star } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
-import { Timestamp, arrayUnion, doc, updateDoc } from 'firebase/firestore';
-import { cookies, headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import SubmitButton from './SubmitButton';
 import EditNoteDialog from './EditNoteDialog';
-import { ColourType } from '@/utils/colours';
+import { currentUser, getNoteById, isNoteFavourite } from '@/data/note';
+import { toggleNoteFavourite } from '@/actions/note';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
 }
 
 export default async function Dropdown({ children, noteId }: DropdownProps) {
-  const userId = cookies().get('user_id')?.value;
+  const user = await currentUser();
+  const userId = user?.id;
 
-  // server actions
-  async function addFavourites() {
+  async function handleToggleFavourite() {
     'use server';
-    //todo
-  }
-  async function unfavourite() {
-    'use server';
-    //todo
+    if (!userId) return;
+    await toggleNoteFavourite(noteId, userId);
   }
 
-  async function isFavourite() {
-    //todo
-  }
-  async function getNoteProps() {
-    //todo
-  }
-  const favourite = await isFavourite();
-  const noteProps = await getNoteProps();
+  const note = await getNoteById(noteId);
+  if (!note) return;
+
+  const { id, title, colour } = note;
+  const favourite = await isNoteFavourite(noteId);
   const iconStyle =
-    'group-active:scale-95 transition-transform group-hover:scale-110 group-focus:scale-110 duration-200';
+    'group-active:scale-95 transition-transform duration-200';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      {/* <DropdownMenuContent
+      <DropdownMenuContent
         align='end'
         sideOffset={14}
         className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
@@ -57,14 +50,14 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           }`}
         >
           {favourite ? (
-            <form className='w-full' action={unfavourite}>
+            <form className='w-full' action={handleToggleFavourite}>
               <SubmitButton>
                 <Star fill='#333333' className={iconStyle} size={20} />
                 Unfavourite
               </SubmitButton>
             </form>
           ) : (
-            <form className='w-full' action={addFavourites}>
+            <form className='w-full' action={handleToggleFavourite}>
               <SubmitButton>
                 <Star size={20} className={iconStyle} />
                 Favourite
@@ -76,14 +69,14 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           <Archive size={20} className={iconStyle} />
           Archive
         </DropdownMenuItem>
-        <EditNoteDialog noteName={name} noteColour={colour}>
+        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-tiffany focus:bg-tiffany focus:text-black focus:outline-none hover:bg-tiffany hover:text-black group'>
             <Pencil size={20} className={iconStyle} />
             Edit
           </button>
         </EditNoteDialog>
         <Separator className='bg-white/40' />
-        <DeleteNoteDialog noteName={name}>
+        {/* <DeleteNoteDialog noteName={name}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>
             <Trash
               size={20}
@@ -91,8 +84,8 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             />
             <span>Delete</span>
           </button>
-        </DeleteNoteDialog>
-      </DropdownMenuContent> */}
+        </DeleteNoteDialog> */}
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

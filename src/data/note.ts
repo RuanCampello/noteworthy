@@ -32,10 +32,19 @@ export async function updateNoteContent(userId: string, content: string) {
       where: { userId },
       data: { content, lastUpdate: new Date() },
     });
-    revalidatePath('/notes')
+    revalidatePath('/notes');
     return note;
   } catch (error) {
     console.error(error);
     return;
+  }
+}
+
+export async function isNoteFavourite(id: string) {
+  try {
+    const note = await db.note.findUnique({ where: { id, isFavourite: true } });
+    if (note) return true;
+  } catch (error) {
+    return false;
   }
 }

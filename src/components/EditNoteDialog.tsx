@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+'use client';
+import { ReactNode, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,79 +12,125 @@ import {
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import ColourSelect from './ColourSelect';
-import AddNoteSubmit from './AddNoteSubmit';
-import { cookies, headers } from 'next/headers';
-import { ColourType, getRandomColour } from '@/utils/colours';
-import { redirect } from 'next/navigation';
-import { OverrideNote } from '@/utils/api';
-import { getCollection } from '@/utils/get-navigation-info';
+import { ColourType } from '@/utils/colours';
+import { useForm } from 'react-hook-form';
+import { noteDialogSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { NoteDialog } from './AddNoteDialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from './ui/form';
+import { Button } from './ui/button';
+import { editNote } from '@/actions/note';
 
 interface EditNoteDialogProps {
   children: ReactNode;
   noteName: string;
-  noteColour: 'random' | ColourType;
+  noteColour: ColourType;
+  noteId: string;
 }
 
-export default async function EditNoteDialog({
+export default function EditNoteDialog({
   children,
   noteName,
   noteColour,
+  noteId, 
 }: EditNoteDialogProps) {
-  const user_id = cookies().get('user_id')?.value;
-  const openNote = cookies().get('open_note')?.value;
-  const pathname = headers().get('pathname');
-  if (!pathname) return;
-  const collection = getCollection(pathname);
+  const [loading, startTransition] = useTransition();
+  const [open, setOpen] = useState(false)
+  const noteDialog = useForm<NoteDialog>({
+    resolver: zodResolver(noteDialogSchema),
+    defaultValues: {
+      name: noteName,
+      colour: noteColour,
+    },
+  });
 
-  async function editNote(formData: FormData) {
-    'use server';
-    const name = formData.get('name') as string;
-    const colour = formData.get('colour') as ColourType;
-    const colourName =
-      colour.toString() === 'random'
-        ? (getRandomColour().name as ColourType)
-        : colour;
-
-    if (user_id && openNote) {
-      await OverrideNote(user_id, openNote, collection, {
-        title: name,
-        colour: colourName,
-      });
-      redirect(openNote);
-    }
+  function handleEditNote(values: NoteDialog) {
+    startTransition(async () => {
+      await editNote(values, noteId);
+      setOpen(false)
+    });
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
-        <form action={editNote} className='flex flex-col gap-3'>
-          <DialogHeader className='flex flex-col gap-3'>
-            <DialogTitle className='flex gap-2'>
-              Edit <p title={noteName} className='text-silver line-clamp-1'>{`"${noteName}"`}</p>
-            </DialogTitle>
-            <DialogDescription>
-              📝 Let&apos;s capture inspiration and craft wonders together! Edit
-              your note, let creativity soar! ✨
-            </DialogDescription>
-          </DialogHeader>
-          <div className='grid grid-cols-4 gap-4 items-center'>
-            <Label className='text-right text-base'>Name</Label>
-            <Input
-              required
-              defaultValue={noteName}
+        <Form {...noteDialog}>
+          <form
+            onSubmit={noteDialog.handleSubmit(handleEditNote)}
+            className='flex flex-col gap-3'
+          >
+            <DialogHeader className='flex flex-col gap-3'>
+              <DialogTitle className='flex gap-2'>
+                Edit{' '}
+                <p
+                  title={noteName}
+                  className='text-silver line-clamp-1'
+                >{`"${noteName}"`}</p>
+              </DialogTitle>
+              <DialogDescription>
+                📝 Let&apos;s capture inspiration and craft wonders together!
+                Edit your note, let creativity soar! ✨
+              </DialogDescription>
+            </DialogHeader>
+            <FormField
+              control={noteDialog.control}
               name='name'
-              minLength={4}
-              className='col-span-3 bg-black invalid:focus:outline-red-600'
+              render={({ field }) => (
+                <FormItem>
+                  <div className='grid grid-cols-4 gap-4 items-center'>
+                    <FormLabel className='text-base text-neutral-200 text-right'>
+                      Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type='text'
+                        className='bg-black dark col-span-3'
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className='grid grid-cols-4 gap-4 items-center'>
-            <Label className='text-base text-right'>Colour</Label>
-            <ColourSelect defaultColour={noteColour} />
-          </div>
-          <DialogFooter>
-            <AddNoteSubmit text='Edit note' />
-          </DialogFooter>
-        </form>
+            <FormField
+              name='colour'
+              control={noteDialog.control}
+              render={({ field }) => (
+                <FormItem className='grid grid-cols-4 gap-4 items-center'>
+                  <FormLabel className='text-base text-neutral-200 text-right'>
+                    Colour
+                  </FormLabel>
+                  <FormControl>
+                    <ColourSelect
+                      onValueChange={field.onChange}
+                      defaultColour={noteColour}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button
+                disabled={loading}
+                variant='create'
+                size='sm'
+                type='submit'
+              >
+                Save changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

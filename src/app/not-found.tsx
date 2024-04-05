@@ -3,7 +3,6 @@ import Logo from '../../public/assets/logo.svg';
 import { Dela_Gothic_One } from 'next/font/google';
 import { headers } from 'next/headers';
 import Link from 'next/link';
-import { getNavigationInfo } from '@/utils/get-navigation-info';
 
 const gothicOne = Dela_Gothic_One({
   weight: '400',
@@ -13,7 +12,8 @@ const gothicOne = Dela_Gothic_One({
 
 export default function NotFound() {
   const pathname = headers().get('pathname');
-  const { href, text, redirectTitle } = getNavigationInfo(pathname || '');
+  //todo
+  // const { href, text, redirectTitle } = getNavigationInfo(pathname || '');
   return (
     <div className='h-screen w-screen flex flex-col gap-8 items-center justify-center text-neutral-200 bg-black'>
       <div className={`flex gap-3 items-center text-9xl ${gothicOne.className}`}>
@@ -29,7 +29,7 @@ export default function NotFound() {
         </div>
         <span>4</span>
       </div>
-      <div className='text-center flex flex-col gap-3'>
+      {/* <div className='text-center flex flex-col gap-3'>
         <h1 className='text-4xl font-semibold uppercase'>Page not found</h1>
         <p className='text-silver'>
           Uh oh, it seems like the {text} you are looking for does not exist
@@ -40,7 +40,7 @@ export default function NotFound() {
         >
           Return to {redirectTitle}
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

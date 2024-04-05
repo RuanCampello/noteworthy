@@ -12,7 +12,6 @@ import {
 } from './ui/dialog';
 import { Input } from './ui/input';
 import ColourSelect from './ColourSelect';
-import AddNoteSubmit from './AddNoteSubmit';
 import { createNote } from '@/actions/note';
 import { z } from 'zod';
 import { noteDialogSchema } from '@/schemas';
@@ -26,12 +25,13 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
+import { Button } from './ui/button';
 
 interface AddNoteDialogProps {
   children: ReactNode;
 }
 
-type NoteDialog = z.infer<typeof noteDialogSchema>;
+export type NoteDialog = z.infer<typeof noteDialogSchema>;
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   async function handleAddNote(values: NoteDialog) {
@@ -102,7 +102,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               )}
             />
             <DialogFooter>
-              <AddNoteSubmit text='Create note' />
+              <Button variant='create' size='sm' type='submit'>Create note</Button>
             </DialogFooter>
           </form>
         </Form>

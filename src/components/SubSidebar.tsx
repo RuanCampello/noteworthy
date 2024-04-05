@@ -20,10 +20,10 @@ export default function SubSidebar({
       {notes.map((note) => (
         <Note
           href='favourites'
-          key={note.uid}
-          uid={note.uid}
+          key={note.id}
+          uid={note.id}
           name={note.title}
-          date={note.date.seconds}
+          date={note.createdAt}
           colour={note.colour}
           text={note.content}
         />
