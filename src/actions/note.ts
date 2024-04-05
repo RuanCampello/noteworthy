@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/auth';
+import { currentUser } from '@/data/note';
 import { db } from '@/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
@@ -15,14 +15,14 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
 
   colour === 'random' ? (colour = getRandomColour().name) : colour;
 
-  const user = await auth();
-  if (!user || !user.user || !user.user.id) return;
+  const user = await currentUser();
+  if (!user || !user.id) return;
 
   const note = await db.note.create({
     data: {
       title: name,
       colour: colour,
-      userId: user.user.id,
+      userId: user.id,
       content: '',
     },
   });

@@ -13,15 +13,12 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import Image from 'next/image';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { storage } from '@/firebase';
 import { User } from '@/types/user-type';
 import { getCookie } from 'cookies-next';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, Pencil, X } from 'lucide-react';
-import { checkUsernameAvailability, updateProfile } from '@/utils/api';
+import { Pencil, X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -63,60 +60,60 @@ export default function EditProfileDialog({
   if (!userId) return null;
 
   async function handleEditProfile({ name, image }: FormSchema) {
-    const newName = name !== currentUser.name ? name : undefined;
-    const isUsernameAvailable = await checkUsernameAvailability(name);
+    // const newName = name !== currentUser.name ? name : undefined;
+    // const isUsernameAvailable = await checkUsernameAvailability(name);
 
-    if (newName === undefined && (image === undefined || image.length === 0)) {
-      return;
-    }
+    // if (newName === undefined && (image === undefined || image.length === 0)) {
+    //   return;
+    // }
 
-    if (isUsernameAvailable) {
-      if (image !== undefined && image.length > 0) {
-        const profileImage = image[0];
-        const storageRef = ref(storage, `${userId}`);
-        await uploadBytesResumable(storageRef, profileImage);
-        const downloadUrl = await getDownloadURL(storageRef);
+    // if (isUsernameAvailable) {
+    //   if (image !== undefined && image.length > 0) {
+    //     const profileImage = image[0];
+    //     const storageRef = ref(storage, `${userId}`);
+    //     await uploadBytesResumable(storageRef, profileImage);
+    //     const downloadUrl = await getDownloadURL(storageRef);
 
-        if (newName !== undefined && isUsernameAvailable) {
-          await updateProfile(currentUser, {
-            name: newName,
-            photoURL: downloadUrl,
-          });
-        } else {
-          await updateProfile(currentUser, { photoURL: downloadUrl });
-        }
-      } else {
-        await updateProfile(currentUser, { name: newName });
-      }
-      toast({
-        title: 'Profile Updated',
-        description: 'Your digital identity shines brighter than ever! ✨',
-        variant: 'edit',
-        action: (
-          <div className='bg-slate/20 p-2 rounded-md w-fit'>
-            <Check
-              size={24}
-              className='bg-slate text-midnight p-1 rounded-full'
-            />
-          </div>
-        ),
-      });
-      setOpen(false);
-      router.refresh();
-      setSelectedImage(undefined);
-    } else {
-      toast({
-        title: 'Name Unavailable',
-        description:
-          "Oops! It seems like the name you're trying to use is already taken.",
-        variant: 'error',
-        action: (
-          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
-            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
-          </div>
-        ),
-      });
-    }
+    //     if (newName !== undefined && isUsernameAvailable) {
+    //       await updateProfile(currentUser, {
+    //         name: newName,
+    //         image: downloadUrl,
+    //       });
+    //     } else {
+    //       await updateProfile(currentUser, { image: downloadUrl });
+    //     }
+    //   } else {
+    //     await updateProfile(currentUser, { name: newName });
+    //   }
+    //   toast({
+    //     title: 'Profile Updated',
+    //     description: 'Your digital identity shines brighter than ever! ✨',
+    //     variant: 'edit',
+    //     action: (
+    //       <div className='bg-slate/20 p-2 rounded-md w-fit'>
+    //         <Check
+    //           size={24}
+    //           className='bg-slate text-midnight p-1 rounded-full'
+    //         />
+    //       </div>
+    //     ),
+    //   });
+    //   setOpen(false);
+    //   router.refresh();
+    //   setSelectedImage(undefined);
+    // } else {
+    //   toast({
+    //     title: 'Name Unavailable',
+    //     description:
+    //       "Oops! It seems like the name you're trying to use is already taken.",
+    //     variant: 'error',
+    //     action: (
+    //       <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+    //         <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+    //       </div>
+    //     ),
+    //   });
+    // }
   }
   function handleImageChange(e: any) {
     if (e.target && e.target.files && e.target.files.length > 0) {
@@ -124,7 +121,7 @@ export default function EditProfileDialog({
       setSelectedImage(URL.createObjectURL(preview));
     }
   }
-  const { name, photoURL } = currentUser;
+  const { name, image } = currentUser;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -154,7 +151,7 @@ export default function EditProfileDialog({
               )}
               <Image
                 className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
-                src={selectedImage || photoURL}
+                src={selectedImage || image}
                 width={160}
                 height={160}
                 alt={name[0].toUpperCase()}

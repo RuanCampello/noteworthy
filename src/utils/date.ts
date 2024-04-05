@@ -1,5 +1,5 @@
-export function secondsToLocaleDateLong(seconds: number): string {
-  const localeDateString = new Date(seconds * 1000).toLocaleDateString(
+export function toLocaleDateLong(date: Date): string {
+  const localeDateString = date.toLocaleDateString(
     'en-GB',
     {
       day: 'numeric',

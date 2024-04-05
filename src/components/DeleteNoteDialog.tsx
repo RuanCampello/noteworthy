@@ -1,20 +1,14 @@
 import { ReactNode } from 'react';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
+  AlertDialog, AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from './ui/alert-dialog';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
-import { NoteType } from '@/types/note-type';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import DeleteNoteSubmit from './DeleteNoteSubmit';
 
 interface DeleteNoteDialogProps {
@@ -30,17 +24,7 @@ export default function DeleteNoteDialog({
 
   async function handleDeleteNote() {
     'use server';
-    const note_id = cookies().get('open_note')?.value;
-    if (!user_id || !note_id) return;
-    const noteRef = doc(db, 'userNotes', user_id);
-    const noteDoc = await getDoc(noteRef);
-    if (!noteDoc.exists()) return;
-    const noteData = noteDoc.data();
-    const notes: NoteType[] = noteData.notes;
-    const noteIndex = notes.findIndex((note) => note.uid === note_id);
-    notes.splice(noteIndex, 1);
-    await updateDoc(noteRef, { notes });
-    redirect('/');
+    //todo
   }
   return (
     <AlertDialog>

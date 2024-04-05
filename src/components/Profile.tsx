@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { auth, db } from '@/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 import { Bolt, LogOut } from 'lucide-react';
@@ -13,25 +12,25 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { auth, signOut } from '@/auth';
 
 export default async function Profile() {
-  const user_id = cookies().get('user_id')?.value;
-  if (!user_id) return null;
+  const session = await auth();
+  if (!session?.user || !session.user?.id) return null;
 
-  const user = (await getDoc(doc(db, 'users', user_id))).data() as User;
-  const { name, email, photoURL } = user;
+  const user = session.user as User;
+  const { name, email, image } = user;
+  if (!name || !email) return;
 
   async function handleLogout() {
     'use server';
-    cookies().delete('user_id');
-    cookies().delete('open_note');
-    auth.signOut();
+    await signOut();
   }
   return (
     <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
-          <AvatarImage src={photoURL} />
+          <AvatarImage src={image || ''} />
           <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
             {name[0].toUpperCase()}
           </AvatarFallback>
@@ -41,7 +40,7 @@ export default async function Profile() {
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild >
+          <DropdownMenuTrigger asChild>
             <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black'>

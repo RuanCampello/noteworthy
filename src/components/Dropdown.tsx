@@ -8,11 +8,9 @@ import {
 import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
-import { db } from '@/firebase';
 import { Timestamp, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { findNote, retrieveNotes } from '@/utils/api';
 import SubmitButton from './SubmitButton';
 import EditNoteDialog from './EditNoteDialog';
 import { ColourType } from '@/utils/colours';
@@ -27,98 +25,27 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
   // server actions
   async function addFavourites() {
     'use server';
-    if (!userId || !noteId) return;
-    const result = await retrieveNotes({
-      userId,
-      noteId,
-      collection: 'userNotes',
-      returnAll: true,
-      returnSingleNote: true,
-    });
-    if (!result) return;
-    const { note, notes } = result;
-    if (!note || !notes) return;
-    const noteIndex = notes.findIndex((note) => note.uid === noteId);
-    const { uid, title, owner, colour, content, date } = note;
-    await updateDoc(doc(db, 'userFavourites', userId), {
-      notes: arrayUnion({
-        uid: uid,
-        title: title,
-        owner: owner,
-        colour: colour,
-        content: content,
-        date: date,
-        lastUpdate: Timestamp.now(),
-      }),
-    });
-    notes.splice(noteIndex, 1);
-    await updateDoc(doc(db, 'userNotes', userId), { notes });
-    redirect(`/favourites/${note.uid}`);
+    //todo
   }
   async function unfavourite() {
     'use server';
-    if (!userId) return;
-    const result = await retrieveNotes({
-      userId,
-      noteId,
-      collection: 'userFavourites',
-      returnAll: true,
-      returnSingleNote: true,
-    });
-    if (!result) return;
-    const { note, notes } = result;
-    if (!note || !notes) return;
-    const favouriteNoteIndex = notes.findIndex((note) => note.uid === noteId);
-    const { uid, title, owner, colour, content, date } = note;
-    await updateDoc(doc(db, 'userNotes', userId), {
-      notes: arrayUnion({
-        uid: uid,
-        title: title,
-        owner: owner,
-        colour: colour,
-        content: content,
-        date: date,
-        lastUpdate: Timestamp.now(),
-      }),
-    });
-    notes.splice(favouriteNoteIndex, 1);
-    await updateDoc(doc(db, 'userFavourites', userId), { notes });
-    redirect(`/notes/${note.uid}`);
+    //todo
   }
 
-  // firebase queries
-  async function isFavourite(): Promise<boolean | null> {
-    if (!userId) return null;
-    const favouriteNote = await findNote(userId, 'userFavourites', noteId);
-    if (favouriteNote) return true;
-    else return false;
+  async function isFavourite() {
+    //todo
   }
-  async function getNoteProps(): Promise<{
-    name: string;
-    colour: ColourType;
-  } | null> {
-    if (!userId) return null;
-    const pathname = headers().get('pathname');
-    if (pathname?.includes('favourites')) {
-      const note = await findNote(userId, 'userFavourites', noteId);
-      if (note) return { name: note.title, colour: note.colour };
-      return null;
-    } else {
-      const note = await findNote(userId, 'userNotes', noteId);
-      if (note) return { name: note.title, colour: note.colour };
-      return null;
-    }
+  async function getNoteProps() {
+    //todo
   }
   const favourite = await isFavourite();
   const noteProps = await getNoteProps();
-  if (!noteProps) return;
-  const { name, colour } = noteProps;
   const iconStyle =
     'group-active:scale-95 transition-transform group-hover:scale-110 group-focus:scale-110 duration-200';
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent
+      {/* <DropdownMenuContent
         align='end'
         sideOffset={14}
         className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
@@ -165,7 +92,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             <span>Delete</span>
           </button>
         </DeleteNoteDialog>
-      </DropdownMenuContent>
+      </DropdownMenuContent> */}
     </DropdownMenu>
   );
 }

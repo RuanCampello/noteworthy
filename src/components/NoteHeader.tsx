@@ -9,6 +9,7 @@ import { Separator } from './ui/separator';
 import SaveNote from './SaveNote';
 import WordCounter from './WordCounter';
 import NoteHeaderItem from './NoteHeaderItem';
+import { toLocaleDateLong } from '@/utils/date';
 
 interface NoteHeaderProps {
   title: string;
@@ -24,8 +25,8 @@ export default async function NoteHeader({
   id,
   lastUpdate,
 }: NoteHeaderProps) {
-  const longLastUpdate = date.toLocaleDateString('en-GB');
-  const longDate = date.toLocaleDateString('en-GB');
+  const longLastUpdate = toLocaleDateLong(lastUpdate);
+  const longDate = toLocaleDateLong(date);
   return (
     <div className='sticky xl:px-11 px-6 xl:pt-14 pt-8'>
       <div className='flex justify-between items-center xl:mb-14 mb-8'>

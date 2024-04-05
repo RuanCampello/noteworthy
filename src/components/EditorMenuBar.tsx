@@ -13,11 +13,11 @@ import {
 } from './ui/select';
 import { useEffect, useState } from 'react';
 import { toast } from './ui/use-toast';
-import { saveNote } from '@/utils/api';
-import { usePathname, useRouter } from 'next/navigation';
 import MenuItems from './MenuItems';
 import SelectFontSize from './SelectFontSize';
 import SelectFontFamily from './SelectFontFamily';
+import { updateNoteContent } from '@/data/note';
+import { useSession } from 'next-auth/react';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -25,17 +25,16 @@ export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
-  const router = useRouter();
-  const pathname = usePathname();
+  const session = useSession();
+  const noteId = session.data?.user?.id;
 
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
       if (event.ctrlKey && event.key === 's') {
-        event.preventDefault()
+        event.preventDefault();
         const currentContent = editor?.getHTML();
-        if (!currentContent) return;
-        await saveNote(currentContent, pathname);
-        router.refresh();
+        if (!currentContent || !noteId) return null;
+        await updateNoteContent(noteId, currentContent);
         toast({
           title: 'Note Saved',
           description:
