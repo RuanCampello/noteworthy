@@ -26,14 +26,14 @@ export default function EditorMenuBar() {
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const session = useSession();
-  const noteId = session.data?.user?.id;
 
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
       if (event.ctrlKey && event.key === 's') {
         event.preventDefault();
         const currentContent = editor?.getHTML();
-        if (!currentContent || !noteId) return null;
+        const noteId = session.data?.user?.id;
+        if (!currentContent || !noteId || session.status === 'loading') return null;
         await updateNoteContent(noteId, currentContent);
         toast({
           title: 'Note Saved',
@@ -53,7 +53,7 @@ export default function EditorMenuBar() {
     }
     window.addEventListener('keydown', handleSaveShortcut);
     return () => window.removeEventListener('keydown', handleSaveShortcut);
-  }, []);
+  }, [session.status]);
 
   useEffect(() => {
     if (!editor) return;
