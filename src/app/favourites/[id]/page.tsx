@@ -32,7 +32,7 @@ export async function generateMetadata({
   const { notes, note } = result;
   if (notes) {
     if (note) {
-      return { title: note.title, note, notes };
+      return { title: `${note.title} ⭐`, note, notes };
     } else return { title: '%s', notes };
   } else {
     return { title: '%s' };

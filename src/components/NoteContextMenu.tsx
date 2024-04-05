@@ -32,7 +32,7 @@ export default async function NoteContextMenu({
     { name: 'Add to Favourites', action: handleFavourite, icon: <Star /> },
     { name: 'Move to Archive', action: handleArchive, icon: <Archive /> },
     { name: 'Edit', action: handleEdit, icon: <Pencil /> },
-    { name: 'Delete', action: handleArchive, icon: <Trash /> },
+    { name: 'Delete', action: handleDelete, icon: <Trash /> },
   ];
 
   const colourValue = Colours[colour];
@@ -60,11 +60,11 @@ export default async function NoteContextMenu({
         <ContextMenuLabel className='truncate text-base py-3 select-none'>
           {title}
         </ContextMenuLabel>
-        <div className='flex flex-col gap-1.5'>
+        <div className='flex flex-col gap-1'>
           {actions.map((action, i) => (
             <form key={i} action={action.action}>
               <button
-                className='w-full hover:bg-night group rounded py-1.5 text-sm text-start px-2 font-medium flex gap-2 items-center transition-colors'
+                className='w-full hover:bg-night group rounded p-2 text-sm text-start font-medium flex gap-2 items-center transition-colors'
                 style={{ color: colourValue }}
                 type='submit'
               >

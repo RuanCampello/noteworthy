@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { SelectItem } from './ui/select';
-import { Colours } from '@/utils/colours';
+import { ColourType, Colours } from '@/utils/colours';
 
 interface HoverableSelectItemProps {
-  value: string;
+  value: ColourType;
   name: string;
 }
 

@@ -50,7 +50,7 @@ export default function ColourSelect({defaultColour}: ColourSelectProps) {
           {colours.map((colour) => (
             <HoverableSelectItem
               key={colour.value}
-              value={colour.value}
+              value={colour.value as ColourType}
               name={colour.name}
             />
           ))}

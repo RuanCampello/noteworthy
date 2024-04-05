@@ -1,12 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import {
+  authRoutes,
+  DEFAULT_REDIRECT,
+  apiAuthPrefix,
+  publicRoutes,
+} from './routes';
+import NextAuth from 'next-auth';
+import authConfig from './auth.config';
 
-export default function middleware(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('pathname', request.nextUrl.pathname);
-  requestHeaders.set('search-params', request.nextUrl.searchParams.toString());
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-}
+const { auth } = NextAuth(authConfig);
+
+export default auth((request) => {
+  const { nextUrl } = request;
+  const { pathname } = nextUrl;
+  const isLoggedIn = request.auth;
+
+  const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
+  const isPublicRoute = publicRoutes.includes(pathname);
+  const isAuthRoute = authRoutes.includes(pathname);
+
+  if (isApiAuthRoute) return undefined;
+
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL(DEFAULT_REDIRECT, nextUrl.origin));
+    }
+    return undefined;
+  }
+
+  if (!isLoggedIn && !isPublicRoute) {
+    return NextResponse.redirect(new URL('/login', nextUrl.origin));
+  }
+  return undefined;
+});
+
+export const config = {
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+};

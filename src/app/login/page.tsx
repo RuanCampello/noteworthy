@@ -1,15 +1,9 @@
-import LoginForm from '@/components/LoginForm';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import LoginForm from '@/components/auth/LoginForm';
 
-export default function LoginPage() {
-  const user_id = cookies().get('user_id')?.value;
-  if (user_id) redirect('/');
-  else {
-    return (
-      <div className='flex justify-center h-screen w-screen overflow-hidden items-center bg-black'>
-        <LoginForm />
-      </div>
-    );
-  }
+export default async function LoginPage() {
+  return (
+    <div className='flex justify-center h-screen w-screen overflow-hidden items-center bg-black'>
+      <LoginForm />
+    </div>
+  );
 }
