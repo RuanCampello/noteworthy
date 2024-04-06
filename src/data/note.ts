@@ -26,10 +26,10 @@ export async function getAllUserNotes(userId: string) {
   }
 }
 
-export async function updateNoteContent(userId: string, content: string) {
+export async function updateNoteContent(id: string, userId: string, content: string) {
   try {
     const note = await db.note.update({
-      where: { userId },
+      where: { id, userId },
       data: { content, lastUpdate: new Date() },
     });
     revalidatePath('/notes');

@@ -6,20 +6,27 @@ import { useTransition } from 'react';
 import { useToast } from './ui/use-toast';
 import { updateNoteContent } from '@/data/note';
 import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
   const { toast } = useToast();
   const [loading, startTransition] = useTransition();
   const session = useSession();
-  const noteId = session.data?.user?.id;
+  const userId = session.data?.user?.id;
+
+  const openNote = useParams<{ id: string }>().id;
 
   if (!currentEditor) return;
 
   async function handleSaveClick() {
     startTransition(async () => {
-      if (!noteId || !currentEditor.editor) return;
-      await updateNoteContent(noteId, currentEditor.editor?.getHTML());
+      if (!userId || !openNote || !currentEditor.editor) return;
+      await updateNoteContent(
+        openNote,
+        userId,
+        currentEditor.editor?.getHTML()
+      );
       toast({
         title: 'Note Saved',
         description:

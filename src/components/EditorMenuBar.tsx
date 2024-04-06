@@ -18,6 +18,7 @@ import SelectFontSize from './SelectFontSize';
 import SelectFontFamily from './SelectFontFamily';
 import { updateNoteContent } from '@/data/note';
 import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -26,15 +27,18 @@ export default function EditorMenuBar() {
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const session = useSession();
+  const openNote = useParams<{ id: string }>().id;
 
   useEffect(() => {
     async function handleSaveShortcut(event: KeyboardEvent) {
       if (event.ctrlKey && event.key === 's') {
         event.preventDefault();
         const currentContent = editor?.getHTML();
-        const noteId = session.data?.user?.id;
-        if (!currentContent || !noteId || session.status === 'loading') return null;
-        await updateNoteContent(noteId, currentContent);
+        const userId = session.data?.user?.id;
+        if (!currentContent || !userId || !openNote || session.status === 'loading') {
+          return null;
+        }
+        await updateNoteContent(openNote, userId, currentContent);
         toast({
           title: 'Note Saved',
           description:
