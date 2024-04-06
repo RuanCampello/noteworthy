@@ -38,6 +38,18 @@ export async function getAllUserOrdinaryNotes(userId: string) {
   }
 }
 
+export async function getAllUserFavouriteNotes(userId: string) {
+  try {
+    const notes = await db.note.findMany({
+      where: { userId, isFavourite: true },
+    });
+    return notes;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export async function updateNoteContent(
   id: string,
   userId: string,

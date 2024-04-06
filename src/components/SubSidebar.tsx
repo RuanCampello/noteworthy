@@ -1,6 +1,6 @@
-import { NoteType } from '@/types/note-type';
-import Note from './Note';
 import { ReactNode } from 'react';
+import { Note as NoteType } from '@prisma/client';
+import Note from './Note';
 
 interface SubSidebarProps {
   notes: NoteType[];
