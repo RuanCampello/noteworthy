@@ -19,7 +19,7 @@ export default async function Counter({
     ? { userId, isFavourite }
     : isArchived
     ? { userId, isArchived }
-    : { userId };
+    : { userId, isArchived: false, isFavourite: false };
 
   const notesNumber: number = await db.note.count({ where: condition });
 
