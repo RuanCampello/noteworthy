@@ -26,7 +26,23 @@ export async function getAllUserNotes(userId: string) {
   }
 }
 
-export async function updateNoteContent(id: string, userId: string, content: string) {
+export async function getAllUserOrdinaryNotes(userId: string) {
+  try {
+    const notes = await db.note.findMany({
+      where: { userId, isArchived: false, isFavourite: false },
+    });
+    return notes;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function updateNoteContent(
+  id: string,
+  userId: string,
+  content: string
+) {
   try {
     const note = await db.note.update({
       where: { id, userId },

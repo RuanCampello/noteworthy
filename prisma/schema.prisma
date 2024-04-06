@@ -60,7 +60,7 @@ model Note {
   lastUpdate  DateTime?
   isFavourite Boolean   @default(false)
   isArchived  Boolean   @default(false)
-  owner       User?     @relation(fields: [userId], references: [id])
+  owner       User      @relation(fields: [userId], references: [id])
   content     String
   colour      Colour
   userId      String

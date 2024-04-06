@@ -1,6 +1,6 @@
 'use server';
 
-import { currentUser, getNoteById } from '@/data/note';
+import { currentUser } from '@/data/note';
 import { db } from '@/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';

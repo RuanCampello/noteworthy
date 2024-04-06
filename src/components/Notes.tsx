@@ -1,4 +1,3 @@
-import { doc, getDoc } from 'firebase/firestore';
 import Note from './Note';
 import SectionTitle from './SectionTitle';
 import Counter from './Counter';
@@ -6,16 +5,16 @@ import SearchNote from './SearchNote';
 import SortDropdown from './SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
 import NoteContextMenu from './NoteContextMenu';
-import { getAllUserNotes } from '@/data/note';
+import { getAllUserOrdinaryNotes } from '@/data/note';
 import { auth } from '@/auth';
 
 export default async function Notes() {
   const session = await auth();
   if (!session?.user || !session.user.id) return;
 
-  const notes = await getAllUserNotes(session.user.id);
+  const notes = await getAllUserOrdinaryNotes(session.user.id);
   if (!notes) return;
-  const owner = session.user.name
+  const owner = session.user.name;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
 
@@ -52,8 +51,7 @@ export default async function Notes() {
           </div>
         ) : (
           filteredNotes.map((note) => {
-            const { id, title, colour, content, createdAt, lastUpdate } =
-              note;
+            const { id, title, colour, content, createdAt, lastUpdate } = note;
             return (
               <NoteContextMenu
                 title={title}
