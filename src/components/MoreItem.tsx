@@ -28,7 +28,7 @@ export default function MoreItem({
   return (
     <Link
       href={href}
-      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center`}
+      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group`}
     >
       <div className='flex gap-4'>
         <Icon

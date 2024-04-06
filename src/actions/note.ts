@@ -59,9 +59,14 @@ export async function editNote(
   let { name, colour } = fields.data;
   colour === 'random' ? (colour = getRandomColour().name) : colour;
   try {
-    await db.note.update({where: {id}, data: {title: name, colour}})
-  } catch(error) {
-    console.error(error)
+    await db.note.update({ where: { id }, data: { title: name, colour } });
+  } catch (error) {
+    console.error(error);
   }
-  redirect(`/notes/${id}`)
+  redirect(`/notes/${id}`);
+}
+
+export async function deleteNote(id: string) {
+  await db.note.delete({ where: { id } });
+  redirect('/')
 }

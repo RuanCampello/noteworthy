@@ -16,7 +16,7 @@ export default function More() {
           name='Favourites'
           icon={'star'}
         >
-          <Counter />
+          <Counter isFavourite />
         </MoreItem>
         <MoreItem
           colour={archiveColour}
@@ -24,7 +24,7 @@ export default function More() {
           name='Archived Notes'
           icon={'archive'}
         >
-          <Counter />
+          <Counter isArchived />
         </MoreItem>
       </div>
     </div>

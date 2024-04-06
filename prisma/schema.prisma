@@ -35,7 +35,7 @@ model User {
   image         String?
   password      String?
   accounts      Account[]
-  Note          Note?
+  Note          Note[]
 
   @@map("users")
 }
@@ -58,11 +58,12 @@ model Note {
   title       String
   createdAt   DateTime  @default(now())
   lastUpdate  DateTime?
-  isFavourite Boolean?
+  isFavourite Boolean   @default(false)
+  isArchived  Boolean   @default(false)
   owner       User?     @relation(fields: [userId], references: [id])
   content     String
   colour      Colour
-  userId      String    @unique
+  userId      String
 
   @@map("notes")
 }

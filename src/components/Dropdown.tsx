@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Archive, Pencil, Star } from 'lucide-react';
+import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import SubmitButton from './SubmitButton';
@@ -76,7 +76,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           </button>
         </EditNoteDialog>
         <Separator className='bg-white/40' />
-        {/* <DeleteNoteDialog noteName={name}>
+        <DeleteNoteDialog noteName={title} noteId={id}>
           <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>
             <Trash
               size={20}
@@ -84,7 +84,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             />
             <span>Delete</span>
           </button>
-        </DeleteNoteDialog> */}
+        </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );

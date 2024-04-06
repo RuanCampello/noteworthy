@@ -1,30 +1,36 @@
-import { ReactNode } from 'react';
+'use client';
+
+import { ReactNode, useTransition } from 'react';
 import {
-  AlertDialog, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from './ui/alert-dialog';
-import { cookies } from 'next/headers';
-import DeleteNoteSubmit from './DeleteNoteSubmit';
+
+import { deleteNote } from '@/actions/note';
+import { Button } from './ui/button';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
   noteName: string;
+  noteId: string;
 }
 
 export default function DeleteNoteDialog({
   children,
   noteName,
+  noteId,
 }: DeleteNoteDialogProps) {
-  const user_id = cookies().get('user_id')?.value;
-
-  async function handleDeleteNote() {
-    'use server';
-    //todo
+  const [loading, startTransition] = useTransition();
+  function handleDeleteNote() {
+    startTransition(async () => {
+      await deleteNote(noteId);
+    });
   }
   return (
     <AlertDialog>
@@ -39,9 +45,13 @@ export default function DeleteNoteDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className='light'>Cancel</AlertDialogCancel>
-          <form action={handleDeleteNote}>
-            <DeleteNoteSubmit />
-          </form>
+          <Button
+            disabled={loading}
+            variant='destructive'
+            onClick={handleDeleteNote}
+          >
+            Delete note
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
