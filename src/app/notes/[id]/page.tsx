@@ -1,9 +1,11 @@
 import NotFound from '@/app/not-found';
+import { Loading } from '@/components/Loading';
 import NoteEditor from '@/components/NoteEditor';
 import NoteHeader from '@/components/NoteHeader';
 import Resizable from '@/components/Resizable';
 import { getNoteById } from '@/data/note';
 import { getUserById } from '@/data/user';
+import { Suspense } from 'react';
 
 type Props = { params: { id: string } };
 
@@ -17,17 +19,19 @@ export default async function NotePage({ params }: Props) {
 
   return (
     <Resizable>
-      <div className='flex flex-col gap-3 h-full overflow-y-clip'>
-        <NoteEditor content={content}>
-          <NoteHeader
-            id={id}
-            title={title}
-            date={createdAt}
-            owner={owner.name!}
-            lastUpdate={lastUpdate || createdAt}
-          />
-        </NoteEditor>
-      </div>
+      <Suspense fallback={<Loading />}>
+        <div className='flex flex-col gap-3 h-full overflow-y-clip'>
+          <NoteEditor content={content}>
+            <NoteHeader
+              id={id}
+              title={title}
+              date={createdAt}
+              owner={owner.name!}
+              lastUpdate={lastUpdate || createdAt}
+            />
+          </NoteEditor>
+        </div>
+      </Suspense>
     </Resizable>
   );
 }
