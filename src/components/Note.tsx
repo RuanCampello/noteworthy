@@ -5,7 +5,7 @@ import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NoteProps {
@@ -50,8 +50,8 @@ export default function Note({
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const currentId = pathname.replace(/^\/(?:notes|favourites)\//, '');
+  const currentId = useParams<{ id: string }>().id;
+  //todo: fix double focus on save
   useEffect(() => {
     if (currentId === uid) setFocused(true);
   }, [currentId, uid, focused]);

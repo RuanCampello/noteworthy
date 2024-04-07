@@ -8,6 +8,8 @@ import { getUserByEmail } from '@/data/user';
 import { signIn } from '@/auth';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
+import { getRandomColour } from '@/utils/colours';
+import { helloWorld } from '@/utils/hello-world';
 
 export async function register(values: z.infer<typeof registerFormSchema>) {
   const fields = registerFormSchema.safeParse(values);
@@ -20,11 +22,21 @@ export async function register(values: z.infer<typeof registerFormSchema>) {
   const user = await getUserByEmail(email);
   if (user) return { error: 'Email already in use!' };
 
-  await db.user.create({
+  const owner = await db.user.create({
     data: {
       name: username,
       email,
       password: hashedPassword,
+    },
+  });
+
+  const randomColour = getRandomColour().name;
+  await db.note.create({
+    data: {
+      colour: randomColour,
+      content: helloWorld,
+      title: 'Hello World 📝',
+      userId: owner.id,
     },
   });
 
