@@ -12,10 +12,13 @@ import {
 } from './ui/dropdown-menu';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const dropdownValues = [
-  { value: 'date-new', text: 'Date added (newest)'},
-  { value: 'date-old', text: 'Date added (oldest)'},
-  { value: 'title', text: 'Title'},
+type DropdownValue = { value: string; text: string };
+
+const dropdownValues: DropdownValue[] = [
+  { value: 'last-modified', text: 'Last modified' },
+  { value: 'title', text: 'Title' },
+  { value: 'date-new', text: 'Date added (newest)' },
+  { value: 'date-old', text: 'Date added (oldest)' },
 ];
 
 export default function SortDropdown() {
@@ -23,7 +26,7 @@ export default function SortDropdown() {
   const filterParams = searchParams.get('filter');
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
-  const filter = filterParams || ''
+  const filter = filterParams || '';
 
   function handleSort(selectedItem: string) {
     if (!filterParams) {
@@ -45,7 +48,7 @@ export default function SortDropdown() {
       <DropdownMenuContent className='dark bg-black'>
         <DropdownMenuLabel>Sort by</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={filter}>
+        <DropdownMenuRadioGroup value={filter || 'last-modified'}>
           {dropdownValues.map((dropdownValue) => (
             <button
               className='flex w-full'
@@ -54,7 +57,10 @@ export default function SortDropdown() {
               name='item'
               type='submit'
             >
-              <DropdownMenuRadioItem value={dropdownValue.value} className='w-full'>
+              <DropdownMenuRadioItem
+                value={dropdownValue.value}
+                className='w-full'
+              >
                 {dropdownValue.text}
               </DropdownMenuRadioItem>
             </button>

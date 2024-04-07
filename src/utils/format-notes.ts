@@ -1,4 +1,3 @@
-import { NoteType } from '@/types/note-type';
 import { headers } from 'next/headers';
 import { formatSearchParams } from './format';
 import { Note } from '@prisma/client';
@@ -30,7 +29,7 @@ export function getFilteredNotes(
   }
 }
 
-type Filters = 'date-new' | 'date-old' | 'title';
+type Filters = 'date-new' | 'date-old' | 'title' | 'last-modified';
 
 const allowedFilters: Filters[] = ['date-new', 'date-old', 'title'];
 
