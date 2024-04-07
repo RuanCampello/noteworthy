@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
-import { Input } from './ui/input';
-import ColourSelect from './ColourSelect';
+} from '../ui/dialog';
+import { Input } from '../ui/input';
+import ColourSelect from '../ColourSelect';
 import { createNote } from '@/actions/note';
 import { z } from 'zod';
 import { noteDialogSchema } from '@/schemas';
@@ -24,8 +24,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Button } from './ui/button';
+} from '../ui/form';
+import { Button } from '../ui/button';
 
 interface AddNoteDialogProps {
   children: ReactNode;

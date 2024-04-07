@@ -1,7 +1,7 @@
 import Logo from './Logo';
-import Notes from './Notes';
+import Notes from './Note/Notes';
 import More from './More';
-import AddNoteButton from './AddNoteButton';
+import AddNoteButton from './Note/AddNoteButton';
 import Profile from './Profile';
 
 export default function Sidebar() {

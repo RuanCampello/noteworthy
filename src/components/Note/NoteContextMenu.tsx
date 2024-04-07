@@ -5,7 +5,7 @@ import {
   ContextMenuLabel,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from './ui/context-menu';
+} from '../ui/context-menu';
 import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { ColourType, Colours } from '@/utils/colours';
 

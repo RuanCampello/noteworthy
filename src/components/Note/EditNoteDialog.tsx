@@ -8,10 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import ColourSelect from './ColourSelect';
+} from '../ui/dialog';
+import { Input } from '../ui/input';
+import ColourSelect from '../ColourSelect';
 import { ColourType } from '@/utils/colours';
 import { useForm } from 'react-hook-form';
 import { noteDialogSchema } from '@/schemas';
@@ -24,8 +23,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Button } from './ui/button';
+} from '../ui/form';
+import { Button } from '../ui/button';
 import { editNote } from '@/actions/note';
 
 interface EditNoteDialogProps {

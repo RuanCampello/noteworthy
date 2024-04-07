@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './ui/tooltip';
+} from '../ui/tooltip';
 
 type SimpleNote = {
   title: string;

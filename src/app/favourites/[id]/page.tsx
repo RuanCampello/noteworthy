@@ -1,7 +1,7 @@
 import NotFound from '@/app/not-found';
 import { Loading } from '@/components/Loading';
-import NoteEditor from '@/components/NoteEditor';
-import NoteHeader from '@/components/NoteHeader';
+import NoteEditor from '@/components/Note/NoteEditor';
+import NoteHeader from '@/components/Note/NoteHeader';
 import { getNoteById } from '@/data/note';
 import { getUserById } from '@/data/user';
 import { Suspense } from 'react';

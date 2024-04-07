@@ -1,8 +1,8 @@
 import Note from './Note';
-import SectionTitle from './SectionTitle';
-import Counter from './Counter';
+import SectionTitle from '../SectionTitle';
+import Counter from '../Counter';
 import SearchNote from './SearchNote';
-import SortDropdown from './SortDropdown';
+import SortDropdown from '../SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
 import NoteContextMenu from './NoteContextMenu';
 import { getAllUserOrdinaryNotes } from '@/data/note';
@@ -18,20 +18,28 @@ export default async function Notes() {
   const owner = session.user.name;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
+  console.log(filter);
 
   switch (filter) {
     case 'date-new':
-      filteredNotes.sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-      );
+      filteredNotes.sort((a, b) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+      break;
     case 'date-old':
-      filteredNotes.sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      );
+      filteredNotes.sort((a, b) => {
+        return a.createdAt.getTime() - b.createdAt.getTime();
+      });
+      break;
     case 'title':
       filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+      break;
     default:
-      filteredNotes.sort((a, b) => b.lastUpdate!.getTime() - a.lastUpdate!.getTime())
+      filteredNotes.sort((a, b) => {
+        if (!b.lastUpdate || !a.lastUpdate) return b.lastUpdate ? -1 : 1;
+        return b.lastUpdate.getTime() - a.lastUpdate.getTime();
+      });
+      break;
   }
 
   return (

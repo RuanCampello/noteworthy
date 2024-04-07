@@ -10,10 +10,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alert-dialog';
+} from '../ui/alert-dialog';
 
 import { deleteNote } from '@/actions/note';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;

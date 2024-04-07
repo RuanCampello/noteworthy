@@ -1,4 +1,4 @@
-import NoNotes from '@/components/NoNotes';
+import NoNotes from '@/components/Note/NoNotes';
 import Resizable from '@/components/Resizable';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser, getAllUserFavouriteNotes } from '@/data/note';

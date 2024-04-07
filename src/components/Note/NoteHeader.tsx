@@ -4,10 +4,10 @@ import {
   MoreHorizontal,
   SquareUserRound,
 } from 'lucide-react';
-import Dropdown from './Dropdown';
-import { Separator } from './ui/separator';
+import Dropdown from '../Dropdown';
+import { Separator } from '../ui/separator';
 import SaveNote from './SaveNote';
-import WordCounter from './WordCounter';
+import WordCounter from '../WordCounter';
 import NoteHeaderItem from './NoteHeaderItem';
 import { toLocaleDateLong } from '@/utils/date';
 

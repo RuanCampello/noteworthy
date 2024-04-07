@@ -2,7 +2,7 @@
 
 import { useCurrentEditor } from '@tiptap/react';
 import { WholeWord } from 'lucide-react';
-import NoteHeaderItem from './NoteHeaderItem';
+import NoteHeaderItem from './Note/NoteHeaderItem';
 
 export default function WordCounter() {
   const { editor } = useCurrentEditor();

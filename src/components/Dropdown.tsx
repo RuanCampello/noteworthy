@@ -7,9 +7,9 @@ import {
 } from './ui/dropdown-menu';
 import { Archive, Pencil, Star, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
-import DeleteNoteDialog from './DeleteNoteDialog';
+import DeleteNoteDialog from './Note/DeleteNoteDialog';
 import SubmitButton from './SubmitButton';
-import EditNoteDialog from './EditNoteDialog';
+import EditNoteDialog from './Note/EditNoteDialog';
 import { currentUser, getNoteById, isNoteFavourite } from '@/data/note';
 import { toggleNoteFavourite } from '@/actions/note';
 interface DropdownProps {

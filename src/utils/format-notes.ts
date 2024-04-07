@@ -31,7 +31,7 @@ export function getFilteredNotes(
 
 type Filters = 'date-new' | 'date-old' | 'title' | 'last-modified';
 
-const allowedFilters: Filters[] = ['date-new', 'date-old', 'title'];
+const allowedFilters: Filters[] = ['date-new', 'date-old', 'title', 'last-modified'];
 
 export function getFilter() {
   const searchParams = headers().get('search-params');

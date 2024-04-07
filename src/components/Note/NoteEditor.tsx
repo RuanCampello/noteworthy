@@ -2,7 +2,7 @@
 
 import { EditorProvider, Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import EditorMenuBar from './EditorMenuBar';
+import EditorMenuBar from '../EditorMenuBar';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
