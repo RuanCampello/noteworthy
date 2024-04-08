@@ -10,7 +10,7 @@ interface FormRedirectProps {
 
 export default function FormRedirect({ text, path, link, disableWhen }: FormRedirectProps) {
   return (
-    <div className='flex my-10 justify-center gap-1 text-neutral-400'>
+    <div className='flex my-10 justify-center gap-1 text-silver'>
       <span>{text}</span>
       <Link
         aria-disabled={disableWhen}

@@ -10,7 +10,7 @@ export default function FormButton({ title, disableWhen }: FormButtonProps) {
     <button
       type='submit'
       disabled={disableWhen}
-      className='bg-tickle hover:bg-tickle/80 disabled:bg-tickle/80 transition-colors duration-200 font-semibold text-midnight disabled:p-3 p-4 w-full rounded-md flex items-center justify-center'
+      className='bg-tickle hover:bg-tickle/80 disabled:bg-tickle/80 transition-colors duration-200 font-semibold text-midnight disabled:p-2 p-2.5 w-full rounded-md flex items-center justify-center'
     >
       {!disableWhen ? (
         title

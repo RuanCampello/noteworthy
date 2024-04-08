@@ -48,11 +48,7 @@ export default function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className='rounded-md w-[420px]'
       >
-        <CustomForm.Header
-          image={LogoImage}
-          title='Sign Up'
-          subtitle='Unique annotations 🌟'
-        />
+        <CustomForm.Header image={LogoImage} />
         <CustomForm.ThirdPartLogin
           disableWhen={isSubmitting}
           type='signup'

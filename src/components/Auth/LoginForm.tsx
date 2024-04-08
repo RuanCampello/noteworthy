@@ -39,13 +39,9 @@ export default function LoginForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='rounded-md w-[420px]'
+        className='rounded-md w-[380px]'
       >
-        <CustomForm.Header
-          image={LogoImage}
-          title='Login'
-          subtitle='Welcome back 👋'
-        />
+        <CustomForm.Header image={LogoImage} />
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
           type='login'
@@ -54,21 +50,29 @@ export default function LoginForm() {
           }
           name='Google'
         />
+        <CustomForm.ThirdPartLogin
+          disableWhen={isPending}
+          type='login'
+          image={
+            'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg'
+          }
+          name='Github'
+        />
         <CustomForm.Separator />
-        <div className='gap-8 flex flex-col mb-12'>
+        <div className='gap-3 flex flex-col mb-10'>
           <FormField
             control={form.control}
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-lg text-neutral-200'>
+                <FormLabel className='font-semibold'>
                   E-mail
                 </FormLabel>
                 <FormControl>
                   <Input
                     type='email'
                     placeholder='johnsmith@example.com'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    className='placeholder:text-midnight/50 placeholder:font-medium h-11 text-base bg-neutral-200 text-midnight'
                     {...field}
                   />
                 </FormControl>
@@ -81,14 +85,14 @@ export default function LoginForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-lg text-neutral-200'>
+                <FormLabel className='font-semibold'>
                   Password
                 </FormLabel>
                 <FormControl>
                   <Input
                     type='password'
                     placeholder='•••••••'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight'
                     {...field}
                   />
                 </FormControl>

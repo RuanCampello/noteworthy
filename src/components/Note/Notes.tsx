@@ -18,8 +18,7 @@ export default async function Notes() {
   const owner = session.user.name;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
-  console.log(filter);
-
+  
   switch (filter) {
     case 'date-new':
       filteredNotes.sort((a, b) => {
