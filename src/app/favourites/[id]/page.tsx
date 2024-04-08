@@ -1,10 +1,8 @@
 import NotFound from '@/app/not-found';
-import { Loading } from '@/components/Loading';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
 import { getNoteById } from '@/data/note';
 import { getUserById } from '@/data/user';
-import { Suspense } from 'react';
 
 type Props = { params: { id: string } };
 
@@ -16,17 +14,15 @@ export default async function Favourite({ params }: Props) {
 
   return (
     <div className='w-full py-6 overflow-y-clip flex flex-col gap-4'>
-      <Suspense fallback={<Loading />}>
-        <NoteEditor content={content}>
-          <NoteHeader
-            title={title}
-            date={createdAt}
-            owner={onwer?.name || ''}
-            id={id}
-            lastUpdate={lastUpdate || createdAt}
-          />
-        </NoteEditor>
-      </Suspense>
+      <NoteEditor content={content}>
+        <NoteHeader
+          title={title}
+          date={createdAt}
+          owner={onwer?.name || ''}
+          id={id}
+          lastUpdate={lastUpdate || createdAt}
+        />
+      </NoteEditor>
     </div>
   );
 }

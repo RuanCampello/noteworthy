@@ -18,7 +18,7 @@ export default function FormThirdPartLogin({
     <button
       type='button'
       disabled={disableWhen}
-      className='bg-neutral-200 hover:bg-neutral-300 disabled:bg-neutral-300 transition-colors duration-200 font-semibold text-midnight py-2 w-full rounded-md flex items-center justify-center gap-4 mt-3'
+      className='bg-neutral-200 hover:bg-neutral-300 disabled:bg-neutral-300 transition-colors duration-200 font-semibold text-midnight py-2 w-full rounded-md flex items-center justify-center gap-4 mt-2.5'
     >
       <Image width={24} height={24} src={image} alt={`${name}'s logo`} />
       {type === 'login' ? (

@@ -18,6 +18,9 @@ import { login } from '@/actions/login';
 import { useTransition } from 'react';
 import { loginFormSchema } from '@/schemas';
 
+import GoogleLogo from '@assets/third-part-login/Google.png';
+import GithubLogo from '@assets/third-part-login/GitHub.svg';
+
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
@@ -35,6 +38,10 @@ export default function LoginForm() {
       login(values);
     });
   }
+
+  const inputStyle =
+    'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
+
   return (
     <Form {...form}>
       <form
@@ -45,17 +52,13 @@ export default function LoginForm() {
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
           type='login'
-          image={
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
-          }
+          image={GoogleLogo}
           name='Google'
         />
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
           type='login'
-          image={
-            'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg'
-          }
+          image={GithubLogo}
           name='Github'
         />
         <CustomForm.Separator />
@@ -65,14 +68,12 @@ export default function LoginForm() {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>
-                  E-mail
-                </FormLabel>
+                <FormLabel className='font-semibold'>E-mail</FormLabel>
                 <FormControl>
                   <Input
                     type='email'
                     placeholder='johnsmith@example.com'
-                    className='placeholder:text-midnight/50 placeholder:font-medium h-11 text-base bg-neutral-200 text-midnight'
+                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
@@ -85,14 +86,12 @@ export default function LoginForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>
-                  Password
-                </FormLabel>
+                <FormLabel className='font-semibold'>Password</FormLabel>
                 <FormControl>
                   <Input
                     type='password'
                     placeholder='•••••••'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight'
+                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>

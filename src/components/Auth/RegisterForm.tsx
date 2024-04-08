@@ -21,6 +21,9 @@ import { useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
 import { register } from '@/actions/register';
 
+import GoogleLogo from '@assets/third-part-login/Google.png';
+import GithubLogo from '@assets/third-part-login/GitHub.svg';
+
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export default function RegisterForm() {
@@ -42,40 +45,46 @@ export default function RegisterForm() {
       register(values);
     });
   }
+
+  const inputStyle =
+    'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='rounded-md w-[420px]'
+        className='rounded-md w-[380px]'
       >
         <CustomForm.Header image={LogoImage} />
         <CustomForm.ThirdPartLogin
           disableWhen={isSubmitting}
           type='signup'
-          image={
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png'
-          }
+          image={GoogleLogo}
           name='Google'
         />
+        <CustomForm.ThirdPartLogin
+          disableWhen={isSubmitting}
+          type='signup'
+          image={GithubLogo}
+          name='Github'
+        />
         <CustomForm.Separator />
-        <div className='gap-6 flex flex-col mb-12'>
+        <div className='gap-3 flex flex-col mb-10'>
           <FormField
             control={form.control}
             name='username'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-lg text-neutral-200'>
-                  Username
-                </FormLabel>
+                <FormLabel className='font-semibold'>Username</FormLabel>
                 <FormControl>
                   <Input
                     type='text'
-                    placeholder='johnsmith123'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    placeholder='johnsmith'
+                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
-                <FormDescription className='text-base text-white/50'>
+                <FormDescription className='text-white/60'>
                   This is your public display name.
                 </FormDescription>
                 <FormMessage />
@@ -87,14 +96,12 @@ export default function RegisterForm() {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-lg text-neutral-200'>
-                  E-mail
-                </FormLabel>
+                <FormLabel className='font-semibold'>E-mail</FormLabel>
                 <FormControl>
                   <Input
                     type='email'
                     placeholder='johnsmith@example.com'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
@@ -107,14 +114,12 @@ export default function RegisterForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-lg text-neutral-200'>
-                  Password
-                </FormLabel>
+                <FormLabel className='font-semibold'>Password</FormLabel>
                 <FormControl>
                   <Input
                     type='password'
                     placeholder='•••••••'
-                    className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 text-lg h-14 text-midnight'
+                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>

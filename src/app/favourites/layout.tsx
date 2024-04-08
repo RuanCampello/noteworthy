@@ -23,7 +23,7 @@ export default async function FavouriteLayout({
             paragraphIcon={<Sparkles size={16} fill='#A3A3A3' />}
           />
         </SubSidebar>
-        {favouriteNotes?.length && children}
+        {favouriteNotes && favouriteNotes.length > 0 && children}
       </div>
     </Resizable>
   );
