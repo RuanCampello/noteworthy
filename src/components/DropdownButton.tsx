@@ -16,7 +16,8 @@ const buttonVariants = tv({
     {
       color: 'favourite',
       active: true,
-      className: 'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 hover:bg-sunset/85',
+      className:
+        'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 hover:bg-sunset/85',
     },
   ],
 });
@@ -37,6 +38,7 @@ export default function DropdownButton({
     <button className={buttonVariants(props)}>
       {cloneElement(icon, {
         size: 18,
+        fill: props.active ? '#181818' : 'transparent',
         className: 'group-active:scale-95 transition-transform duration-200',
       })}
       <span>{text}</span>

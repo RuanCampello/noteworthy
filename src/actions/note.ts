@@ -4,7 +4,7 @@ import { currentUser } from '@/data/note';
 import { db } from '@/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
-import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -32,21 +32,31 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
 }
 
 export async function toggleNoteFavourite(id: string, userId: string) {
+  const origin = headers().get('origin');
+  const pathname = headers().get('pathname');
+  const basePathname = pathname?.split('/')[1];
+
   const note = await db.note.findUnique({ where: { id, userId } });
   if (!note) return;
   if (note.isFavourite === true) {
     await db.note.update({
       where: { id, userId },
-      data: { isFavourite: false },
+      data: { isFavourite: false, lastUpdate: new Date() },
     });
   } else if (note.isFavourite === false) {
     await db.note.update({
       where: { id, userId },
-      data: { isFavourite: true },
+      data: { isFavourite: true, lastUpdate: new Date() },
     });
   }
 
-  revalidatePath(`/notes/${id}`);
+  if (basePathname === 'favourites') {
+    const redirectUrl = new URL(`${origin}/notes/${id}`);
+    redirect(redirectUrl.toString());
+  } else if (basePathname === 'notes') {
+    const redirectUrl = new URL(`${origin}/favourites/${id}`);
+    redirect(redirectUrl.toString());
+  }
 }
 
 export async function editNote(
@@ -68,5 +78,5 @@ export async function editNote(
 
 export async function deleteNote(id: string) {
   await db.note.delete({ where: { id } });
-  redirect('/')
+  redirect('/');
 }
