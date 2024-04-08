@@ -18,27 +18,22 @@ export default async function Notes() {
   const owner = session.user.name;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
-  
+
   switch (filter) {
     case 'date-new':
       filteredNotes.sort((a, b) => {
         return b.createdAt.getTime() - a.createdAt.getTime();
       });
-      break;
     case 'date-old':
       filteredNotes.sort((a, b) => {
         return a.createdAt.getTime() - b.createdAt.getTime();
       });
-      break;
     case 'title':
       filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
-      break;
     default:
-      filteredNotes.sort((a, b) => {
-        if (!b.lastUpdate || !a.lastUpdate) return b.lastUpdate ? -1 : 1;
-        return b.lastUpdate.getTime() - a.lastUpdate.getTime();
-      });
-      break;
+      filteredNotes.sort(
+        (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime()
+      );
   }
 
   return (
