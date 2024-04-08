@@ -12,10 +12,15 @@ import HoverableSelectItem from './HoverableSelectItem';
 
 interface ColourSelectProps {
   defaultColour: 'random' | ColourType;
-  onValueChange: () => void
+  onValueChange: () => void;
+  disabled?: boolean;
 }
 
-export default function ColourSelect({ defaultColour, onValueChange }: ColourSelectProps) {
+export default function ColourSelect({
+  defaultColour,
+  onValueChange,
+  disabled,
+}: ColourSelectProps) {
   const colours = [
     { value: 'slate', name: 'dark slate blue' },
     { value: 'wisteria', name: 'wisteria' },
@@ -30,7 +35,12 @@ export default function ColourSelect({ defaultColour, onValueChange }: ColourSel
   ];
 
   return (
-    <Select defaultValue={defaultColour} onValueChange={onValueChange} name='colour'>
+    <Select
+      disabled={disabled}
+      defaultValue={defaultColour}
+      onValueChange={onValueChange}
+      name='colour'
+    >
       <SelectTrigger className='bg-black capitalize col-span-3'>
         <SelectValue className='w-full' placeholder={defaultColour} />
       </SelectTrigger>

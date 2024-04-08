@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Button } from '../ui/button';
+import { Loader2 } from 'lucide-react';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -34,8 +35,12 @@ interface AddNoteDialogProps {
 export type NoteDialog = z.infer<typeof noteDialogSchema>;
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
-  async function handleAddNote(values: NoteDialog) {
-    await createNote(values);
+  const [loading, startTransition] = useTransition();
+
+  function handleAddNote(values: NoteDialog) {
+    startTransition(async () => {
+      await createNote(values);
+    });
   }
 
   const noteDialog = useForm<NoteDialog>({
@@ -72,6 +77,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        disabled={loading}
                         type='text'
                         className='bg-black dark col-span-3'
                         {...field}
@@ -92,6 +98,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                   </FormLabel>
                   <FormControl>
                     <ColourSelect
+                      disabled={loading}
                       onValueChange={field.onChange}
                       defaultColour={'random'}
                       {...field}
@@ -102,7 +109,15 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               )}
             />
             <DialogFooter>
-              <Button variant='create' size='sm' type='submit'>Create note</Button>
+              <Button
+                disabled={loading}
+                variant='create'
+                size='sm'
+                type='submit'
+              >
+                Create note
+                {loading && <Loader2 size={16} className='animate-spin' />}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
