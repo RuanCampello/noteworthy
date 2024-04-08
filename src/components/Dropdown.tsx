@@ -1,17 +1,16 @@
 import { ReactNode } from 'react';
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuContent, DropdownMenuTrigger
 } from './ui/dropdown-menu';
-import { Archive, Pencil, Star, Trash } from 'lucide-react';
+import { Archive, Pencil, Star, StarOff, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './Note/DeleteNoteDialog';
-import SubmitButton from './SubmitButton';
 import EditNoteDialog from './Note/EditNoteDialog';
 import { currentUser, getNoteById, isNoteFavourite } from '@/data/note';
 import { toggleNoteFavourite } from '@/actions/note';
+
+import DropdownButton from './DropdownButton';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
@@ -32,58 +31,29 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
 
   const { id, title, colour } = note;
   const favourite = await isNoteFavourite(noteId);
-  const iconStyle =
-    'group-active:scale-95 transition-transform duration-200';
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         align='end'
-        sideOffset={14}
-        className='bg-night text-neutral-100 border-none gap-3 w-52 flex flex-col p-3 rounded-md'
+        sideOffset={10}
+        className='bg-night text-neutral-100 border-none gap-1.5 w-44 flex flex-col p-1.5 rounded-md'
       >
-        <DropdownMenuItem
-          className={`text-base active:bg-sunset focus:bg-sunset hover:bg-sunset active:text-black group ${
-            favourite &&
-            'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 text-black'
-          }`}
-        >
-          {favourite ? (
-            <form className='w-full' action={handleToggleFavourite}>
-              <SubmitButton>
-                <Star fill='#333333' className={iconStyle} size={20} />
-                Unfavourite
-              </SubmitButton>
-            </form>
-          ) : (
-            <form className='w-full' action={handleToggleFavourite}>
-              <SubmitButton>
-                <Star size={20} className={iconStyle} />
-                Favourite
-              </SubmitButton>
-            </form>
-          )}
-        </DropdownMenuItem>
-        <DropdownMenuItem className='gap-3 text-base focus:bg-mindaro active:bg-mindaro active:text-black group'>
-          <Archive size={20} className={iconStyle} />
-          Archive
-        </DropdownMenuItem>
+        <form action={handleToggleFavourite}>
+          <DropdownButton
+            active={favourite}
+            color='favourite'
+            text={favourite ? 'Unfavourite' : 'Favourite'}
+            icon={favourite ? <StarOff /> : <Star />}
+          />
+        </form>
+        <DropdownButton icon={<Archive />} text='Archive' color='archive' />
         <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
-          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-tiffany focus:bg-tiffany focus:text-black focus:outline-none hover:bg-tiffany hover:text-black group'>
-            <Pencil size={20} className={iconStyle} />
-            Edit
-          </button>
+          <DropdownButton text='Edit' icon={<Pencil />} color='edit' />
         </EditNoteDialog>
-        <Separator className='bg-white/40' />
+        <Separator className='bg-silver' />
         <DeleteNoteDialog noteName={title} noteId={id}>
-          <button className='gap-3 flex p-2 items-center rounded-sm text-base active:text-black active:bg-melon focus:bg-melon focus:text-black focus:outline-none hover:bg-melon hover:text-black group'>
-            <Trash
-              size={20}
-              className='group-hover:scale-110 transition-transform duration-200 group-active:scale-95'
-            />
-            <span>Delete</span>
-          </button>
+          <DropdownButton color='delete' icon={<Trash />} text='Delete' />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>
