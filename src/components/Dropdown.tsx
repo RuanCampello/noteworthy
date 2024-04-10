@@ -1,14 +1,15 @@
 import { ReactNode } from 'react';
 import {
   DropdownMenu,
-  DropdownMenuContent, DropdownMenuTrigger
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Archive, Pencil, Star, StarOff, Trash } from 'lucide-react';
+import { Archive, ArchiveX, Pencil, Star, StarOff, Trash } from 'lucide-react';
 import { Separator } from './ui/separator';
 import DeleteNoteDialog from './Note/DeleteNoteDialog';
 import EditNoteDialog from './Note/EditNoteDialog';
-import { currentUser, getNoteById, isNoteFavourite } from '@/data/note';
-import { toggleNoteFavourite } from '@/actions/note';
+import { currentUser, getNoteById } from '@/data/note';
+import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 
 import DropdownButton from './DropdownButton';
 interface DropdownProps {
@@ -26,11 +27,18 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
     await toggleNoteFavourite(noteId, userId);
   }
 
+  async function handleToggleArchive() {
+    'use server';
+    if (!userId) return;
+    await toggleNoteArchive(noteId, userId);
+  }
+
   const note = await getNoteById(noteId);
   if (!note) return;
 
-  const { id, title, colour } = note;
-  const favourite = await isNoteFavourite(noteId);
+  const { id, title, colour, isFavourite, isArchived } = note;
+
+  console.log(isFavourite, isArchived);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -41,19 +49,28 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
       >
         <form action={handleToggleFavourite}>
           <DropdownButton
-            active={favourite}
+            disabled={isArchived}
+            active={isFavourite}
             color='favourite'
-            text={favourite ? 'Unfavourite' : 'Favourite'}
-            icon={favourite ? <StarOff /> : <Star />}
+            text={isFavourite ? 'Unfavourite' : 'Favourite'}
+            icon={isFavourite ? <StarOff /> : <Star />}
           />
         </form>
-        <DropdownButton icon={<Archive />} text='Archive' color='archive' />
+        <form action={handleToggleArchive}>
+          <DropdownButton
+            icon={isArchived ? <ArchiveX /> : <Archive />}
+            color='archive'
+            text={isArchived ? 'Unarchive' : 'Archive'}
+            disabled={isFavourite}
+            active={isArchived}
+          />
+        </form>
         <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
-          <DropdownButton text='Edit' icon={<Pencil />} color='edit' />
+          <DropdownButton icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         <Separator className='bg-silver' />
         <DeleteNoteDialog noteName={title} noteId={id}>
-          <DropdownButton color='delete' icon={<Trash />} text='Delete' />
+          <DropdownButton color='delete' icon={<Trash />} />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>

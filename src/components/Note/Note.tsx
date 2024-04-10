@@ -3,7 +3,6 @@
 import { ColourType, Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
-import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,7 +13,7 @@ interface NoteProps {
   text: HTMLContent;
   colour: ColourType;
   date: Date;
-  href: 'notes' | 'favourites';
+  href: 'notes' | 'favourites' | 'archived';
 }
 
 export default function Note({
@@ -58,9 +57,15 @@ export default function Note({
 
   function formatRedirectUrl(): string {
     if (pathname.includes('notes')) return uid;
-    if (pathname.includes('favourites/') && href === 'favourites') return uid;
-    if (pathname.includes('favourites/')) return `/notes/${uid}`;
-    else return `${href}/${uid}`;
+    if (
+      (pathname.includes('favourites/') && href === 'favourites') ||
+      (pathname.includes('archived/') && href === 'archived')
+    ) {
+      return uid;
+    }
+    if (pathname.includes('archived/') || pathname.includes('favourites/')) {
+      return `/notes/${uid}`;
+    } else return `${href}/${uid}`;
   }
 
   const redirectUrl =
@@ -69,7 +74,6 @@ export default function Note({
       : formatRedirectUrl();
 
   const backgroundColour = Colours[colour];
-  const setOpenNote = (id: string) => setCookie('open_note', id);
 
   const formattedName: string =
     isMobile && orientation === 'portrait' ? name[0].toUpperCase() : name;
@@ -79,11 +83,11 @@ export default function Note({
       href={
         //if the user is inside a favourite note and click on a non favourite note
         // remove the favourite from redirect link and transform into a note link
-        href === 'favourites' && pathname.includes('favourites/')
-          ? redirectUrl.replace('favourites', '')
+        (href === 'favourites' && pathname.includes('favourites/')) ||
+        (href === 'archived' && pathname.includes('archived/'))
+          ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      onClick={() => setOpenNote(uid)}
       className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none'
       style={{
         transition: 'background-color 0.5s ease',

@@ -31,30 +31,66 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   redirect(`notes/${note.id}`);
 }
 
-export async function toggleNoteFavourite(id: string, userId: string) {
+function getPathnameParams() {
   const origin = headers().get('origin');
   const pathname = headers().get('pathname');
-  const basePathname = pathname?.split('/')[1];
+  return { basePath: pathname?.split('/')[1], origin };
+}
+
+export async function toggleNoteFavourite(id: string, userId: string) {
+  const { basePath, origin } = getPathnameParams();
 
   const note = await db.note.findUnique({ where: { id, userId } });
   if (!note) return;
-  if (note.isFavourite === true) {
-    await db.note.update({
-      where: { id, userId },
-      data: { isFavourite: false, lastUpdate: new Date() },
-    });
-  } else if (note.isFavourite === false) {
-    await db.note.update({
-      where: { id, userId },
-      data: { isFavourite: true, lastUpdate: new Date() },
-    });
+
+  if (!note.isArchived) {
+    if (note.isFavourite === true) {
+      await db.note.update({
+        where: { id, userId },
+        data: { isFavourite: false, lastUpdate: new Date() },
+      });
+    } else if (note.isFavourite === false) {
+      await db.note.update({
+        where: { id, userId },
+        data: { isFavourite: true, lastUpdate: new Date() },
+      });
+    }
   }
 
-  if (basePathname === 'favourites') {
+  if (basePath === 'favourites') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
     redirect(redirectUrl.toString());
-  } else if (basePathname === 'notes') {
+  } else if (basePath === 'notes') {
     const redirectUrl = new URL(`${origin}/favourites/${id}`);
+    redirect(redirectUrl.toString());
+  }
+}
+
+export async function toggleNoteArchive(id: string, userId: string) {
+  const { basePath, origin } = getPathnameParams();
+
+  const note = await db.note.findUnique({ where: { id, userId } });
+  if (!note) return;
+
+  if (!note.isFavourite) {
+    if (note.isArchived === true) {
+      await db.note.update({
+        where: { id, userId },
+        data: { isArchived: false, lastUpdate: new Date() },
+      });
+    } else if (note.isArchived === false) {
+      await db.note.update({
+        where: { id, userId },
+        data: { isArchived: true, lastUpdate: new Date() },
+      });
+    }
+  }
+
+  if (basePath === 'archived') {
+    const redirectUrl = new URL(`${origin}/notes/${id}`);
+    redirect(redirectUrl.toString());
+  } else if (basePath === 'notes') {
+    const redirectUrl = new URL(`${origin}/archived/${id}`);
     redirect(redirectUrl.toString());
   }
 }

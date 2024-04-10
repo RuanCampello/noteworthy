@@ -15,7 +15,11 @@ export default async function FavouriteLayout({
   return (
     <Resizable>
       <div className='flex h-full'>
-        <SubSidebar notes={favouriteNotes!} title={'Favourites'}>
+        <SubSidebar
+          notes={favouriteNotes!}
+          title={'Favourites'}
+          href={'favourites'}
+        >
           <NoNotes
             headerIcon={<StarOff size={80} strokeWidth={1} />}
             text="You don't have any favourite note"

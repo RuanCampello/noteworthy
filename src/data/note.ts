@@ -50,6 +50,18 @@ export async function getAllUserFavouriteNotes(userId: string) {
   }
 }
 
+export async function getAllUserArchivedNotes(userId: string) {
+  try {
+    const notes = await db.note.findMany({
+      where: { userId, isArchived: true },
+    });
+    return notes;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export async function updateNoteContent(
   id: string,
   userId: string,
@@ -65,14 +77,5 @@ export async function updateNoteContent(
   } catch (error) {
     console.error(error);
     return;
-  }
-}
-
-export async function isNoteFavourite(id: string) {
-  try {
-    const note = await db.note.findUnique({ where: { id, isFavourite: true } });
-    if (note) return true;
-  } catch (error) {
-    return false;
   }
 }

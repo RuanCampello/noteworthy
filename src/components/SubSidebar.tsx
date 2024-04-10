@@ -6,12 +6,14 @@ interface SubSidebarProps {
   notes: NoteType[];
   children?: ReactNode;
   title: string;
+  href: 'favourites' | 'archived';
 }
 
 export default function SubSidebar({
   notes,
   children,
   title,
+  href,
 }: SubSidebarProps) {
   if (!notes || notes.length <= 0) return children;
   return (
@@ -19,7 +21,7 @@ export default function SubSidebar({
       <h1 className='font-semibold text-2xl my-10'>{title}</h1>
       {notes.map((note) => (
         <Note
-          href='favourites'
+          href={href}
           key={note.id}
           uid={note.id}
           name={note.title}

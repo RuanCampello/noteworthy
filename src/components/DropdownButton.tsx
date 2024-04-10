@@ -11,6 +11,9 @@ const buttonVariants = tv({
       archive: 'active:bg-mindaro focus:bg-mindaro hover:bg-mindaro',
     },
     active: { true: 'text-black' },
+    disabled: {
+      true: 'text-neutral-400 hover:text-neutral-400 focus:text-neutral-400 active:text-neutral-400 hover:bg-transparent focus:bg-transparent active:bg-transparent cursor-not-allowed',
+    },
   },
   compoundVariants: [
     {
@@ -19,13 +22,19 @@ const buttonVariants = tv({
       className:
         'bg-sunset active:bg-sunset/85 focus:bg-sunset/85 hover:bg-sunset/85',
     },
+    {
+      color: 'archive',
+      active: true,
+      className:
+        'bg-mindaro active:bg-mindaro/85 focus:bg-mindaro/85 hover:bg-mindaro/85',
+    },
   ],
 });
 
 type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 interface DropdownButtonProps extends ButtonVariants {
-  text: string;
+  text?: string;
   icon: JSX.Element;
 }
 
@@ -35,13 +44,14 @@ export default function DropdownButton({
   ...props
 }: DropdownButtonProps) {
   return (
-    <button className={buttonVariants(props)}>
+    <button disabled={props.disabled} className={buttonVariants(props)}>
       {cloneElement(icon, {
         size: 18,
-        fill: props.active ? '#181818' : 'transparent',
-        className: 'group-active:scale-95 transition-transform duration-200',
+        fill: props.active ? '#A3A3A3' : 'transparent',
+        strokeWidth: 2.5,
+        className: 'group-disabled:scale-100 group-active:scale-95 transition-transform duration-200',
       })}
-      <span>{text}</span>
+      <span className='capitalize'>{text || props.color}</span>
     </button>
   );
 }
