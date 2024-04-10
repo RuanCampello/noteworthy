@@ -13,7 +13,7 @@ export default async function Favourite({ params }: Props) {
   const onwer = await getUserById(userId);
 
   return (
-    <div className='w-full py-6 overflow-y-clip flex flex-col gap-4'>
+    <div className='w-full pb-6 overflow-y-clip flex flex-col gap-4'>
       <NoteEditor content={content}>
         <NoteHeader
           title={title}

@@ -28,23 +28,25 @@ export default async function NoteHeader({
   const longLastUpdate = toLocaleDateLong(lastUpdate);
   const longDate = toLocaleDateLong(date);
   return (
-    <div className='sticky xl:px-11 px-6 xl:pt-14 pt-8'>
-      <div className='flex justify-between items-center xl:mb-14 mb-8'>
+    <header className='sticky xl:px-10 px-6 xl:pt-12 pt-8'>
+      <div className='flex justify-between items-center xl:mb-12 mb-8'>
         <h1
           className='text-4xl font-semibold line-clamp-1 w-[90%]'
           title={title}
         >
           {title}
         </h1>
-        <SaveNote />
-        <Dropdown noteId={id}>
-          <button className='h-fit focus:rounded-full focus:outline-offset-2'>
-            <MoreHorizontal
-              size={38}
-              className='text-white/60 border-2 border-white/60 hover:text-neutral-200 hover:border-neutral-100 transition-colors duration-200 rounded-full focus:outline-none p-2'
-            />
-          </button>
-        </Dropdown>
+        <div className='flex gap-3 items-center'>
+          <SaveNote />
+          <Dropdown noteId={id}>
+            <button className='h-fit focus:rounded-full focus:outline-offset-2'>
+              <MoreHorizontal
+                size={42}
+                className='text-white/60 border-2 border-white/60 hover:text-neutral-200 hover:border-neutral-100 transition-colors duration-200 rounded-full focus:outline-none p-2'
+              />
+            </button>
+          </Dropdown>
+        </div>
       </div>
       <Separator className='mb-3' />
       <div className='font-medium text-silver xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'>
@@ -62,6 +64,6 @@ export default async function NoteHeader({
         </NoteHeaderItem>
         <WordCounter />
       </div>
-    </div>
+    </header>
   );
 }

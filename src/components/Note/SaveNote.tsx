@@ -1,4 +1,5 @@
 'use client';
+
 import { Check, Save } from 'lucide-react';
 import MenuTooltip from '../Tooltip';
 import { useCurrentEditor } from '@tiptap/react';
@@ -50,7 +51,7 @@ export default function SaveNote() {
           type='submit'
           disabled={loading}
           onClick={handleSaveClick}
-          className='text-silver h-fit focus:outline-offset-2 p-2 border-2 border-silver rounded-full disabled:animate-pulse'
+          className='text-silver hover:text-neutral-200 hover:border-neutral-100 h-fit focus:outline-offset-2 p-2 border-2 border-silver rounded-full disabled:animate-pulse'
         >
           <Save size={22} strokeWidth={2} />
         </button>
