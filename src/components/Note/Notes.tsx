@@ -19,23 +19,17 @@ export default async function Notes() {
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
 
-  switch (filter) {
-    case 'date-new':
-      filteredNotes.sort((a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      });
-    case 'date-old':
-      filteredNotes.sort((a, b) => {
-        return a.createdAt.getTime() - b.createdAt.getTime();
-      });
-    case 'title':
-      filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
-    default:
-      filteredNotes.sort(
-        (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime()
-      );
+  if (filter === 'date-new') {
+    filteredNotes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  } else if (filter === 'date-old') {
+    filteredNotes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  } else if (filter === 'title') {
+    filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    filteredNotes.sort(
+      (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime()
+    );
   }
-
   return (
     <div>
       <SectionTitle title='Notes'>

@@ -26,16 +26,19 @@ export default function SortDropdown() {
   const filterParams = searchParams.get('filter');
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
-  const filter = filterParams || '';
+  const filter = filterParams || 'last-modified';
 
   function handleSort(selectedItem: string) {
     if (!filterParams) {
       params.append('filter', selectedItem);
       router.push(`?${params}`);
+      console.log(params)
+      
     } else {
       params.delete('filter', filterParams);
       params.append('filter', selectedItem);
       router.push(`?${params}`);
+      console.log(params)
     }
   }
   return (

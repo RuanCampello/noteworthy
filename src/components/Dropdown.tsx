@@ -37,8 +37,6 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
   if (!note) return;
 
   const { id, title, colour, isFavourite, isArchived } = note;
-
-  console.log(isFavourite, isArchived);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
