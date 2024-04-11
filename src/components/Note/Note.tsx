@@ -49,11 +49,6 @@ export default function Note({
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentId = useParams<{ id: string }>().id;
-  //todo: fix double focus on save
-  useEffect(() => {
-    if (currentId === uid) setFocused(true);
-  }, [currentId, uid, focused]);
 
   function formatRedirectUrl(): string {
     if (pathname.includes('notes')) return uid;

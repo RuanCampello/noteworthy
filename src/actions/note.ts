@@ -4,6 +4,7 @@ import { currentUser } from '@/data/note';
 import { db } from '@/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -63,6 +64,8 @@ export async function toggleNoteFavourite(id: string, userId: string) {
   } else if (basePath === 'notes') {
     const redirectUrl = new URL(`${origin}/favourites/${id}`);
     redirect(redirectUrl.toString());
+  } else {
+    revalidatePath('/')
   }
 }
 

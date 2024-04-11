@@ -49,14 +49,12 @@ export default async function Notes() {
           </PlaceholderWrapper>
         ) : filteredNotes.length > 0 ? (
           filteredNotes.map((note) => {
-            const { id, title, colour, content, createdAt, lastUpdate } = note;
+            const { id, title, colour, content, createdAt } = note;
+            const extendedNote = {...note, owner}
             return (
               <NoteContextMenu
-                title={title}
-                colour={colour}
+                note={extendedNote}
                 key={id}
-                owner={owner || ''}
-                lastUpdate={lastUpdate || createdAt}
               >
                 <Note
                   href='notes'
