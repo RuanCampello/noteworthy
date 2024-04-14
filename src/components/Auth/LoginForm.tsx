@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -15,16 +16,20 @@ import { CustomForm } from '../Form';
 import { Input } from '../ui/input';
 import LogoImage from '@assets/logo.svg';
 import { login } from '@/actions/login';
-import { useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { loginFormSchema } from '@/schemas';
 
 import GoogleLogo from '@assets/third-part-login/Google.png';
 import GithubLogo from '@assets/third-part-login/GitHub.svg';
+import { useToast } from '../ui/use-toast';
+import { X } from 'lucide-react';
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState(String);
+  const { toast } = useToast();
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -34,11 +39,27 @@ export default function LoginForm() {
   });
 
   async function onSubmit(values: LoginFormSchema) {
-    startTransition(() => {
-      login(values);
+    startTransition(async () => {
+      const { error } = await login(values);
+      if (error) setError(error);
     });
   }
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'error',
+        action: (
+          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          </div>
+        ),
+      });
+    }
+  }, [error]);
+  
   const inputStyle =
     'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
 

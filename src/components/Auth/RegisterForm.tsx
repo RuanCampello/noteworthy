@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,18 +18,19 @@ import { Input } from '../ui/input';
 import LogoImage from '@assets/logo.svg';
 import { useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
-import { useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
 import { register } from '@/actions/register';
 
 import GoogleLogo from '@assets/third-part-login/Google.png';
 import GithubLogo from '@assets/third-part-login/GitHub.svg';
+import { X } from 'lucide-react';
 
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export default function RegisterForm() {
-  const router = useRouter();
   const { toast } = useToast();
+  const [error, setError] = useState(String);
   const [isSubmitting, startTransition] = useTransition();
 
   const form = useForm<RegisterFormSchema>({
@@ -41,10 +43,25 @@ export default function RegisterForm() {
   });
 
   async function onSubmit(values: RegisterFormSchema) {
-    startTransition(() => {
-      register(values);
+    startTransition(async () => {
+      const { error } = await register(values);
+      if (error) setError(error);
     });
   }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'error',
+        action: (
+          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          </div>
+        ),
+      });
+    }
+  }, [error]);
 
   const inputStyle =
     'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';

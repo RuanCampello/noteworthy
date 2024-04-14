@@ -11,7 +11,9 @@ import { AuthError } from 'next-auth';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
 
-export async function register(values: z.infer<typeof registerFormSchema>) {
+export async function register(
+  values: z.infer<typeof registerFormSchema>
+): Promise<{ error: string | null }> {
   const fields = registerFormSchema.safeParse(values);
 
   if (!fields.success) return { error: 'Invalid Fields' };
@@ -46,6 +48,7 @@ export async function register(values: z.infer<typeof registerFormSchema>) {
       password,
       redirectTo: DEFAULT_REDIRECT,
     });
+    return { error: null };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
