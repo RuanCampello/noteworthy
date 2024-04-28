@@ -6,7 +6,7 @@ export async function uploadImage(image: File, userId: string) {
   const profileImageRef = ref(storage, userId);
 
   const metadata = { contentType: 'image/jpeg' };
-  const compressedImage = await compressImage(image)
+  const compressedImage = await compressImage(image);
 
   await uploadBytesResumable(profileImageRef, compressedImage, metadata);
   const downloadUrl = await getDownloadURL(profileImageRef);

@@ -12,7 +12,6 @@ import {
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import Image from 'next/image';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -52,6 +51,7 @@ export default function EditProfileDialog() {
       if (!user?.id || !user.name || !image) return;
       const url = await uploadImage(image[0], user.name);
       await uploadUserProfileImage(url, user.id);
+      setOpen(false);
       //force reload to prevent nextjs image cache
       if (!(typeof window === 'undefined')) window.location.reload();
     });
@@ -92,11 +92,11 @@ export default function EditProfileDialog() {
                   <X size={16} />
                 </button>
               )}
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
                 src={selectedImage || image || ''}
-                width={160}
-                height={160}
+                loading='lazy'
                 alt={(name && name[0].toUpperCase()) || ''}
               />
             </Label>
