@@ -1,10 +1,7 @@
-import { cookies } from 'next/headers';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { doc, getDoc } from 'firebase/firestore';
 
 import { Bolt, LogOut } from 'lucide-react';
 import EditProfileDialog from './EditProfileDialog';
-import { User } from '@/types/user-type';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,10 +15,9 @@ export default async function Profile() {
   const session = await auth();
   if (!session?.user || !session.user?.id) return null;
 
-  const user = session.user as User;
-  const { name, email, image } = user;
-  if (!name || !email) return;
-
+  const { image, name, email } = session.user;
+  if (!name) return null;
+  
   async function handleLogout() {
     'use server';
     await signOut();
@@ -44,7 +40,7 @@ export default async function Profile() {
             <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black'>
-            <EditProfileDialog currentUser={user} />
+            <EditProfileDialog />
             <DropdownMenuSeparator />
             <form id='logout' action={handleLogout}>
               <button

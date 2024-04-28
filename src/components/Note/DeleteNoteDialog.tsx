@@ -48,6 +48,7 @@ export default function DeleteNoteDialog({
           <Button
             disabled={loading}
             variant='destructive'
+            size='sm'
             onClick={handleDeleteNote}
           >
             Delete note

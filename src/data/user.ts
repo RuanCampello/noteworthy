@@ -1,3 +1,5 @@
+'use server';
+
 import { db } from '@/db';
 
 export async function getUserByEmail(email: string) {
@@ -15,5 +17,16 @@ export async function getUserById(id: string) {
     return user;
   } catch (error) {
     return null;
+  }
+}
+
+export async function uploadUserProfileImage(url: string, userId: string) {
+  try {
+    await db.user.update({
+      where: { id: userId },
+      data: { image: url },
+    });
+  } catch (error) {
+    console.error(error);
   }
 }

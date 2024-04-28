@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,18 +13,15 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import Image from 'next/image';
-import { User } from '@/types/user-type';
-import { getCookie } from 'cookies-next';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Pencil, X } from 'lucide-react';
+import { Loader2, Pencil, X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { useSession } from 'next-auth/react';
+import { uploadImage } from '@/actions/user';
+import { uploadUserProfileImage } from '@/data/user';
 import { useRouter } from 'next/navigation';
-
-interface EditProfileDialogProps {
-  currentUser: User;
-}
 
 const formSchema = z.object({
   name: z
@@ -35,97 +32,43 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-export default function EditProfileDialog({
-  currentUser,
-}: EditProfileDialogProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<FormSchema>({
+export default function EditProfileDialog() {
+  const { register, handleSubmit } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
 
-  const [userId, setUserID] = useState(String);
   const [selectedImage, setSelectedImage] = useState<string>();
+  const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const session = useSession();
+  const user = session.data?.user;
   const { toast } = useToast();
 
-  useEffect(() => {
-    const user_id = getCookie('user_id');
-    if (user_id) setUserID(user_id);
-  }, []);
-
-  if (!userId) return null;
+  if (!user) return;
 
   async function handleEditProfile({ name, image }: FormSchema) {
-    // const newName = name !== currentUser.name ? name : undefined;
-    // const isUsernameAvailable = await checkUsernameAvailability(name);
-
-    // if (newName === undefined && (image === undefined || image.length === 0)) {
-    //   return;
-    // }
-
-    // if (isUsernameAvailable) {
-    //   if (image !== undefined && image.length > 0) {
-    //     const profileImage = image[0];
-    //     const storageRef = ref(storage, `${userId}`);
-    //     await uploadBytesResumable(storageRef, profileImage);
-    //     const downloadUrl = await getDownloadURL(storageRef);
-
-    //     if (newName !== undefined && isUsernameAvailable) {
-    //       await updateProfile(currentUser, {
-    //         name: newName,
-    //         image: downloadUrl,
-    //       });
-    //     } else {
-    //       await updateProfile(currentUser, { image: downloadUrl });
-    //     }
-    //   } else {
-    //     await updateProfile(currentUser, { name: newName });
-    //   }
-    //   toast({
-    //     title: 'Profile Updated',
-    //     description: 'Your digital identity shines brighter than ever! ✨',
-    //     variant: 'edit',
-    //     action: (
-    //       <div className='bg-slate/20 p-2 rounded-md w-fit'>
-    //         <Check
-    //           size={24}
-    //           className='bg-slate text-midnight p-1 rounded-full'
-    //         />
-    //       </div>
-    //     ),
-    //   });
-    //   setOpen(false);
-    //   router.refresh();
-    //   setSelectedImage(undefined);
-    // } else {
-    //   toast({
-    //     title: 'Name Unavailable',
-    //     description:
-    //       "Oops! It seems like the name you're trying to use is already taken.",
-    //     variant: 'error',
-    //     action: (
-    //       <div className='bg-tickle/20 p-2 rounded-md w-fit'>
-    //         <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
-    //       </div>
-    //     ),
-    //   });
-    // }
+    startTransition(async () => {
+      if (!user?.id || !user.name || !image) return;
+      const url = await uploadImage(image[0], user.name);
+      await uploadUserProfileImage(url, user.id);
+      //force reload to prevent nextjs image cache
+      if (!(typeof window === 'undefined')) window.location.reload();
+    });
   }
+
   function handleImageChange(e: any) {
     if (e.target && e.target.files && e.target.files.length > 0) {
       const preview = e.target.files[0];
       setSelectedImage(URL.createObjectURL(preview));
     }
   }
-  const { name, image } = currentUser;
+
+  const { name, image } = user;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className='w-full select-none rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between'>
+        <div className='w-full select-none rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between cursor-pointer'>
           Edit profile
           <Pencil size={16} className='text-neutral-400' />
         </div>
@@ -151,10 +94,10 @@ export default function EditProfileDialog({
               )}
               <Image
                 className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
-                src={selectedImage || image}
+                src={selectedImage || image || ''}
                 width={160}
                 height={160}
-                alt={name[0].toUpperCase()}
+                alt={(name && name[0].toUpperCase()) || ''}
               />
             </Label>
             <Input
@@ -164,6 +107,7 @@ export default function EditProfileDialog({
               className='hidden'
               id='image-input'
               accept='image/png, image/jpeg'
+              disabled={loading}
             />
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>
@@ -172,13 +116,19 @@ export default function EditProfileDialog({
               {...register('name')}
               className='col-span-3 bg-black invalid:focus:outline-red-600'
               required
-              defaultValue={name}
-              minLength={4}
+              defaultValue={name || ''}
+              disabled={loading}
             />
           </div>
           <DialogFooter className='mt-4'>
-            <Button disabled={isSubmitting} type='submit'>
+            <Button
+              size='sm'
+              disabled={loading}
+              type='submit'
+              className='flex items-center gap-2'
+            >
               Save changes
+              {loading && <Loader2 size={16} className='animate-spin' />}
             </Button>
           </DialogFooter>
         </form>

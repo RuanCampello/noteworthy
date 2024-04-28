@@ -24,12 +24,9 @@ export default {
 
         if (fields.success) {
           const { email, password } = fields.data;
-
           const user = await getUserByEmail(email);
           if (!user || !user.password) return null;
-
           const passwordsMatch = await bcrypt.compare(password, user.password);
-
           if (passwordsMatch) return user;
         }
         return null;
