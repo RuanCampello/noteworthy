@@ -1,4 +1,5 @@
 'use client';
+
 import { ReactNode, useState, useTransition } from 'react';
 import {
   Dialog,
@@ -11,8 +12,8 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 import ColourSelect from '../ColourSelect';
-import { ColourType } from '@/utils/colours';
-import { useForm } from 'react-hook-form';
+import { ColourType, Colours } from '@/utils/colours';
+import { useForm, useWatch } from 'react-hook-form';
 import { noteDialogSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NoteDialog } from './AddNoteDialog';
@@ -38,10 +39,10 @@ export default function EditNoteDialog({
   children,
   noteName,
   noteColour,
-  noteId, 
+  noteId,
 }: EditNoteDialogProps) {
   const [loading, startTransition] = useTransition();
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const noteDialog = useForm<NoteDialog>({
     resolver: zodResolver(noteDialogSchema),
     defaultValues: {
@@ -53,9 +54,16 @@ export default function EditNoteDialog({
   function handleEditNote(values: NoteDialog) {
     startTransition(async () => {
       await editNote(values, noteId);
-      setOpen(false)
+      setOpen(false);
     });
   }
+
+  const colour = useWatch({
+    control: noteDialog.control,
+    name: 'colour',
+  }) as ColourType;
+  const selectedColour = Colours[colour];
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -89,8 +97,9 @@ export default function EditNoteDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        style={{ outlineColor: selectedColour }}
                         type='text'
-                        className='bg-black dark col-span-3'
+                        className='bg-black dark col-span-3 focus:outline focus:ring-transparent'
                         {...field}
                       />
                     </FormControl>
@@ -109,6 +118,7 @@ export default function EditNoteDialog({
                   </FormLabel>
                   <FormControl>
                     <ColourSelect
+                      colour={selectedColour}
                       onValueChange={field.onChange}
                       defaultColour={noteColour}
                       {...field}
@@ -120,8 +130,8 @@ export default function EditNoteDialog({
             />
             <DialogFooter>
               <Button
+                style={{ backgroundColor: selectedColour }}
                 disabled={loading}
-                variant='create'
                 size='sm'
                 type='submit'
               >

@@ -14,12 +14,14 @@ interface ColourSelectProps {
   defaultColour: 'random' | ColourType;
   onValueChange: () => void;
   disabled?: boolean;
+  colour?: string;
 }
 
 export default function ColourSelect({
   defaultColour,
   onValueChange,
   disabled,
+  colour,
 }: ColourSelectProps) {
   const colours = [
     { value: 'slate', name: 'dark slate blue' },
@@ -41,7 +43,10 @@ export default function ColourSelect({
       onValueChange={onValueChange}
       name='colour'
     >
-      <SelectTrigger className='bg-black capitalize col-span-3'>
+      <SelectTrigger
+        style={{ outlineColor: colour }}
+        className='bg-black capitalize col-span-3'
+      >
         <SelectValue className='w-full' placeholder={defaultColour} />
       </SelectTrigger>
       <SelectContent

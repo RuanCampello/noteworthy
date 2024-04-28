@@ -15,7 +15,7 @@ import ColourSelect from '../ColourSelect';
 import { createNote } from '@/actions/note';
 import { z } from 'zod';
 import { noteDialogSchema } from '@/schemas';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -27,6 +27,7 @@ import {
 } from '../ui/form';
 import { Button } from '../ui/button';
 import { Loader2 } from 'lucide-react';
+import { ColourType, Colours } from '@/utils/colours';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -49,6 +50,13 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
       colour: 'random',
     },
   });
+
+  const colour = useWatch({
+    control: noteDialog.control,
+    name: 'colour',
+  }) as ColourType;
+  const selectedColour = Colours[colour];
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -79,7 +87,8 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                       <Input
                         disabled={loading}
                         type='text'
-                        className='bg-black dark col-span-3'
+                        className='bg-black dark col-span-3 focus:ring-transparent focus:outline'
+                        style={{outlineColor: selectedColour}}
                         {...field}
                       />
                     </FormControl>
@@ -98,6 +107,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                   </FormLabel>
                   <FormControl>
                     <ColourSelect
+                      colour={selectedColour}
                       disabled={loading}
                       onValueChange={field.onChange}
                       defaultColour={'random'}
@@ -111,9 +121,10 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             <DialogFooter>
               <Button
                 disabled={loading}
-                variant='create'
+                style={{ backgroundColor: selectedColour }}
                 size='sm'
                 type='submit'
+                className='transition-colors duration-200 ease-in'
               >
                 Create note
                 {loading && <Loader2 size={16} className='animate-spin' />}

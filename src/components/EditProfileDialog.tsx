@@ -16,11 +16,9 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Pencil, X } from 'lucide-react';
-import { useToast } from './ui/use-toast';
 import { useSession } from 'next-auth/react';
 import { uploadImage } from '@/actions/user';
 import { uploadUserProfileImage } from '@/data/user';
-import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z
@@ -39,10 +37,8 @@ export default function EditProfileDialog() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
   const session = useSession();
   const user = session.data?.user;
-  const { toast } = useToast();
 
   if (!user) return;
 
@@ -86,6 +82,7 @@ export default function EditProfileDialog() {
               {selectedImage && (
                 <button
                   type='button'
+                  disabled={loading}
                   className='absolute -right-2 -top-2 bg-slate border p-1 rounded-full'
                   onClick={() => setSelectedImage(undefined)}
                 >
