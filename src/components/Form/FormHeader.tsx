@@ -5,10 +5,7 @@ import Image, { StaticImageData } from 'next/image';
 import { Lora } from 'next/font/google';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-
-interface FormHeaderProps {
-  image: StaticImageData;
-}
+import LogoImage from '@assets/logo.svg';
 
 const lora = Lora({ subsets: ['latin'] });
 
@@ -26,7 +23,7 @@ const defaultAnimation = {
   },
 };
 
-export default function FormHeader({ image }: FormHeaderProps) {
+export default function FormHeader() {
   const control = useAnimation();
   const ref = useRef(null);
   const word = 'Noteworthy';
@@ -37,7 +34,7 @@ export default function FormHeader({ image }: FormHeaderProps) {
 
   return (
     <div className='flex gap-1 items-center pb-16'>
-      <Image alt='noteworthy logo' src={image} width={48} height={52} />
+      <Image alt='noteworthy logo' src={LogoImage} width={48} height={52} />
       <motion.h1
         className={`${lora.className} text-4xl font-bold block`}
         ref={ref}

@@ -44,7 +44,7 @@ export default function EditProfileDialog() {
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      if (!user?.id || !user.name || !image) return;
+      if (!user?.id || !user.name || !image || isOAuthImage) return;
       const url = await uploadImage(image[0], user.name);
       await uploadUserProfileImage(url, user.id);
       setOpen(false);
@@ -61,6 +61,9 @@ export default function EditProfileDialog() {
   }
 
   const { name, image } = user;
+  const isOAuthImage =
+    image?.includes('https://avatars.githubusercontent.com') ||
+    image?.includes('https://lh3.googleusercontent.com');
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -76,8 +79,11 @@ export default function EditProfileDialog() {
         <form onSubmit={handleSubmit(handleEditProfile)}>
           <div className='flex justify-center mb-6'>
             <Label
+              aria-disabled={isOAuthImage}
               htmlFor='image-input'
-              className='text-center cursor-pointer relative'
+              className={`text-center relative ${
+                isOAuthImage ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
             >
               {selectedImage && (
                 <button
@@ -104,7 +110,7 @@ export default function EditProfileDialog() {
               className='hidden'
               id='image-input'
               accept='image/png, image/jpeg'
-              disabled={loading}
+              disabled={loading || isOAuthImage}
             />
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>

@@ -15,8 +15,6 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import LogoImage from '@assets/logo.svg';
-import { useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
 import { useEffect, useState, useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
@@ -72,7 +70,7 @@ export default function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className='rounded-md w-[380px]'
       >
-        <CustomForm.Header image={LogoImage} />
+        <CustomForm.Header />
         <CustomForm.ThirdPartLogin
           disableWhen={isSubmitting}
           type='signup'

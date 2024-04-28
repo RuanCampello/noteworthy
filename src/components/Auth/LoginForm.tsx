@@ -14,7 +14,6 @@ import {
 } from '../ui/form';
 import { CustomForm } from '../Form';
 import { Input } from '../ui/input';
-import LogoImage from '@assets/logo.svg';
 import { login } from '@/actions/login';
 import { useEffect, useState, useTransition } from 'react';
 import { loginFormSchema } from '@/schemas';
@@ -23,11 +22,13 @@ import GoogleLogo from '@assets/third-part-login/Google.png';
 import GithubLogo from '@assets/third-part-login/GitHub.svg';
 import { useToast } from '../ui/use-toast';
 import { X } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
   const [error, setError] = useState(String);
   const { toast } = useToast();
   const form = useForm<LoginFormSchema>({
@@ -41,11 +42,28 @@ export default function LoginForm() {
   async function onSubmit(values: LoginFormSchema) {
     startTransition(async () => {
       const { error } = await login(values);
-      if (error) setError(error);
+      if (error) {
+        toast({
+          title: 'Error',
+          description: error,
+          variant: 'error',
+          action: (
+            <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+              <X
+                size={24}
+                className='bg-tickle text-midnight p-1 rounded-full'
+              />
+            </div>
+          ),
+        });
+      }
     });
   }
 
+  const emailError = searchParams.get('error') === 'OAuthAccountNotLinked';
+  
   useEffect(() => {
+    if (emailError) setError('E-mail already in use with another provider!');
     if (error) {
       toast({
         title: 'Error',
@@ -58,8 +76,8 @@ export default function LoginForm() {
         ),
       });
     }
-  }, [error]);
-  
+  }, [emailError, error]);
+
   const inputStyle =
     'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
 
@@ -69,7 +87,7 @@ export default function LoginForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className='rounded-md w-[380px]'
       >
-        <CustomForm.Header image={LogoImage} />
+        <CustomForm.Header />
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
           type='login'
