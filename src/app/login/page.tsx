@@ -1,5 +1,5 @@
 import LoginForm from '@/components/Auth/LoginForm';
-import { Loader2 } from 'lucide-react';
+import LoadingSuspense from '@/components/LoadingSuspense';
 import { Suspense } from 'react';
 
 export default async function LoginPage() {
@@ -10,12 +10,4 @@ export default async function LoginPage() {
       </Suspense>
     </div>
   );
-}
-
-export function LoadingSuspense() {
-  return (
-    <div className='w-screen h-screen flex items-center justify-center'>
-      <Loader2 size={20} />
-    </div>
-  );
-}
+  }
