@@ -5,14 +5,14 @@ import { Suspense } from 'react';
 export default async function LoginPage() {
   return (
     <div className='flex justify-center h-screen w-screen overflow-hidden items-center bg-black'>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<LoadingSuspense />}>
         <LoginForm />
       </Suspense>
     </div>
   );
 }
 
-function Loading() {
+export function LoadingSuspense() {
   return (
     <div className='w-screen h-screen flex items-center justify-center'>
       <Loader2 size={20} />
