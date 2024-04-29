@@ -8,8 +8,7 @@ import { getUserByEmail } from '@/data/user';
 import { signIn } from '@/auth';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
-import { getRandomColour } from '@/utils/colours';
-import { helloWorld } from '@/utils/hello-world';
+import { createPlaceholderNote } from './note';
 
 export async function register(
   values: z.infer<typeof registerFormSchema>
@@ -31,17 +30,7 @@ export async function register(
       password: hashedPassword,
     },
   });
-
-  const randomColour = getRandomColour().name;
-  await db.note.create({
-    data: {
-      colour: randomColour,
-      content: helloWorld,
-      title: 'Hello World 📝',
-      userId: owner.id,
-    },
-  });
-
+  await createPlaceholderNote(owner.id);
   try {
     await signIn('credentials', {
       email,

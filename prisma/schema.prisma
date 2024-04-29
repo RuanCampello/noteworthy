@@ -67,3 +67,13 @@ model Note {
 
   @@map("notes")
 }
+
+model PasswordResetToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([token, email])
+  @@map("password_reset_tokens")
+}

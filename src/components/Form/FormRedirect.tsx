@@ -5,7 +5,7 @@ interface FormRedirectProps {
   text: string;
   path: string;
   link: string;
-  disableWhen: boolean;
+  disableWhen?: boolean;
 }
 
 export default function FormRedirect({ text, path, link, disableWhen }: FormRedirectProps) {

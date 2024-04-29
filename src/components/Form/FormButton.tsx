@@ -17,8 +17,8 @@ export default function FormButton({ title, disableWhen }: FormButtonProps) {
       ) : (
         <Image
           alt='loading...'
-          width={32}
-          height={32}
+          width={28}
+          height={28}
           src={
             'https://raw.githubusercontent.com/n3r4zzurr0/svg-spinners/abfa05c49acf005b8b1e0ef8eb25a67a7057eb20/svg-css/90-ring-with-bg.svg'
           }

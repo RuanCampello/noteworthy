@@ -22,11 +22,14 @@ import GithubLogo from '@assets/third-part-login/GitHub.svg';
 import { useToast } from '../ui/use-toast';
 import { X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const searchParams = useSearchParams();
   const [error, setError] = useState(String);
   const { toast } = useToast();
@@ -60,7 +63,7 @@ export default function LoginForm() {
   }
 
   const emailError = searchParams.get('error') === 'OAuthAccountNotLinked';
-  
+
   useEffect(() => {
     if (emailError) setError('E-mail already in use with another provider!');
     if (error) {
@@ -76,10 +79,7 @@ export default function LoginForm() {
       });
     }
   }, [emailError, error]);
-
-  const inputStyle =
-    'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
-
+  
   return (
     <Form {...form}>
       <form
@@ -108,10 +108,9 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel className='font-semibold'>E-mail</FormLabel>
                 <FormControl>
-                  <Input
+                  <CustomForm.Input
                     type='email'
                     placeholder='johnsmith@example.com'
-                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
@@ -119,24 +118,39 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className='font-semibold'>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type='password'
-                    placeholder='•••••••'
-                    className={inputStyle}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div>
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='font-semibold'>Password</FormLabel>
+                  <FormControl>
+                    <CustomForm.PasswordWrapper
+                      value={isPasswordVisible}
+                      onChange={() => setIsPasswordVisible(!isPasswordVisible)}
+                    >
+                      <Input
+                        type={isPasswordVisible ? 'text' : 'password'}
+                        placeholder='•••••••'
+                        className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                        {...field}
+                      />
+                    </CustomForm.PasswordWrapper>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              variant='link'
+              className='dark px-0 self-start text-neutral-300 underline-offset-2 focus:outline-none'
+              asChild
+              size='sm'
+            >
+              <Link href='/reset'>Forgot password?</Link>
+            </Button>
+          </div>
         </div>
         <CustomForm.Button disableWhen={isPending} title='Login' />
         <CustomForm.Redirect

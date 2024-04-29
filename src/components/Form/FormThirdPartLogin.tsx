@@ -1,5 +1,3 @@
-'use client';
-
 import { DEFAULT_REDIRECT } from '@/routes';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
@@ -18,9 +16,9 @@ export default function FormThirdPartLogin({
   type,
   disableWhen,
 }: FormThirdPartLoginProps) {
-  function handleLogin() {
-    signIn(name.toLowerCase(), {
-      callbackUrl: DEFAULT_REDIRECT,
+  async function handleLogin() {
+    await signIn(name.toLowerCase(), {
+      redirectTo: DEFAULT_REDIRECT,
     });
   }
   return (

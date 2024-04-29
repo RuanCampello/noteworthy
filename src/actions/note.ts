@@ -4,6 +4,7 @@ import { currentUser } from '@/data/note';
 import { db } from '@/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
+import { helloWorld } from '@/utils/hello-world';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -65,7 +66,7 @@ export async function toggleNoteFavourite(id: string, userId: string) {
     const redirectUrl = new URL(`${origin}/favourites/${id}`);
     redirect(redirectUrl.toString());
   } else {
-    revalidatePath('/')
+    revalidatePath('/');
   }
 }
 
@@ -118,4 +119,16 @@ export async function editNote(
 export async function deleteNote(id: string) {
   await db.note.delete({ where: { id } });
   redirect('/');
+}
+
+export async function createPlaceholderNote(userId: string) {
+  const randomColour = getRandomColour().name;
+  await db.note.create({
+    data: {
+      colour: randomColour,
+      content: helloWorld,
+      title: 'Hello World 📝',
+      userId,
+    },
+  });
 }
