@@ -19,14 +19,3 @@ export async function getUserById(id: string) {
     return null;
   }
 }
-
-export async function uploadUserProfileImage(url: string, userId: string) {
-  try {
-    await db.user.update({
-      where: { id: userId },
-      data: { image: url },
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}

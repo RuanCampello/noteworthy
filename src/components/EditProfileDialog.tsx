@@ -18,7 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Pencil, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { uploadImage } from '@/actions/user';
-import { uploadUserProfileImage } from '@/data/user';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z
@@ -37,19 +37,19 @@ export default function EditProfileDialog() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const session = useSession();
-  const user = session.data?.user;
+  const { data: session, update } = useSession();
+  const router = useRouter();
+  const user = session?.user;
 
   if (!user) return;
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      if (!user?.id || !user.name || !image || isOAuthImage) return;
-      const url = await uploadImage(image[0], user.name);
-      await uploadUserProfileImage(url, user.id);
+      if (!user?.id || !image || isOAuthImage) return;
+      const url = await uploadImage(image[0], user.id);
+      await update({ image: url });
       setOpen(false);
-      //force reload to prevent nextjs image cache
-      if (!(typeof window === 'undefined')) window.location.reload();
+      router.refresh()
     });
   }
 
