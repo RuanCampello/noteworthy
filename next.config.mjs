@@ -4,11 +4,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'upload.wikimedia.org',
+        hostname: 'firebasestorage.googleapis.com',
         protocol: 'https',
       },
       {
-        hostname: 'firebasestorage.googleapis.com',
+        hostname: 'lh3.googleusercontent.com',
         protocol: 'https',
       },
     ],
