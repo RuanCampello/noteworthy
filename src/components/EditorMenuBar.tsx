@@ -35,7 +35,12 @@ export default function EditorMenuBar() {
         event.preventDefault();
         const currentContent = editor?.getHTML();
         const userId = session.data?.user?.id;
-        if (!currentContent || !userId || !openNote || session.status === 'loading') {
+        if (
+          !currentContent ||
+          !userId ||
+          !openNote ||
+          session.status === 'loading'
+        ) {
           return null;
         }
         await updateNoteContent(openNote, userId, currentContent);
@@ -101,7 +106,6 @@ export default function EditorMenuBar() {
   }
   return (
     <div className='flex flex-col gap-1 xl:px-11 px-4'>
-      <Separator />
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content='Styles' sideOffset={6}>

@@ -16,13 +16,23 @@ import FontSize from 'tiptap-extension-font-size';
 
 import { ReactNode } from 'react';
 import { DoubleClickLink } from '@/utils/double-click-link';
+import { useSession } from 'next-auth/react';
 
 interface NoteEditorProps {
   content: string;
   children: ReactNode;
+  owner: string;
 }
 
-export default function NoteEditor({ content, children }: NoteEditorProps) {
+export default function NoteEditor({
+  content,
+  children,
+  owner,
+}: NoteEditorProps) {
+  const { data: session } = useSession();
+  if (!session?.user) return;
+  const isEditable = session.user.id === owner;
+
   const extensions = [
     StarterKit,
     Underline,
@@ -58,17 +68,18 @@ export default function NoteEditor({ content, children }: NoteEditorProps) {
   const editorProps = {
     attributes: {
       class:
-        'prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black',
+        'prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2',
     },
   };
   return (
     <>
       <EditorProvider
+        editable={isEditable}
         content={content}
         slotBefore={
           <>
             {children}
-            <EditorMenuBar />
+            {isEditable && <EditorMenuBar />}
           </>
         }
         extensions={extensions}
