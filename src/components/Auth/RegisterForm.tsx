@@ -30,6 +30,7 @@ export default function RegisterForm() {
   const { toast } = useToast();
   const [error, setError] = useState(String);
   const [isSubmitting, startTransition] = useTransition();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
@@ -61,9 +62,6 @@ export default function RegisterForm() {
     }
   }, [error]);
 
-  const inputStyle =
-    'placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle';
-
   return (
     <Form {...form}>
       <form
@@ -92,10 +90,9 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className='font-semibold'>Username</FormLabel>
                 <FormControl>
-                  <Input
+                  <CustomForm.Input
                     type='text'
                     placeholder='johnsmith'
-                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
@@ -113,10 +110,9 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className='font-semibold'>E-mail</FormLabel>
                 <FormControl>
-                  <Input
+                  <CustomForm.Input
                     type='email'
                     placeholder='johnsmith@example.com'
-                    className={inputStyle}
                     {...field}
                   />
                 </FormControl>
@@ -131,12 +127,17 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className='font-semibold'>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type='password'
-                    placeholder='•••••••'
-                    className={inputStyle}
-                    {...field}
-                  />
+                  <CustomForm.PasswordWrapper
+                    value={isPasswordVisible}
+                    onChange={() => setIsPasswordVisible(!isPasswordVisible)}
+                  >
+                    <Input
+                      type={isPasswordVisible ? 'text' : 'password'}
+                      placeholder='•••••••'
+                      className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                      {...field}
+                    />
+                  </CustomForm.PasswordWrapper>
                 </FormControl>
                 <FormMessage />
               </FormItem>

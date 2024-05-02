@@ -49,7 +49,8 @@ export default function EditProfileDialog() {
       const url = await uploadImage(image[0], user.id);
       await update({ image: url });
       setOpen(false);
-      router.refresh()
+      setSelectedImage(undefined);
+      router.refresh();
     });
   }
 
@@ -85,7 +86,7 @@ export default function EditProfileDialog() {
                 isOAuthImage ? 'cursor-not-allowed' : 'cursor-pointer'
               }`}
             >
-              {selectedImage && (
+              {selectedImage && !loading && (
                 <button
                   type='button'
                   disabled={loading}

@@ -23,7 +23,7 @@ export default async function Profile() {
     await signOut();
   }
   return (
-    <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1'>
+    <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
           <AvatarImage src={image || ''} />
