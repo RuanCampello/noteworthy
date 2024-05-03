@@ -4,7 +4,6 @@ import Counter from '../Counter';
 import SearchNote from './SearchNote';
 import SortDropdown from '../SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
-import NoteContextMenu from './NoteContextMenu';
 import { getAllUserOrdinaryNotes } from '@/data/note';
 import { auth } from '@/auth';
 import { ReactNode } from 'react';
@@ -50,21 +49,16 @@ export default async function Notes() {
         ) : filteredNotes.length > 0 ? (
           filteredNotes.map((note) => {
             const { id, title, colour, content, createdAt } = note;
-            const extendedNote = {...note, owner}
             return (
-              <NoteContextMenu
-                note={extendedNote}
+              <Note
                 key={id}
-              >
-                <Note
-                  href='notes'
-                  uid={id}
-                  colour={colour}
-                  name={title}
-                  text={content}
-                  date={createdAt}
-                />
-              </NoteContextMenu>
+                href='notes'
+                uid={id}
+                colour={colour}
+                name={title}
+                text={content}
+                date={createdAt}
+              />
             );
           })
         ) : (

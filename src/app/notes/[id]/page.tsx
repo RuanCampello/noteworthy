@@ -1,7 +1,6 @@
 import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader, { Owner } from '@/components/Note/NoteHeader';
-import Resizable from '@/components/Resizable';
 import { getNoteById } from '@/data/note';
 import { getUserById } from '@/data/user';
 
@@ -21,18 +20,14 @@ export default async function NotePage({ params }: Props) {
   };
 
   return (
-    <Resizable>
-      <div className='flex flex-col h-full overflow-y-clip'>
-        <NoteEditor owner={owner.id} content={content}>
-          <NoteHeader
-            id={id}
-            title={title}
-            date={createdAt}
-            owner={resumedOwner}
-            lastUpdate={lastUpdate || createdAt}
-          />
-        </NoteEditor>
-      </div>
-    </Resizable>
+    <NoteEditor owner={owner.id} content={content}>
+      <NoteHeader
+        id={id}
+        title={title}
+        date={createdAt}
+        owner={resumedOwner}
+        lastUpdate={lastUpdate || createdAt}
+      />
+    </NoteEditor>
   );
 }

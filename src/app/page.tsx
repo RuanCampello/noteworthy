@@ -1,10 +1,11 @@
 import Placeholder from '@/components/Placeholder';
-import Resizable from '@/components/Resizable';
+import Sidebar from '@/components/Sidebar';
 import { FileText } from 'lucide-react';
 
 export default async function Home() {
   return (
-    <Resizable>
+    <div className='flex w-full relative h-screen'>
+      <Sidebar />
       <Placeholder
         paragraph='Choose a note from the list on the left to view its contents, or create
         a new note to add to your collection.'
@@ -12,6 +13,6 @@ export default async function Home() {
       >
         <FileText size={80} strokeWidth={1} />
       </Placeholder>
-    </Resizable>
+    </div>
   );
 }
