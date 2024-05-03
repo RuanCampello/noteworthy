@@ -43,7 +43,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
       <DropdownMenuContent
         align='end'
         sideOffset={10}
-        className='bg-night text-neutral-100 border-none gap-1.5 w-44 flex flex-col p-1.5 rounded-md'
+        className='bg-night text-neutral-100 leading-none border-none w-36 flex flex-col p-0 my-1'
       >
         <form action={handleToggleFavourite}>
           <DropdownButton
@@ -66,7 +66,6 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
         <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
           <DropdownButton icon={<Pencil />} color='edit' />
         </EditNoteDialog>
-        <Separator className='bg-silver' />
         <DeleteNoteDialog noteName={title} noteId={id}>
           <DropdownButton color='delete' icon={<Trash />} />
         </DeleteNoteDialog>

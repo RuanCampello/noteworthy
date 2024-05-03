@@ -2,7 +2,7 @@ import { cloneElement } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 const buttonVariants = tv({
-  base: 'gap-2 flex p-1 px-2 items-center rounded-sm active:text-black hover:text-black focus:text-black focus:outline-none group w-full transition-colors duration-200',
+  base: 'gap-1.5 flex p-2 px-3 items-center active:text-black hover:text-black focus:text-black focus:outline-none group w-full transition-colors duration-200',
   variants: {
     color: {
       edit: 'active:bg-tiffany focus:bg-tiffany hover:bg-tiffany',
@@ -46,7 +46,7 @@ export default function DropdownButton({
   return (
     <button disabled={props.disabled} className={buttonVariants(props)}>
       {cloneElement(icon, {
-        size: 18,
+        size: 17,
         fill: props.active ? '#A3A3A3' : 'transparent',
         strokeWidth: 2.5,
         className: 'group-disabled:scale-100 group-active:scale-95 transition-transform duration-200',
