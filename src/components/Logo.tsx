@@ -9,7 +9,7 @@ export default function Logo() {
   return (
     <Link 
       href='/'
-      className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full'
+      className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full focus:outline-none'
     >
       <Image
         alt='noteworthy'
