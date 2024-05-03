@@ -21,7 +21,7 @@ import { useSession } from 'next-auth/react';
 interface NoteEditorProps {
   content: string;
   children: ReactNode;
-  owner: string;
+  owner: string | null;
 }
 
 export default function NoteEditor({
