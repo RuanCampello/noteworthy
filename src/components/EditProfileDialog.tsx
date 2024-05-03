@@ -19,6 +19,15 @@ import { Loader2, Pencil, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { uploadImage } from '@/actions/image';
 import { useRouter } from 'next/navigation';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from './ui/form';
+import { CustomForm } from './Form';
 
 const formSchema = z.object({
   name: z
@@ -92,66 +101,92 @@ export default function EditProfileDialog() {
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-        <form onSubmit={editProfileForm.handleSubmit(handleEditProfile)}>
-          <div className='flex justify-center mb-6'>
-            <Label
-              aria-disabled={isOAuthImage}
-              htmlFor='image-input'
-              className={`text-center relative ${
-                isOAuthImage ? 'cursor-not-allowed' : 'cursor-pointer'
-              }`}
-            >
-              {selectedImage && !loading && (
-                <button
-                  type='button'
-                  disabled={loading}
-                  className='absolute -right-2 -top-2 bg-slate border p-1 rounded-full'
-                  onClick={() => setSelectedImage(undefined)}
-                >
-                  <X size={16} />
-                </button>
+        <Form {...editProfileForm}>
+          <form
+            className='flex flex-col gap-3'
+            onSubmit={editProfileForm.handleSubmit(handleEditProfile)}
+          >
+            <FormField
+              control={editProfileForm.control}
+              name='image'
+              render={({ field }) => (
+                <FormItem className='flex justify-center'>
+                  <FormLabel
+                    aria-disabled={isOAuthImage}
+                    htmlFor='image-input'
+                    className={`text-center relative ${
+                      isOAuthImage ? 'cursor-not-allowed' : 'cursor-pointer'
+                    }`}
+                  >
+                    {selectedImage && !loading && (
+                      <button
+                        type='button'
+                        disabled={loading}
+                        className='absolute -right-2 -top-2 bg-slate border p-1 rounded-full'
+                        onClick={() => setSelectedImage(undefined)}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
+                      src={selectedImage || image || ''}
+                      loading='lazy'
+                      alt={(name && name[0].toUpperCase()) || ''}
+                    />
+                  </FormLabel>
+                  <FormControl>
+                    <CustomForm.Input
+                      {...editProfileForm.register('image')}
+                      {...(onchange = (e) => handleImageChange(e))}
+                      type='file'
+                      className='hidden'
+                      id='image-input'
+                      accept='image/png, image/jpeg'
+                      disabled={loading || isOAuthImage}
+                    />
+                  </FormControl>
+                </FormItem>
               )}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
-                src={selectedImage || image || ''}
-                loading='lazy'
-                alt={(name && name[0].toUpperCase()) || ''}
-              />
-            </Label>
-            <Input
-              {...editProfileForm.register('image')}
-              {...(onchange = (e) => handleImageChange(e))}
-              type='file'
-              className='hidden'
-              id='image-input'
-              accept='image/png, image/jpeg'
-              disabled={loading || isOAuthImage}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label className='text-right text-base'>Name</Label>
-            <Input
-              {...editProfileForm.register('name')}
-              className='col-span-3 bg-black invalid:focus:outline-red-600'
-              required
-              disabled={loading}
+            <FormField
+              control={editProfileForm.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <div className='grid grid-cols-4 gap-4 items-center'>
+                    <FormLabel className='text-base text-neutral-200 text-right'>
+                      Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type='text'
+                        className='bg-black dark col-span-3 focus:outline focus:ring-transparent'
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <DialogFooter className='mt-4'>
-            <Button
-              size='sm'
-              disabled={
-                loading || (currentName === name && selectedImage === undefined)
-              }
-              type='submit'
-              className='flex items-center gap-1'
-            >
-              Save changes
-              {loading && <Loader2 size={16} className='animate-spin' />}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className='mt-4'>
+              <Button
+                size='sm'
+                disabled={
+                  loading ||
+                  (currentName === name && selectedImage === undefined)
+                }
+                type='submit'
+                className='flex items-center gap-1'
+              >
+                Save changes
+                {loading && <Loader2 size={16} className='animate-spin' />}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
