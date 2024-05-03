@@ -17,7 +17,7 @@ export default async function Profile() {
 
   const { image, name, email } = session.user;
   if (!name) return null;
-  
+
   async function handleLogout() {
     'use server';
     await signOut();

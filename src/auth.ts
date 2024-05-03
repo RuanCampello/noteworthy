@@ -41,23 +41,28 @@ export const {
       const user = await getUserById(token.sub);
       if (!user) return token;
 
-      if (trigger === 'update' && session?.image) {
-        //update database field
-        await db.user.update({
-          where: { id: user.id },
-          data: { image: session.image },
-        });
-        return {
-          //update current session image
-          ...token,
-          picture: session.image,
-          id: user.id,
-        };
+      const updates: Partial<{ name: string; image: string }> = {};
+
+      if (trigger === 'update') {
+        if (session?.name && session.name !== user.name) {
+          updates.name = session.name;
+        }
+        if (session?.image && session.image !== user.image) {
+          updates.image = session.image;
+        }
+        if (Object.keys(updates).length > 0) {
+          await db.user.update({ data: updates, where: { id: user.id } });
+          //update token with new data
+          if (updates.name) {
+            token.name = updates.name;
+          }
+          if (updates.image) {
+            token.picture = updates.image;
+          }
+          token.id = user.id;
+        }
       }
-      return {
-        ...token,
-        id: user.id,
-      };
+      return token;
     },
   },
   adapter: PrismaAdapter(db),

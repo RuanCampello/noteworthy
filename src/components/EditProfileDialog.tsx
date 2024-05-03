@@ -13,11 +13,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Pencil, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { uploadImage } from '@/actions/user';
+import { uploadImage } from '@/actions/image';
 import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
@@ -30,10 +30,6 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function EditProfileDialog() {
-  const { register, handleSubmit } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
-  });
-
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -41,13 +37,31 @@ export default function EditProfileDialog() {
   const router = useRouter();
   const user = session?.user;
 
+  const editProfileForm = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: user?.name || '',
+    },
+  });
+
+  const currentName = useWatch({
+    control: editProfileForm.control,
+    name: 'name',
+  });
+
   if (!user) return;
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      if (!user?.id || !image || isOAuthImage) return;
-      const url = await uploadImage(image[0], user.id);
-      await update({ image: url });
+      if (!user?.id || isOAuthImage) return;
+
+      if (name !== user.name) {
+        await update({ name: currentName });
+      }
+      if (image && image[0]) {
+        const url = await uploadImage(image[0], user.id);
+        await update({ image: url });
+      }
       setOpen(false);
       setSelectedImage(undefined);
       router.refresh();
@@ -62,6 +76,7 @@ export default function EditProfileDialog() {
   }
 
   const { name, image } = user;
+
   const isOAuthImage =
     image?.includes('https://avatars.githubusercontent.com') ||
     image?.includes('https://lh3.googleusercontent.com');
@@ -77,7 +92,7 @@ export default function EditProfileDialog() {
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(handleEditProfile)}>
+        <form onSubmit={editProfileForm.handleSubmit(handleEditProfile)}>
           <div className='flex justify-center mb-6'>
             <Label
               aria-disabled={isOAuthImage}
@@ -105,7 +120,7 @@ export default function EditProfileDialog() {
               />
             </Label>
             <Input
-              {...register('image')}
+              {...editProfileForm.register('image')}
               {...(onchange = (e) => handleImageChange(e))}
               type='file'
               className='hidden'
@@ -117,19 +132,20 @@ export default function EditProfileDialog() {
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label className='text-right text-base'>Name</Label>
             <Input
-              {...register('name')}
+              {...editProfileForm.register('name')}
               className='col-span-3 bg-black invalid:focus:outline-red-600'
               required
-              defaultValue={name || ''}
               disabled={loading}
             />
           </div>
           <DialogFooter className='mt-4'>
             <Button
               size='sm'
-              disabled={loading}
+              disabled={
+                loading || (currentName === name && selectedImage === undefined)
+              }
               type='submit'
-              className='flex items-center gap-2'
+              className='flex items-center gap-1'
             >
               Save changes
               {loading && <Loader2 size={16} className='animate-spin' />}

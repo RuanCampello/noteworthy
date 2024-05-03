@@ -124,7 +124,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                 style={{ backgroundColor: selectedColour }}
                 size='sm'
                 type='submit'
-                className='transition-colors duration-200 ease-in'
+                className='transition-colors duration-200 ease-in flex gap-1 items-center'
               >
                 Create note
                 {loading && <Loader2 size={16} className='animate-spin' />}
