@@ -68,7 +68,7 @@ export default function NoteEditor({
   const editorProps = {
     attributes: {
       class:
-        'prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 h-[70vh] prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2',
+        'prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2',
     },
   };
   return (

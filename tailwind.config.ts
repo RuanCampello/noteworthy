@@ -26,7 +26,7 @@ const config = {
           css: {
             maxWidth: '100%',
             overflowY: 'scroll',
-            maxHeight: '70vh',
+            maxHeight: '79vh',
             paddingBottom: '24px',
             textUnderlineOffset: '2px',
           },
