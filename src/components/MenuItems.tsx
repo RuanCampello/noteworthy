@@ -1,4 +1,4 @@
-import { isActive, useCurrentEditor } from '@tiptap/react';
+import { useCurrentEditor } from '@tiptap/react';
 import {
   AlignCenter,
   AlignRight,

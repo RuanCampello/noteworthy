@@ -8,7 +8,7 @@ import { getUserByEmail } from './data/user';
 import bcrypt from 'bcryptjs';
 
 export default {
-  secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   providers: [
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,

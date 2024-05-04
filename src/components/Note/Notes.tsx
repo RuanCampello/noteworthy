@@ -14,7 +14,6 @@ export default async function Notes() {
 
   const notes = await getAllUserOrdinaryNotes(session.user.id);
   if (!notes) return;
-  const owner = session.user.name;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
 

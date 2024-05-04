@@ -3,6 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import { FileText } from 'lucide-react';
 
 export default async function Home() {
+  console.log(process.env.FIREBASE_API_KEY)
   return (
     <div className='flex w-full relative h-screen'>
       <Sidebar />
