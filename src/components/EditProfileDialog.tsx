@@ -28,6 +28,7 @@ import {
   FormMessage,
 } from './ui/form';
 import { CustomForm } from './Form';
+import Compressor from 'compressorjs';
 
 const formSchema = z.object({
   name: z
@@ -68,12 +69,26 @@ export default function EditProfileDialog() {
         await update({ name: currentName });
       }
       if (image && image[0]) {
-        const url = await uploadImage(image[0], user.id);
-        await update({ image: url });
+        new Compressor(image[0], {
+          maxHeight: 72,
+          maxWidth: 72,
+          quality: 0.8,
+          async success(result: File) {
+            const formData = new FormData();
+            formData.append('file', result, result.name);
+
+            const response = await fetch(`api/upload?id=${user.id}`, {
+              method: 'POST',
+              body: formData,
+            });
+            const url = await response.text();
+            await update({ image: url });
+            router.refresh();
+          },
+        });
       }
       setOpen(false);
       setSelectedImage(undefined);
-      router.refresh();
     });
   }
 
@@ -90,11 +105,17 @@ export default function EditProfileDialog() {
     image?.includes('https://avatars.githubusercontent.com') ||
     image?.includes('https://lh3.googleusercontent.com');
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DialogTrigger asChild>
         <div className='w-full select-none rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between cursor-pointer'>
           Edit profile
-          <Pencil size={16} className='text-neutral-400' />
+          <Pencil
+            size={16}
+            className='text-neutral-400'
+          />
         </div>
       </DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
@@ -182,7 +203,12 @@ export default function EditProfileDialog() {
                 className='flex items-center gap-1'
               >
                 Save changes
-                {loading && <Loader2 size={16} className='animate-spin' />}
+                {loading && (
+                  <Loader2
+                    size={16}
+                    className='animate-spin'
+                  />
+                )}
               </Button>
             </DialogFooter>
           </form>
