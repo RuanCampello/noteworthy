@@ -20,7 +20,10 @@ export default async function NotePage({ params }: Props) {
   };
 
   return (
-    <NoteEditor owner={owner.id} content={content}>
+    <NoteEditor
+      owner={owner.id}
+      content={content}
+    >
       <NoteHeader
         id={id}
         title={title}

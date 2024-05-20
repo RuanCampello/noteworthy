@@ -17,6 +17,7 @@ import FontSize from 'tiptap-extension-font-size';
 import { ReactNode } from 'react';
 import { DoubleClickLink } from '@/utils/double-click-link';
 import { useSession } from 'next-auth/react';
+import NoteBubbleMenu from './NoteBubbleMenu';
 
 interface NoteEditorProps {
   content: string;
@@ -72,21 +73,21 @@ export default function NoteEditor({
     },
   };
   return (
-    <>
-      <EditorProvider
-        editable={isEditable}
-        content={content}
-        slotBefore={
-          <>
-            {children}
-            {isEditable && <EditorMenuBar />}
-          </>
-        }
-        extensions={extensions}
-        editorProps={editorProps}
-      >
-        <></>
-      </EditorProvider>
-    </>
+    <EditorProvider
+      editable={isEditable}
+      content={content}
+      slotBefore={
+        <>
+          {children}
+          {isEditable && <EditorMenuBar />}
+        </>
+      }
+      extensions={extensions}
+      editorProps={editorProps}
+    >
+      <>
+        <NoteBubbleMenu />
+      </>
+    </EditorProvider>
   );
 }
