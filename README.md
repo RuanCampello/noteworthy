@@ -13,8 +13,8 @@
 
 Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organize their thoughts, ideas, and tasks.
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) [![Shadcn](https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/) [![Prisma](https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212)](https://prisma.io) ![Static Badge](https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010) [![Zod](https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a)](https://zod.dev) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) [![Static Badge](https://img.shields.io/badge/Firebase-0?logo=Firebase&logoColor=white&color=f77f00)
-](https://firebase.google.com/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet)](https://noteworthy-ebon.vercel.app/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) [![Shadcn](https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/) [![Prisma](https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212)](https://prisma.io) ![Static Badge](https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010) [![Zod](https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a)](https://zod.dev) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) [![Cloudflare](https://img.shields.io/badge/Cloudflare-000?logo=cloudflare&logoColor=fff&color=f77f00)
+](https://www.cloudflare.com/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet)](https://noteworthy-ebon.vercel.app/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Design Inspiration
 
@@ -30,7 +30,7 @@ Noteworthy's backend is built with Next.js server actions, Neon, and Prisma:
 
 Forms across Noteworthy, including those for authentication and other user interactions, are validated using Zod, providing robust validation and ensuring data integrity.
 
-Additionally, users' profile images are stored on Firebase, offering a secure and scalable solution for image storage.
+Additionally, users' profile images are stored on Cloudflare R2, offering a secure and scalable solution for image storage.
 
 ## Features
 
@@ -108,12 +108,11 @@ GOOGLE_CLIENT_SECRET=
 
 AUTH_SECRET=
 
-FIREBASE_API_KEY=
-FIREBASE_AUTH_DOMAIN=
-FIREBASE_PROJECT_ID=
-FIREBASE_STORAGE_BUCKET=
-FIREBASE_MESSAGING_SENDER_ID=
-FIREBASE_APP_ID=
+CLOUDFLARE_ACCOUNT_ID=
+CLOUDFLARE_BUCKET_NAME=
+CLOUDFLARE_ACCESS_KEY=
+CLOUDFLARE_SECRET_KEY=
+NEXT_PUBLIC_CLOUDFLARE_DEV_URL=
 
 RESEND_API_KEY=
 
