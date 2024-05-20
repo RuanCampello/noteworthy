@@ -80,7 +80,9 @@ export default function EditProfileDialog() {
               method: 'PUT',
               body: result,
             });
-            window.location.reload();
+            if (typeof window !== 'undefined') {
+              window.location.reload();
+            }
           },
         });
       }

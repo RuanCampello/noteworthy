@@ -11,27 +11,24 @@ import {
 } from './ui/dropdown-menu';
 import { auth, signOut } from '@/auth';
 import { env } from '@/env';
-import { revalidateTag } from 'next/cache';
 
 export default async function Profile() {
   const session = await auth();
   if (!session?.user || !session.user?.id) return null;
 
-  const { name, email, id } = session.user;
+  const { image, name, email, id } = session.user;
   if (!name) return null;
 
   async function handleLogout() {
     'use server';
     await signOut();
   }
-  
-  revalidateTag('profile-image');
 
   return (
     <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
-          <AvatarImage src={`${env.CLOUDFLARE_DEV_URL}/${id}` || ''} />
+          <AvatarImage src={image || `${env.CLOUDFLARE_DEV_URL}/${id}` || ''} />
           <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
             {name[0].toUpperCase()}
           </AvatarFallback>
