@@ -28,7 +28,7 @@ export default async function Profile() {
     <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
-          <AvatarImage src={image || `${env.CLOUDFLARE_DEV_URL}/${id}` || ''} />
+          <AvatarImage src={image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` || ''} />
           <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
             {name[0].toUpperCase()}
           </AvatarFallback>

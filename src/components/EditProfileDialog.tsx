@@ -99,7 +99,7 @@ export default function EditProfileDialog() {
     }
   }
 
-  const { name, image } = user;
+  const { name, image, id } = user;
 
   const isOAuthImage =
     image?.includes('https://avatars.githubusercontent.com') ||
@@ -152,7 +152,12 @@ export default function EditProfileDialog() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
-                      src={selectedImage || image || ''}
+                      src={
+                        selectedImage ||
+                        image ||
+                        `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` ||
+                        ''
+                      }
                       loading='lazy'
                       alt={(name && name[0].toUpperCase()) || ''}
                     />

@@ -5,7 +5,7 @@ const envSchema = z.object({
   CLOUDFLARE_BUCKET_NAME: z.string(),
   CLOUDFLARE_ACCESS_KEY: z.string(),
   CLOUDFLARE_SECRET_KEY: z.string(),
-  CLOUDFLARE_DEV_URL: z.string().url(),
+  NEXT_PUBLIC_CLOUDFLARE_DEV_URL: z.string().url()
 });
 
 export const env = envSchema.parse(process.env);
