@@ -1,10 +1,8 @@
-import { storage } from '@/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+'use server';
 
-export async function uploadImage(image: File, userId: string) {
-  const profileImageRef = ref(storage, userId);
+import { getSignedUrlForObject } from '@/lib/s3';
 
-  await uploadBytesResumable(profileImageRef, image);
-  const downloadUrl = await getDownloadURL(profileImageRef);
-  return downloadUrl;
+export async function getUploadUrl(key: string, contentType: string) {
+  const signedUrl = await getSignedUrlForObject(key, contentType);
+  return signedUrl;
 }

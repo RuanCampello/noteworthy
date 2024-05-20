@@ -41,24 +41,15 @@ export const {
       const user = await getUserById(token.sub);
       if (!user) return token;
 
-      const updates: Partial<{ name: string; image: string }> = {};
-
       if (trigger === 'update') {
         if (session?.name && session.name !== user.name) {
-          updates.name = session.name;
-        }
-        if (session?.image && session.image !== user.image) {
-          updates.image = session.image;
-        }
-        if (Object.keys(updates).length > 0) {
-          await db.user.update({ data: updates, where: { id: user.id } });
+          await db.user.update({
+            data: { name: session.name },
+            where: { id: user.id },
+          });
+
           //update token with new data
-          if (updates.name) {
-            token.name = updates.name;
-          }
-          if (updates.image) {
-            token.picture = updates.image;
-          }
+          token.name = session.name;
           token.id = user.id;
         }
       }

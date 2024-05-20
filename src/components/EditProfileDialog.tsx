@@ -11,13 +11,11 @@ import {
 } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Label } from './ui/label';
 import { z } from 'zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Pencil, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { uploadImage } from '@/actions/image';
 import { useRouter } from 'next/navigation';
 import {
   Form,
@@ -29,6 +27,7 @@ import {
 } from './ui/form';
 import { CustomForm } from './Form';
 import Compressor from 'compressorjs';
+import { getUploadUrl } from '@/actions/image';
 
 const formSchema = z.object({
   name: z
@@ -74,21 +73,20 @@ export default function EditProfileDialog() {
           maxWidth: 72,
           quality: 0.8,
           async success(result: File) {
-            const formData = new FormData();
-            formData.append('file', result, result.name);
+            if (!user.id) return;
 
-            const response = await fetch(`api/upload?id=${user.id}`, {
-              method: 'POST',
-              body: formData,
+            const uploadUrl = await getUploadUrl(user.id, result.type);
+            await fetch(uploadUrl, {
+              method: 'PUT',
+              body: result,
             });
-            const url = await response.text();
-            await update({ image: url });
-            router.refresh();
+            window.location.reload();
           },
         });
       }
       setOpen(false);
       setSelectedImage(undefined);
+      router.refresh();
     });
   }
 

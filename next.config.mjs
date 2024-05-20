@@ -11,6 +11,10 @@ const nextConfig = {
         hostname: 'lh3.googleusercontent.com',
         protocol: 'https',
       },
+      {
+        hostname: process.env.CLOUDFLARE_DEV_URL,
+        protocol: 'https',
+      },
     ],
   },
 };
