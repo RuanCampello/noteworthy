@@ -1,5 +1,7 @@
 # Noteworthy
 
+![screenshot image](/public/assets/screenshot.png)
+
 ## Stack
 
 - **Frontend Framework**: Next.js
@@ -13,6 +15,7 @@ Noteworthy is a sleek and efficient note-taking web application built with Next.
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) [![Shadcn](https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/) [![Prisma](https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212)](https://prisma.io) ![Static Badge](https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010) [![Zod](https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a)](https://zod.dev) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) [![Static Badge](https://img.shields.io/badge/Firebase-0?logo=Firebase&logoColor=white&color=f77f00)
 ](https://firebase.google.com/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet)](https://noteworthy-ebon.vercel.app/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+
 ## Design Inspiration
 
 A significant portion of Noteworthy's UI design is inspired by the figma community file [Nowted](https://www.figma.com/community/file/1188856976000269208/nowted-a-note-taking-app).
@@ -28,15 +31,19 @@ Noteworthy's backend is built with Next.js server actions, Neon, and Prisma:
 Forms across Noteworthy, including those for authentication and other user interactions, are validated using Zod, providing robust validation and ensuring data integrity.
 
 Additionally, users' profile images are stored on Firebase, offering a secure and scalable solution for image storage.
+
 ## Features
 
 ### 1. Intuitive Interface
+
 - Enjoy a clean and user-friendly interface for an effortless note-taking experience.
 
 ### 2. Server Components
+
 - Utilize server components to render and hydrate components on the server, optimizing performance and reducing client-side bundle size.
 
 ### 3. Note Management
+
 - **Create Note**: Create a new note using pre-created colors and providing a name.
 - **Favorite/Unfavorite Note**: Easily mark notes as favorites or remove them from favorites.
 - **Archive/Unarchive Note**: Archive notes to keep your workspace clutter-free, and unarchive them when needed.
@@ -56,6 +63,7 @@ Authentication in Noteworthy is powered by [NextAuth](https://authjs.dev/), supp
 
 > [!IMPORTANT]
 > The authentication system is immutable, ensuring that users cannot log in with the same email using different authentication methods.
+
 ## Note editor functionality
 
 The note editor functionality in Noteworthy is powered by [Tiptap](https://github.com/ueberdosis/tiptap), a headless editor. Customized by me, it offers the following features:
@@ -88,7 +96,6 @@ To run Noteworthy locally, follow these steps:
 1. Clone this repository to your local machine.
 2. Navigate to the project directory.
 3. Create a `.env` file and fill it with your configuration. Use the following template:
-
 
 ```
 DATABASE_URL=
@@ -123,4 +130,4 @@ Contributions are welcome! If you have any suggestions, bug reports, or feature 
 
 ## License
 
-This project is licensed under the [MIT License](link_to_license).
+This project is licensed under the [MIT License](/LICENSE.md).
