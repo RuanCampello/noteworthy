@@ -11,14 +11,14 @@
 
 ## Overview
 
-Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organize their thoughts, ideas, and tasks.
+Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) [![Shadcn](https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/) [![Prisma](https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212)](https://prisma.io) ![Static Badge](https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010) [![Zod](https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a)](https://zod.dev) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) [![Cloudflare](https://img.shields.io/badge/Cloudflare-000?logo=cloudflare&logoColor=fff&color=f77f00)
 ](https://www.cloudflare.com/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet)](https://noteworthy-ebon.vercel.app/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Design Inspiration
 
-A significant portion of Noteworthy's UI design is inspired by the figma community file [Nowted](https://www.figma.com/community/file/1188856976000269208/nowted-a-note-taking-app).
+A significant portion of Noteworthy's UI design is inspired by the Figma community file [Nowted](https://www.figma.com/community/file/1188856976000269208/nowted-a-note-taking-app).
 
 ## Backend Architecture
 
@@ -40,18 +40,18 @@ Additionally, users' profile images are stored on Cloudflare R2, offering a secu
 
 ### 2. Server Components
 
-- Utilize server components to render and hydrate components on the server, optimizing performance and reducing client-side bundle size.
+- Utilise server components to render and hydrate components on the server, optimising performance and reducing client-side bundle size.
 
 ### 3. Note Management
 
-- **Create Note**: Create a new note using pre-created colors and providing a name.
-- **Favorite/Unfavorite Note**: Easily mark notes as favorites or remove them from favorites.
+- **Create Note**: Create a new note using pre-created colours and providing a name.
+- **Favourite/Unfavourite Note**: Easily mark notes as favourites or remove them from favourites.
 - **Archive/Unarchive Note**: Archive notes to keep your workspace clutter-free, and unarchive them when needed.
 - **Search Notes**: Quickly find specific notes using the search functionality.
 - **Filter Notes**: Filter notes by title alphabetically, by creation time (newest or oldest), or by update time (last update first), with the default filter being by update time.
 
 > [!NOTE]
-> A note cannot be archived and favorited at the same time; it's either one or none.
+> A note cannot be archived and favourited at the same time; it's either one or none.
 
 ## Authentication
 
@@ -72,7 +72,7 @@ The note editor functionality in Noteworthy is powered by [Tiptap](https://githu
 - **Font Family**: Select from 6 available fonts, including Garamond, Montserrat, Lobster, Didot, Merriweather, and Source Sans 3 (default).
 - **Font Size**: Change the font size using pre-selected values, with the default set to 12px.
 - **Alignment**: Align text to left, center, right, or justify, with the default alignment set to left.
-- **Text Formatting**: Format text with options to bold, italicize, underline, strike, highlight, superscript, or subscript.
+- **Text Formatting**: Format text with options to bold, Italicise, underline, strike, highlight, superscript, or subscript.
 
 ## Keyboard Shortcuts
 
@@ -119,8 +119,8 @@ RESEND_API_KEY=
 NEXT_PUBLIC_HOSTNAME=http://localhost:3000
 ```
 
-4. Install dependencies using npm install.
-5. Start the development server using npm run dev.
+4. Install dependencies using `npm install`.
+5. Start the development server using `npm run dev`.
 6. Open your web browser and visit http://localhost:3000.
 
 ## Contributing
