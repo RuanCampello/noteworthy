@@ -1,6 +1,6 @@
 'use server';
 
-import { getUserByEmail } from '@/data/user';
+import { getUserByEmail, userHasProviderAccount } from '@/data/user';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { generatePasswordResetToken } from '@/lib/tokens';
 import { resetPasswordSchema } from '@/schemas';
@@ -15,6 +15,16 @@ export async function resetPassword(
   const { email } = fields.data;
   const user = await getUserByEmail(email);
   if (!user) return { error: 'No user found with this e-mail' };
+
+  const { value: isProviderAccount, provider } = await userHasProviderAccount(
+    user.id
+  );
+
+  if (isProviderAccount) {
+    return {
+      message: `It looks like your account was created by a provider. Try resetting your password with ${provider}.`,
+    };
+  }
 
   const passwordResetToken = await generatePasswordResetToken(email);
   if (passwordResetToken.currentToken) {
