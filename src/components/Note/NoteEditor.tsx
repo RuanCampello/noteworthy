@@ -79,15 +79,16 @@ export default function NoteEditor({
       slotBefore={
         <>
           {children}
+
           {isEditable && <EditorMenuBar />}
         </>
       }
       extensions={extensions}
       editorProps={editorProps}
     >
-      <>
+      <div>
         <NoteBubbleMenu />
-      </>
+      </div>
     </EditorProvider>
   );
 }
