@@ -108,7 +108,10 @@ export default function EditorMenuBar() {
     <div className='flex flex-col gap-1 xl:px-11 px-4'>
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
-          <MenuTooltip content='Styles' sideOffset={6}>
+          <MenuTooltip
+            content='Styles'
+            sideOffset={6}
+          >
             <SelectTrigger className='bg-black border-none w-28 font-semibold'>
               <SelectValue>{selectedValue}</SelectValue>
             </SelectTrigger>
