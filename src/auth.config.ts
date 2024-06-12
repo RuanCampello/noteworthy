@@ -6,17 +6,18 @@ import type { NextAuthConfig } from 'next-auth';
 import { loginFormSchema } from '@/schemas';
 import { getUserByEmail } from './data/user';
 import bcrypt from 'bcryptjs';
+import { env } from './env';
 
 export default {
-  secret: process.env.AUTH_SECRET,
+  secret: env.AUTH_SECRET,
   providers: [
     GitHub({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
     Credentials({
       async authorize(credentials) {
