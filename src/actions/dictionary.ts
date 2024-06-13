@@ -10,7 +10,11 @@ export async function getDefinition(word: string) {
       next: { tags: ['update-definition'] },
     }
   );
-  const data = await response.json();
-  const definition: Definition = data[0];
-  return definition;
+  try {
+    const data = await response.json();
+    const definition: Definition = data[0];
+    return definition;
+  } catch (error) {
+    console.error(error);
+  }
 }

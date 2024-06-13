@@ -14,22 +14,22 @@ export default function DictionarySearch() {
     const word = formData.get('word') as string;
     if (!word) return;
 
-    const params = new URLSearchParams(searchParams)
-    params.set('dfn-open', 'true')
-    params.set('dfn-word', word)
+    const params = new URLSearchParams(searchParams);
+    params.set('dfn-open', 'true');
+    params.set('dfn-word', word);
 
     router.push(`?${params}`);
-    router.refresh()
+    router.refresh();
   }
 
   return (
     <form
       action={searchWord}
-      className='w-full pe-3 flex bg-midnight text-silver rounded-md items-center'
+      className='w-full pe-3 flex bg-midnight text-silver rounded-md items-center focus-within:outline-white focus-within:outline focus-within:outline-2'
     >
       <Input
         defaultValue={word || ''}
-        className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent'
+        className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent z-50'
         name='word'
         placeholder='Search for a word'
       />

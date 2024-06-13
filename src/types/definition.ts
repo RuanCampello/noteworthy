@@ -6,18 +6,20 @@ export type Definition = {
     audio: string;
     sourceUrl: string;
   }[];
-  meanings: {
-    partOfSpeech: string;
-    definitions: {
-      definition: string;
-      synonyms: string[];
-      antonyms: string[];
-      example: string;
-    }[];
-  }[];
+  meanings: Meaning[];
   license: {
     name: string;
     url: string;
   };
   sourceUrls: string[];
+};
+
+export type Meaning = {
+  partOfSpeech: string;
+  definitions: {
+    definition: string;
+    synonyms: string[];
+    antonyms: string[];
+    example: string;
+  }[];
 };
