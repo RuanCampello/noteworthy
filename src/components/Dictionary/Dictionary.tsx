@@ -1,11 +1,10 @@
-import { BookA, Search, X } from 'lucide-react';
-import { Input } from './ui/input';
-import MenuTooltip from './Tooltip';
+import { BookA, X } from 'lucide-react';
+import MenuTooltip from '../Tooltip';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getDefinition } from '@/actions/dictionary';
-import { revalidateTag } from 'next/cache';
-import { Separator } from './ui/separator';
+import { Separator } from '../ui/separator';
+import DictionarySearch from './DictionarySearch';
 
 interface DictionaryProps {
   word?: string;
@@ -29,23 +28,6 @@ export default async function Dictionary({ word }: DictionaryProps) {
     }
   }
 
-  async function searchWord(formData: FormData) {
-    'use server';
-
-    const word = formData.get('word') as string;
-    if (!word) return;
-
-    const headersList = headers();
-    const params = headersList.get('search-params');
-    const searchParams = new URLSearchParams(params!);
-
-    searchParams.set('dfn-open', 'true');
-    searchParams.set('dfn-word', word);
-
-    revalidateTag('update-definition');
-    redirect(`?${searchParams}`);
-  }
-
   return (
     <aside className='w-1/4 p-5 pt-0 border-l border-l-midnight h-screen overflow-y-scroll relative'>
       <div className='sticky top-0 pt-5 pb-1 bg-black'>
@@ -65,23 +47,7 @@ export default async function Dictionary({ word }: DictionaryProps) {
             </form>
           </MenuTooltip>
         </header>
-        <form
-          action={searchWord}
-          className='w-full pe-3 flex bg-midnight text-silver rounded-md items-center'
-        >
-          <Input
-            defaultValue={word}
-            className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent'
-            name='word'
-            placeholder='Search for a word'
-          />
-          <button
-            type='submit'
-            className='h-fit focus:outline-none'
-          >
-            <Search size={20} />
-          </button>
-        </form>
+        <DictionarySearch />
         <section>
           <div className='my-3'>
             <h3 className='text-3xl font-semibold capitalize'>

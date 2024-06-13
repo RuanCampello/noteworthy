@@ -1,4 +1,4 @@
-import Dictionary from '@/components/Dictionary';
+import Dictionary from '@/components/Dictionary/Dictionary';
 import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 
