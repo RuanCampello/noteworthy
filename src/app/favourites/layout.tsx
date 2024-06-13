@@ -13,7 +13,7 @@ export default async function FavouriteLayout({
   if (!user?.id) return;
   const favouriteNotes = await getAllUserFavouriteNotes(user.id);
   return (
-    <div className='flex h-screen'>
+    <div className='flex h-screen w-full'>
       <Sidebar />
       <SubSidebar
         notes={favouriteNotes!}

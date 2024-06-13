@@ -11,7 +11,7 @@ export default async function Template({ children }: { children: ReactNode }) {
   const word = searchParams.get('dfn-word') || undefined;
 
   return (
-    <main className='flex'>
+    <main className='flex relative'>
       {children}
       {isDictionaryOpen && <Dictionary word={word} />}
     </main>
