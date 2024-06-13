@@ -116,6 +116,33 @@ export default async function Dictionary({ word }: DictionaryProps) {
           })}
         </section>
       ))}
+      <footer className='flex flex-col gap-3 mt-4 underline-offset-4 text-silver text-sm'>
+        <Separator orientation='horizontal' />
+        <div className='grid grid-cols-4'>
+          <p>{definition.sourceUrls.length > 1 ? 'Sources' : 'Source'}</p>
+          <div className='flex flex-col col-span-3'>
+            {definition.sourceUrls.map((source) => (
+              <a
+                key={source}
+                href={source}
+                className='underline'
+                target='_blank'
+              >
+                {source}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div className='grid grid-cols-4'>
+          <p>Licence</p>
+          <a
+            className='underline col-span-3'
+            href={definition.license.url}
+          >
+            {definition.license.name}
+          </a>
+        </div>
+      </footer>
     </aside>
   );
 }
