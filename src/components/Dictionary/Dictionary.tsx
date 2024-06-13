@@ -25,7 +25,7 @@ export default async function Dictionary({ word }: DictionaryProps) {
       searchParams.delete('dfn-word');
 
       redirect(`?${searchParams}`);
-    }
+    } else redirect('?');
   }
 
   return (
@@ -64,11 +64,16 @@ export default async function Dictionary({ word }: DictionaryProps) {
             <Separator orientation='horizontal' />
           </div>
           {meaning.definitions.map((definition, i) => (
-            <div className='mb-2' key={definition.definition}>
+            <div
+              className='mb-2'
+              key={definition.definition}
+            >
               <p className='mx-2 text-white/80 flex gap-1.5'>
-                <span className='px-2 rounded-full h-fit text-silver bg-midnight'>{i+1}</span>
+                <span className='px-2 rounded-full h-fit text-silver bg-midnight'>
+                  {i + 1}
+                </span>
                 {definition.definition}
-                </p>
+              </p>
             </div>
           ))}
         </section>
