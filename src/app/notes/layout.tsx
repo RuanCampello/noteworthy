@@ -8,9 +8,9 @@ export default function NoteLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className='flex h-screen w-full'>
+    <div className='flex w-screen overflow-x-hidden'>
       <Sidebar />
-      <div className='flex flex-col h-full overflow-y-clip grow'>
+      <div className='flex flex-col h-full overflow-y-clip flex-1 w-fit'>
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>
     </div>
