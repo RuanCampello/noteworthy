@@ -1,7 +1,4 @@
-import { BookA, X } from 'lucide-react';
-import MenuTooltip from '../Tooltip';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { BookA } from 'lucide-react';
 import { getDefinition } from '@/actions/dictionary';
 import { Separator } from '../ui/separator';
 import DictionarySearch from './DictionarySearch';
@@ -10,25 +7,10 @@ import DerivedWords from './DerivedWords';
 import Example from './Example';
 import NotFound from './NotFound';
 import { Definition, Meaning } from '@/types/definition';
+import CloseButton from './CloseButton';
 
 interface DictionaryProps {
   word?: string;
-}
-
-async function closeDictionary() {
-  'use server';
-
-  const headersList = headers();
-  const params = headersList.get('search-params');
-  const searchParams = new URLSearchParams(params!);
-
-  if (searchParams.has('dfn-open')) {
-    searchParams.delete('dfn-open');
-    searchParams.delete('dfn-word');
-    redirect(`?${searchParams}`);
-  } else {
-    redirect('?');
-  }
 }
 
 interface PhoneticSectionProps {
@@ -147,16 +129,7 @@ export default async function Dictionary({ word }: DictionaryProps) {
             <BookA size={26} />
             <h2 className='text-xl font-medium'>Dictionary</h2>
           </div>
-          <MenuTooltip content='Close dictionary'>
-            <form action={closeDictionary}>
-              <button
-                type='submit'
-                className='p-1.5 rounded-full text-silver hover:bg-midnight'
-              >
-                <X size={18} />
-              </button>
-            </form>
-          </MenuTooltip>
+          <CloseButton />
         </header>
         <DictionarySearch />
         {hasContent ? (

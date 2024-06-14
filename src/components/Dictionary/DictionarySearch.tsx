@@ -29,7 +29,7 @@ export default function DictionarySearch() {
     >
       <Input
         defaultValue={word || ''}
-        className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent z-50'
+        className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent z-40'
         name='word'
         placeholder='Search for a word'
       />
