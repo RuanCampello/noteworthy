@@ -43,7 +43,7 @@ function PhoneticSection({ definition }: PhoneticSectionProps) {
   return (
     <section className='py-4 mt-1 flex items-center justify-between'>
       <div>
-        <h3 className='text-3xl font-semibold capitalize leading-none'>
+        <h3 className='text-3xl font-semibold capitalize leading-tight'>
           {definition.word}
         </h3>
         <p className='text-silver font-semibold'>{definition.phonetic}</p>

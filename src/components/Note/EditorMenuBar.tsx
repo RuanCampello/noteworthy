@@ -1,21 +1,21 @@
 'use client';
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Separator } from './ui/separator';
+import { Separator } from '../ui/separator';
 import { Check } from 'lucide-react';
 import { useCurrentEditor } from '@tiptap/react';
-import MenuTooltip from './Tooltip';
+import MenuTooltip from '../Tooltip';
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
+} from '../ui/select';
 import { useEffect, useState } from 'react';
-import { toast } from './ui/use-toast';
-import MenuItems from './MenuItems';
-import SelectFontSize from './SelectFontSize';
-import SelectFontFamily from './SelectFontFamily';
+import { toast } from '../ui/use-toast';
+import MenuItems from '../MenuItems';
+import SelectFontSize from '../SelectFontSize';
+import SelectFontFamily from '../SelectFontFamily';
 import { updateNoteContent } from '@/data/note';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';

@@ -44,16 +44,17 @@ export default function ListenWord({ url }: ListenWordProps) {
   }, [isPlaying, audio]);
 
   const iconProps = {
-    size: 20,
+    size: 24,
     fill: '#181818',
   };
 
   return (
     <Button
       onClick={() => setIsPlaying(!isPlaying)}
-      className='p-4 rounded-full focus:outline-none'
+      className='p-6 rounded-full focus:outline-none hover:bg-neutral-400 data-[playing=true]:bg-neutral-400'
       size='icon'
       variant='secondary'
+      data-playing={isPlaying}
     >
       {isPlaying ? (
         <Pause

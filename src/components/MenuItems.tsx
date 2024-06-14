@@ -11,10 +11,12 @@ import {
   Superscript,
   Subscript,
   AlignLeft,
+  BookA,
 } from 'lucide-react';
 import { Fragment } from 'react';
 import MenuTooltip from './Tooltip';
 import { Separator } from './ui/separator';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type MenuItem = {
   tooltipContent: string;
@@ -25,6 +27,10 @@ type MenuItem = {
 
 export default function MenuItems() {
   const { editor } = useCurrentEditor();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const isDictionaryActive = searchParams.has('dfn-open');
+
   if (!editor) return;
 
   function handleSuperscript() {
@@ -43,6 +49,23 @@ export default function MenuItems() {
       editor.chain().focus().toggleSubscript().run();
     } else {
       editor.chain().focus().toggleSubscript().run();
+    }
+  }
+
+  function handleDefine() {
+    if (!editor) return;
+
+    const { view, state } = editor;
+    const { from, to } = view.state.selection;
+    const text = state.doc.textBetween(from, to);
+    const isSingleWord = /^\w+$/.test(text);
+    if (isSingleWord) {
+      const params = new URLSearchParams(searchParams);
+      params.set('dfn-open', 'true');
+      params.set('dfn-word', text);
+
+      router.push(`?${params}`);
+      router.refresh();
     }
   }
 
@@ -113,6 +136,12 @@ export default function MenuItems() {
       isActive: editor.isActive('subscript'),
       icon: <Subscript size={20} />,
     },
+    {
+      tooltipContent: 'Define word',
+      action: handleDefine,
+      isActive: isDictionaryActive,
+      icon: <BookA size={20} />,
+    },
   ];
   return (
     <>
@@ -128,7 +157,9 @@ export default function MenuItems() {
               {item.icon}
             </button>
           </MenuTooltip>
-          {(i === 3 || i === 8) && <Separator orientation='vertical' />}
+          {(i === 3 || i === 8 || i === 10) && (
+            <Separator orientation='vertical' />
+          )}
         </Fragment>
       ))}
     </>
