@@ -1,4 +1,5 @@
 'use client';
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Separator } from '../ui/separator';
 import { Check } from 'lucide-react';
@@ -16,7 +17,7 @@ import { toast } from '../ui/use-toast';
 import MenuItems from '../MenuItems';
 import SelectFontSize from '../SelectFontSize';
 import SelectFontFamily from '../SelectFontFamily';
-import { updateNoteContent } from '@/data/note';
+import { updateNoteContent } from '@/actions/note';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 

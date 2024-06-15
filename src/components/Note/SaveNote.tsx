@@ -5,7 +5,7 @@ import MenuTooltip from '../Tooltip';
 import { useCurrentEditor } from '@tiptap/react';
 import { useTransition } from 'react';
 import { useToast } from '../ui/use-toast';
-import { updateNoteContent } from '@/data/note';
+import { updateNoteContent } from '@/actions/note';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 

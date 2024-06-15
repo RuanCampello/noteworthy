@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { getUserByEmail } from '@/data/user';
+import { getUserByEmail } from '@/server/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';
 import { AuthError } from 'next-auth';

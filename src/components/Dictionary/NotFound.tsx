@@ -1,4 +1,4 @@
-import NotFoundImage from '@assets/dictionary-not-found.svg';
+import NotFoundImage from '@/assets/dictionary-not-found.svg';
 import Image from 'next/image';
 
 export default function NotFound() {

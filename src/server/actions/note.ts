@@ -1,7 +1,7 @@
 'use server';
 
-import { currentUser } from '@/data/note';
-import { db } from '@/db';
+import { currentUser } from '@/queries/note';
+import { db } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/hello-world';
@@ -122,13 +122,31 @@ export async function deleteNote(id: string) {
 }
 
 export async function createPlaceholderNote(userId: string) {
-  const randomColour = getRandomColour().name;
+  const { name } = getRandomColour();
   await db.note.create({
     data: {
-      colour: randomColour,
+      colour: name,
       content: helloWorld,
       title: 'Hello World 📝',
       userId,
     },
   });
+}
+
+export async function updateNoteContent(
+  id: string,
+  userId: string,
+  content: string
+) {
+  try {
+    const note = await db.note.update({
+      where: { id, userId },
+      data: { content, lastUpdate: new Date() },
+    });
+    revalidatePath('/notes');
+    return note;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 }

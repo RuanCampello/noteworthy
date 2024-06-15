@@ -4,7 +4,7 @@ import Credentials from 'next-auth/providers/credentials';
 
 import type { NextAuthConfig } from 'next-auth';
 import { loginFormSchema } from '@/schemas';
-import { getUserByEmail } from './data/user';
+import { getUserByEmail } from './server/queries/user';
 import bcrypt from 'bcryptjs';
 import { env } from './env';
 

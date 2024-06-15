@@ -1,4 +1,6 @@
-import { db } from '@/db';
+import 'server-only';
+
+import { db } from '@/server/db';
 
 export async function getPasswordResetTokenByToken(token: string) {
   try {

@@ -20,8 +20,8 @@ import { useEffect, useState, useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
 import { register } from '@/actions/register';
 
-import GoogleLogo from '@assets/third-part-login/Google.png';
-import GithubLogo from '@assets/third-part-login/GitHub.svg';
+import GoogleLogo from '@/assets/third-part-login/Google.png';
+import GithubLogo from '@/assets/third-part-login/GitHub.svg';
 import { X } from 'lucide-react';
 
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;

@@ -5,10 +5,9 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Archive, ArchiveX, Pencil, Star, StarOff, Trash } from 'lucide-react';
-import { Separator } from './ui/separator';
 import DeleteNoteDialog from './Note/DeleteNoteDialog';
 import EditNoteDialog from './Note/EditNoteDialog';
-import { currentUser, getNoteById } from '@/data/note';
+import { currentUser, getNoteById } from '@/queries/note';
 import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 
 import DropdownButton from './DropdownButton';

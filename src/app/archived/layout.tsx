@@ -1,7 +1,7 @@
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
-import { currentUser, getAllUserArchivedNotes } from '@/data/note';
+import { currentUser, getAllUserArchivedNotes } from '@/queries/note';
 import { ArchiveX, ArchiveRestore } from 'lucide-react';
 
 export default async function FavouriteLayout({

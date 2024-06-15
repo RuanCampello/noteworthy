@@ -1,5 +1,5 @@
-import { getPasswordResetTokenByEmail } from '@/data/password-reset-token';
-import { db } from '@/db';
+import { getPasswordResetTokenByEmail } from '@/queries/password-reset-token';
+import { db } from '@/server/db';
 import { v4 as uuid } from 'uuid';
 
 type Token = {

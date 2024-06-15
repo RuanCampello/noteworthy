@@ -1,7 +1,7 @@
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
-import { currentUser, getAllUserFavouriteNotes } from '@/data/note';
+import { currentUser, getAllUserFavouriteNotes } from '@/queries/note';
 import { StarOff, Sparkles } from 'lucide-react';
 
 export default async function FavouriteLayout({

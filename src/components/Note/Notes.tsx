@@ -4,7 +4,7 @@ import Counter from '../Counter';
 import SearchNote from './SearchNote';
 import SortDropdown from '../SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
-import { getAllUserOrdinaryNotes } from '@/data/note';
+import { getAllUserOrdinaryNotes } from '@/queries/note';
 import { auth } from '@/auth';
 import { ReactNode } from 'react';
 
