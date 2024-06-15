@@ -19,8 +19,11 @@ export default async function Favourite({ params }: Props) {
   };
 
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col gap-4'>
-      <NoteEditor owner={owner.name} content={content}>
+    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+      <NoteEditor
+        owner={owner.id}
+        content={content}
+      >
         <NoteHeader
           title={title}
           date={createdAt}

@@ -19,8 +19,8 @@ export default async function Archived({ params }: Props) {
   };
 
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col gap-4'>
-      <NoteEditor content={content} owner={owner.name}>
+    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+      <NoteEditor content={content} owner={owner.id}>
         <NoteHeader
           title={title}
           date={createdAt}
