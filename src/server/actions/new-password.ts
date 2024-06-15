@@ -1,7 +1,7 @@
 'use server';
 
-import { getPasswordResetTokenByToken } from '@/server/queries/password-reset-token';
-import { getUserByEmail } from '@/server/queries/user';
+import { getPasswordResetTokenByToken } from '@/queries/password-reset-token';
+import { getUserByEmail } from '@/queries/user';
 import { newPasswordSchema } from '@/schemas';
 import { z } from 'zod';
 import bycrpt from 'bcryptjs';

@@ -1,6 +1,6 @@
 'use server';
 
-import { getUserByEmail, userHasProviderAccount } from '@/server/queries/user';
+import { getUserByEmail, userHasProviderAccount } from '@/queries/user';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { generatePasswordResetToken } from '@/lib/tokens';
 import { resetPasswordSchema } from '@/schemas';

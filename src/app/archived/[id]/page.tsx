@@ -2,7 +2,7 @@ import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader, { Owner } from '@/components/Note/NoteHeader';
 import { getNoteById } from '@/queries/note';
-import { getUserById } from '@/server/queries/user';
+import { getUserById } from '@/queries/user';
 
 type Props = { params: { id: string } };
 

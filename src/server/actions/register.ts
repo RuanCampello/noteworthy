@@ -4,7 +4,7 @@ import { registerFormSchema } from '@/schemas';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { db } from '@/server/db';
-import { getUserByEmail } from '@/server/queries/user';
+import { getUserByEmail } from '@/queries/user';
 import { signIn } from '@/auth';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
