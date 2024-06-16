@@ -51,7 +51,7 @@ export default async function Profile() {
               <button
                 form='logout'
                 type='submit'
-                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-red-600 hover:font-semibold group flex items-center'
+                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-tickle hover:text-black hover:font-semibold group flex items-center'
               >
                 Log out
                 <DropdownMenuShortcut>
