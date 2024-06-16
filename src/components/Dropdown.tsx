@@ -85,6 +85,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
           <DropdownButton
             icon={<Globe />}
             color='publish'
+            text={isPublic ? 'Unpublish' : 'Publish'}
           />
         </PublishNoteDialog>
         <DeleteNoteDialog

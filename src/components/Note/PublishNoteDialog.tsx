@@ -13,6 +13,8 @@ import { tooglePublishState } from '@/server/actions/note';
 import { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import SubmitButton from '../SubmitButton';
+import { Globe } from 'lucide-react';
+import ShareLinkButton from '../ShareLinkButton';
 
 interface PublishNoteDialogProps {
   children: ReactNode;
@@ -40,35 +42,43 @@ export default function PublishNoteDialog({
     },
     public: {
       title: 'Unpublish this note',
-      description:
-        'Ready to reclaim your thoughts? Unpublish your note, keep your ideas close, and let your creativity simmer in private. 🔒',
+      description: 'Anyone who has this link will be able to view this.',
       actionName: 'Unpublish',
     },
   };
   const dialogKey: DialogKey = isPublic ? 'public' : 'private';
 
+  const headerList = headers();
+  const pathname = headerList.get('pathname');
+  if (!pathname) return;
+
+  const noteId = pathname.replace(/\/[^/]*\//g, '');
+
   async function handleTogglePublishState() {
     'use server';
 
-    const headerList = headers();
-    const pathname = headerList.get('pathname');
-    if (!pathname) return;
-
-    const noteId = pathname.replace(/\/[^/]*\//g, '');
     await tooglePublishState(noteId, isPublic);
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className='w-96 bg-black dark'>
-        <form action={handleTogglePublishState}>
+      <DialogContent className='w-96 bg-black dark select-none'>
+        <form
+          className='overflow-x-hidden p-1'
+          action={handleTogglePublishState}
+        >
           <DialogHeader>
             <DialogTitle>{dialogContent[dialogKey].title}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription
+              data-global={isPublic}
+              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-2 data-[global=true]:items-center'
+            >
+              {isPublic && <Globe size={16} />}
               {dialogContent[dialogKey].description}
             </DialogDescription>
           </DialogHeader>
+          {isPublic && <ShareLinkButton noteId={noteId} />}
           <DialogFooter className='grid grid-cols-2 mt-6'>
             <DialogClose asChild>
               <Button
