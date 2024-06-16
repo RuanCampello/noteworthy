@@ -42,7 +42,7 @@ export default function PublishNoteDialog({
     },
     public: {
       title: 'Unpublish this note',
-      description: 'Anyone who has this link will be able to view this.',
+      description: 'Anyone who has this link will be able to view the note.',
       actionName: 'Unpublish',
     },
   };
@@ -65,21 +65,21 @@ export default function PublishNoteDialog({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='w-96 bg-black dark select-none'>
         <form
-          className='overflow-x-hidden p-1'
+          className='overflow-x-hidden'
           action={handleTogglePublishState}
         >
           <DialogHeader>
             <DialogTitle>{dialogContent[dialogKey].title}</DialogTitle>
             <DialogDescription
               data-global={isPublic}
-              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-2 data-[global=true]:items-center'
+              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-1 data-[global=true]:items-center'
             >
               {isPublic && <Globe size={16} />}
               {dialogContent[dialogKey].description}
             </DialogDescription>
           </DialogHeader>
           {isPublic && <ShareLinkButton noteId={noteId} />}
-          <DialogFooter className='grid grid-cols-2 mt-6'>
+          <DialogFooter className='grid grid-cols-2 mt-6 p-1'>
             <DialogClose asChild>
               <Button
                 type='button'
