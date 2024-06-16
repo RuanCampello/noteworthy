@@ -60,6 +60,7 @@ model Note {
   lastUpdate  DateTime @default(now())
   isFavourite Boolean  @default(false)
   isArchived  Boolean  @default(false)
+  isPublic    Boolean  @default(false)
   owner       User     @relation(fields: [userId], references: [id])
   content     String
   colour      Colour
