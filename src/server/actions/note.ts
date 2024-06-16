@@ -1,6 +1,6 @@
 'use server';
 
-import { currentUser } from '@/queries/note';
+import { currentUser, getNoteById } from '@/queries/note';
 import { db } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
@@ -117,6 +117,15 @@ export async function editNote(
 }
 
 export async function deleteNote(id: string) {
+  const user = await currentUser();
+
+  if (!user) return;
+
+  const selectedNote = await getNoteById(id);
+
+  if (!selectedNote?.id) return;
+  if (selectedNote.userId !== user.id) return;
+  
   await db.note.delete({ where: { id } });
   redirect('/');
 }

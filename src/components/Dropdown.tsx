@@ -62,11 +62,24 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             active={isArchived}
           />
         </form>
-        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
-          <DropdownButton icon={<Pencil />} color='edit' />
+        <EditNoteDialog
+          noteId={id}
+          noteName={title}
+          noteColour={colour}
+        >
+          <DropdownButton
+            icon={<Pencil />}
+            color='edit'
+          />
         </EditNoteDialog>
-        <DeleteNoteDialog noteName={title} noteId={id}>
-          <DropdownButton color='delete' icon={<Trash />} />
+        <DeleteNoteDialog
+          noteName={title}
+          noteId={id}
+        >
+          <DropdownButton
+            color='delete'
+            icon={<Trash />}
+          />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>
