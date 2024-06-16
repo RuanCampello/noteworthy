@@ -5,7 +5,7 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { db } from '@/server/db';
 import { getUserByEmail } from '@/queries/user';
-import { signIn } from '@/auth';
+import { signIn } from '@/auth/auth';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
 import { createPlaceholderNote } from './note';

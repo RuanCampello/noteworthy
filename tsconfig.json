@@ -40,6 +40,9 @@
       ],
       "@/actions/*": [
         "./src/server/actions/*"
+      ],
+      "@/auth/*": [
+        "./src/server/auth/*"
       ]
     }
   },

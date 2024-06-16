@@ -9,7 +9,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { auth, signOut } from '@/auth';
+import { auth, signOut } from '@/auth/auth';
 import { env } from '@/env';
 
 export default async function Profile() {

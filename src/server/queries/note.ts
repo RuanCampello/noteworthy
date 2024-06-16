@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { auth } from '@/auth';
+import { auth } from '@/auth/auth';
 import { db } from '@/server/db';
 
 export async function currentUser() {

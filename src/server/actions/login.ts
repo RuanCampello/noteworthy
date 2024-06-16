@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn } from '@/auth/auth';
 import { getUserByEmail } from '@/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';

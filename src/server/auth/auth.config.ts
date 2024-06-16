@@ -6,7 +6,7 @@ import type { NextAuthConfig } from 'next-auth';
 import { loginFormSchema } from '@/schemas';
 import { getUserByEmail } from '@/queries/user';
 import bcrypt from 'bcryptjs';
-import { env } from './env';
+import { env } from '@/env';
 
 export default {
   secret: env.AUTH_SECRET,
