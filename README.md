@@ -53,6 +53,13 @@ Additionally, users' profile images are stored on Cloudflare R2, offering a secu
 > [!NOTE]
 > A note cannot be archived and favourited at the same time; it's either one or none.
 
+### 4. Dictionary
+
+- **Word Definitions and Phonetics**: Look up definitions and phonetic transcriptions of words.
+- **Word Pronunciation**: Audio pronunciations to help users learn the correct pronunciation.
+- **Synonyms and Antonyms**: View synonyms and antonyms to enhance vocabulary.
+- **Examples with Selected Words**: Display example sentences using the selected word for context.
+
 ## Authentication
 
 Authentication in Noteworthy is powered by [NextAuth](https://authjs.dev/), supporting multiple authentication providers including:
