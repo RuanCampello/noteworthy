@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useTransition } from 'react';
+import { ReactNode, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -37,10 +37,12 @@ export type NoteDialog = z.infer<typeof noteDialogSchema>;
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [loading, startTransition] = useTransition();
+  const [open, setOpen] = useState<boolean>(false);
 
   function handleAddNote(values: NoteDialog) {
     startTransition(async () => {
       await createNote(values);
+      setOpen(false);
     });
   }
 
@@ -58,7 +60,10 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const selectedColour = Colours[colour];
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={setOpen}
+      open={open}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
         <Form {...noteDialog}>
@@ -88,7 +93,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                         disabled={loading}
                         type='text'
                         className='bg-black dark col-span-3 focus:ring-transparent focus:outline'
-                        style={{outlineColor: selectedColour}}
+                        style={{ outlineColor: selectedColour }}
                         {...field}
                       />
                     </FormControl>
@@ -127,7 +132,12 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                 className='transition-colors duration-200 ease-in flex gap-1 items-center'
               >
                 Create note
-                {loading && <Loader2 size={16} className='animate-spin' />}
+                {loading && (
+                  <Loader2
+                    size={16}
+                    className='animate-spin'
+                  />
+                )}
               </Button>
             </DialogFooter>
           </form>

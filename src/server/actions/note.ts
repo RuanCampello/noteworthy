@@ -10,6 +10,12 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
+function getPathnameParams() {
+  const origin = headers().get('origin');
+  const pathname = headers().get('pathname');
+  return { basePath: pathname?.split('/')[1], origin };
+}
+
 export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
 
@@ -30,13 +36,13 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
     },
   });
 
-  redirect(`notes/${note.id}`);
-}
+  const { origin, basePath } = getPathnameParams();
 
-function getPathnameParams() {
-  const origin = headers().get('origin');
-  const pathname = headers().get('pathname');
-  return { basePath: pathname?.split('/')[1], origin };
+  if (!basePath || basePath === 'favourites' || basePath === 'archived') {
+    redirect(`${origin}/notes/${note.id}`);
+  }
+  //if user is already in notes path, but not on favourite/archive page
+  redirect(`${origin}/${basePath}/${note.id}`);
 }
 
 export async function toggleNoteFavourite(id: string, userId: string) {
@@ -125,7 +131,7 @@ export async function deleteNote(id: string) {
 
   if (!selectedNote?.id) return;
   if (selectedNote.userId !== user.id) return;
-  
+
   await db.note.delete({ where: { id } });
   redirect('/');
 }
