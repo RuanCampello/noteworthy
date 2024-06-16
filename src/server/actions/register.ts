@@ -3,9 +3,9 @@
 import { registerFormSchema } from '@/schemas';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
-import { db } from '@/db';
-import { getUserByEmail } from '@/data/user';
-import { signIn } from '@/auth';
+import { db } from '@/server/db';
+import { getUserByEmail } from '@/queries/user';
+import { signIn } from '@/auth/auth';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
 import { createPlaceholderNote } from './note';

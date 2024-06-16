@@ -12,7 +12,7 @@ import SaveNote from './SaveNote';
 import WordCounter from '../WordCounter';
 import NoteHeaderItem from './NoteHeaderItem';
 import { toLocaleDateLong } from '@/utils/date';
-import { currentUser } from '@/data/note';
+import { currentUser } from '@/queries/note';
 import StatusTooltip from '../StatusTooltip';
 import { headers } from 'next/headers';
 

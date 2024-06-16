@@ -1,8 +1,7 @@
-'use server';
+import 'server-only';
 
-import { auth } from '@/auth';
-import { db } from '@/db';
-import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth/auth';
+import { db } from '@/server/db';
 
 export async function currentUser() {
   const session = await auth();
@@ -60,23 +59,5 @@ export async function getAllUserArchivedNotes(userId: string) {
   } catch (error) {
     console.error(error);
     return null;
-  }
-}
-
-export async function updateNoteContent(
-  id: string,
-  userId: string,
-  content: string
-) {
-  try {
-    const note = await db.note.update({
-      where: { id, userId },
-      data: { content, lastUpdate: new Date() },
-    });
-    revalidatePath('/notes');
-    return note;
-  } catch (error) {
-    console.error(error);
-    return;
   }
 }

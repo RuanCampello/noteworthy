@@ -1,6 +1,6 @@
-'use server';
+import 'server-only';
 
-import { db } from '@/db';
+import { db } from '@/server/db';
 
 export async function getUserByEmail(email: string) {
   try {

@@ -5,10 +5,9 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Archive, ArchiveX, Pencil, Star, StarOff, Trash } from 'lucide-react';
-import { Separator } from './ui/separator';
 import DeleteNoteDialog from './Note/DeleteNoteDialog';
 import EditNoteDialog from './Note/EditNoteDialog';
-import { currentUser, getNoteById } from '@/data/note';
+import { currentUser, getNoteById } from '@/queries/note';
 import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 
 import DropdownButton from './DropdownButton';
@@ -63,11 +62,24 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             active={isArchived}
           />
         </form>
-        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
-          <DropdownButton icon={<Pencil />} color='edit' />
+        <EditNoteDialog
+          noteId={id}
+          noteName={title}
+          noteColour={colour}
+        >
+          <DropdownButton
+            icon={<Pencil />}
+            color='edit'
+          />
         </EditNoteDialog>
-        <DeleteNoteDialog noteName={title} noteId={id}>
-          <DropdownButton color='delete' icon={<Trash />} />
+        <DeleteNoteDialog
+          noteName={title}
+          noteId={id}
+        >
+          <DropdownButton
+            color='delete'
+            icon={<Trash />}
+          />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>

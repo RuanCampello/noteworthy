@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { Lora } from 'next/font/google';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import LogoImage from '@assets/logo.svg';
+import LogoImage from '@/assets/logo.svg';
 
 const lora = Lora({ subsets: ['latin'] });
 

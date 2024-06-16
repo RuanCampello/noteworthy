@@ -1,8 +1,8 @@
 import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader, { Owner } from '@/components/Note/NoteHeader';
-import { getNoteById } from '@/data/note';
-import { getUserById } from '@/data/user';
+import { getNoteById } from '@/queries/note';
+import { getUserById } from '@/queries/user';
 
 type Props = { params: { id: string } };
 
@@ -19,8 +19,11 @@ export default async function Favourite({ params }: Props) {
   };
 
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col gap-4'>
-      <NoteEditor owner={owner.name} content={content}>
+    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+      <NoteEditor
+        owner={owner.id}
+        content={content}
+      >
         <NoteHeader
           title={title}
           date={createdAt}

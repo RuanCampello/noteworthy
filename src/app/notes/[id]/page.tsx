@@ -1,8 +1,8 @@
 import NotFound from '@/app/not-found';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader, { Owner } from '@/components/Note/NoteHeader';
-import { getNoteById } from '@/data/note';
-import { getUserById } from '@/data/user';
+import { getNoteById } from '@/queries/note';
+import { getUserById } from '@/queries/user';
 
 type Props = { params: { id: string } };
 

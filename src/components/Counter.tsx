@@ -1,6 +1,6 @@
-import { db } from '@/db';
+import { db } from '@/server/db';
 import AnimatedCounter from './AnimatedCounter';
-import { currentUser } from '@/data/note';
+import { currentUser } from '@/queries/note';
 
 interface CounterProps {
   isFavourite?: boolean;
