@@ -9,6 +9,7 @@ const buttonVariants = tv({
       delete: 'active:bg-melon focus:bg-melon hover:bg-melon',
       favourite: 'active:bg-sunset focus:bg-sunset hover:bg-sunset',
       archive: 'active:bg-mindaro focus:bg-mindaro hover:bg-mindaro',
+      publish: 'active:bg-wisteria focus:bg-wisteria hover:bg-wisteria'
     },
     active: { true: 'text-black' },
     disabled: {

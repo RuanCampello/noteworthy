@@ -3,14 +3,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { Archive, ArchiveX, Pencil, Star, StarOff, Trash } from 'lucide-react';
+} from '@/ui/dropdown-menu';
+import {
+  Archive,
+  ArchiveX,
+  Globe,
+  Pencil,
+  Star,
+  StarOff,
+  Trash,
+} from 'lucide-react';
 import DeleteNoteDialog from './Note/DeleteNoteDialog';
 import EditNoteDialog from './Note/EditNoteDialog';
 import { currentUser, getNoteById } from '@/queries/note';
 import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 
 import DropdownButton from './DropdownButton';
+import PublishNoteDialog from './Note/PublishNoteDialog';
 interface DropdownProps {
   children: ReactNode;
   noteId: string;
@@ -35,7 +44,7 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
   const note = await getNoteById(noteId);
   if (!note) return;
 
-  const { id, title, colour, isFavourite, isArchived } = note;
+  const { id, title, colour, isFavourite, isArchived, isPublic } = note;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -72,6 +81,12 @@ export default async function Dropdown({ children, noteId }: DropdownProps) {
             color='edit'
           />
         </EditNoteDialog>
+        <PublishNoteDialog isPublic={isPublic}>
+          <DropdownButton
+            icon={<Globe />}
+            color='publish'
+          />
+        </PublishNoteDialog>
         <DeleteNoteDialog
           noteName={title}
           noteId={id}

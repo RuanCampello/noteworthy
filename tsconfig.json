@@ -43,6 +43,9 @@
       ],
       "@/auth/*": [
         "./src/server/auth/*"
+      ],
+      "@/ui/*": [
+        "./src/components/ui/*"
       ]
     }
   },

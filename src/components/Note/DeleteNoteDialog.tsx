@@ -13,7 +13,7 @@ import {
 } from '../ui/alert-dialog';
 
 import { deleteNote } from '@/actions/note';
-import { Button } from '../ui/button';
+import { Button } from '@/ui/button';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
@@ -35,7 +35,7 @@ export default function DeleteNoteDialog({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className='dark bg-black border-red-500'>
+      <AlertDialogContent className='dark bg-black border-red-500 w-96'>
         <AlertDialogHeader>
           <AlertDialogTitle>Are absolutly sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -44,7 +44,14 @@ export default function DeleteNoteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className='light'>Cancel</AlertDialogCancel>
+          <AlertDialogCancel asChild>
+            <Button
+              size='sm'
+              className='h-fit bg-secondary text-sm text-secondary-foreground hover:bg-secondary/80'
+            >
+              Cancel
+            </Button>
+          </AlertDialogCancel>
           <Button
             disabled={loading}
             variant='destructive'

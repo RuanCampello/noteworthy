@@ -2,8 +2,6 @@ import 'server-only';
 
 import { auth } from '@/auth/auth';
 import { db } from '@/server/db';
-import { Note, User } from '@prisma/client';
-import { getUserById } from './user';
 
 export async function currentUser() {
   const session = await auth();
