@@ -47,7 +47,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "compressorjs": "^1.2.1",
-    "cookies-next": "^4.1.1",
+    "cookies-next": "^4.2.1",
     "firebase": "^10.11.1",
     "framer-motion": "^11.0.6",
     "lucide-react": "^0.331.0",
