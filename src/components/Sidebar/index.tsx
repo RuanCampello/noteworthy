@@ -4,21 +4,21 @@ import More from '@/components/More';
 import AddNoteButton from '@/components/Note/AddNoteButton';
 import Profile from '@/components/Profile';
 import ToggleSidebarButton from '@/components/Sidebar/ToggleSidebarButton';
-import { cookies } from 'next/headers';
+import { useSidebarState } from '@/utils/sidebar';
 
 export default async function Sidebar() {
-  const sidebarState = !!cookies().get('sidebar-state')?.value;
+  const state = useSidebarState();
 
   return (
-    <aside className='w-[20vw] flex flex-col pt-7 gap-7 h-screen border-r border-r-midnight'>
-      <header className='flex items-center justify-between pe-5'>
-        <Logo />
+    <aside
+      data-state={state}
+      className='w-[20vw] flex flex-col pt-7 gap-7 h-screen border-r border-r-midnight data-[state=closed]:w-[4vw] overflow-x-hidden data-[state=closed]:items-center group'
+    >
+      <header className='flex items-center group-data-[state=open]:justify-between group-data-[state=open]:pe-5 justify-center w-full'>
+        {state === 'open' && <Logo />}
         <ToggleSidebarButton />
       </header>
-      <section
-        data-close={sidebarState}
-        className='justify-center flex flex-col gap-7'
-      >
+      <section className='justify-center flex flex-col gap-7 w-full'>
         <AddNoteButton />
         <Notes />
         <More />

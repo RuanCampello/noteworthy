@@ -14,8 +14,8 @@ import {
   BookA,
 } from 'lucide-react';
 import { Fragment } from 'react';
-import MenuTooltip from './Tooltip';
-import { Separator } from './ui/separator';
+import MenuTooltip from '@/components/Tooltip';
+import { Separator } from '@/ui/separator';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type MenuItem = {
@@ -30,7 +30,6 @@ export default function MenuItems() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const isDictionaryActive = searchParams.has('dfn-open');
-
   if (!editor) return;
 
   function handleSuperscript() {

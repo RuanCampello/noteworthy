@@ -1,22 +1,25 @@
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 
 import { Bolt, LogOut } from 'lucide-react';
-import EditProfileDialog from './EditProfileDialog';
+import EditProfileDialog from '@/components/EditProfileDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { auth, signOut } from '@/auth/auth';
+} from '@/ui/dropdown-menu';
+import { signOut } from '@/auth/auth';
 import { env } from '@/env';
+import { currentUser } from '@/server/queries/note';
+import { useSidebarState } from '@/utils/sidebar';
 
 export default async function Profile() {
-  const session = await auth();
-  if (!session?.user || !session.user?.id) return null;
+  const user = await currentUser();
+  const state = useSidebarState();
+  if (!user) return;
 
-  const { image, name, email, id } = session.user;
+  const { image, name, email, id } = user;
   if (!name) return null;
 
   async function handleLogout() {
@@ -25,10 +28,15 @@ export default async function Profile() {
   }
 
   return (
-    <div className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none'>
+    <div
+      data-state={state}
+      className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none data-[state=closed]:hidden'
+    >
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
-          <AvatarImage src={image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` || ''} />
+          <AvatarImage
+            src={image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` || ''}
+          />
           <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
             {name[0].toUpperCase()}
           </AvatarFallback>

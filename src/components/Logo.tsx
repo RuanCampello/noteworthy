@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import LogoImage from '../../public/assets/logo.svg';
+import LogoImage from '@/assets/logo.svg';
 
 import { Lora } from 'next/font/google';
 import { redirect } from 'next/navigation';
@@ -8,7 +8,7 @@ const lora = Lora({ subsets: ['latin'] });
 export default function Logo() {
   async function redirectToHome() {
     'use server';
-    
+
     redirect('/');
   }
   return (
@@ -19,7 +19,7 @@ export default function Logo() {
       >
         <Image
           alt='noteworthy'
-          className='group-hover:-translate-x-1 group-hover:rotate-12 transition-transform duration-300'
+          className='group-hover:-translate-x-1 shrink-0 group-hover:rotate-12 transition-transform duration-300'
           src={LogoImage}
           width={42}
           height={42}

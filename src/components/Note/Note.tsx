@@ -4,7 +4,7 @@ import { ColourType, Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import Link from 'next/link';
-import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NoteProps {
@@ -70,8 +70,14 @@ export default function Note({
 
   const backgroundColour = Colours[colour];
 
-  const formattedName: string =
-    isMobile && orientation === 'portrait' ? name[0].toUpperCase() : name;
+  
+  function getFormattedName(name: string): string {
+    const shortenName = name[0].toUpperCase();
+    if (isMobile && orientation === 'portrait') return shortenName;
+    else return name;
+  }
+
+  const formattedName = getFormattedName(name);
   const textWithoutHtml = stripHTMLTags(text);
   return (
     <Link
@@ -83,7 +89,7 @@ export default function Note({
           ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none'
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -101,10 +107,10 @@ export default function Note({
         {formattedName}
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm'>
-        <span className='text-black/60 md:inline-block hidden'>
+        <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
           {date.toLocaleDateString('en-GB')}
         </span>
-        <p className='truncate text-black/80 md:inline-block hidden'>
+        <p className='truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden'>
           {textWithoutHtml}
         </p>
       </div>

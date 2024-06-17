@@ -4,6 +4,7 @@ import { Button } from '@/ui/button';
 import { getCookie, setCookie } from 'cookies-next';
 import { OptionsType } from 'cookies-next/lib/types';
 import { PanelRightClose, PanelRightOpen } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const key = 'sidebar-state';
@@ -13,6 +14,7 @@ const options: OptionsType = {
 
 export default function ToggleSidebarButton() {
   const [currentState, setCurrentState] = useState<boolean>(true);
+  const router = useRouter();
 
   useEffect(() => {
     const state = getCookie(key);
@@ -21,9 +23,9 @@ export default function ToggleSidebarButton() {
   }, [currentState]);
 
   const iconProps = {
-    size: 22,
+    size: 20,
     className: 'text-silver',
-    strokeWidth: 2,
+    strokeWidth: 2.2,
   };
 
   function handleToogleSidebar() {
@@ -36,6 +38,8 @@ export default function ToggleSidebarButton() {
       setCookie(key, 'open', options);
       setCurrentState(true);
     }
+
+    router.refresh();
   }
 
   return (
