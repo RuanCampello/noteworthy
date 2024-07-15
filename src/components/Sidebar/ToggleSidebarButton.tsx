@@ -6,6 +6,7 @@ import { OptionsType } from 'cookies-next/lib/types';
 import { PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import useKeyboardShortcut from 'use-keyboard-shortcut';
 
 const key = 'sidebar-state';
 const options: OptionsType = {
@@ -15,6 +16,10 @@ const options: OptionsType = {
 export default function ToggleSidebarButton() {
   const [currentState, setCurrentState] = useState<boolean>(true);
   const router = useRouter();
+  useKeyboardShortcut(['Alt', 'S'], () => handleToogleSidebar(), {
+    overrideSystem: true,
+    repeatOnHold: false,
+  });
 
   useEffect(() => {
     const state = getCookie(key);

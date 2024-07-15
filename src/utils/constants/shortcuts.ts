@@ -41,3 +41,12 @@ export const shortcuts: Shortcut[] = [
     commands: ['Ctrl', 'Shift', 'H'],
   },
 ];
+
+export const noteShortcuts: Shortcut[] = [
+  { action: 'Save note', commands: ['Ctrl', 'S'] },
+  { action: 'Create new note', commands: ['Ctrl', 'E'] },
+];
+
+export const globalShortcuts: Shortcut[] = [
+  { action: 'Toggle sidebar', commands: ['Alt', 'S'] },
+];

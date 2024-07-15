@@ -11,7 +11,12 @@ import { Keyboard } from 'lucide-react';
 import { DropdownMenuShortcut } from './ui/dropdown-menu';
 import { Separator } from './ui/separator';
 import { type ReactNode } from 'react';
-import { type Shortcut, shortcuts } from '@/utils/constants/editor-shortcuts';
+import {
+  type Shortcut,
+  globalShortcuts,
+  noteShortcuts,
+  shortcuts,
+} from '@/utils/constants/shortcuts';
 
 export default function KeyboardDialog() {
   return (
@@ -33,11 +38,25 @@ export default function KeyboardDialog() {
           </DialogDescription>
         </DialogHeader>
         <section className='grid grid-cols-2 mt-4 gap-4'>
-          <div>
-            <Title>Note</Title>
-            <Separator className='my-1.5' />
-            <Shortcut action='Save note' commands={['Ctrl', 'S']} />
-            <Shortcut action='Create new note' commands={['Ctrl', 'E']} />
+          <div className='grid grid-rows-2'>
+            <div>
+              <Title>Note</Title>
+              <Separator className='my-1.5' />
+              <div className='flex flex-col gap-1'>
+                {noteShortcuts.map((shortcut) => (
+                  <Shortcut key={shortcut.action} {...shortcut} />
+                ))}
+              </div>
+            </div>
+            <div>
+              <Title>Global</Title>
+              <Separator className='my-1.5' />
+              <div className='flex flex-col gap-1'>
+                {globalShortcuts.map((shortcut) => (
+                  <Shortcut key={shortcut.action} {...shortcut} />
+                ))}
+              </div>
+            </div>
           </div>
           <div>
             <Title>Editor</Title>
