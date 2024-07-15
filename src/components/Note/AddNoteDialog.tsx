@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
-import { Input } from '../ui/input';
+} from '@/ui/dialog';
+import { Input } from '@/ui/input';
 import ColourSelect from '../ColourSelect';
 import { createNote } from '@/actions/note';
 import { z } from 'zod';
@@ -24,10 +24,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Button } from '../ui/button';
-import { Loader2 } from 'lucide-react';
+} from '@/ui/form';
+import { Button } from '@/ui/button';
 import { ColourType, Colours } from '@/utils/colours';
+import { Loader2 } from 'lucide-react';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -72,7 +72,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             className='flex flex-col gap-3'
           >
             <DialogHeader className='flex flex-col gap-3'>
-              <DialogTitle className='text-2xl'>Add New Note</DialogTitle>
+              <DialogTitle>Add New Note</DialogTitle>
               <DialogDescription>
                 📝 Ready to capture a spark of inspiration? Create your note,
                 let your thoughts soar, and sprinkle some magic into your

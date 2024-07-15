@@ -25,10 +25,11 @@ export default function MoreItem({
   children,
 }: MoreItemProps) {
   const active = headers().get('pathname')?.includes(href);
+  
   return (
     <Link
       href={href}
-      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group focus:outline-none`}
+      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group focus:outline-none group-data-[state=closed]/root:justify-center`}
     >
       <div className='flex gap-4'>
         <Icon
@@ -38,7 +39,9 @@ export default function MoreItem({
           stroke={active ? colour : '#fff'}
           fill={active ? '#333333' : '#181818'}
         />
-        <span className='sm:inline truncate hidden'>{name}</span>
+        <span className='sm:inline truncate hidden group-data-[state=closed]/root:hidden'>
+          {name}
+        </span>
       </div>
       {children}
     </Link>

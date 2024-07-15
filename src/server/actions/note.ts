@@ -165,3 +165,23 @@ export async function updateNoteContent(
     return;
   }
 }
+
+export async function tooglePublishState(id: string, currentState: boolean) {
+  try {
+    const note = await getNoteById(id);
+    if (!note) return;
+
+    const user = await currentUser();
+    if (user?.id !== note.userId) return;
+
+    await db.note.update({ where: { id }, data: { isPublic: !currentState } });
+    const { basePath } = getPathnameParams();
+
+    if (basePath) {
+      revalidatePath(`${basePath}/${id}`);
+    }
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}

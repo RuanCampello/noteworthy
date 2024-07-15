@@ -33,7 +33,6 @@ export default function NoteEditor({
   const { data: session } = useSession();
   if (!session?.user) return;
   const isEditable = session.user.id === owner;
-
   const extensions = [
     StarterKit,
     Underline,

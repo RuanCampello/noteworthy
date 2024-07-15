@@ -29,6 +29,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
       "@/assets/*": [
         "./public/assets/*"
       ],
@@ -43,6 +46,9 @@
       ],
       "@/auth/*": [
         "./src/server/auth/*"
+      ],
+      "@/ui/*": [
+        "./src/components/ui/*"
       ]
     }
   },

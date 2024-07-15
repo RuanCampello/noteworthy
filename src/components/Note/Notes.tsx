@@ -1,15 +1,18 @@
-import Note from './Note';
-import SectionTitle from '../SectionTitle';
-import Counter from '../Counter';
-import SearchNote from './SearchNote';
-import SortDropdown from '../SortDropdown';
+import Note from '@/components/Note/Note';
+import SectionTitle from '@/components/SectionTitle';
+import Counter from '@/components/Counter';
+import SearchNote from '@/components/Note/SearchNote';
+import SortDropdown from '@/components/SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
 import { getAllUserOrdinaryNotes } from '@/queries/note';
 import { auth } from '@/auth/auth';
 import { ReactNode } from 'react';
+import { useSidebarState } from '@/utils/sidebar';
 
 export default async function Notes() {
   const session = await auth();
+  const state = useSidebarState();
+
   if (!session?.user || !session.user.id) return;
 
   const notes = await getAllUserOrdinaryNotes(session.user.id);
@@ -29,15 +32,18 @@ export default async function Notes() {
     );
   }
   return (
-    <div>
+    <div
+      data-state={state}
+      className='group/root'
+    >
       <SectionTitle title='Notes'>
         <Counter />
       </SectionTitle>
-      <div className='px-5 flex gap-2 items-center'>
+      <div className='px-5 flex gap-2 items-center group-data-[state=closed]/root:hidden'>
         <SearchNote />
         <SortDropdown />
       </div>
-      <div className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver xl:max-h-[400px] lg:max-h-[300px] max-h-[230px] px-5 pb-1'>
+      <div className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver xl:max-h-[400px] lg:max-h-[300px] max-h-[230px] px-5 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden'>
         {filteredNotes.length === 0 && searchParam ? (
           <PlaceholderWrapper>
             <h1>

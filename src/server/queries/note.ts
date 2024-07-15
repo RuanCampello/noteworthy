@@ -2,11 +2,12 @@ import 'server-only';
 
 import { auth } from '@/auth/auth';
 import { db } from '@/server/db';
+import { cache } from 'react';
 
-export async function currentUser() {
+export const currentUser = cache(async () => {
   const session = await auth();
   return session?.user;
-}
+});
 
 export async function getNoteById(id: string) {
   try {
