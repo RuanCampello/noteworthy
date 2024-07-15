@@ -30,7 +30,7 @@ export default async function Profile() {
   return (
     <div
       data-state={state}
-      className='mt-auto p-5 md:ps-4 bg-midnight relative rounded-md m-1 select-none data-[state=closed]:hidden'
+      className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
     >
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar className='dark'>
@@ -41,21 +41,18 @@ export default async function Profile() {
             {name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className='overflow-hidden md:inline hidden'>
+        <div className='overflow-hidden md:inline hidden group-data-[state=closed]:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden' />
+            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]:hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black'>
             <EditProfileDialog />
             <DropdownMenuSeparator />
-            <form
-              id='logout'
-              action={handleLogout}
-            >
+            <form id='logout' action={handleLogout}>
               <button
                 form='logout'
                 type='submit'
@@ -63,10 +60,7 @@ export default async function Profile() {
               >
                 Log out
                 <DropdownMenuShortcut>
-                  <LogOut
-                    size={16}
-                    className='group-hover:text-black'
-                  />
+                  <LogOut size={16} className='group-hover:text-black' />
                 </DropdownMenuShortcut>
               </button>
             </form>
