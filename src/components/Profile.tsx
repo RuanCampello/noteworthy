@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 
-import { Bolt, LogOut } from 'lucide-react';
+import { Bolt, Key, LogOut } from 'lucide-react';
 import EditProfileDialog from '@/components/EditProfileDialog';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import { signOut } from '@/auth/auth';
 import { env } from '@/env';
 import { currentUser } from '@/server/queries/note';
 import { useSidebarState } from '@/utils/sidebar';
+import KeyboardDialog from './KeyboardDialog';
 
 export default async function Profile() {
   const user = await currentUser();
@@ -49,8 +50,11 @@ export default async function Profile() {
           <DropdownMenuTrigger asChild>
             <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]:hidden' />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className='dark bg-black'>
-            <EditProfileDialog />
+          <DropdownMenuContent className='dark bg-black w-44'>
+            <div className='flex flex-col gap-1'>
+              <EditProfileDialog />
+              <KeyboardDialog />
+            </div>
             <DropdownMenuSeparator />
             <form id='logout' action={handleLogout}>
               <button

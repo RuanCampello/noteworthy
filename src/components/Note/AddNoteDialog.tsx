@@ -16,6 +16,7 @@ import { createNote } from '@/actions/note';
 import { z } from 'zod';
 import { noteDialogSchema } from '@/schemas';
 import { useForm, useWatch } from 'react-hook-form';
+import useKeyboardShortcut from 'use-keyboard-shortcut';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -38,6 +39,13 @@ export type NoteDialog = z.infer<typeof noteDialogSchema>;
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
+  const {} = useKeyboardShortcut(
+    ['Control', 'E'],
+    (shortcutKey) => {
+      setOpen(true);
+    },
+    { overrideSystem: true, repeatOnHold: false },
+  );
 
   function handleAddNote(values: NoteDialog) {
     startTransition(async () => {
@@ -60,10 +68,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const selectedColour = Colours[colour];
 
   return (
-    <Dialog
-      onOpenChange={setOpen}
-      open={open}
-    >
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
         <Form {...noteDialog}>
@@ -132,12 +137,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                 className='transition-colors duration-200 ease-in flex gap-1 items-center'
               >
                 Create note
-                {loading && (
-                  <Loader2
-                    size={16}
-                    className='animate-spin'
-                  />
-                )}
+                {loading && <Loader2 size={16} className='animate-spin' />}
               </Button>
             </DialogFooter>
           </form>

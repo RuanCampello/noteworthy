@@ -28,6 +28,7 @@ import {
 import { CustomForm } from './Form';
 import Compressor from 'compressorjs';
 import { getUploadUrl } from '@/actions/image';
+import { DropdownMenuShortcut } from './ui/dropdown-menu';
 
 const formSchema = z.object({
   name: z
@@ -105,18 +106,14 @@ export default function EditProfileDialog() {
     image?.includes('https://avatars.githubusercontent.com') ||
     image?.includes('https://lh3.googleusercontent.com');
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className='w-full select-none rounded-sm text-sm items-center hover:bg-midnight px-3 py-1 flex justify-between cursor-pointer'>
-          Edit profile
-          <Pencil
-            size={16}
-            className='text-neutral-400'
-          />
-        </div>
+        <Button variant='dropdown' size='xs'>
+          Profile
+          <DropdownMenuShortcut>
+            <Pencil size={16} />
+          </DropdownMenuShortcut>
+        </Button>
       </DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
         <DialogHeader>
@@ -208,12 +205,7 @@ export default function EditProfileDialog() {
                 className='flex items-center gap-1'
               >
                 Save changes
-                {loading && (
-                  <Loader2
-                    size={16}
-                    className='animate-spin'
-                  />
-                )}
+                {loading && <Loader2 size={16} className='animate-spin' />}
               </Button>
             </DialogFooter>
           </form>

@@ -1,6 +1,6 @@
 'use client';
 
-import { generateSequence } from '@/utils/generate-sequence';
+import { generateSequence } from '@/utils/constants/generate-sequence';
 import {
   Select,
   SelectTrigger,
@@ -22,7 +22,7 @@ export default function SelectFontSize() {
 
     const handleSizeChange = () => {
       const activeSize = fontSizes.find((size) =>
-        editor.isActive('textStyle', { fontSize: `${size}pt` })
+        editor.isActive('textStyle', { fontSize: `${size}pt` }),
       );
       if (activeSize) setFontSize(activeSize);
       else setFontSize(12);

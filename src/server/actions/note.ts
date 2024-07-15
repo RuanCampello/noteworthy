@@ -4,7 +4,7 @@ import { currentUser, getNoteById } from '@/queries/note';
 import { db } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
-import { helloWorld } from '@/utils/hello-world';
+import { helloWorld } from '@/utils/constants/hello-world';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -107,7 +107,7 @@ export async function toggleNoteArchive(id: string, userId: string) {
 
 export async function editNote(
   values: z.infer<typeof noteDialogSchema>,
-  id: string
+  id: string,
 ) {
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
@@ -151,7 +151,7 @@ export async function createPlaceholderNote(userId: string) {
 export async function updateNoteContent(
   id: string,
   userId: string,
-  content: string
+  content: string,
 ) {
   try {
     const note = await db.note.update({
