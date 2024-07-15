@@ -61,6 +61,9 @@ export default function NoteEditor({
                 return true;
               })
               .run(),
+          'Mod-e': () => {
+            return true;
+          },
         };
       },
     }),

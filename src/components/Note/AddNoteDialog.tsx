@@ -44,7 +44,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
     (shortcutKey) => {
       setOpen(true);
     },
-    { overrideSystem: true, repeatOnHold: false },
+    { overrideSystem: true, repeatOnHold: false, ignoreInputFields: true },
   );
 
   function handleAddNote(values: NoteDialog) {
