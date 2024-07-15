@@ -42,13 +42,13 @@ export default async function Profile() {
             {name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className='overflow-hidden md:inline hidden group-data-[state=closed]:hidden'>
+        <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]:hidden' />
+            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>

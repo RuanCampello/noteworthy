@@ -66,7 +66,7 @@ export default function EditNoteDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-96'>
         <Form {...noteDialog}>
           <form
