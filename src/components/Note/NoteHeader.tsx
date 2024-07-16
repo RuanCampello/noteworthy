@@ -1,12 +1,11 @@
 import {
   CalendarClock,
   CalendarDays,
-  MoreHorizontal,
   Pencil,
   SquareUserRound,
   View,
 } from 'lucide-react';
-import Dropdown from '../Dropdown';
+import Dropdown from './NoteDropdown';
 import { Separator } from '../ui/separator';
 import SaveNote from './SaveNote';
 import WordCounter from '../WordCounter';
@@ -15,6 +14,7 @@ import { toLocaleDateLong } from '@/utils/date';
 import { currentUser } from '@/queries/note';
 import StatusTooltip from '../StatusTooltip';
 import { headers } from 'next/headers';
+import PublishNoteDialog from './PublishNoteDialog';
 
 export type Owner = {
   name: string | null;
@@ -57,10 +57,8 @@ export default async function NoteHeader({
         {isEditor && (
           <div className='flex gap-2 items-center'>
             <SaveNote />
-            <Dropdown noteId={id}>
-              <button className='h-fit focus:rounded-full focus:outline-offset-2 p-2 border-2 border-white/60 text-white/60 hover:text-neutral-200 hover:border-neutral-100 rounded-full focus:outline-none shrink-0 transition-colors duration-200'>
-                <MoreHorizontal size={18} />
-              </button>
+            <Dropdown>
+              <PublishNoteDialog />
             </Dropdown>
           </div>
         )}
@@ -71,32 +69,17 @@ export default async function NoteHeader({
           data-dictionary={isDictionaryOpen}
           className='font-medium grow text-silver data-[dictionary=true]:justify-items-center xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'
         >
-          <NoteHeaderItem
-            name='Created'
-            value={longDate}
-          >
-            <CalendarDays
-              size={20}
-              strokeWidth={2}
-            />
+          <NoteHeaderItem name='Created' value={longDate}>
+            <CalendarDays size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <NoteHeaderItem
             name='Modified'
             value={lastUpdate ? longLastUpdate : longDate}
           >
-            <CalendarClock
-              size={20}
-              strokeWidth={2}
-            />
+            <CalendarClock size={20} strokeWidth={2} />
           </NoteHeaderItem>
-          <NoteHeaderItem
-            name='Owner'
-            value={owner.name!}
-          >
-            <SquareUserRound
-              size={20}
-              strokeWidth={2}
-            />
+          <NoteHeaderItem name='Owner' value={owner.name!}>
+            <SquareUserRound size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <WordCounter />
         </div>

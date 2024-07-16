@@ -9,14 +9,14 @@ export const currentUser = cache(async () => {
   return session?.user;
 });
 
-export async function getNoteById(id: string) {
+export const getNoteById = cache(async (id: string) => {
   try {
     const note = await db.note.findUnique({ where: { id } });
     return note;
   } catch (error) {
     return null;
   }
-}
+});
 
 export async function getAllUserNotes(userId: string) {
   try {
@@ -62,3 +62,17 @@ export async function getAllUserArchivedNotes(userId: string) {
     return null;
   }
 }
+
+export const getNoteIsPublic = cache(async (noteId: string) => {
+  try {
+    const note = await db.note.findUnique({
+      where: { id: noteId },
+    });
+    if (!note) return null;
+    if (note.isPublic) return true;
+    return false;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+});

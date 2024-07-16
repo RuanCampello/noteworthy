@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { cache } from 'react';
 
 function getPathnameParams() {
   const origin = headers().get('origin');
@@ -185,3 +186,12 @@ export async function tooglePublishState(id: string, currentState: boolean) {
     return;
   }
 }
+
+export const getNote = cache(async (id: string) => {
+  try {
+    const note = await db.note.findUnique({ where: { id } });
+    return note;
+  } catch (error) {
+    return null;
+  }
+});

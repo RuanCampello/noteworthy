@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import { cloneElement } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
@@ -9,7 +10,7 @@ const buttonVariants = tv({
       delete: 'active:bg-melon focus:bg-melon hover:bg-melon',
       favourite: 'active:bg-sunset focus:bg-sunset hover:bg-sunset',
       archive: 'active:bg-mindaro focus:bg-mindaro hover:bg-mindaro',
-      publish: 'active:bg-wisteria focus:bg-wisteria hover:bg-wisteria'
+      publish: 'active:bg-wisteria focus:bg-wisteria hover:bg-wisteria',
     },
     active: { true: 'text-black' },
     disabled: {
@@ -36,22 +37,28 @@ type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 interface DropdownButtonProps extends ButtonVariants {
   text?: string;
+  loading?: boolean;
   icon: JSX.Element;
 }
 
 export default function DropdownButton({
   text,
   icon,
+  loading,
   ...props
 }: DropdownButtonProps) {
   return (
     <button disabled={props.disabled} className={buttonVariants(props)}>
-      {cloneElement(icon, {
-        size: 17,
-        fill: props.active ? '#A3A3A3' : 'transparent',
-        strokeWidth: 2.5,
-        className: 'group-disabled:scale-100 group-active:scale-95 transition-transform duration-200',
-      })}
+      {loading ? (
+        <Loader2 size={17} strokeWidth={2.5} className='animate-spin' />
+      ) : (
+        cloneElement(icon, {
+          size: 17,
+          fill: props.active ? '#A3A3A3' : 'transparent',
+          strokeWidth: 2.5,
+          className: `group-disabled:scale-100 group-active:scale-95 transition-transform duration-200`,
+        })
+      )}
       <span className='capitalize'>{text || props.color}</span>
     </button>
   );

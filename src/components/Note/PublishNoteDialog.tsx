@@ -15,11 +15,8 @@ import { headers } from 'next/headers';
 import SubmitButton from '../SubmitButton';
 import { Globe } from 'lucide-react';
 import ShareLinkButton from '../ShareLinkButton';
-
-interface PublishNoteDialogProps {
-  children: ReactNode;
-  isPublic: boolean;
-}
+import DropdownButton from '../DropdownButton';
+import { getNoteIsPublic } from '@/server/queries/note';
 
 interface DialogContentProps {
   title: string;
@@ -29,10 +26,7 @@ interface DialogContentProps {
 
 type DialogKey = 'public' | 'private';
 
-export default function PublishNoteDialog({
-  children,
-  isPublic,
-}: PublishNoteDialogProps) {
+export default async function PublishNoteDialog() {
   const dialogContent: Record<DialogKey, DialogContentProps> = {
     private: {
       title: 'Publish this note',
@@ -46,28 +40,33 @@ export default function PublishNoteDialog({
       actionName: 'Unpublish',
     },
   };
-  const dialogKey: DialogKey = isPublic ? 'public' : 'private';
-
   const headerList = headers();
   const pathname = headerList.get('pathname');
   if (!pathname) return;
 
   const noteId = pathname.replace(/\/[^/]*\//g, '');
+  const isPublic = await getNoteIsPublic(noteId);
+
+  const dialogKey: DialogKey = isPublic ? 'public' : 'private';
 
   async function handleTogglePublishState() {
     'use server';
 
+    if (isPublic === null) return;
     await tooglePublishState(noteId, isPublic);
   }
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <DropdownButton
+          icon={<Globe />}
+          color='publish'
+          text={isPublic ? 'Unpublish' : 'Publish'}
+        />
+      </DialogTrigger>
       <DialogContent className='w-96 bg-black dark select-none'>
-        <form
-          className='overflow-x-hidden'
-          action={handleTogglePublishState}
-        >
+        <form className='overflow-x-hidden' action={handleTogglePublishState}>
           <DialogHeader>
             <DialogTitle>{dialogContent[dialogKey].title}</DialogTitle>
             <DialogDescription
@@ -81,19 +80,11 @@ export default function PublishNoteDialog({
           {isPublic && <ShareLinkButton noteId={noteId} />}
           <DialogFooter className='grid grid-cols-2 mt-6 p-1'>
             <DialogClose asChild>
-              <Button
-                type='button'
-                size='sm'
-                variant='secondary'
-              >
+              <Button type='button' size='sm' variant='secondary'>
                 Cancel
               </Button>
             </DialogClose>
-            <SubmitButton
-              size='sm'
-              variant='default'
-              type='submit'
-            >
+            <SubmitButton size='sm' variant='default' type='submit'>
               {dialogContent[dialogKey].actionName}
             </SubmitButton>
           </DialogFooter>
