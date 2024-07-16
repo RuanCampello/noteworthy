@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/ui/dialog';
 import { Button } from '@/ui/button';
-import { tooglePublishState } from '@/server/actions/note';
+import { togglePublishState } from '@/server/actions/note';
 import { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import SubmitButton from '../SubmitButton';
@@ -53,7 +53,7 @@ export default async function PublishNoteDialog() {
     'use server';
 
     if (isPublic === null) return;
-    await tooglePublishState(noteId, isPublic);
+    await togglePublishState(noteId, isPublic);
   }
 
   return (

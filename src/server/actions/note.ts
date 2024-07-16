@@ -167,7 +167,7 @@ export async function updateNoteContent(
   }
 }
 
-export async function tooglePublishState(id: string, currentState: boolean) {
+export async function togglePublishState(id: string, currentState: boolean) {
   try {
     const note = await getNoteById(id);
     if (!note) return;
