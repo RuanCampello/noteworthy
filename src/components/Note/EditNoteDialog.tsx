@@ -33,6 +33,7 @@ interface EditNoteDialogProps {
   noteName: string;
   noteColour: ColourType;
   noteId: string;
+  callback: () => void;
 }
 
 export default function EditNoteDialog({
@@ -40,6 +41,7 @@ export default function EditNoteDialog({
   noteName,
   noteColour,
   noteId,
+  callback,
 }: EditNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -55,6 +57,7 @@ export default function EditNoteDialog({
     startTransition(async () => {
       await editNote(values, noteId);
       setOpen(false);
+      callback();
     });
   }
 

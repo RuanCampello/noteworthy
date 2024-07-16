@@ -3,6 +3,7 @@
 import {
   type ReactNode,
   cache,
+  useCallback,
   useEffect,
   useState,
   useTransition,
@@ -15,7 +16,6 @@ import {
 import {
   Archive,
   ArchiveX,
-  Loader2,
   MoreHorizontal,
   Pencil,
   Star,
@@ -32,7 +32,7 @@ import {
 import DropdownButton from '@/components/DropdownButton';
 import { useSession } from 'next-auth/react';
 import { type Note } from '@prisma/client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 interface DropdownProps {
   children: ReactNode;
@@ -47,14 +47,15 @@ export default function Dropdown({ children }: DropdownProps) {
   const noteId = params.id;
   const [note, setNote] = useState<Note>();
 
-  useEffect(() => {
-    const fetchNote = cache(async () => {
-      if (!noteId) return;
-      const note = await getNote(noteId);
-      if (note) setNote(note);
-    });
-    fetchNote();
+  const fetchNote = useCallback(async () => {
+    if (!noteId) return;
+    const note = await getNote(noteId);
+    if (note) setNote(note);
   }, [noteId]);
+
+  useEffect(() => {
+    fetchNote();
+  }, [fetchNote]);
 
   function handleToggleFavourite() {
     if (!userId || !noteId) return;
@@ -104,7 +105,12 @@ export default function Dropdown({ children }: DropdownProps) {
             active={isArchived}
           />
         </form>
-        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
+        <EditNoteDialog
+          noteId={id}
+          noteName={title}
+          noteColour={colour}
+          callback={fetchNote}
+        >
           <DropdownButton icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         {children}
