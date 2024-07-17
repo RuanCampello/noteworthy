@@ -4,7 +4,7 @@
   </a>
   <h1 align="center">Noteworthy</h1>
   <p align="center">
-    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
+    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. </br>It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
   </p>
   <div align="center">
     <a href="https://nextjs.org/" target="_blank">
@@ -38,6 +38,7 @@
       <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="MIT License" />
     </a>
   </div>
+  </br>
 </div>
 
 ## Stack
