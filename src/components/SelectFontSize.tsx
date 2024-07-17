@@ -42,13 +42,13 @@ export default function SelectFontSize() {
   if (!editor) return;
   return (
     <Select value={fontSize.toString()}>
-      <MenuTooltip content='Font size' sideOffset={6}>
-        <SelectTrigger className='w-16 bg-black border-none font-semibold'>
+      <MenuTooltip content="Font size" sideOffset={6}>
+        <SelectTrigger className="w-16 bg-black border-none font-semibold">
           <SelectValue>{fontSize.toString()}</SelectValue>
         </SelectTrigger>
       </MenuTooltip>
-      <SelectContent className='w-16 bg-black dark border-2 border-silver'>
-        <SelectGroup className='flex flex-col gap-1 pe-1'>
+      <SelectContent className="w-16 bg-black dark border-2 border-silver">
+        <SelectGroup className="flex flex-col gap-1 pe-1">
           {fontSizes.map((size) => (
             <button
               className={`${

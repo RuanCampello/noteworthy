@@ -16,7 +16,7 @@ export default async function Favourite({ params }: Props) {
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+    <div className="w-full pb-6 overflow-y-clip flex flex-col">
       <NoteEditor owner={owner.id} content={content}>
         <NoteHeader
           title={title}

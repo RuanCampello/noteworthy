@@ -8,9 +8,14 @@ interface FormRedirectProps {
   disableWhen?: boolean;
 }
 
-export default function FormRedirect({ text, path, link, disableWhen }: FormRedirectProps) {
+export default function FormRedirect({
+  text,
+  path,
+  link,
+  disableWhen,
+}: FormRedirectProps) {
   return (
-    <div className='flex my-10 justify-center gap-1 text-silver select-none'>
+    <div className="flex my-10 justify-center gap-1 text-silver select-none">
       <span>{text}</span>
       <Link
         aria-disabled={disableWhen}

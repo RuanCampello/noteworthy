@@ -61,30 +61,30 @@ export default async function PublishNoteDialog() {
       <DialogTrigger asChild>
         <DropdownButton
           icon={<Globe />}
-          color='publish'
+          color="publish"
           text={isPublic ? 'Unpublish' : 'Publish'}
         />
       </DialogTrigger>
-      <DialogContent className='w-96 bg-black dark select-none'>
-        <form className='overflow-x-hidden' action={handleTogglePublishState}>
+      <DialogContent className="w-96 bg-black dark select-none">
+        <form className="overflow-x-hidden" action={handleTogglePublishState}>
           <DialogHeader>
             <DialogTitle>{dialogContent[dialogKey].title}</DialogTitle>
             <DialogDescription
               data-global={isPublic}
-              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-1 data-[global=true]:items-center'
+              className="data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-1 data-[global=true]:items-center"
             >
               {isPublic && <Globe size={16} />}
               {dialogContent[dialogKey].description}
             </DialogDescription>
           </DialogHeader>
           {isPublic && <ShareLinkButton noteId={noteId} />}
-          <DialogFooter className='grid grid-cols-2 mt-6 p-1'>
+          <DialogFooter className="grid grid-cols-2 mt-6 p-1">
             <DialogClose asChild>
-              <Button type='button' size='sm' variant='secondary'>
+              <Button type="button" size="sm" variant="secondary">
                 Cancel
               </Button>
             </DialogClose>
-            <SubmitButton size='sm' variant='default' type='submit'>
+            <SubmitButton size="sm" variant="default" type="submit">
               {dialogContent[dialogKey].actionName}
             </SubmitButton>
           </DialogFooter>

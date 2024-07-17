@@ -10,8 +10,8 @@ type Token = {
 };
 
 export async function generatePasswordResetToken(
-  email: string
-): Promise<{ currentToken?: Token, newToken?: Token }> {
+  email: string,
+): Promise<{ currentToken?: Token; newToken?: Token }> {
   const token = uuid();
   // validity of one hour
   const expires = new Date(new Date().getTime() + 3600 * 1000);

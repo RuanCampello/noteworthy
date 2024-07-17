@@ -25,18 +25,15 @@ export default function DictionarySearch() {
   return (
     <form
       action={searchWord}
-      className='w-full pe-3 flex bg-midnight text-silver rounded-md items-center focus-within:outline-white focus-within:outline focus-within:outline-2'
+      className="w-full pe-3 flex bg-midnight text-silver rounded-md items-center focus-within:outline-white focus-within:outline focus-within:outline-2"
     >
       <Input
         defaultValue={word || ''}
-        className='dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent z-40'
-        name='word'
-        placeholder='Search for a word'
+        className="dark bg-midnight placeholder:text-silver/60 font-medium ring-transparent z-40"
+        name="word"
+        placeholder="Search for a word"
       />
-      <button
-        type='submit'
-        className='h-fit focus:outline-none'
-      >
+      <button type="submit" className="h-fit focus:outline-none">
         <Search size={20} />
       </button>
     </form>

@@ -33,12 +33,12 @@ export default function FormHeader() {
   }, []);
 
   return (
-    <div className='flex gap-1 items-center pb-16'>
-      <Image alt='noteworthy logo' src={LogoImage} width={48} height={52} />
+    <div className="flex gap-1 items-center pb-16">
+      <Image alt="noteworthy logo" src={LogoImage} width={48} height={52} />
       <motion.h1
         className={`${lora.className} text-4xl font-bold block`}
         ref={ref}
-        initial='hidden'
+        initial="hidden"
         animate={control}
         variants={{
           visible: { transition: { staggerChildren: 0.2 } },
@@ -49,7 +49,7 @@ export default function FormHeader() {
         {word.split('').map((c, i) => (
           <motion.span
             key={i}
-            className='inline-block'
+            className="inline-block"
             variants={defaultAnimation}
           >
             {c}

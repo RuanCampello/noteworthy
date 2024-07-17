@@ -8,11 +8,11 @@ const FormInput = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         value={value}
         type={props.type}
-        className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle'
+        className="placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle"
         {...props}
       />
     );
-  }
+  },
 );
 
 FormInput.displayName = 'FormInput';

@@ -19,6 +19,6 @@ export async function getSignedUrlForObject(key: string, type: string) {
       Key: key,
       ContentType: type,
     }),
-    { expiresIn: 3600 }
+    { expiresIn: 3600 },
   );
 }

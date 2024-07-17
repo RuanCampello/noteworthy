@@ -16,7 +16,7 @@ export default async function Archived({ params }: Props) {
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+    <div className="w-full pb-6 overflow-y-clip flex flex-col">
       <NoteEditor content={content} owner={owner.id}>
         <NoteHeader
           title={title}

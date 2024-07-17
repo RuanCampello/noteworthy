@@ -39,13 +39,11 @@ export type NoteDialog = z.infer<typeof noteDialogSchema>;
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
-  const {} = useKeyboardShortcut(
-    ['Control', 'E'],
-    (shortcutKey) => {
-      setOpen(true);
-    },
-    { overrideSystem: true, repeatOnHold: false, ignoreInputFields: true },
-  );
+  useKeyboardShortcut(['Control', 'E'], () => setOpen(true), {
+    overrideSystem: true,
+    repeatOnHold: false,
+    ignoreInputFields: true,
+  });
 
   function handleAddNote(values: NoteDialog) {
     startTransition(async () => {
@@ -70,13 +68,13 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className='dark bg-black w-96'>
+      <DialogContent className="dark bg-black w-96">
         <Form {...noteDialog}>
           <form
             onSubmit={noteDialog.handleSubmit(handleAddNote)}
-            className='flex flex-col gap-3'
+            className="flex flex-col gap-3"
           >
-            <DialogHeader className='flex flex-col gap-3'>
+            <DialogHeader className="flex flex-col gap-3">
               <DialogTitle>Add New Note</DialogTitle>
               <DialogDescription>
                 📝 Ready to capture a spark of inspiration? Create your note,
@@ -86,18 +84,18 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             </DialogHeader>
             <FormField
               control={noteDialog.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <div className='grid grid-cols-4 gap-4 items-center'>
-                    <FormLabel className='text-base text-neutral-200 text-right'>
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <FormLabel className="text-base text-neutral-200 text-right">
                       Name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
-                        type='text'
-                        className='bg-black dark col-span-3 focus:ring-transparent focus:outline'
+                        type="text"
+                        className="bg-black dark col-span-3 focus:ring-transparent focus:outline"
                         style={{ outlineColor: selectedColour }}
                         {...field}
                       />
@@ -108,11 +106,11 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               )}
             />
             <FormField
-              name='colour'
+              name="colour"
               control={noteDialog.control}
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 gap-4 items-center'>
-                  <FormLabel className='text-base text-neutral-200 text-right'>
+                <FormItem className="grid grid-cols-4 gap-4 items-center">
+                  <FormLabel className="text-base text-neutral-200 text-right">
                     Colour
                   </FormLabel>
                   <FormControl>
@@ -132,12 +130,12 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               <Button
                 disabled={loading}
                 style={{ backgroundColor: selectedColour }}
-                size='sm'
-                type='submit'
-                className='transition-colors duration-200 ease-in flex gap-1 items-center'
+                size="sm"
+                type="submit"
+                className="transition-colors duration-200 ease-in flex gap-1 items-center"
               >
                 Create note
-                {loading && <Loader2 size={16} className='animate-spin' />}
+                {loading && <Loader2 size={16} className="animate-spin" />}
               </Button>
             </DialogFooter>
           </form>

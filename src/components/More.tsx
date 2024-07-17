@@ -10,24 +10,21 @@ export default function More() {
 
   const state = useSidebarState();
   return (
-    <div
-      className='group/root'
-      data-state={state}
-    >
-      <SectionTitle title='More' />
-      <div className='font-semibold flex flex-col'>
+    <div className="group/root" data-state={state}>
+      <SectionTitle title="More" />
+      <div className="font-semibold flex flex-col">
         <MoreItem
           colour={favouriteColour}
-          href='/favourites'
-          name='Favourites'
+          href="/favourites"
+          name="Favourites"
           icon={'star'}
         >
           <Counter isFavourite />
         </MoreItem>
         <MoreItem
           colour={archiveColour}
-          href='/archived'
-          name='Archived Notes'
+          href="/archived"
+          name="Archived Notes"
           icon={'archive'}
         >
           <Counter isArchived />

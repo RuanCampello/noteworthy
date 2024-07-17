@@ -4,12 +4,12 @@ import { FileText } from 'lucide-react';
 
 export default async function Home() {
   return (
-    <div className='flex w-full relative h-screen'>
+    <div className="flex w-full relative h-screen">
       <Sidebar />
       <Placeholder
-        paragraph='Choose a note from the list on the left to view its contents, or create
-        a new note to add to your collection.'
-        text='Select a note to view'
+        paragraph="Choose a note from the list on the left to view its contents, or create
+        a new note to add to your collection."
+        text="Select a note to view"
       >
         <FileText size={80} strokeWidth={1} />
       </Placeholder>

@@ -108,39 +108,39 @@ export default function EditProfileDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='dropdown' size='xs'>
+        <Button variant="dropdown" size="xs">
           Profile
           <DropdownMenuShortcut>
             <Pencil size={16} />
           </DropdownMenuShortcut>
         </Button>
       </DialogTrigger>
-      <DialogContent className='dark bg-black w-96'>
+      <DialogContent className="dark bg-black w-96">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
         <Form {...editProfileForm}>
           <form
-            className='flex flex-col gap-3'
+            className="flex flex-col gap-3"
             onSubmit={editProfileForm.handleSubmit(handleEditProfile)}
           >
             <FormField
               control={editProfileForm.control}
-              name='image'
-              render={({ field }) => (
-                <FormItem className='flex justify-center'>
+              name="image"
+              render={() => (
+                <FormItem className="flex justify-center">
                   <FormLabel
                     aria-disabled={isOAuthImage}
-                    htmlFor='image-input'
+                    htmlFor="image-input"
                     className={`text-center relative ${
                       isOAuthImage ? 'cursor-not-allowed' : 'cursor-pointer'
                     }`}
                   >
                     {selectedImage && !loading && (
                       <button
-                        type='button'
+                        type="button"
                         disabled={loading}
-                        className='absolute -right-2 -top-2 bg-slate border p-1 rounded-full'
+                        className="absolute -right-2 -top-2 bg-slate border p-1 rounded-full"
                         onClick={() => setSelectedImage(undefined)}
                       >
                         <X size={16} />
@@ -148,14 +148,14 @@ export default function EditProfileDialog() {
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center'
+                      className="bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-lg text-4xl font-semibold text-center items-center w-20 h-20 shrink-0 object-cover flex justify-center"
                       src={
                         selectedImage ||
                         image ||
                         `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` ||
                         ''
                       }
-                      loading='lazy'
+                      loading="lazy"
                       alt={(name && name[0].toUpperCase()) || ''}
                     />
                   </FormLabel>
@@ -163,10 +163,10 @@ export default function EditProfileDialog() {
                     <CustomForm.Input
                       {...editProfileForm.register('image')}
                       {...(onchange = (e) => handleImageChange(e))}
-                      type='file'
-                      className='hidden'
-                      id='image-input'
-                      accept='image/png, image/jpeg'
+                      type="file"
+                      className="hidden"
+                      id="image-input"
+                      accept="image/png, image/jpeg"
                       disabled={loading || isOAuthImage}
                     />
                   </FormControl>
@@ -175,17 +175,17 @@ export default function EditProfileDialog() {
             />
             <FormField
               control={editProfileForm.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <div className='grid grid-cols-4 gap-4 items-center'>
-                    <FormLabel className='text-base text-neutral-200 text-right'>
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <FormLabel className="text-base text-neutral-200 text-right">
                       Name
                     </FormLabel>
                     <FormControl>
                       <Input
-                        type='text'
-                        className='bg-black dark col-span-3 focus:outline focus:ring-transparent'
+                        type="text"
+                        className="bg-black dark col-span-3 focus:outline focus:ring-transparent"
                         {...field}
                       />
                     </FormControl>
@@ -194,18 +194,18 @@ export default function EditProfileDialog() {
                 </FormItem>
               )}
             />
-            <DialogFooter className='mt-4'>
+            <DialogFooter className="mt-4">
               <Button
-                size='sm'
+                size="sm"
                 disabled={
                   loading ||
                   (currentName === name && selectedImage === undefined)
                 }
-                type='submit'
-                className='flex items-center gap-1'
+                type="submit"
+                className="flex items-center gap-1"
               >
                 Save changes
-                {loading && <Loader2 size={16} className='animate-spin' />}
+                {loading && <Loader2 size={16} className="animate-spin" />}
               </Button>
             </DialogFooter>
           </form>

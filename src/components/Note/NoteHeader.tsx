@@ -46,16 +46,16 @@ export default async function NoteHeader({
   const isEditor = user.id === owner.id;
 
   return (
-    <header className='sticky xl:px-12 px-6 xl:pt-8 pt-8'>
-      <div className='flex justify-between items-center xl:mb-8 mb-8'>
+    <header className="sticky xl:px-12 px-6 xl:pt-8 pt-8">
+      <div className="flex justify-between items-center xl:mb-8 mb-8">
         <h1
-          className='text-3xl font-semibold line-clamp-1 w-[90%]'
+          className="text-3xl font-semibold line-clamp-1 w-[90%]"
           title={title}
         >
           {title}
         </h1>
         {isEditor && (
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <SaveNote />
             <Dropdown>
               <PublishNoteDialog />
@@ -63,22 +63,22 @@ export default async function NoteHeader({
           </div>
         )}
       </div>
-      <Separator className='mb-1.5' />
-      <div className='flex justify-between w-full'>
+      <Separator className="mb-1.5" />
+      <div className="flex justify-between w-full">
         <div
           data-dictionary={isDictionaryOpen}
-          className='font-medium grow text-silver data-[dictionary=true]:justify-items-center xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'
+          className="font-medium grow text-silver data-[dictionary=true]:justify-items-center xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1"
         >
-          <NoteHeaderItem name='Created' value={longDate}>
+          <NoteHeaderItem name="Created" value={longDate}>
             <CalendarDays size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <NoteHeaderItem
-            name='Modified'
+            name="Modified"
             value={lastUpdate ? longLastUpdate : longDate}
           >
             <CalendarClock size={20} strokeWidth={2} />
           </NoteHeaderItem>
-          <NoteHeaderItem name='Owner' value={owner.name!}>
+          <NoteHeaderItem name="Owner" value={owner.name!}>
             <SquareUserRound size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <WordCounter />
@@ -86,18 +86,18 @@ export default async function NoteHeader({
         {isEditor ? (
           <StatusTooltip
             icon={<Pencil />}
-            className='bg-slate'
+            className="bg-slate"
             content={"You're an editor able to edit the document directly"}
           />
         ) : (
           <StatusTooltip
             icon={<View />}
-            className='bg-tickle'
+            className="bg-tickle"
             content={"You're a view able to read the document"}
           />
         )}
       </div>
-      <Separator className='my-1.5' />
+      <Separator className="my-1.5" />
     </header>
   );
 }

@@ -26,7 +26,7 @@ export default function MenuTooltip({
           sideOffset={props.sideOffset || 4}
           className={cn(
             'bg-midnight border-white/40 text-neutral-200 font-medium',
-            props.className
+            props.className,
           )}
           {...props}
         >

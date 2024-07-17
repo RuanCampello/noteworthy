@@ -14,11 +14,11 @@ export default function NoNotes({
   paragraph,
 }: NoNotesProps) {
   return (
-    <div className='w-full h-full flex items-center justify-center'>
-      <div className='flex flex-col items-center text-center gap-2.5'>
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="flex flex-col items-center text-center gap-2.5">
         {headerIcon}
-        <h1 className='text-[28px] leading-normal font-semibold'>{text}</h1>
-        <p className='flex gap-1 text-base leading-none text-silver'>
+        <h1 className="text-[28px] leading-normal font-semibold">{text}</h1>
+        <p className="flex gap-1 text-base leading-none text-silver">
           {paragraph}
           {paragraphIcon}
         </p>

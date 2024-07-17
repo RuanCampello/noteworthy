@@ -3,6 +3,7 @@ import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SessionProvider } from 'next-auth/react';
+import { type ReactNode } from 'react';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -20,10 +21,10 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
-    <html lang='en' spellCheck={false}>
+    <html lang="en" spellCheck={false}>
       <body
         className={`${sourceSans.className} bg-black text-neutral-100 text-base`}
       >

@@ -13,11 +13,11 @@ export default function Example({ text, word }: ExampleProps) {
         <b key={index}>{part}</b>
       ) : (
         part
-      )
+      ),
     );
 
   return (
-    <p className='leading-tight underline-offset-2 my-2 text-silver text-[15px]'>
+    <p className="leading-tight underline-offset-2 my-2 text-silver text-[15px]">
       &quot;{boldedExample}&quot;
     </p>
   );

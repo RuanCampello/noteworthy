@@ -38,38 +38,38 @@ export default function ResetPage() {
           description: error,
           variant: 'error',
           action: (
-            <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <div className="bg-tickle/20 p-2 rounded-md w-fit">
               <X
                 size={24}
-                className='bg-tickle text-midnight p-1 rounded-full'
+                className="bg-tickle text-midnight p-1 rounded-full"
               />
             </div>
           ),
         });
-      } else if(success) {
+      } else if (success) {
         toast({
           title: 'Success',
           description: success,
           variant: 'success',
           action: (
-            <div className='bg-blue/20 p-2 rounded-md w-fit'>
+            <div className="bg-blue/20 p-2 rounded-md w-fit">
               <Check
                 size={24}
-                className='bg-blue text-midnight p-1 rounded-full'
+                className="bg-blue text-midnight p-1 rounded-full"
               />
             </div>
           ),
         });
-      } else if(message) {
+      } else if (message) {
         toast({
           title: 'A moment',
           description: message,
           variant: 'edit',
           action: (
-            <div className='bg-slate/20 p-2 rounded-md w-fit'>
+            <div className="bg-slate/20 p-2 rounded-md w-fit">
               <AlertCircle
                 size={24}
-                className='bg-slate text-midnight rounded-full p-0.5'
+                className="bg-slate text-midnight rounded-full p-0.5"
               />
             </div>
           ),
@@ -79,24 +79,24 @@ export default function ResetPage() {
   }
 
   return (
-    <main className='w-screen h-screen overflow-hidden flex items-center justify-center'>
-      <div className='w-[380px]'>
+    <main className="w-screen h-screen overflow-hidden flex items-center justify-center">
+      <div className="w-[380px]">
         <CustomForm.Header />
         <Form {...resetPasswordForm}>
           <form
-            className='flex flex-col gap-8'
+            className="flex flex-col gap-8"
             onSubmit={resetPasswordForm.handleSubmit(handleReset)}
           >
             <FormField
               control={resetPasswordForm.control}
-              name='email'
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='font-semibold'>E-mail</FormLabel>
+                  <FormLabel className="font-semibold">E-mail</FormLabel>
                   <FormControl>
                     <CustomForm.Input
-                      type='email'
-                      placeholder='johnsmith@gmail.com'
+                      type="email"
+                      placeholder="johnsmith@gmail.com"
                       {...field}
                     />
                   </FormControl>
@@ -105,10 +105,10 @@ export default function ResetPage() {
               )}
             />
 
-            <CustomForm.Button title='Reset password' disableWhen={loading} />
+            <CustomForm.Button title="Reset password" disableWhen={loading} />
           </form>
         </Form>
-        <CustomForm.Redirect text='Return to' path='/login' link='Login' />
+        <CustomForm.Redirect text="Return to" path="/login" link="Login" />
       </div>
     </main>
   );

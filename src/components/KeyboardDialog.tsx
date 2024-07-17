@@ -22,14 +22,14 @@ export default function KeyboardDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size='xs' variant='dropdown'>
+        <Button size="xs" variant="dropdown">
           Keyboard Shortcuts
           <DropdownMenuShortcut>
-            <Keyboard size={16} className='shrink-0' />
+            <Keyboard size={16} className="shrink-0" />
           </DropdownMenuShortcut>
         </Button>
       </DialogTrigger>
-      <DialogContent className='dark bg-black w-[524px]'>
+      <DialogContent className="dark bg-black w-[524px]">
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
           <DialogDescription>
@@ -37,12 +37,12 @@ export default function KeyboardDialog() {
             experience.
           </DialogDescription>
         </DialogHeader>
-        <section className='grid grid-cols-2 mt-4 gap-4'>
-          <div className='grid grid-rows-2'>
+        <section className="grid grid-cols-2 mt-4 gap-4">
+          <div className="grid grid-rows-2">
             <div>
               <Title>Note</Title>
-              <Separator className='my-1.5' />
-              <div className='flex flex-col gap-1'>
+              <Separator className="my-1.5" />
+              <div className="flex flex-col gap-1">
                 {noteShortcuts.map((shortcut) => (
                   <Shortcut key={shortcut.action} {...shortcut} />
                 ))}
@@ -50,8 +50,8 @@ export default function KeyboardDialog() {
             </div>
             <div>
               <Title>Global</Title>
-              <Separator className='my-1.5' />
-              <div className='flex flex-col gap-1'>
+              <Separator className="my-1.5" />
+              <div className="flex flex-col gap-1">
                 {globalShortcuts.map((shortcut) => (
                   <Shortcut key={shortcut.action} {...shortcut} />
                 ))}
@@ -60,8 +60,8 @@ export default function KeyboardDialog() {
           </div>
           <div>
             <Title>Editor</Title>
-            <Separator className='my-1.5' />
-            <div className='flex flex-col gap-1'>
+            <Separator className="my-1.5" />
+            <div className="flex flex-col gap-1">
               {shortcuts.map((shortcut) => (
                 <Shortcut key={shortcut.action} {...shortcut} />
               ))}
@@ -75,13 +75,13 @@ export default function KeyboardDialog() {
 
 function Shortcut({ action, commands }: Shortcut) {
   return (
-    <div className='flex justify-between items-center text-sm'>
-      <p className='font-semibold'>{action}</p>
-      <div className='flex gap-1 bg-neutral-800/40 rounded-md p-1'>
+    <div className="flex justify-between items-center text-sm">
+      <p className="font-semibold">{action}</p>
+      <div className="flex gap-1 bg-neutral-800/40 rounded-md p-1">
         {commands.map((command) => (
           <div
             key={command}
-            className='bg-neutral-800 px-1.5 h-fit font-medium rounded-sm select-none'
+            className="bg-neutral-800 px-1.5 h-fit font-medium rounded-sm select-none"
           >
             {command}
           </div>
@@ -92,5 +92,5 @@ function Shortcut({ action, commands }: Shortcut) {
 }
 
 function Title({ children }: { children: ReactNode }) {
-  return <h2 className='text-lg font-medium text-silver'>{children}</h2>;
+  return <h2 className="text-lg font-medium text-silver">{children}</h2>;
 }

@@ -26,7 +26,7 @@ export default function SaveNote() {
       await updateNoteContent(
         openNote,
         userId,
-        currentEditor.editor?.getHTML()
+        currentEditor.editor?.getHTML(),
       );
       toast({
         title: 'Note Saved',
@@ -34,10 +34,10 @@ export default function SaveNote() {
           "Your note has been saved! It's ready whenever you need it. 📌",
         variant: 'success',
         action: (
-          <div className='bg-blue/20 p-2 rounded-md w-fit'>
+          <div className="bg-blue/20 p-2 rounded-md w-fit">
             <Check
               size={24}
-              className='bg-blue text-midnight p-1 rounded-full'
+              className="bg-blue text-midnight p-1 rounded-full"
             />
           </div>
         ),
@@ -45,13 +45,13 @@ export default function SaveNote() {
     });
   }
   return (
-    <MenuTooltip content='Save changes (Ctrl+S)' sideOffset={8}>
+    <MenuTooltip content="Save changes (Ctrl+S)" sideOffset={8}>
       <form action={handleSaveClick}>
         <button
-          type='submit'
+          type="submit"
           disabled={loading}
           onClick={handleSaveClick}
-          className='text-silver hover:text-neutral-200 hover:border-neutral-100 h-fit focus:outline-offset-2 p-2 border-2 border-silver rounded-full disabled:animate-pulse'
+          className="text-silver hover:text-neutral-200 hover:border-neutral-100 h-fit focus:outline-offset-2 p-2 border-2 border-silver rounded-full disabled:animate-pulse"
         >
           <Save size={18} strokeWidth={2.3} />
         </button>

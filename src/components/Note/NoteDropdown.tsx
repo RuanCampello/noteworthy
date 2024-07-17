@@ -76,21 +76,21 @@ export default function Dropdown({ children }: DropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className='h-fit focus:rounded-full focus:outline-offset-2 p-2 border-2 border-white/60 text-white/60 hover:text-neutral-200 hover:border-neutral-100 rounded-full focus:outline-none shrink-0 transition-colors duration-200'>
+        <button className="h-fit focus:rounded-full focus:outline-offset-2 p-2 border-2 border-white/60 text-white/60 hover:text-neutral-200 hover:border-neutral-100 rounded-full focus:outline-none shrink-0 transition-colors duration-200">
           <MoreHorizontal size={18} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align='end'
+        align="end"
         sideOffset={10}
-        className='bg-night text-neutral-100 leading-none border-none w-36 flex flex-col p-0 my-1'
+        className="bg-night text-neutral-100 leading-none border-none w-36 flex flex-col p-0 my-1"
       >
         <form action={handleToggleFavourite}>
           <DropdownButton
             loading={favouriteLoading}
             disabled={isArchived || favouriteLoading}
             active={isFavourite}
-            color='favourite'
+            color="favourite"
             text={isFavourite ? 'Unfavourite' : 'Favourite'}
             icon={isFavourite ? <StarOff /> : <Star />}
           />
@@ -99,7 +99,7 @@ export default function Dropdown({ children }: DropdownProps) {
           <DropdownButton
             loading={archiveLoading}
             icon={isArchived ? <ArchiveX /> : <Archive />}
-            color='archive'
+            color="archive"
             text={isArchived ? 'Unarchive' : 'Archive'}
             disabled={isFavourite || archiveLoading}
             active={isArchived}
@@ -111,11 +111,11 @@ export default function Dropdown({ children }: DropdownProps) {
           noteColour={colour}
           callback={fetchNote}
         >
-          <DropdownButton icon={<Pencil />} color='edit' />
+          <DropdownButton icon={<Pencil />} color="edit" />
         </EditNoteDialog>
         {children}
         <DeleteNoteDialog noteName={title} noteId={id}>
-          <DropdownButton color='delete' icon={<Trash />} />
+          <DropdownButton color="delete" icon={<Trash />} />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>

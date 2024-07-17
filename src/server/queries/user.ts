@@ -21,7 +21,7 @@ export async function getUserById(id: string) {
 }
 
 export async function userHasProviderAccount(
-  id: string
+  id: string,
 ): Promise<{ value: boolean; provider?: string }> {
   const user = await db.account.findFirst({ where: { userId: id } });
   if (user) {

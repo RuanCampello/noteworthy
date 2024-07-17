@@ -49,9 +49,9 @@ export default function ToggleSidebarButton() {
 
   return (
     <Button
-      size='icon'
-      variant='secondary'
-      className='dark'
+      size="icon"
+      variant="secondary"
+      className="dark"
       onClick={handleToogleSidebar}
     >
       {currentState ? (

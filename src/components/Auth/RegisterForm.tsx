@@ -54,8 +54,8 @@ export default function RegisterForm() {
         description: error,
         variant: 'error',
         action: (
-          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
-            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          <div className="bg-tickle/20 p-2 rounded-md w-fit">
+            <X size={24} className="bg-tickle text-midnight p-1 rounded-full" />
           </div>
         ),
       });
@@ -66,37 +66,37 @@ export default function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='rounded-md w-[380px]'
+        className="rounded-md w-[380px]"
       >
         <CustomForm.Header />
         <CustomForm.ThirdPartLogin
           disableWhen={isSubmitting}
-          type='signup'
+          type="signup"
           image={GoogleLogo}
-          name='Google'
+          name="Google"
         />
         <CustomForm.ThirdPartLogin
           disableWhen={isSubmitting}
-          type='signup'
+          type="signup"
           image={GithubLogo}
-          name='Github'
+          name="Github"
         />
         <CustomForm.Separator />
-        <div className='gap-3 flex flex-col mb-10'>
+        <div className="gap-3 flex flex-col mb-10">
           <FormField
             control={form.control}
-            name='username'
+            name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>Username</FormLabel>
+                <FormLabel className="font-semibold">Username</FormLabel>
                 <FormControl>
                   <CustomForm.Input
-                    type='text'
-                    placeholder='johnsmith'
+                    type="text"
+                    placeholder="johnsmith"
                     {...field}
                   />
                 </FormControl>
-                <FormDescription className='text-white/60'>
+                <FormDescription className="text-white/60">
                   This is your public display name.
                 </FormDescription>
                 <FormMessage />
@@ -105,14 +105,14 @@ export default function RegisterForm() {
           />
           <FormField
             control={form.control}
-            name='email'
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>E-mail</FormLabel>
+                <FormLabel className="font-semibold">E-mail</FormLabel>
                 <FormControl>
                   <CustomForm.Input
-                    type='email'
-                    placeholder='johnsmith@example.com'
+                    type="email"
+                    placeholder="johnsmith@example.com"
                     {...field}
                   />
                 </FormControl>
@@ -122,10 +122,10 @@ export default function RegisterForm() {
           />
           <FormField
             control={form.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>Password</FormLabel>
+                <FormLabel className="font-semibold">Password</FormLabel>
                 <FormControl>
                   <CustomForm.PasswordWrapper
                     value={isPasswordVisible}
@@ -133,8 +133,8 @@ export default function RegisterForm() {
                   >
                     <Input
                       type={isPasswordVisible ? 'text' : 'password'}
-                      placeholder='•••••••'
-                      className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                      placeholder="•••••••"
+                      className="bg-neutral-200 text-base border-none focus:ring-transparent"
                       {...field}
                     />
                   </CustomForm.PasswordWrapper>
@@ -144,12 +144,12 @@ export default function RegisterForm() {
             )}
           />
         </div>
-        <CustomForm.Button disableWhen={isSubmitting} title='Register' />
+        <CustomForm.Button disableWhen={isSubmitting} title="Register" />
         <CustomForm.Redirect
           disableWhen={isSubmitting}
-          text='Have an account?'
-          path='/login'
-          link='Log in now'
+          text="Have an account?"
+          path="/login"
+          link="Log in now"
         />
       </form>
     </Form>

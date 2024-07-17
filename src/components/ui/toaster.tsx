@@ -19,15 +19,15 @@ export function Toaster() {
         return (
           <Toast
             duration={5000}
-            className='dark bg-midnight border-l-[16px] border-r-0 border-y-0 justify-normal px-4'
+            className="dark bg-midnight border-l-[16px] border-r-0 border-y-0 justify-normal px-4"
             key={id}
             {...props}
           >
             {action}
-            <div className='flex gap-4 items-center justify-between w-full'>
-              <div className='grid gap-1'>
+            <div className="flex gap-4 items-center justify-between w-full">
+              <div className="grid gap-1">
                 {title && (
-                  <ToastTitle className='text-lg leading-none'>
+                  <ToastTitle className="text-lg leading-none">
                     {title}
                   </ToastTitle>
                 )}

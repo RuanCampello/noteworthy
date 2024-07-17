@@ -35,7 +35,7 @@ export default function DeleteNoteDialog({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className='dark bg-black border-red-500 w-96'>
+      <AlertDialogContent className="dark bg-black border-red-500 w-96">
         <AlertDialogHeader>
           <AlertDialogTitle>Are absolutly sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -46,16 +46,16 @@ export default function DeleteNoteDialog({
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button
-              size='sm'
-              className='h-fit bg-secondary text-sm text-secondary-foreground hover:bg-secondary/80'
+              size="sm"
+              className="h-fit bg-secondary text-sm text-secondary-foreground hover:bg-secondary/80"
             >
               Cancel
             </Button>
           </AlertDialogCancel>
           <Button
             disabled={loading}
-            variant='destructive'
-            size='sm'
+            variant="destructive"
+            size="sm"
             onClick={handleDeleteNote}
           >
             Delete note

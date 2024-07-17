@@ -8,7 +8,7 @@ export async function getDefinition(word: string) {
     {
       method: 'GET',
       next: { tags: ['update-definition'] },
-    }
+    },
   );
   try {
     const data = await response.json();

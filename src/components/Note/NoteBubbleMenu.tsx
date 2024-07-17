@@ -18,7 +18,7 @@ export default function NoteBubbleMenu() {
     params.set('dfn-open', 'true');
     params.set('dfn-word', selectedWord);
     router.push(`?${params}`);
-    router.refresh()
+    router.refresh();
   }
 
   return (
@@ -34,15 +34,12 @@ export default function NoteBubbleMenu() {
     >
       <button
         onClick={handleDefine}
-        className='flex items-center rounded-md gap-1 p-2 py-1.5 text-sm bg-neutral-100 hover:bg-neutral-200 text-black font-medium focus:outline-none transition-colors'
+        className="flex items-center rounded-md gap-1 p-2 py-1.5 text-sm bg-neutral-100 hover:bg-neutral-200 text-black font-medium focus:outline-none transition-colors"
       >
-        <BookA
-          size={18}
-          strokeWidth={1.7}
-        />
+        <BookA size={18} strokeWidth={1.7} />
         <div>
           Define{' '}
-          <span className='text-black/80 lowercase'>{`'${selectedWord}'`}</span>
+          <span className="text-black/80 lowercase">{`'${selectedWord}'`}</span>
         </div>
       </button>
     </BubbleMenu>

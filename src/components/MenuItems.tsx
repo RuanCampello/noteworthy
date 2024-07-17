@@ -157,7 +157,7 @@ export default function MenuItems() {
             </button>
           </MenuTooltip>
           {(i === 3 || i === 8 || i === 10) && (
-            <Separator orientation='vertical' />
+            <Separator orientation="vertical" />
           )}
         </Fragment>
       ))}

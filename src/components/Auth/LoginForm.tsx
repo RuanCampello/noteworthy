@@ -50,10 +50,10 @@ export default function LoginForm() {
           description: error,
           variant: 'error',
           action: (
-            <div className='bg-tickle/20 p-2 rounded-md w-fit'>
+            <div className="bg-tickle/20 p-2 rounded-md w-fit">
               <X
                 size={24}
-                className='bg-tickle text-midnight p-1 rounded-full'
+                className="bg-tickle text-midnight p-1 rounded-full"
               />
             </div>
           ),
@@ -72,45 +72,45 @@ export default function LoginForm() {
         description: error,
         variant: 'error',
         action: (
-          <div className='bg-tickle/20 p-2 rounded-md w-fit'>
-            <X size={24} className='bg-tickle text-midnight p-1 rounded-full' />
+          <div className="bg-tickle/20 p-2 rounded-md w-fit">
+            <X size={24} className="bg-tickle text-midnight p-1 rounded-full" />
           </div>
         ),
       });
     }
   }, [emailError, error]);
-  
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='rounded-md w-[380px]'
+        className="rounded-md w-[380px]"
       >
         <CustomForm.Header />
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
-          type='login'
+          type="login"
           image={GoogleLogo}
-          name='Google'
+          name="Google"
         />
         <CustomForm.ThirdPartLogin
           disableWhen={isPending}
-          type='login'
+          type="login"
           image={GithubLogo}
-          name='Github'
+          name="Github"
         />
         <CustomForm.Separator />
-        <div className='gap-3 flex flex-col mb-10'>
+        <div className="gap-3 flex flex-col mb-10">
           <FormField
             control={form.control}
-            name='email'
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>E-mail</FormLabel>
+                <FormLabel className="font-semibold">E-mail</FormLabel>
                 <FormControl>
                   <CustomForm.Input
-                    type='email'
-                    placeholder='johnsmith@example.com'
+                    type="email"
+                    placeholder="johnsmith@example.com"
                     {...field}
                   />
                 </FormControl>
@@ -121,10 +121,10 @@ export default function LoginForm() {
           <div>
             <FormField
               control={form.control}
-              name='password'
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='font-semibold'>Password</FormLabel>
+                  <FormLabel className="font-semibold">Password</FormLabel>
                   <FormControl>
                     <CustomForm.PasswordWrapper
                       value={isPasswordVisible}
@@ -132,8 +132,8 @@ export default function LoginForm() {
                     >
                       <Input
                         type={isPasswordVisible ? 'text' : 'password'}
-                        placeholder='•••••••'
-                        className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                        placeholder="•••••••"
+                        className="bg-neutral-200 text-base border-none focus:ring-transparent"
                         {...field}
                       />
                     </CustomForm.PasswordWrapper>
@@ -143,21 +143,21 @@ export default function LoginForm() {
               )}
             />
             <Button
-              variant='link'
-              className='dark px-0 self-start text-neutral-300 underline-offset-2 focus:outline-none'
+              variant="link"
+              className="dark px-0 self-start text-neutral-300 underline-offset-2 focus:outline-none"
               asChild
-              size='sm'
+              size="sm"
             >
-              <Link href='/reset'>Forgot password?</Link>
+              <Link href="/reset">Forgot password?</Link>
             </Button>
           </div>
         </div>
-        <CustomForm.Button disableWhen={isPending} title='Login' />
+        <CustomForm.Button disableWhen={isPending} title="Login" />
         <CustomForm.Redirect
           disableWhen={isPending}
-          text='Not registered yet?'
-          path='/register'
-          link='Create an account'
+          text="Not registered yet?"
+          path="/register"
+          link="Create an account"
         />
       </form>
     </Form>

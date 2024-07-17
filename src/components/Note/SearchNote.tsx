@@ -31,7 +31,7 @@ export default function SearchNote() {
         router.push(`?${params.toString()}`);
       } else {
         params.delete('name', searchParams);
-        params.delete(searchParams)
+        params.delete(searchParams);
         params.append('name', name);
         router.push(`?${params.toString()}`);
       }
@@ -48,22 +48,22 @@ export default function SearchNote() {
   return (
     <form
       onSubmit={handleSubmit(handleFilters)}
-      className='w-full my-1 md:flex hidden bg-midnight text-silver rounded-sm items-center gap-2 p-2 focus-within:outline focus-within:outline-2 focus-within:outline-white'
+      className="w-full my-1 md:flex hidden bg-midnight text-silver rounded-sm items-center gap-2 p-2 focus-within:outline focus-within:outline-2 focus-within:outline-white"
     >
-      <Search size={20} className='shrink-0' />
+      <Search size={20} className="shrink-0" />
       <input
         {...register('name')}
         defaultValue={formatSearchParams(searchParamsString || '')}
-        className='w-full rounded-sm text-base leading-5 bg-midnight text-silver focus:outline-none font-medium placeholder:truncate'
-        placeholder='Search a note'
+        className="w-full rounded-sm text-base leading-5 bg-midnight text-silver focus:outline-none font-medium placeholder:truncate"
+        placeholder="Search a note"
       />
       {searchParams && (
         <button
-          className='rounded-full'
-          type='button'
+          className="rounded-full"
+          type="button"
           onClick={handleCleanFilters}
         >
-          <X className='shrink-0' size={20} />
+          <X className="shrink-0" size={20} />
         </button>
       )}
     </form>

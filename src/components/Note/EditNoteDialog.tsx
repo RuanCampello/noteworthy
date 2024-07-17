@@ -70,18 +70,18 @@ export default function EditNoteDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
-      <DialogContent className='dark bg-black w-96'>
+      <DialogContent className="dark bg-black w-96">
         <Form {...noteDialog}>
           <form
             onSubmit={noteDialog.handleSubmit(handleEditNote)}
-            className='flex flex-col gap-3'
+            className="flex flex-col gap-3"
           >
-            <DialogHeader className='flex flex-col gap-3'>
-              <DialogTitle className='flex gap-2'>
+            <DialogHeader className="flex flex-col gap-3">
+              <DialogTitle className="flex gap-2">
                 Edit{' '}
                 <p
                   title={noteName}
-                  className='text-silver line-clamp-1'
+                  className="text-silver line-clamp-1"
                 >{`"${noteName}"`}</p>
               </DialogTitle>
               <DialogDescription>
@@ -91,18 +91,18 @@ export default function EditNoteDialog({
             </DialogHeader>
             <FormField
               control={noteDialog.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <div className='grid grid-cols-4 gap-4 items-center'>
-                    <FormLabel className='text-base text-neutral-200 text-right'>
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <FormLabel className="text-base text-neutral-200 text-right">
                       Name
                     </FormLabel>
                     <FormControl>
                       <Input
                         style={{ outlineColor: selectedColour }}
-                        type='text'
-                        className='bg-black dark col-span-3 focus:outline focus:ring-transparent'
+                        type="text"
+                        className="bg-black dark col-span-3 focus:outline focus:ring-transparent"
                         {...field}
                       />
                     </FormControl>
@@ -112,11 +112,11 @@ export default function EditNoteDialog({
               )}
             />
             <FormField
-              name='colour'
+              name="colour"
               control={noteDialog.control}
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 gap-4 items-center'>
-                  <FormLabel className='text-base text-neutral-200 text-right'>
+                <FormItem className="grid grid-cols-4 gap-4 items-center">
+                  <FormLabel className="text-base text-neutral-200 text-right">
                     Colour
                   </FormLabel>
                   <FormControl>
@@ -135,8 +135,8 @@ export default function EditNoteDialog({
               <Button
                 style={{ backgroundColor: selectedColour }}
                 disabled={loading}
-                size='sm'
-                type='submit'
+                size="sm"
+                type="submit"
               >
                 Save changes
               </Button>

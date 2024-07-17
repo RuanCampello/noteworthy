@@ -10,7 +10,7 @@ export default function WordCounter() {
 
   const words = editor.storage.characterCount.words();
   return (
-    <NoteHeaderItem name='Words' value={words}>
+    <NoteHeaderItem name="Words" value={words}>
       <WholeWord size={22} strokeWidth={2} />
     </NoteHeaderItem>
   );

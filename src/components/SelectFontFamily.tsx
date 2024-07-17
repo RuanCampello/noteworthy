@@ -33,7 +33,7 @@ export default function SelectFontFamily() {
 
     const handleFontChange = () => {
       const activeFont = fontFamilies.find((fontFamily) =>
-        editor.isActive('textStyle', { fontFamily: fontFamily.value })
+        editor.isActive('textStyle', { fontFamily: fontFamily.value }),
       );
       if (activeFont) setFontFamily(activeFont);
       else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });
@@ -47,16 +47,16 @@ export default function SelectFontFamily() {
   if (!editor) return;
   return (
     <Select value={fontFamily.name}>
-      <MenuTooltip content='Font Family' sideOffset={6}>
-        <SelectTrigger className='bg-black border-none w-[8.5rem] font-semibold'>
+      <MenuTooltip content="Font Family" sideOffset={6}>
+        <SelectTrigger className="bg-black border-none w-[8.5rem] font-semibold">
           <SelectValue>{fontFamily.name}</SelectValue>
         </SelectTrigger>
       </MenuTooltip>
       <SelectContent
         sideOffset={6}
-        className='bg-black border-2 border-silver dark'
+        className="bg-black border-2 border-silver dark"
       >
-        <SelectGroup className='flex flex-col gap-1'>
+        <SelectGroup className="flex flex-col gap-1">
           <button
             onClick={() => editor.chain().focus().unsetFontFamily().run()}
             className={`py-1.5 leading-none text-start px-1 ${

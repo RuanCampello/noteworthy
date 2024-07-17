@@ -7,9 +7,7 @@ interface FilteredResults {
   searchParam?: string;
 }
 
-export function getFilteredNotes(
-  notes: Note[]
-): FilteredResults {
+export function getFilteredNotes(notes: Note[]): FilteredResults {
   const searchParams = headers().get('search-params');
   if (!searchParams) return { notes: notes };
   const search = searchParams.match(/name=([^&]*)/);
@@ -20,7 +18,7 @@ export function getFilteredNotes(
       notes: notes.filter((note) =>
         note.title
           .toLowerCase()
-          .includes(searchParamsString.toLocaleLowerCase())
+          .includes(searchParamsString.toLocaleLowerCase()),
       ),
       searchParam: searchParamsString,
     };
@@ -31,7 +29,12 @@ export function getFilteredNotes(
 
 type Filters = 'date-new' | 'date-old' | 'title' | 'last-modified';
 
-const allowedFilters: Filters[] = ['date-new', 'date-old', 'title', 'last-modified'];
+const allowedFilters: Filters[] = [
+  'date-new',
+  'date-old',
+  'title',
+  'last-modified',
+];
 
 export function getFilter() {
   const searchParams = headers().get('search-params');

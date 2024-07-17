@@ -42,19 +42,19 @@ export default function NewPasswordForm() {
   }
 
   return (
-    <div className='w-[380px]'>
+    <div className="w-[380px]">
       <CustomForm.Header />
       <Form {...newPasswordForm}>
         <form
-          className='flex flex-col gap-8'
+          className="flex flex-col gap-8"
           onSubmit={newPasswordForm.handleSubmit(handleReset)}
         >
           <FormField
             control={newPasswordForm.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>New Password</FormLabel>
+                <FormLabel className="font-semibold">New Password</FormLabel>
                 <FormControl>
                   <CustomForm.PasswordWrapper
                     value={isPasswordVisible}
@@ -62,8 +62,8 @@ export default function NewPasswordForm() {
                   >
                     <Input
                       type={isPasswordVisible ? 'text' : 'password'}
-                      placeholder='•••••••'
-                      className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                      placeholder="•••••••"
+                      className="bg-neutral-200 text-base border-none focus:ring-transparent"
                       {...field}
                     />
                   </CustomForm.PasswordWrapper>
@@ -73,10 +73,10 @@ export default function NewPasswordForm() {
             )}
           />
 
-          <CustomForm.Button title='Reset password' disableWhen={loading} />
+          <CustomForm.Button title="Reset password" disableWhen={loading} />
         </form>
       </Form>
-      <CustomForm.Redirect text='Return to' path='/login' link='Login' />
+      <CustomForm.Redirect text="Return to" path="/login" link="Login" />
     </div>
   );
 }

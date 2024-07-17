@@ -12,10 +12,10 @@ export default function NoteHeaderItem({
   value,
 }: NoteHeaderItemProps) {
   return (
-    <div className='flex gap-1.5 items-center'>
+    <div className="flex gap-1.5 items-center">
       {children}
-      <span className='xl:mr-4 xl:w-fit w-20'>{name}</span>
-      <span className='text-neutral-100'>{value}</span>
+      <span className="xl:mr-4 xl:w-fit w-20">{name}</span>
+      <span className="text-neutral-100">{value}</span>
     </div>
   );
 }

@@ -31,40 +31,40 @@ export default async function Profile() {
   return (
     <div
       data-state={state}
-      className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
+      className="mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none"
     >
-      <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar className='dark'>
+      <div className="flex justify-center xl:gap-4 md:gap-2 items-center w-full">
+        <Avatar className="dark">
           <AvatarImage
             src={image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` || ''}
           />
-          <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
+          <AvatarFallback className="bg-slate font-semibold text-neutral-100">
             {name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
-          <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
-          <h2 className='text-silver leading-none truncate'>{email}</h2>
+        <div className="overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden">
+          <h2 className="text-lg leading-none font-semibold trucate">{name}</h2>
+          <h2 className="text-silver leading-none truncate">{email}</h2>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden' />
+            <Bolt className="text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className='dark bg-black w-44'>
-            <div className='flex flex-col gap-1'>
+          <DropdownMenuContent className="dark bg-black w-44">
+            <div className="flex flex-col gap-1">
               <EditProfileDialog />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />
-            <form id='logout' action={handleLogout}>
+            <form id="logout" action={handleLogout}>
               <button
-                form='logout'
-                type='submit'
-                className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-tickle hover:text-black hover:font-semibold group flex items-center'
+                form="logout"
+                type="submit"
+                className="w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-tickle hover:text-black hover:font-semibold group flex items-center"
               >
                 Log out
                 <DropdownMenuShortcut>
-                  <LogOut size={16} className='group-hover:text-black' />
+                  <LogOut size={16} className="group-hover:text-black" />
                 </DropdownMenuShortcut>
               </button>
             </form>

@@ -1,6 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import { cloneElement } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
+import { type JSX } from 'react/jsx-runtime';
 
 const buttonVariants = tv({
   base: 'gap-1.5 flex p-2 px-3 items-center active:text-black hover:text-black focus:text-black focus:outline-none group w-full transition-colors duration-200',
@@ -50,7 +51,7 @@ export default function DropdownButton({
   return (
     <button disabled={props.disabled} className={buttonVariants(props)}>
       {loading ? (
-        <Loader2 size={17} strokeWidth={2.5} className='animate-spin' />
+        <Loader2 size={17} strokeWidth={2.5} className="animate-spin" />
       ) : (
         cloneElement(icon, {
           size: 17,
@@ -59,7 +60,7 @@ export default function DropdownButton({
           className: `group-disabled:scale-100 group-active:scale-95 transition-transform duration-200`,
         })
       )}
-      <span className='capitalize'>{text || props.color}</span>
+      <span className="capitalize">{text || props.color}</span>
     </button>
   );
 }

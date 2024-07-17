@@ -22,7 +22,7 @@ export default function HoverableSelectItem({
       style={{
         backgroundColor: Colours[value],
         opacity: hovered ? '80%' : '100%',
-        textTransform: 'capitalize'
+        textTransform: 'capitalize',
       }}
     >
       {name}

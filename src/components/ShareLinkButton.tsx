@@ -17,22 +17,19 @@ export default function ShareLinkButton({ noteId }: { noteId: string }) {
   }
 
   return (
-    <div className='mt-6'>
-      <div className='flex gap-2 items-center h-9'>
-        <ScrollArea className='p-1.5 py-2 text-sm text-silver whitespace-nowrap border border-secondary rounded-md select-text'>
+    <div className="mt-6">
+      <div className="flex gap-2 items-center h-9">
+        <ScrollArea className="p-1.5 py-2 text-sm text-silver whitespace-nowrap border border-secondary rounded-md select-text">
           {shareLink}
-          <ScrollBar orientation='horizontal' />
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <Button
           onClick={handleCopy}
-          className='shrink-0 me-1 h-9 w-9'
-          type='button'
-          size='icon'
+          className="shrink-0 me-1 h-9 w-9"
+          type="button"
+          size="icon"
         >
-          <Copy
-            size={18}
-            strokeWidth={2}
-          />
+          <Copy size={18} strokeWidth={2} />
         </Button>
       </div>
     </div>

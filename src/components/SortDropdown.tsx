@@ -32,7 +32,6 @@ export default function SortDropdown() {
     if (!filterParams) {
       params.append('filter', selectedItem);
       router.push(`?${params}`);
-      
     } else {
       params.delete('filter', filterParams);
       params.append('filter', selectedItem);
@@ -42,25 +41,25 @@ export default function SortDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className='bg-midnight text-silver p-2 rounded-sm md:inline hidden'>
+        <button className="bg-midnight text-silver p-2 rounded-sm md:inline hidden">
           <List size={24} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='dark bg-black'>
+      <DropdownMenuContent className="dark bg-black">
         <DropdownMenuLabel>Sort by</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={filter || 'last-modified'}>
           {dropdownValues.map((dropdownValue) => (
             <button
-              className='flex w-full'
+              className="flex w-full"
               key={dropdownValue.value}
               onClick={() => handleSort(dropdownValue.value)}
-              name='item'
-              type='submit'
+              name="item"
+              type="submit"
             >
               <DropdownMenuRadioItem
                 value={dropdownValue.value}
-                className='w-full'
+                className="w-full"
               >
                 {dropdownValue.text}
               </DropdownMenuRadioItem>

@@ -51,10 +51,10 @@ export default function EditorMenuBar() {
             "Your note has been saved! It's ready whenever you need it. 📌",
           variant: 'success',
           action: (
-            <div className='bg-blue/20 p-2 rounded-md w-fit'>
+            <div className="bg-blue/20 p-2 rounded-md w-fit">
               <Check
                 size={24}
-                className='bg-blue text-midnight p-1 rounded-full'
+                className="bg-blue text-midnight p-1 rounded-full"
               />
             </div>
           ),
@@ -71,7 +71,7 @@ export default function EditorMenuBar() {
     const handleEditorChange = () => {
       const headingLevels = [1, 2, 3, 4];
       const activeHeadingLevel = headingLevels.find((level) =>
-        editor.isActive('heading', { level })
+        editor.isActive('heading', { level }),
       );
 
       if (activeHeadingLevel) {
@@ -106,23 +106,20 @@ export default function EditorMenuBar() {
     }
   }
   return (
-    <div className='flex flex-col gap-1 xl:px-11 px-4'>
-      <div className='flex items-center gap-1'>
+    <div className="flex flex-col gap-1 xl:px-11 px-4">
+      <div className="flex items-center gap-1">
         <Select value={selectedValue}>
-          <MenuTooltip
-            content='Styles'
-            sideOffset={6}
-          >
-            <SelectTrigger className='bg-black border-none w-28 font-semibold'>
+          <MenuTooltip content="Styles" sideOffset={6}>
+            <SelectTrigger className="bg-black border-none w-28 font-semibold">
               <SelectValue>{selectedValue}</SelectValue>
             </SelectTrigger>
           </MenuTooltip>
           <SelectContent
             sideOffset={6}
-            className='bg-black border-silver border-2 p-1'
+            className="bg-black border-silver border-2 p-1"
           >
             <SelectGroup>
-              <div className='flex flex-col'>
+              <div className="flex flex-col">
                 {Array.from({ length: 4 }, (_, index) => (
                   <button
                     key={`${index}`}
@@ -146,18 +143,18 @@ export default function EditorMenuBar() {
                     ? 'bg-neutral-100 rounded-sm text-black'
                     : 'text-neutral-200'
                 }`}
-                value='Paragraph'
+                value="Paragraph"
               >
                 Paragraph
               </button>
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Separator orientation='vertical' />
+        <Separator orientation="vertical" />
         <SelectFontFamily />
-        <Separator orientation='vertical' />
+        <Separator orientation="vertical" />
         <SelectFontSize />
-        <Separator orientation='vertical' />
+        <Separator orientation="vertical" />
         <MenuItems />
       </div>
       <Separator />

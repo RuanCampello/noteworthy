@@ -28,7 +28,7 @@ export default function Note({
   const [focused, setFocused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
-    'portrait'
+    'portrait',
   );
 
   useEffect(() => {
@@ -70,7 +70,6 @@ export default function Note({
 
   const backgroundColour = Colours[colour];
 
-  
   function getFormattedName(name: string): string {
     const shortenName = name[0].toUpperCase();
     if (isMobile && orientation === 'portrait') return shortenName;
@@ -89,7 +88,7 @@ export default function Note({
           ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2'
+      className="rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2"
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -103,14 +102,14 @@ export default function Note({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
+      <h3 className="lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center">
         {formattedName}
       </h3>
-      <div className='flex gap-2.5 lg:text-base text-sm'>
-        <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
+      <div className="flex gap-2.5 lg:text-base text-sm">
+        <span className="text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden">
           {date.toLocaleDateString('en-GB')}
         </span>
-        <p className='truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden'>
+        <p className="truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden">
           {textWithoutHtml}
         </p>
       </div>

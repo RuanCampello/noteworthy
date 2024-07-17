@@ -41,25 +41,25 @@ export default function ColourSelect({
       disabled={disabled}
       defaultValue={defaultColour}
       onValueChange={onValueChange}
-      name='colour'
+      name="colour"
     >
       <SelectTrigger
         style={{ outlineColor: colour }}
-        className='bg-black capitalize col-span-3'
+        className="bg-black capitalize col-span-3"
       >
-        <SelectValue className='w-full' placeholder={defaultColour} />
+        <SelectValue className="w-full" placeholder={defaultColour} />
       </SelectTrigger>
       <SelectContent
-        side='right'
-        align='center'
+        side="right"
+        align="center"
         sideOffset={24}
-        className='dark bg-black'
+        className="dark bg-black"
       >
-        <SelectGroup className='flex flex-col gap-1'>
+        <SelectGroup className="flex flex-col gap-1">
           <SelectLabel>Colours</SelectLabel>
           <SelectItem
-            className='text-neutral-200 focus:text-neutral-300'
-            value='random'
+            className="text-neutral-200 focus:text-neutral-300"
+            value="random"
           >
             Random
           </SelectItem>

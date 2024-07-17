@@ -23,12 +23,12 @@ export default function NoteTooltip({ children, note }: NoteTooltipProps) {
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent
-          align='center'
-          side='right'
-          className='max-w-52 border-black border-2 lg:-translate-x-[20%]'
+          align="center"
+          side="right"
+          className="max-w-52 border-black border-2 lg:-translate-x-[20%]"
           style={{ background: colour }}
         >
-          <h1 className='text-lg font-medium truncate'>{title}</h1>
+          <h1 className="text-lg font-medium truncate">{title}</h1>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
