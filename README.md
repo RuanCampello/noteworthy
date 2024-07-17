@@ -11,16 +11,16 @@
       <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
     </a>
     <a href="https://ui.shadcn.com/" target="_blank">
-      <img src="https://img.shields.io/badge/shadcn-ui?style=flat-square?logo=shadcn%2Fui&color=000" alt="Shadcn" />
+      <img src="https://img.shields.io/badge/shadcn-ui?style=flat-square&logo=shadcn%2Fui&color=000" alt="Shadcn" />
     </a>
     <a href="https://prisma.io" target="_blank">
-      <img src="https://img.shields.io/badge/Prisma-8A2BE2?style=flat-square?logo=prisma&color=121212" alt="Prisma" />
+      <img src="https://img.shields.io/badge/prisma-0?style=flat-square&logo=Prisma&color=121212" alt="Prisma" />
     </a>
     <a href="https://resend.com" target="_blank">
-      <img src="https://img.shields.io/badge/Resend-1010?style=flat-square?logo=resend&color=%23101010" alt="Resend" />
+      <img src="https://img.shields.io/badge/resend-0?style=flat-square&logo=resend&color=101010" alt="Resend" />
     </a>
     <a href="https://zod.dev" target="_blank">
-      <img src="https://img.shields.io/badge/Zod-000?style=flat-square?logo=Zod&logoColor=white&color=023e8a" alt="Zod" />
+      <img src="https://img.shields.io/badge/zod-0?style=flat-square&logo=zod&logoColor=white&color=023e8a" alt="Zod" />
     </a>
     <a href="https://www.typescriptlang.org/" target="_blank">
       <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -29,7 +29,7 @@
       <img src="https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     </a>
     <a href="https://www.cloudflare.com/" target="_blank">
-      <img src="https://img.shields.io/badge/Cloudflare-000?style=flat-square?logo=cloudflare&logoColor=fff&color=f77f00" alt="Cloudflare" />
+      <img src="https://img.shields.io/badge/Cloudflare-000?style=flat-square&logo=cloudflare&logoColor=fff&color=f77f00" alt="Cloudflare" />
     </a>
     <a href="https://noteworthy-ebon.vercel.app/" target="_blank">
       <img src="https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet?style=flat-square" alt="Deployed on Vercel" />
