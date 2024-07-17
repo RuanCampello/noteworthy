@@ -13,7 +13,7 @@ export default function Example({ text, word }: ExampleProps) {
         <b key={index}>{part}</b>
       ) : (
         part
-      )
+      ),
     );
 
   return (

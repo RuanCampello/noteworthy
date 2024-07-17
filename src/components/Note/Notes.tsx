@@ -28,14 +28,11 @@ export default async function Notes() {
     filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
   } else {
     filteredNotes.sort(
-      (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime()
+      (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime(),
     );
   }
   return (
-    <div
-      data-state={state}
-      className='group/root'
-    >
+    <div data-state={state} className='group/root'>
       <SectionTitle title='Notes'>
         <Counter />
       </SectionTitle>

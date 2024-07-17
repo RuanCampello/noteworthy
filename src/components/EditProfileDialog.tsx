@@ -127,7 +127,7 @@ export default function EditProfileDialog() {
             <FormField
               control={editProfileForm.control}
               name='image'
-              render={({ field }) => (
+              render={() => (
                 <FormItem className='flex justify-center'>
                   <FormLabel
                     aria-disabled={isOAuthImage}

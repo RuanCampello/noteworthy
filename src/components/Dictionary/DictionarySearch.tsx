@@ -33,10 +33,7 @@ export default function DictionarySearch() {
         name='word'
         placeholder='Search for a word'
       />
-      <button
-        type='submit'
-        className='h-fit focus:outline-none'
-      >
+      <button type='submit' className='h-fit focus:outline-none'>
         <Search size={20} />
       </button>
     </form>

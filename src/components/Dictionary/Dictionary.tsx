@@ -19,7 +19,7 @@ interface PhoneticSectionProps {
 
 function PhoneticSection({ definition }: PhoneticSectionProps) {
   const firstPhoneticWithAudio = definition?.phonetics.find(
-    (phonetic) => phonetic.audio
+    (phonetic) => phonetic.audio,
   );
 
   return (
@@ -47,34 +47,19 @@ function MeaningSection({ meanings, word }: MeaningSectionProps) {
     <section key={i}>
       <div className='flex items-center overflow-hidden gap-4 text-silver mb-3'>
         <p className='italic font-medium text-lg'>{meaning.partOfSpeech}</p>
-        <Separator
-          orientation='horizontal'
-          className='bg-silver/40'
-        />
+        <Separator orientation='horizontal' className='bg-silver/40' />
       </div>
       {meaning.definitions.slice(0, 3).map((def, index: number) => (
-        <div
-          className='mb-2 mx-2'
-          key={def.definition}
-        >
+        <div className='mb-2 mx-2' key={def.definition}>
           <p className='text-white/80 flex gap-1.5'>
             <span className='px-2 rounded-full text-sm leading-6 h-fit items-center text-silver bg-midnight'>
               {index + 1}
             </span>
             {def.definition}
           </p>
-          <DerivedWords
-            items={def.synonyms}
-            title='Synonyms'
-          />
-          <DerivedWords
-            items={def.antonyms}
-            title='Antonyms'
-          />
-          <Example
-            text={def.example}
-            word={word}
-          />
+          <DerivedWords items={def.synonyms} title='Synonyms' />
+          <DerivedWords items={def.antonyms} title='Antonyms' />
+          <Example text={def.example} word={word} />
         </div>
       ))}
     </section>
@@ -93,12 +78,7 @@ function FooterSection({ definition }: FooterSectionProps) {
         <p>{definition.sourceUrls.length > 1 ? 'Sources' : 'Source'}</p>
         <div className='flex flex-col col-span-3'>
           {definition.sourceUrls.map((source: string) => (
-            <a
-              key={source}
-              href={source}
-              className='underline'
-              target='_blank'
-            >
+            <a key={source} href={source} className='underline' target='_blank'>
               {source}
             </a>
           ))}
@@ -106,10 +86,7 @@ function FooterSection({ definition }: FooterSectionProps) {
       </div>
       <div className='grid grid-cols-4'>
         <p>Licence</p>
-        <a
-          className='underline col-span-3'
-          href={definition.license.url}
-        >
+        <a className='underline col-span-3' href={definition.license.url}>
           {definition.license.name}
         </a>
       </div>
@@ -139,10 +116,7 @@ export default async function Dictionary({ word }: DictionaryProps) {
         ) : null}
       </div>
       {hasContent && (
-        <MeaningSection
-          meanings={definition.meanings}
-          word={definition.word}
-        />
+        <MeaningSection meanings={definition.meanings} word={definition.word} />
       )}
       {hasContent && <FooterSection definition={definition} />}
     </aside>

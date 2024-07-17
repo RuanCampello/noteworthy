@@ -12,7 +12,7 @@ const FormInput = React.forwardRef<HTMLInputElement, InputProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 FormInput.displayName = 'FormInput';

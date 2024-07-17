@@ -29,10 +29,7 @@ export default function ShareLinkButton({ noteId }: { noteId: string }) {
           type='button'
           size='icon'
         >
-          <Copy
-            size={18}
-            strokeWidth={2}
-          />
+          <Copy size={18} strokeWidth={2} />
         </Button>
       </div>
     </div>

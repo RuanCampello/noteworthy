@@ -9,7 +9,7 @@ import { db } from '@/server/db';
 
 export async function newPassword(
   values: z.infer<typeof newPasswordSchema>,
-  token?: string | null
+  token?: string | null,
 ) {
   if (!token) return { error: 'Token is required' };
 

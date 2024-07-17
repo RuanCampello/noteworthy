@@ -31,7 +31,7 @@ export default function SearchNote() {
         router.push(`?${params.toString()}`);
       } else {
         params.delete('name', searchParams);
-        params.delete(searchParams)
+        params.delete(searchParams);
         params.append('name', name);
         router.push(`?${params.toString()}`);
       }

@@ -25,7 +25,7 @@ export default function MoreItem({
   children,
 }: MoreItemProps) {
   const active = headers().get('pathname')?.includes(href);
-  
+
   return (
     <Link
       href={href}

@@ -46,7 +46,7 @@ export default function ResetPage() {
             </div>
           ),
         });
-      } else if(success) {
+      } else if (success) {
         toast({
           title: 'Success',
           description: success,
@@ -60,7 +60,7 @@ export default function ResetPage() {
             </div>
           ),
         });
-      } else if(message) {
+      } else if (message) {
         toast({
           title: 'A moment',
           description: message,

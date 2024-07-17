@@ -19,10 +19,7 @@ export default function CloseButton() {
     } else router.refresh();
   }
   return (
-    <MenuTooltip
-      content='Close dictionary'
-      side='left'
-    >
+    <MenuTooltip content='Close dictionary' side='left'>
       <button
         onClick={closeDictionary}
         className='p-1.5 rounded-full text-silver hover:bg-midnight z-50'

@@ -39,13 +39,11 @@ export type NoteDialog = z.infer<typeof noteDialogSchema>;
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
-  const {} = useKeyboardShortcut(
-    ['Control', 'E'],
-    (shortcutKey) => {
-      setOpen(true);
-    },
-    { overrideSystem: true, repeatOnHold: false, ignoreInputFields: true },
-  );
+  useKeyboardShortcut(['Control', 'E'], () => setOpen(true), {
+    overrideSystem: true,
+    repeatOnHold: false,
+    ignoreInputFields: true,
+  });
 
   function handleAddNote(values: NoteDialog) {
     startTransition(async () => {

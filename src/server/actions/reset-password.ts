@@ -7,7 +7,7 @@ import { resetPasswordSchema } from '@/schemas';
 import { z } from 'zod';
 
 export async function resetPassword(
-  values: z.infer<typeof resetPasswordSchema>
+  values: z.infer<typeof resetPasswordSchema>,
 ) {
   const fields = resetPasswordSchema.safeParse(values);
   if (!fields.success) return { error: 'Invalid e-mail' };
@@ -17,7 +17,7 @@ export async function resetPassword(
   if (!user) return { error: 'No user found with this e-mail' };
 
   const { value: isProviderAccount, provider } = await userHasProviderAccount(
-    user.id
+    user.id,
   );
 
   if (isProviderAccount) {
@@ -35,7 +35,7 @@ export async function resetPassword(
   if (passwordResetToken.newToken)
     await sendPasswordResetEmail(
       passwordResetToken.newToken.email,
-      passwordResetToken.newToken.token
+      passwordResetToken.newToken.token,
     );
   return { success: 'Reset password e-mail sent' };
 }

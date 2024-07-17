@@ -26,7 +26,7 @@ export default function SaveNote() {
       await updateNoteContent(
         openNote,
         userId,
-        currentEditor.editor?.getHTML()
+        currentEditor.editor?.getHTML(),
       );
       toast({
         title: 'Note Saved',

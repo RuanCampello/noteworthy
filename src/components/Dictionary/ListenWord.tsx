@@ -17,7 +17,7 @@ export default function ListenWord({ url }: ListenWordProps) {
 
   useEffect(() => {
     if (!url) return;
-    
+
     const audioElement = new Audio(url);
     setAudio(audioElement);
 
@@ -57,10 +57,7 @@ export default function ListenWord({ url }: ListenWordProps) {
       data-playing={isPlaying}
     >
       {isPlaying ? (
-        <Pause
-          {...iconProps}
-          className='shrink-0 text-black'
-        />
+        <Pause {...iconProps} className='shrink-0 text-black' />
       ) : (
         <Play
           {...iconProps}

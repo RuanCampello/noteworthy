@@ -33,7 +33,7 @@ export default function SelectFontFamily() {
 
     const handleFontChange = () => {
       const activeFont = fontFamilies.find((fontFamily) =>
-        editor.isActive('textStyle', { fontFamily: fontFamily.value })
+        editor.isActive('textStyle', { fontFamily: fontFamily.value }),
       );
       if (activeFont) setFontFamily(activeFont);
       else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });

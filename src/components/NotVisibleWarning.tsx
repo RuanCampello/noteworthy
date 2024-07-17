@@ -8,10 +8,7 @@ export default function NotVisibleWarning() {
         text='This note is private'
         paragraph="Looks like you're trying to see a private note, don't be a little snoop"
       >
-        <FileWarning
-          size={80}
-          strokeWidth={1}
-        />
+        <FileWarning size={80} strokeWidth={1} />
       </Placeholder>
     </main>
   );

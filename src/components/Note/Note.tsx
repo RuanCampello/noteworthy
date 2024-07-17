@@ -28,7 +28,7 @@ export default function Note({
   const [focused, setFocused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
-    'portrait'
+    'portrait',
   );
 
   useEffect(() => {
@@ -70,7 +70,6 @@ export default function Note({
 
   const backgroundColour = Colours[colour];
 
-  
   function getFormattedName(name: string): string {
     const shortenName = name[0].toUpperCase();
     if (isMobile && orientation === 'portrait') return shortenName;

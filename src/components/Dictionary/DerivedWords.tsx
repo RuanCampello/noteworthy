@@ -14,11 +14,7 @@ export default function DerivedWords({ items, title }: DerivedWordsProps) {
       {items.map((derivative, i) => {
         if (i < 4) {
           return (
-            <Badge
-              variant='secondary'
-              className='dark'
-              key={derivative}
-            >
+            <Badge variant='secondary' className='dark' key={derivative}>
               {derivative}
             </Badge>
           );

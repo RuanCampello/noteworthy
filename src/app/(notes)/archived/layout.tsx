@@ -3,11 +3,12 @@ import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser, getAllUserArchivedNotes } from '@/queries/note';
 import { ArchiveX, ArchiveRestore } from 'lucide-react';
+import { type ReactNode } from 'react';
 
 export default async function FavouriteLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const user = await currentUser();
   if (!user?.id) return;

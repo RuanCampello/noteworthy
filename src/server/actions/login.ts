@@ -8,7 +8,7 @@ import { AuthError } from 'next-auth';
 import { z } from 'zod';
 
 export async function login(
-  values: z.infer<typeof loginFormSchema>
+  values: z.infer<typeof loginFormSchema>,
 ): Promise<{ error: string | null }> {
   const fields = loginFormSchema.safeParse(values);
 

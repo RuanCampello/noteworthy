@@ -11,7 +11,7 @@ import { AuthError } from 'next-auth';
 import { createPlaceholderNote } from './note';
 
 export async function register(
-  values: z.infer<typeof registerFormSchema>
+  values: z.infer<typeof registerFormSchema>,
 ): Promise<{ error: string | null }> {
   const fields = registerFormSchema.safeParse(values);
 

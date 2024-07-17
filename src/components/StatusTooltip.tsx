@@ -17,7 +17,7 @@ export default function StatusTooltip({
       <div
         className={cn(
           'p-1.5 rounded-sm shrink-0 hover:border-white text-black border-2 border-transparent transition-colors cursor-help',
-          props.className
+          props.className,
         )}
       >
         {cloneElement(icon, { size: 20 })}

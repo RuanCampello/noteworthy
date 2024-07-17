@@ -10,10 +10,7 @@ export default function More() {
 
   const state = useSidebarState();
   return (
-    <div
-      className='group/root'
-      data-state={state}
-    >
+    <div className='group/root' data-state={state}>
       <SectionTitle title='More' />
       <div className='font-semibold flex flex-col'>
         <MoreItem

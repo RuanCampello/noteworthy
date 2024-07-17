@@ -32,7 +32,6 @@ export default function SortDropdown() {
     if (!filterParams) {
       params.append('filter', selectedItem);
       router.push(`?${params}`);
-      
     } else {
       params.delete('filter', filterParams);
       params.append('filter', selectedItem);
