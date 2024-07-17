@@ -1,6 +1,9 @@
-# Noteworthy
-
-![screenshot image](/public/assets/screenshot.png)
+<div align="center">
+  <a href="https://noteworthy-ebon.vercel.app">
+    <img src="/public/assets/logo.svg" width="124px" alt="logo" />
+  </a>
+  <h1 align="center">Noteworthy</h1>
+</div>
 
 ## Stack
 
