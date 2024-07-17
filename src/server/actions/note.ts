@@ -190,6 +190,7 @@ export async function togglePublishState(id: string, currentState: boolean) {
 export const getNote = cache(async (id: string) => {
   try {
     const note = await db.note.findUnique({ where: { id } });
+
     return note;
   } catch (error) {
     return null;

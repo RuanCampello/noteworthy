@@ -1,38 +1,27 @@
 import NotFound from '@/app/not-found';
 import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
-import NoteHeader, { Owner } from '@/components/Note/NoteHeader';
+import NoteHeader from '@/components/Note/NoteHeader';
 import { currentUser, getNoteById } from '@/queries/note';
-import { getUserById } from '@/queries/user';
 
 type Props = { params: { id: string } };
 
 export default async function Archived({ params }: Props) {
   const note = await getNoteById(params.id);
   if (!note) return <NotFound />;
-  const { content, title, createdAt, id, lastUpdate, userId, isPublic } = note;
-  const owner = await getUserById(userId);
-  if (!owner) return;
+  const { content, title, createdAt, id, lastUpdate, isPublic, owner } = note;
 
   const user = await currentUser();
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
-  const ownerResumed: Owner = {
-    name: owner.name,
-    id: owner.id,
-  };
-
   return (
     <div className='w-full pb-6 overflow-y-clip flex flex-col'>
-      <NoteEditor
-        content={content}
-        owner={owner.id}
-      >
+      <NoteEditor content={content} owner={owner.id}>
         <NoteHeader
           title={title}
           date={createdAt}
-          owner={ownerResumed}
+          owner={owner}
           id={id}
           lastUpdate={lastUpdate || createdAt}
         />

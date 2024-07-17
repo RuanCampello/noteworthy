@@ -11,7 +11,10 @@ export const currentUser = cache(async () => {
 
 export const getNoteById = cache(async (id: string) => {
   try {
-    const note = await db.note.findUnique({ where: { id } });
+    const note = await db.note.findUnique({
+      where: { id },
+      include: { owner: { select: { name: true, id: true } } },
+    });
     return note;
   } catch (error) {
     return null;

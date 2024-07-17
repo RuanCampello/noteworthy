@@ -81,6 +81,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
+    "prettier-plugin-prisma": "^5.0.0",
     "prisma": "^5.12.1",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
