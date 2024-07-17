@@ -56,11 +56,11 @@ enum Colour {
 model Note {
   id          String   @id @default(uuid())
   title       String
-  createdAt   DateTime @default(now())
-  lastUpdate  DateTime @default(now())
-  isFavourite Boolean  @default(false)
-  isArchived  Boolean  @default(false)
-  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  lastUpdate  DateTime @default(now()) @map("last_update")
+  isFavourite Boolean  @default(false) @map("is_favourite")
+  isArchived  Boolean  @default(false) @map("is_archived")
+  isPublic    Boolean  @default(false) @map("is_public")
   owner       User     @relation(fields: [userId], references: [id])
   content     String
   colour      Colour

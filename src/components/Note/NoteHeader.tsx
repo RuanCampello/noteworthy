@@ -16,7 +16,7 @@ import StatusTooltip from '../StatusTooltip';
 import { headers } from 'next/headers';
 import PublishNoteDialog from './PublishNoteDialog';
 
-export type Owner = {
+type Owner = {
   name: string | null;
   id: string;
 };
