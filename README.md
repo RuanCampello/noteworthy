@@ -1,8 +1,43 @@
 <div align="center">
   <a href="https://noteworthy-ebon.vercel.app">
-    <img src="/public/assets/logo.svg" width="124px" alt="logo" />
+    <img src="/public/assets/logo.svg" width="96px" alt="logo" />
   </a>
   <h1 align="center">Noteworthy</h1>
+  <p align="center">
+    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
+  </p>
+  <div align="center">
+    <a href="https://nextjs.org/" target="_blank">
+      <img src="https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white" alt="Next.js" />
+    </a>
+    <a href="https://ui.shadcn.com/" target="_blank">
+      <img src="https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000" alt="Shadcn" />
+    </a>
+    <a href="https://prisma.io" target="_blank">
+      <img src="https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212" alt="Prisma" />
+    </a>
+    <a href="https://resend.com" target="_blank">
+      <img src="https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010" alt="Resend" />
+    </a>
+    <a href="https://zod.dev" target="_blank">
+      <img src="https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a" alt="Zod" />
+    </a>
+    <a href="https://www.typescriptlang.org/" target="_blank">
+      <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
+    </a>
+    <a href="https://tailwindcss.com/" target="_blank">
+      <img src="https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    </a>
+    <a href="https://www.cloudflare.com/" target="_blank">
+      <img src="https://img.shields.io/badge/Cloudflare-000?logo=cloudflare&logoColor=fff&color=f77f00" alt="Cloudflare" />
+    </a>
+    <a href="https://noteworthy-ebon.vercel.app/" target="_blank">
+      <img src="https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet" alt="Deployed on Vercel" />
+    </a>
+    <a href="https://choosealicense.com/licenses/mit/" target="_blank">
+      <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License" />
+    </a>
+  </div>
 </div>
 
 ## Stack
@@ -11,13 +46,6 @@
 - **Styling**: Tailwind CSS
 - **Language**: TypeScript
 - **Authentication**: NextAuth
-
-## Overview
-
-Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
-
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) [![Shadcn](https://img.shields.io/badge/shadcn-ui?logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/) [![Prisma](https://img.shields.io/badge/Prisma-8A2BE2?logo=prisma&color=121212)](https://prisma.io) ![Static Badge](https://img.shields.io/badge/Resend-1010?logo=resend&color=%23101010) [![Zod](https://img.shields.io/badge/Zod-000?logo=Zod&logoColor=white&color=023e8a)](https://zod.dev) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) [![Cloudflare](https://img.shields.io/badge/Cloudflare-000?logo=cloudflare&logoColor=fff&color=f77f00)
-](https://www.cloudflare.com/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet)](https://noteworthy-ebon.vercel.app/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Design Inspiration
 
