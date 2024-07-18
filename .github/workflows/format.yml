@@ -52,7 +52,7 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           if ! git diff-index --quiet HEAD; then
-            git commit -m "$message"
+            git commit -m "${{ env.MESSAGE }}"
             git push
           else
             echo "No changes to commit"
