@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Set up Node.js
@@ -27,16 +27,17 @@ jobs:
     - name: Run ESLint
       run: npm run lint
 
-    - name: Run Prettier
+    - name: Check Prettier formatting
       run: npm run prettier:check
 
-    - name: Commit changes
-      if: success() && github.event_name == 'push'
-      run: |
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        git add .
-        git commit -m "Apply Prettier formatting" || echo "No changes to commit"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Run Prettier to fix formatting issues
+      if: failure()
+      run: npm run prettier:write
+
+    - name: Verify ESLint on latest commit
+      if: success()
+      run: npm run lint
+
+    - name: Verify Prettier formatting on latest commit
+      if: success()
+      run: npm run prettier:check
