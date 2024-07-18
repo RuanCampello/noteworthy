@@ -54,6 +54,11 @@ enum Colour {
   slate
 }
 
+enum NoteFormat {
+  full
+  slim
+}
+
 model Note {
   id          String   @id @default(uuid())
   title       String
@@ -71,9 +76,10 @@ model Note {
 }
 
 model UserPreferences {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  id         Int        @id @default(autoincrement())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  noteFormat NoteFormat @default(full) @map("note_format")
 
   @@map("users_preferences")
 }

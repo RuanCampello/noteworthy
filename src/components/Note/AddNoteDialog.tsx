@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState, useTransition } from 'react';
+import { type ReactNode, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
