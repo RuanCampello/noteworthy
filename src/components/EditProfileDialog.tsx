@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, type ChangeEvent } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -93,7 +93,7 @@ export default function EditProfileDialog() {
     });
   }
 
-  function handleImageChange(e: any) {
+  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target && e.target.files && e.target.files.length > 0) {
       const preview = e.target.files[0];
       setSelectedImage(URL.createObjectURL(preview));
@@ -162,7 +162,9 @@ export default function EditProfileDialog() {
                   <FormControl>
                     <CustomForm.Input
                       {...editProfileForm.register('image')}
-                      {...(onchange = (e) => handleImageChange(e))}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleImageChange(e)
+                      }
                       type='file'
                       className='hidden'
                       id='image-input'

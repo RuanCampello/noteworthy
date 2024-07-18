@@ -44,7 +44,7 @@ export default function KeyboardDialog() {
               <Separator className='my-1.5' />
               <div className='flex flex-col gap-1'>
                 {noteShortcuts.map((shortcut) => (
-                  <Shortcut key={shortcut.action} {...shortcut} />
+                  <ShortcutItem key={shortcut.action} {...shortcut} />
                 ))}
               </div>
             </div>
@@ -53,7 +53,7 @@ export default function KeyboardDialog() {
               <Separator className='my-1.5' />
               <div className='flex flex-col gap-1'>
                 {globalShortcuts.map((shortcut) => (
-                  <Shortcut key={shortcut.action} {...shortcut} />
+                  <ShortcutItem key={shortcut.action} {...shortcut} />
                 ))}
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function KeyboardDialog() {
             <Separator className='my-1.5' />
             <div className='flex flex-col gap-1'>
               {shortcuts.map((shortcut) => (
-                <Shortcut key={shortcut.action} {...shortcut} />
+                <ShortcutItem key={shortcut.action} {...shortcut} />
               ))}
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function KeyboardDialog() {
   );
 }
 
-function Shortcut({ action, commands }: Shortcut) {
+function ShortcutItem({ action, commands }: Shortcut) {
   return (
     <div className='flex justify-between items-center text-sm'>
       <p className='font-semibold'>{action}</p>
