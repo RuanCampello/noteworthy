@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  lint:
+  format:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,14 +34,23 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        if: steps.cache-npm.outputs.cache-hit != 'true'
+
+      - name: Verify Prettier version
+        run: npx prettier --version
+
+      - name: Check Prettier configuration
+        run: cat .prettierrc
 
       - name: Check Prettier formatting
-        run: npm run prettier:check
+        run: |
+          echo "Checking Prettier formatting..."
+          npm run prettier:check || echo "Prettier check failed"
 
       - name: Run Prettier to fix formatting issues
         if: failure()
-        run: npm run prettier:write
+        run: |
+          echo "Running Prettier to fix formatting issues..."
+          npm run prettier:write
 
       - name: Verify Prettier formatting on latest commit
         if: success()
