@@ -54,5 +54,3 @@ jobs:
           if ! git diff-index --quiet HEAD; then
             git commit -m "${{ env.MESSAGE }}"
             git push
-          else
-            echo "No changes to commit"
