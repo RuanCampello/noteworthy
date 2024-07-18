@@ -105,6 +105,7 @@ export default function EditProfileDialog() {
   const isOAuthImage =
     image?.includes('https://avatars.githubusercontent.com') ||
     image?.includes('https://lh3.googleusercontent.com');
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -161,10 +162,11 @@ export default function EditProfileDialog() {
                   </FormLabel>
                   <FormControl>
                     <CustomForm.Input
+                      {...(onchange = (e: Event) =>
+                        handleImageChange(
+                          e as unknown as ChangeEvent<HTMLInputElement>,
+                        ))}
                       {...editProfileForm.register('image')}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleImageChange(e)
-                      }
                       type='file'
                       className='hidden'
                       id='image-input'
