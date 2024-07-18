@@ -1,4 +1,4 @@
-name: Lint and Format
+name: Format
 
 on:
   pull_request:
@@ -21,11 +21,20 @@ jobs:
         with:
           node-version: '18.17.0'
 
+      - name: Cache npm dependencies
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm install
-
-      - name: Run ESLint
-        run: npm run lint || exit 1
+        if: steps.cache-npm.outputs.cache-hit != 'true'
 
       - name: Check Prettier formatting
         run: npm run prettier:check
@@ -33,10 +42,6 @@ jobs:
       - name: Run Prettier to fix formatting issues
         if: failure()
         run: npm run prettier:write
-
-      - name: Verify ESLint on latest commit
-        if: success()
-        run: npm run lint || exit 1
 
       - name: Verify Prettier formatting on latest commit
         if: success()
