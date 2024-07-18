@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 
-import { Bolt, Key, LogOut } from 'lucide-react';
+import { Bolt, LogOut } from 'lucide-react';
 import EditProfileDialog from '@/components/EditProfileDialog';
 import {
   DropdownMenu,

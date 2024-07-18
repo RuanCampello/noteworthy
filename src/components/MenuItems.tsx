@@ -17,6 +17,7 @@ import { Fragment } from 'react';
 import MenuTooltip from '@/components/Tooltip';
 import { Separator } from '@/ui/separator';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { JSX } from 'react';
 
 type MenuItem = {
   tooltipContent: string;
