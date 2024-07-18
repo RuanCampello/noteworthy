@@ -32,7 +32,6 @@ export default async function NoteHeader({
   title,
   date,
   owner,
-  id,
   lastUpdate,
 }: NoteHeaderProps) {
   const longLastUpdate = toLocaleDateLong(lastUpdate);

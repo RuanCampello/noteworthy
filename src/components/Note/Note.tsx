@@ -32,13 +32,13 @@ export default function Note({
   );
 
   useEffect(() => {
-    const handleResize = () => {
+    function handleResize() {
       const screenWidth = window.innerWidth;
       setIsMobile(screenWidth <= 768);
       const mqPortrait = window.matchMedia('(orientation: portrait)');
       if (mqPortrait.matches) setOrientation('portrait');
       else setOrientation('landscape');
-    };
+    }
     handleResize();
     window.addEventListener('resize', handleResize);
 

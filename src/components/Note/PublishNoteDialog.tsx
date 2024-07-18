@@ -10,7 +10,6 @@ import {
 } from '@/ui/dialog';
 import { Button } from '@/ui/button';
 import { togglePublishState } from '@/server/actions/note';
-import { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import SubmitButton from '../SubmitButton';
 import { Globe } from 'lucide-react';
