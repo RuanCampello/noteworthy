@@ -1,4 +1,5 @@
 import { ColourType } from '@/utils/colours';
+import { NoteFormat } from '@prisma/client';
 import { z } from 'zod';
 
 export const loginFormSchema = z.object({
@@ -39,4 +40,8 @@ export const newPasswordSchema = z.object({
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters',
   }),
+});
+
+export const userPreferencesSchema = z.object({
+  'note-format': z.string().transform((s) => s as NoteFormat),
 });

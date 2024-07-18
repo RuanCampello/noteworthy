@@ -14,6 +14,7 @@ import { env } from '@/env';
 import { currentUser } from '@/server/queries/note';
 import { useSidebarState } from '@/utils/sidebar';
 import KeyboardDialog from './KeyboardDialog';
+import SettingsDialog from './SettingsDialog';
 
 export default async function Profile() {
   const user = await currentUser();
@@ -53,6 +54,7 @@ export default async function Profile() {
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
               <EditProfileDialog />
+              <SettingsDialog />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />
