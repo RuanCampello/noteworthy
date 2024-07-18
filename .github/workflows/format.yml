@@ -39,7 +39,7 @@ jobs:
         run: npx prettier --version
 
       - name: Check Prettier configuration
-        run: cat .prettierrc
+        run: cat .prettierrc.json
 
       - name: Check Prettier formatting
         run: |
