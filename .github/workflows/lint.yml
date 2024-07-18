@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Run ESLint
-        run: npm run lint
+        run: npm run lint || exit 1
 
       - name: Check Prettier formatting
         run: npm run prettier:check
@@ -36,7 +36,7 @@ jobs:
 
       - name: Verify ESLint on latest commit
         if: success()
-        run: npm run lint
+        run: npm run lint || exit 1
 
       - name: Verify Prettier formatting on latest commit
         if: success()
