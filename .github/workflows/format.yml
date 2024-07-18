@@ -37,7 +37,7 @@ jobs:
 
       - name: Save original commit message
         id: vars
-        run: echo "::set-output name=message::$(git log -1 --pretty=%B)"
+        run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
       - name: Check Prettier formatting
         run: npm run prettier:check
@@ -52,7 +52,7 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           if ! git diff-index --quiet HEAD; then
-            git commit -m "${{ steps.vars.outputs.message }}"
+            git commit -m "$message"
             git push
           else
             echo "No changes to commit"
