@@ -21,7 +21,8 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
 
   if (!fields.success) return;
-  let { name, colour } = fields.data;
+  let { colour } = fields.data;
+  const { name } = fields.data;
 
   colour === 'random' ? (colour = getRandomColour().name) : colour;
 
@@ -113,7 +114,8 @@ export async function editNote(
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
 
-  let { name, colour } = fields.data;
+  let { colour } = fields.data;
+  const { name } = fields.data;
   colour === 'random' ? (colour = getRandomColour().name) : colour;
   try {
     await db.note.update({ where: { id }, data: { title: name, colour } });

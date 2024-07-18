@@ -67,8 +67,8 @@ export default function EditorMenuBar() {
 
   useEffect(() => {
     if (!editor) return;
-
-    const handleEditorChange = () => {
+    function handleEditorChange() {
+      if (!editor) return;
       const headingLevels = [1, 2, 3, 4];
       const activeHeadingLevel = headingLevels.find((level) =>
         editor.isActive('heading', { level }),
@@ -79,7 +79,7 @@ export default function EditorMenuBar() {
       } else if (editor.isActive('paragraph')) {
         setSelectedValue('Paragraph');
       }
-    };
+    }
     editor.on('transaction', handleEditorChange);
     return () => {
       editor.off('transaction', handleEditorChange);

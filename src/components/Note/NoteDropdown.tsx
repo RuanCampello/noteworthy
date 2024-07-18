@@ -2,7 +2,6 @@
 
 import {
   type ReactNode,
-  cache,
   useCallback,
   useEffect,
   useState,
@@ -32,7 +31,7 @@ import {
 import DropdownButton from '@/components/DropdownButton';
 import { useSession } from 'next-auth/react';
 import { type Note } from '@prisma/client';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 interface DropdownProps {
   children: ReactNode;

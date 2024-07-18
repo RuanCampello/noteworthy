@@ -31,13 +31,14 @@ export default function SelectFontFamily() {
   useEffect(() => {
     if (!editor) return;
 
-    const handleFontChange = () => {
+    function handleFontChange() {
+      if (!editor) return;
       const activeFont = fontFamilies.find((fontFamily) =>
         editor.isActive('textStyle', { fontFamily: fontFamily.value }),
       );
       if (activeFont) setFontFamily(activeFont);
       else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });
-    };
+    }
     editor.on('transaction', handleFontChange);
     return () => {
       editor.off('transaction', handleFontChange);
