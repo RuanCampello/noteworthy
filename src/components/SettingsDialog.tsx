@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from './ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
 import { userPreferencesSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
@@ -23,6 +23,7 @@ import {
 import { useState, useTransition, type ReactNode } from 'react';
 import { updateUserPreferences } from '@/server/actions/user-preferences';
 import { useRouter } from 'next/navigation';
+import EditProfile from './EditProfile';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -56,7 +57,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
           <Bolt size={16} />
         </Button>
       </DialogTrigger>
-      <DialogContent className='dark bg-black w-[624px] max-w-screen'>
+      <DialogContent className='dark bg-black w-[524px] max-w-screen'>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
         </DialogHeader>
@@ -65,9 +66,12 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
             <TabsTrigger className='w-full' value='appearance'>
               Appearance
             </TabsTrigger>
+            <TabsTrigger className='w-full' value='profile'>
+              Profile
+            </TabsTrigger>
           </TabsList>
           <TabsContent value='appearance'>
-            <h3 className='text-lg my-8 font-medium'>Appearance</h3>
+            <TabsTitle>Appearance</TabsTitle>
             <section className='grid grid-cols-5'>
               <div className='col-span-2'>
                 <h4 className='text-base font-medium'>Note style</h4>
@@ -132,6 +136,12 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                   </footer>
                 </form>
               </Form>
+            </section>
+          </TabsContent>
+          <TabsContent value='profile'>
+            <TabsTitle>Edit Profile</TabsTitle>
+            <section className='flex flex-col items-center'>
+              <EditProfile />
             </section>
           </TabsContent>
         </Tabs>
