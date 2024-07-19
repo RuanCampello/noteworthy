@@ -1,21 +1,21 @@
 'use client';
 
 import { Bolt } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '@/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from './ui/tabs';
-import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
+} from '@/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from '@/ui/tabs';
+import { ToggleGroup, ToggleGroupItem } from '@/ui/toggle-group';
 import { userPreferencesSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField } from './ui/form';
+import { Form, FormField } from '@/ui/form';
 import {
   type NoteFormat,
   type UserPreferences as Preferences,

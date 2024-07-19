@@ -1,4 +1,4 @@
-import { Button } from './ui/button';
+import { Button } from '@/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -6,10 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
+} from '@/ui/dialog';
 import { Keyboard } from 'lucide-react';
-import { DropdownMenuShortcut } from './ui/dropdown-menu';
-import { Separator } from './ui/separator';
+import { DropdownMenuShortcut } from '@/ui/dropdown-menu';
+import { Separator } from '@/ui/separator';
 import { type ReactNode } from 'react';
 import {
   type Shortcut,

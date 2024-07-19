@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useTransition, type ChangeEvent } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { Button } from '@/ui/button';
+import { Input } from '@/ui/input';
 import { z } from 'zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import {
   Form,
   FormControl,
@@ -16,8 +15,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { CustomForm } from './Form';
+} from '@/ui/form';
+import { CustomForm } from '@/components/Form';
 import Compressor from 'compressorjs';
 import { getUploadUrl } from '@/actions/image';
 
@@ -30,11 +29,13 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const { data: session, update } = useSession();
-  const router = useRouter();
   const user = session?.user;
 
   const editProfileForm = useForm<FormSchema>({
@@ -60,8 +61,8 @@ export default function EditProfile() {
       }
       if (image && image[0]) {
         new Compressor(image[0], {
-          maxHeight: 72,
-          maxWidth: 72,
+          maxHeight: 112,
+          maxWidth: 112,
           quality: 0.8,
           async success(result: File) {
             if (!user.id) return;
@@ -78,7 +79,6 @@ export default function EditProfile() {
         });
       }
       setSelectedImage(undefined);
-      router.refresh();
     });
   }
 
@@ -98,6 +98,7 @@ export default function EditProfile() {
   return (
     <Form {...editProfileForm}>
       <form
+        id='update-user-profile'
         className='flex flex-col gap-4 w-96'
         onSubmit={editProfileForm.handleSubmit(handleEditProfile)}
       >
@@ -178,6 +179,7 @@ export default function EditProfile() {
       <footer className='mt-4 w-full'>
         <Button
           size='sm'
+          form='update-user-profile'
           disabled={
             loading || (currentName === name && selectedImage === undefined)
           }
