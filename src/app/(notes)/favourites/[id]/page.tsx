@@ -7,11 +7,14 @@ import { currentUser, getNoteById } from '@/queries/note';
 type Props = { params: { id: string } };
 
 export default async function Favourite({ params }: Props) {
-  const note = await getNoteById(params.id);
+  const [note, user] = await Promise.all([
+    getNoteById(params.id),
+    currentUser(),
+  ]);
+
   if (!note) return <NotFound />;
   const { content, title, createdAt, id, lastUpdate, isPublic, owner } = note;
 
-  const user = await currentUser();
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 

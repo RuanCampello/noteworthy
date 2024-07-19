@@ -23,8 +23,7 @@ export const getNoteById = cache(async (id: string) => {
 
 export async function getAllUserNotes(userId: string) {
   try {
-    const notes = await db.note.findMany({ where: { userId } });
-    return notes;
+    return await db.note.findMany({ where: { userId } });
   } catch (error) {
     return null;
   }
@@ -32,10 +31,9 @@ export async function getAllUserNotes(userId: string) {
 
 export async function getAllUserOrdinaryNotes(userId: string) {
   try {
-    const notes = await db.note.findMany({
+    return await db.note.findMany({
       where: { userId, isArchived: false, isFavourite: false },
     });
-    return notes;
   } catch (error) {
     console.error(error);
     return null;
@@ -44,10 +42,9 @@ export async function getAllUserOrdinaryNotes(userId: string) {
 
 export async function getAllUserFavouriteNotes(userId: string) {
   try {
-    const notes = await db.note.findMany({
+    return await db.note.findMany({
       where: { userId, isFavourite: true },
     });
-    return notes;
   } catch (error) {
     console.error(error);
     return null;
@@ -56,10 +53,9 @@ export async function getAllUserFavouriteNotes(userId: string) {
 
 export async function getAllUserArchivedNotes(userId: string) {
   try {
-    const notes = await db.note.findMany({
+    return await db.note.findMany({
       where: { userId, isArchived: true },
     });
-    return notes;
   } catch (error) {
     console.error(error);
     return null;

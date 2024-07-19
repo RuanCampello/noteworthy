@@ -34,7 +34,7 @@ export default function DeleteNoteDialog({
   }
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger>{children}</AlertDialogTrigger>
       <AlertDialogContent className='dark bg-black border-red-500 w-96'>
         <AlertDialogHeader>
           <AlertDialogTitle>Are absolutly sure?</AlertDialogTitle>
