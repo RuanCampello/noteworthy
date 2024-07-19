@@ -55,7 +55,6 @@ export default async function Profile() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
-              <EditProfileDialog />
               <SettingsDialog preferences={preferences} />
               <KeyboardDialog />
             </div>
