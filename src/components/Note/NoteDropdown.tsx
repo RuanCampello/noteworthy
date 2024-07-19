@@ -1,17 +1,17 @@
 'use client';
 
 import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-  useTransition,
-} from 'react';
+  getNote,
+  toggleNoteArchive,
+  toggleNoteFavourite,
+} from '@/actions/note';
+import DropdownButton from '@/components/DropdownButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
+import { type Note } from '@prisma/client';
 import {
   Archive,
   ArchiveX,
@@ -21,17 +21,17 @@ import {
   StarOff,
   Trash,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
-import {
-  getNote,
-  toggleNoteArchive,
-  toggleNoteFavourite,
-} from '@/actions/note';
-import DropdownButton from '@/components/DropdownButton';
-import { useSession } from 'next-auth/react';
-import { type Note } from '@prisma/client';
-import { useParams } from 'next/navigation';
 
 interface DropdownProps {
   children: ReactNode;

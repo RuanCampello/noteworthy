@@ -1,22 +1,22 @@
 'use client';
 
+import CharacterCount from '@tiptap/extension-character-count';
+import FontFamily from '@tiptap/extension-font-family';
+import Highlight from '@tiptap/extension-highlight';
+import Placeholder from '@tiptap/extension-placeholder';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import TextAlign from '@tiptap/extension-text-align';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
 import { EditorProvider, Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import EditorMenuBar from './EditorMenuBar';
-import Underline from '@tiptap/extension-underline';
-import Highlight from '@tiptap/extension-highlight';
-import TextAlign from '@tiptap/extension-text-align';
-import Placeholder from '@tiptap/extension-placeholder';
-import Superscript from '@tiptap/extension-superscript';
-import Subscript from '@tiptap/extension-subscript';
-import TextStyle from '@tiptap/extension-text-style';
-import FontFamily from '@tiptap/extension-font-family';
-import CharacterCount from '@tiptap/extension-character-count';
 import FontSize from 'tiptap-extension-font-size';
+import EditorMenuBar from './EditorMenuBar';
 
-import { ReactNode } from 'react';
 import { DoubleClickLink } from '@/utils/double-click-link';
 import { useSession } from 'next-auth/react';
+import { ReactNode } from 'react';
 import NoteBubbleMenu from './NoteBubbleMenu';
 
 interface NoteEditorProps {

@@ -43,5 +43,6 @@ export const newPasswordSchema = z.object({
 });
 
 export const userPreferencesSchema = z.object({
-  'note-format': z.string().transform((s) => s as NoteFormat),
+  noteFormat: z.string().transform((s) => s as NoteFormat),
+  fullNote: z.boolean(),
 });

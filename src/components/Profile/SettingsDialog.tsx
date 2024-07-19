@@ -24,6 +24,7 @@ import { useState, useTransition, type ReactNode } from 'react';
 import { updateUserPreferences } from '@/server/actions/user-preferences';
 import { useRouter } from 'next/navigation';
 import EditProfile from './EditProfile';
+import { Switch } from '../ui/switch';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -37,6 +38,9 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   const router = useRouter();
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
+    defaultValues: {
+      ...preferences,
+    },
   });
 
   function handleSaveUserPreferences(values: UserPreferences) {
@@ -72,34 +76,34 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
           </TabsList>
           <TabsContent value='appearance'>
             <TabsTitle>Appearance</TabsTitle>
-            <section className='grid grid-cols-5'>
-              <div className='col-span-2'>
-                <h4 className='text-base font-medium'>Note style</h4>
-                <p className='text-silver text-sm'>
-                  How are notes displayed in sidebar
-                </p>
-              </div>
-              <Form {...userPreferences}>
-                <form
-                  onSubmit={userPreferences.handleSubmit(
-                    handleSaveUserPreferences,
-                  )}
-                  className='col-span-3 flex flex-col gap-2'
-                  id='user-preferences-form'
-                >
+            <Form {...userPreferences}>
+              <form
+                onSubmit={userPreferences.handleSubmit(
+                  handleSaveUserPreferences,
+                )}
+                className='flex flex-col gap-6 justify-center'
+                id='user-preferences-form'
+              >
+                <section className='grid grid-cols-5 gap-4 items-start'>
+                  <div className='col-span-2'>
+                    <h4 className='text-base font-medium'>Note style</h4>
+                    <p className='text-silver text-sm'>
+                      How are notes displayed in sidebar.
+                    </p>
+                  </div>
                   <FormField
                     control={userPreferences.control}
-                    name='note-format'
+                    name='noteFormat'
                     defaultValue={preferences?.noteFormat || 'full'}
                     render={({ field }) => (
                       <ToggleGroup
                         type='single'
-                        className='gap-3'
+                        className='gap-3 col-span-3'
                         value={field.value}
                         onValueChange={(value: NoteFormat) => {
-                          userPreferences.setValue('note-format', value);
+                          userPreferences.setValue('noteFormat', value);
                         }}
-                        {...userPreferences.register('note-format')}
+                        {...userPreferences.register('noteFormat')}
                       >
                         <ToggleGroupItem
                           value='full'
@@ -118,25 +122,39 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                       </ToggleGroup>
                     )}
                   />
-                  <div className='grid grid-cols-2 font-medium text-base'>
-                    <p>Default</p>
-                    <p>Compact</p>
+                </section>
+                <section className='grid grid-cols-5 gap-4 place-items-start'>
+                  <div className='col-span-2'>
+                    <h4 className='text-base font-medium'>Full width note</h4>
+                    <p className='text-silver text-sm'>
+                      Makes note occupy window full width.
+                    </p>
                   </div>
-                  <footer className='mt-4'>
-                    <Button
-                      variant='default'
-                      form='user-preferences-form'
-                      type='submit'
-                      size='sm'
-                      className='float-end'
-                      disabled={loading}
-                    >
-                      Save changes
-                    </Button>
-                  </footer>
-                </form>
-              </Form>
-            </section>
+                  <FormField
+                    control={userPreferences.control}
+                    name='fullNote'
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className='dark'
+                        id='full-note-switch'
+                      />
+                    )}
+                  />
+                </section>
+              </form>
+              <Button
+                variant='default'
+                form='user-preferences-form'
+                type='submit'
+                size='sm'
+                className='float-end mt-4'
+                disabled={loading}
+              >
+                Save changes
+              </Button>
+            </Form>
           </TabsContent>
           <TabsContent value='profile'>
             <TabsTitle>Edit Profile</TabsTitle>

@@ -1,9 +1,15 @@
 'use client';
 
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Separator } from '../ui/separator';
-import { Check } from 'lucide-react';
+import { updateNoteContent } from '@/actions/note';
 import { useCurrentEditor } from '@tiptap/react';
+import { Check } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import MenuItems from '../MenuItems';
+import SelectFontFamily from '../SelectFontFamily';
+import SelectFontSize from '../SelectFontSize';
 import MenuTooltip from '../Tooltip';
 import {
   Select,
@@ -12,14 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { useEffect, useState } from 'react';
+import { Separator } from '../ui/separator';
 import { toast } from '../ui/use-toast';
-import MenuItems from '../MenuItems';
-import SelectFontSize from '../SelectFontSize';
-import SelectFontFamily from '../SelectFontFamily';
-import { updateNoteContent } from '@/actions/note';
-import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
