@@ -9,12 +9,11 @@ type Props = { params: { id: string } };
 export default async function NotePage({ params }: Props) {
   const id = params.id;
 
-  const note = await getNoteById(id);
-  if (!note) return <NotFound />;
+  const [note, user] = await Promise.all([getNoteById(id), currentUser()]);
 
+  if (!note) return <NotFound />;
   const { content, title, createdAt, lastUpdate, isPublic, owner } = note;
 
-  const user = await currentUser();
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
