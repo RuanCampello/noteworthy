@@ -17,6 +17,7 @@ const nextConfig = {
       {
         hostname: process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL,
         protocol: 'https',
+        pathname: '**',
       },
     ],
   },
