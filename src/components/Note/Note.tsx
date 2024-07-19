@@ -88,7 +88,7 @@ export default function Note({
           ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2'
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2 group-data-[format=slim]/root:py-2 group-data-[format=slim]/root:px-3'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -105,7 +105,7 @@ export default function Note({
       <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
         {formattedName}
       </h3>
-      <div className='flex gap-2.5 lg:text-base text-sm'>
+      <div className='flex gap-2.5 lg:text-base text-sm group-data-[format=slim]/root:hidden'>
         <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
           {date.toLocaleDateString('en-GB')}
         </span>

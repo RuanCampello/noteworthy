@@ -15,13 +15,15 @@ import { currentUser } from '@/server/queries/note';
 import { useSidebarState } from '@/utils/sidebar';
 import KeyboardDialog from './KeyboardDialog';
 import SettingsDialog from './SettingsDialog';
+import { getUserPreferences } from '@/server/actions/user-preferences';
 
 export default async function Profile() {
   const user = await currentUser();
   const state = useSidebarState();
-  if (!user) return;
+  if (!user || !user?.id) return;
 
   const { image, name, email, id } = user;
+  const preferences = await getUserPreferences(id);
   if (!name) return null;
 
   async function handleLogout() {
@@ -54,7 +56,7 @@ export default async function Profile() {
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
               <EditProfileDialog />
-              <SettingsDialog />
+              <SettingsDialog preferences={preferences} />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />

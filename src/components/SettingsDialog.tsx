@@ -16,24 +16,40 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormField } from './ui/form';
-import { type NoteFormat } from '@prisma/client';
+import {
+  type NoteFormat,
+  type UserPreferences as Preferences,
+} from '@prisma/client';
+import { useState, useTransition, type ReactNode } from 'react';
+import { updateUserPreferences } from '@/server/actions/user-preferences';
+import { useRouter } from 'next/navigation';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
-export default function SettingsDialog() {
+interface SettingsProps {
+  preferences: Preferences | null;
+}
+
+export default function SettingsDialog({ preferences }: SettingsProps) {
+  const [loading, startTransition] = useTransition();
+  const [open, setOpen] = useState<boolean>(false);
+  const router = useRouter();
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
   });
 
   function handleSaveUserPreferences(values: UserPreferences) {
-    console.log(values);
+    startTransition(async () => {
+      await updateUserPreferences(values);
+      router.refresh();
+      setOpen(false);
+    });
   }
 
   const fieldClassname =
-    'w-full h-24 bg-white/10 outline outline-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
-
+    'h-20 w-full bg-white/10 outline outline-2 outline-offset-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button type='button' variant='dropdown' size='xs'>
           Settings
@@ -51,10 +67,10 @@ export default function SettingsDialog() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value='appearance'>
-            <h3 className='text-lg my-6 font-medium'>Appearance</h3>
+            <h3 className='text-lg my-8 font-medium'>Appearance</h3>
             <section className='grid grid-cols-5'>
               <div className='col-span-2'>
-                <h4 className='text-base'>Note style</h4>
+                <h4 className='text-base font-medium'>Note style</h4>
                 <p className='text-silver text-sm'>
                   How are notes displayed in sidebar
                 </p>
@@ -64,13 +80,13 @@ export default function SettingsDialog() {
                   onSubmit={userPreferences.handleSubmit(
                     handleSaveUserPreferences,
                   )}
-                  className='col-span-3 flex flex-col gap-3'
+                  className='col-span-3 flex flex-col gap-2'
                   id='user-preferences-form'
                 >
                   <FormField
                     control={userPreferences.control}
                     name='note-format'
-                    defaultValue='full'
+                    defaultValue={preferences?.noteFormat || 'full'}
                     render={({ field }) => (
                       <ToggleGroup
                         type='single'
@@ -98,17 +114,18 @@ export default function SettingsDialog() {
                       </ToggleGroup>
                     )}
                   />
-                  <div className='grid grid-cols-2'>
-                    <p className='font-medium'>Full</p>
-                    <p className='font-medium'>Slim</p>
+                  <div className='grid grid-cols-2 font-medium text-base'>
+                    <p>Default</p>
+                    <p>Compact</p>
                   </div>
-                  <footer>
+                  <footer className='mt-4'>
                     <Button
                       variant='default'
                       form='user-preferences-form'
                       type='submit'
                       size='sm'
                       className='float-end'
+                      disabled={loading}
                     >
                       Save changes
                     </Button>
@@ -125,20 +142,28 @@ export default function SettingsDialog() {
 
 function FullNote() {
   return (
-    <div className='h-fit rounded-sm shrink-0 bg-wisteria min-w-full flex flex-col gap-2 p-3'>
-      <div className='bg-black/40 rounded-sm min-w-[80%] h-6'></div>
+    <Note>
+      <div className='bg-black/40 rounded-sm min-w-[80%] h-5'></div>
       <div className='grid grid-cols-3 gap-2'>
-        <div className='bg-black/20 rounded-sm min-w-[80%] h-4'></div>
-        <div className='bg-black/25 rounded-sm min-w-[80%] h-4 col-span-2'></div>
+        <div className='bg-black/20 rounded-sm min-w-[80%] h-3'></div>
+        <div className='bg-black/25 rounded-sm min-w-[80%] h-3 col-span-2'></div>
       </div>
-    </div>
+    </Note>
   );
 }
 
 function SlimNote() {
   return (
-    <div className='h-fit rounded-sm shrink-0 bg-wisteria min-w-full flex flex-col gap-2 p-3'>
-      <div className='bg-black/40 rounded-sm min-w-[80%] h-6'></div>
+    <Note>
+      <div className='bg-black/40 rounded-sm min-w-[80%] h-5'></div>
+    </Note>
+  );
+}
+
+function Note({ children }: { children: ReactNode }) {
+  return (
+    <div className='h-fit rounded-sm shrink-0 bg-wisteria min-w-full flex flex-col gap-2 p-2'>
+      {children}
     </div>
   );
 }
