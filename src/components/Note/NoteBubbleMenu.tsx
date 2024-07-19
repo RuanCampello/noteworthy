@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { BubbleMenu, useCurrentEditor } from '@tiptap/react';
 import { BookA } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NoteBubbleMenu() {
   const { editor } = useCurrentEditor();

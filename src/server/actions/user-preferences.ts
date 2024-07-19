@@ -30,8 +30,7 @@ export async function updateUserPreferences(
   const fields = userPreferencesSchema.safeParse(values);
   if (!fields.success || !user || !user?.id) return;
 
-  const { 'note-format': noteFormat } = fields.data;
-
+  const { noteFormat, fullNote } = fields.data;
   const preferences = await getUserPreferences(user.id);
   if (!preferences) {
     await createUserPreferences(user.id);
@@ -41,6 +40,7 @@ export async function updateUserPreferences(
     where: { userId: user.id },
     data: {
       noteFormat,
+      fullNote,
     },
   });
 }
