@@ -1,6 +1,7 @@
 'use client';
 
-import { Bolt } from 'lucide-react';
+import { userPreferencesSchema } from '@/schemas';
+import { updateUserPreferences } from '@/server/actions/user-preferences';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -9,22 +10,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog';
+import { Form, FormField } from '@/ui/form';
+import { Separator } from '@/ui/separator';
+import { Switch } from '@/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from '@/ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from '@/ui/toggle-group';
-import { userPreferencesSchema } from '@/schemas';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField } from '@/ui/form';
 import {
   type NoteFormat,
   type UserPreferences as Preferences,
 } from '@prisma/client';
-import { useState, useTransition, type ReactNode } from 'react';
-import { updateUserPreferences } from '@/server/actions/user-preferences';
+import { Bolt } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState, useTransition, type ReactNode } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { z } from 'zod';
+
 import EditProfile from './EditProfile';
-import { Switch } from '../ui/switch';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -42,6 +44,19 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
       ...preferences,
     },
   });
+
+  const currentFullNote = useWatch({
+    control: userPreferences.control,
+    name: 'fullNote',
+  });
+  const currentNoteFormat = useWatch({
+    control: userPreferences.control,
+    name: 'noteFormat',
+  });
+
+  const noChange =
+    currentFullNote == preferences?.fullNote &&
+    currentNoteFormat == preferences?.noteFormat;
 
   function handleSaveUserPreferences(values: UserPreferences) {
     startTransition(async () => {
@@ -123,6 +138,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                     )}
                   />
                 </section>
+                <Separator />
                 <section className='grid grid-cols-5 gap-4 place-items-start'>
                   <div className='col-span-2'>
                     <h4 className='text-base font-medium'>Full width note</h4>
@@ -150,7 +166,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                 type='submit'
                 size='sm'
                 className='float-end mt-4'
-                disabled={loading}
+                disabled={loading || noChange}
               >
                 Save changes
               </Button>
