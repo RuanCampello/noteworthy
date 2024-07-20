@@ -19,6 +19,7 @@ import {
 import { CustomForm } from '@/components/Form';
 import Compressor from 'compressorjs';
 import { getUploadUrl } from '@/actions/image';
+import { useTranslations } from 'next-intl';
 
 const formSchema = z.object({
   name: z
@@ -36,6 +37,7 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const { data: session, update } = useSession();
+  const t = useTranslations('Profile');
   const user = session?.user;
 
   const editProfileForm = useForm<FormSchema>({
@@ -161,7 +163,7 @@ export default function EditProfile() {
             <FormItem>
               <div className='grid grid-cols-4 gap-4 items-center'>
                 <FormLabel className='text-base text-neutral-200 text-right'>
-                  Name
+                  {t('field_name')}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -186,7 +188,7 @@ export default function EditProfile() {
           type='submit'
           className='flex items-center gap-1 float-end'
         >
-          Save changes
+          {t('button')}
           {loading && <Loader2 size={16} className='animate-spin' />}
         </Button>
       </footer>
