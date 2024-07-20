@@ -11,19 +11,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
+} from '@/ui/form';
 import { CustomForm } from '../Form';
-import { Input } from '../ui/input';
+import { Input } from '@/ui/input';
 import { login } from '@/actions/login';
 import { useEffect, useState, useTransition } from 'react';
 import { loginFormSchema } from '@/schemas';
 import GoogleLogo from '@/assets/third-part-login/Google.png';
 import GithubLogo from '@/assets/third-part-login/GitHub.svg';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '@/ui/use-toast';
 import { X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from '../ui/button';
+import { Button } from '@/ui/button';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
@@ -33,6 +34,8 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const [error, setError] = useState(String);
   const { toast } = useToast();
+  const t = useTranslations('Login');
+
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -148,7 +151,7 @@ export default function LoginForm() {
               asChild
               size='sm'
             >
-              <Link href='/reset'>Forgot password?</Link>
+              <Link href='/reset'>{t('forgot_password')}</Link>
             </Button>
           </div>
         </div>
