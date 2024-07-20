@@ -11,22 +11,24 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 type DropdownValue = { value: string; text: string };
-
-const dropdownValues: DropdownValue[] = [
-  { value: 'last-modified', text: 'Last modified' },
-  { value: 'title', text: 'Title' },
-  { value: 'date-new', text: 'Date added (newest)' },
-  { value: 'date-old', text: 'Date added (oldest)' },
-];
 
 export default function SortDropdown() {
   const searchParams = useSearchParams();
   const filterParams = searchParams.get('filter');
-  const params = new URLSearchParams(searchParams);
   const router = useRouter();
+  const t = useTranslations('SortDropdown');
+  const params = new URLSearchParams(searchParams);
   const filter = filterParams || 'last-modified';
+
+  const dropdownValues: DropdownValue[] = [
+    { value: 'last-modified', text: t('last_mod') },
+    { value: 'title', text: t('title') },
+    { value: 'date-new', text: t('date_new') },
+    { value: 'date-old', text: t('date_old') },
+  ];
 
   function handleSort(selectedItem: string) {
     if (!filterParams) {
@@ -46,7 +48,7 @@ export default function SortDropdown() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='dark bg-black'>
-        <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('sort_by')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={filter || 'last-modified'}>
           {dropdownValues.map((dropdownValue) => (

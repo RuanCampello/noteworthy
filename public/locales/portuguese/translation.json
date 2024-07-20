@@ -1,0 +1,47 @@
+{
+  "Login": {
+    "password": "Senha",
+    "not_registered": "Ainda não se registrou?",
+    "create_account": "Crie sua conta",
+    "forgot_password": "Esqueceu sua senha?"
+  },
+  "Sidebar": {
+    "new_note": "Criar nota",
+    "notes": "Notas",
+    "search_note": "Procure por uma nota",
+    "more": "Mais",
+    "favourites": "Favoritos",
+    "archived": "Notas Arquivadas"
+  },
+  "AddNote": {
+    "title": "Criar nova nota",
+    "description": "📝 Pronto para capturar uma faísca de inspiração? Crie sua nota, deixe seus pensamentos voarem e salpique um pouco de magia em seu mundo digital. Vamos escrever maravilhas juntos! ✨",
+    "name_field": "Nome",
+    "colour_field": "Cor",
+    "button": "Criar nota"
+  },
+  "SortDropdown": {
+    "sort_by": "Ordernar por",
+    "last_mod": "Último modificado",
+    "title": "Título",
+    "date_new": "Data de adição (mais novo)",
+    "date_old": "Data de adição (mais velho)"
+  },
+  "Header": {
+    "created": "Criado em",
+    "modified": "Modificado em",
+    "owner": "Dono",
+    "words": "Palavras"
+  },
+  "Settings": {
+    "title": "Configurações",
+    "appearance": "Aparência",
+    "profile": "Perfil",
+    "note_style": "Estilo da nota",
+    "note_style_dsc": "Como as notas são mostradas na barra lateral.",
+    "full_note": "Nota do tamanho da tela",
+    "full_note_dsc": "Faz com que a nota ocupe a tela inteira.",
+    "lang": "Linguagem",
+    "button": "Salvar alterações"
+  }
+}

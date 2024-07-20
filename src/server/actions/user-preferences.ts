@@ -5,6 +5,7 @@ import { cache } from 'react';
 import { z } from 'zod';
 import { userPreferencesSchema } from '@/schemas';
 import { currentUser } from '@/queries/note';
+import { setUserLocale } from './locate';
 
 export const getUserPreferences = cache(async (userId: string) => {
   const preferences = await db.userPreferences.findUnique({
@@ -30,7 +31,8 @@ export async function updateUserPreferences(
   const fields = userPreferencesSchema.safeParse(values);
   if (!fields.success || !user || !user?.id) return;
 
-  const { noteFormat, fullNote } = fields.data;
+  const { noteFormat, fullNote, language } = fields.data;
+  await setUserLocale(language);
   const preferences = await getUserPreferences(user.id);
   if (!preferences) {
     await createUserPreferences(user.id);
