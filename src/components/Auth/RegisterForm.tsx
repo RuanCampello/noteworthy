@@ -13,9 +13,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
+} from '@/ui/form';
+import { Input } from '@/ui/input';
+import { useToast } from '@/ui/use-toast';
 import { useEffect, useState, useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
 import { register } from '@/actions/register';
