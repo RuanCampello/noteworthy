@@ -73,5 +73,22 @@
   "Profile": {
     "field_name": "Nome",
     "button": "Salvar alterações"
+  },
+  "NoteDropdown": {
+    "fav": "Favoritar",
+    "unfav": "Desfavoritar",
+    "arc": "Arquivar",
+    "unarc": "Desarquivar",
+    "edit": "Editar",
+    "del": "Apagar"
+  },
+  "Publish": {
+    "pub": "Publicar",
+    "unpub": "Despublicar",
+    "title": "Publicar essa nota",
+    "unpub_title": "Despublicar essa nota",
+    "description": "Pronto para acender suas ideias? Compartilhe sua nota com o mundo, deixe sua criatividade brilhar. Vamos publicar brilhos juntos! 🚀",
+    "unpub_description": "Qualquer pessoa com este link é capaz de ver essa nota.",
+    "cancel": "Cancelar"
   }
 }

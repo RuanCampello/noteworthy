@@ -11,11 +11,12 @@ import {
 import { Button } from '@/ui/button';
 import { togglePublishState } from '@/server/actions/note';
 import { headers } from 'next/headers';
-import SubmitButton from '../SubmitButton';
+import SubmitButton from '@/components/SubmitButton';
 import { Globe } from 'lucide-react';
-import ShareLinkButton from '../ShareLinkButton';
-import DropdownButton from '../DropdownButton';
+import ShareLinkButton from '@/components/ShareLinkButton';
+import DropdownButton from '@/components/DropdownButton';
 import { getNoteIsPublic } from '@/server/queries/note';
+import { getTranslations } from 'next-intl/server';
 
 interface DialogContentProps {
   title: string;
@@ -26,17 +27,18 @@ interface DialogContentProps {
 type DialogKey = 'public' | 'private';
 
 export default async function PublishNoteDialog() {
+  const t = await getTranslations('Publish');
+
   const dialogContent: Record<DialogKey, DialogContentProps> = {
     private: {
-      title: 'Publish this note',
-      description:
-        "Ready to ignite your ideas? Share your note with the world, let your creativity shine. Let's publish brilliance together! 🚀",
-      actionName: 'Publish',
+      title: t('title'),
+      description: t('description'),
+      actionName: t('pub'),
     },
     public: {
-      title: 'Unpublish this note',
-      description: 'Anyone who has this link will be able to view the note.',
-      actionName: 'Unpublish',
+      title: t('unpub_title'),
+      description: t('unpub_description'),
+      actionName: t('unpub'),
     },
   };
   const headerList = headers();
@@ -61,7 +63,7 @@ export default async function PublishNoteDialog() {
         <DropdownButton
           icon={<Globe />}
           color='publish'
-          text={isPublic ? 'Unpublish' : 'Publish'}
+          text={isPublic ? t('unpub') : t('pub')}
         />
       </DialogTrigger>
       <DialogContent className='w-96 bg-black dark select-none'>
@@ -70,7 +72,7 @@ export default async function PublishNoteDialog() {
             <DialogTitle>{dialogContent[dialogKey].title}</DialogTitle>
             <DialogDescription
               data-global={isPublic}
-              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-1 data-[global=true]:items-center'
+              className='data-[global=true]:text-wisteria data-[global=true]:flex data-[global=true]:gap-1 data-[global=true]:items-center text-[13px]'
             >
               {isPublic && <Globe size={16} />}
               {dialogContent[dialogKey].description}
@@ -80,7 +82,7 @@ export default async function PublishNoteDialog() {
           <DialogFooter className='grid grid-cols-2 mt-6 p-1'>
             <DialogClose asChild>
               <Button type='button' size='sm' variant='secondary'>
-                Cancel
+                {t('cancel')}
               </Button>
             </DialogClose>
             <SubmitButton size='sm' variant='default' type='submit'>

@@ -32,6 +32,7 @@ import {
 } from 'react';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
+import { useTranslations } from 'next-intl';
 
 interface DropdownProps {
   children: ReactNode;
@@ -45,6 +46,7 @@ export default function Dropdown({ children }: DropdownProps) {
   const params = useParams<{ id: string }>();
   const noteId = params.id;
   const [note, setNote] = useState<Note>();
+  const t = useTranslations('NoteDropdown');
 
   const fetchNote = useCallback(async () => {
     if (!noteId) return;
@@ -90,7 +92,7 @@ export default function Dropdown({ children }: DropdownProps) {
             disabled={isArchived || favouriteLoading}
             active={isFavourite}
             color='favourite'
-            text={isFavourite ? 'Unfavourite' : 'Favourite'}
+            text={isFavourite ? t('unfav') : t('fav')}
             icon={isFavourite ? <StarOff /> : <Star />}
           />
         </form>
@@ -99,7 +101,7 @@ export default function Dropdown({ children }: DropdownProps) {
             loading={archiveLoading}
             icon={isArchived ? <ArchiveX /> : <Archive />}
             color='archive'
-            text={isArchived ? 'Unarchive' : 'Archive'}
+            text={isArchived ? t('unarc') : t('arc')}
             disabled={isFavourite || archiveLoading}
             active={isArchived}
           />
@@ -110,11 +112,11 @@ export default function Dropdown({ children }: DropdownProps) {
           noteColour={colour}
           callback={fetchNote}
         >
-          <DropdownButton icon={<Pencil />} color='edit' />
+          <DropdownButton text={t('edit')} icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         {children}
         <DeleteNoteDialog noteName={title} noteId={id}>
-          <DropdownButton color='delete' icon={<Trash />} />
+          <DropdownButton text={t('del')} color='delete' icon={<Trash />} />
         </DeleteNoteDialog>
       </DropdownMenuContent>
     </DropdownMenu>
