@@ -33,7 +33,7 @@ export default function KeyboardDialog() {
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
           <DialogDescription>
-            Learn essential key combinations to navigate and optimize your
+            Learn essential key combinations to navigate and optimise your
             experience.
           </DialogDescription>
         </DialogHeader>

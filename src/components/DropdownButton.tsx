@@ -1,7 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import { cloneElement } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
 import { type JSX } from 'react/jsx-runtime';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 const buttonVariants = tv({
   base: 'gap-1.5 flex p-2 px-3 items-center active:text-black hover:text-black focus:text-black focus:outline-none group w-full transition-colors duration-200',
