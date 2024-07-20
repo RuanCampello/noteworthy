@@ -42,6 +42,36 @@
     "full_note": "Nota do tamanho da tela",
     "full_note_dsc": "Faz com que a nota ocupe a tela inteira.",
     "lang": "Linguagem",
+    "button": "Salvar alterações",
+    "edit_profile": "Editar perfil"
+  },
+  "ProfileDropdown": {
+    "settings": "Configurações",
+    "log_out": "Sair"
+  },
+  "Keyboard": {
+    "title": "Atalhos",
+    "description": "Aprenda as combinações de teclas essênciais para navegar e otimizar sua experiência.",
+    "note": "Nota",
+    "global": "Global",
+    "editor": "Editor"
+  },
+  "Shortcuts": {
+    "save_note": "Salvar nota",
+    "create_note": "Criar nova nota",
+    "toggle_sidebar": "Fechar/Abrir barra lateral",
+    "alg_l": "Alinhar à esquerda",
+    "alg_r": "Alinhar à direita",
+    "alg_c": "Alinhar ao centro",
+    "justify": "Justificar",
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "underline": "Sublinhar",
+    "strike": "Tachar",
+    "highlight": "Destacar"
+  },
+  "Profile": {
+    "field_name": "Nome",
     "button": "Salvar alterações"
   }
 }

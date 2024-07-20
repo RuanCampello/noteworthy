@@ -42,6 +42,36 @@
     "full_note": "Full witdh note",
     "full_note_dsc": "Makes note occupy window full width.",
     "lang": "Language",
+    "button": "Save changes",
+    "edit_profile": "Edit Profile"
+  },
+  "ProfileDropdown": {
+    "settings": "Settings",
+    "log_out": "Log out"
+  },
+  "Keyboard": {
+    "title": "Keyboard Shortcuts",
+    "description": "Learn essential key combinations to navigate and optimise your experience.",
+    "note": "Note",
+    "global": "Global",
+    "editor": "Editor"
+  },
+  "Shortcuts": {
+    "save_note": "Save note",
+    "create_note": "Create new note",
+    "toggle_sidebar": "Toggle sidebar",
+    "alg_l": "Align left",
+    "alg_r": "Align right",
+    "alg_c": "Align center",
+    "justify": "Justify",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strike",
+    "highlight": "Highlight"
+  },
+  "Profile": {
+    "field_name": "Name",
     "button": "Save changes"
   }
 }

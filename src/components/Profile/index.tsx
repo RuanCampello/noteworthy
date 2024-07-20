@@ -14,6 +14,7 @@ import KeyboardDialog from './KeyboardDialog';
 import SettingsDialog from './SettingsDialog';
 import Avatar from './Avatar';
 import { getUserPreferences } from '@/server/actions/user-preferences';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -21,6 +22,7 @@ export const revalidate = 0;
 export default async function Profile() {
   const user = await currentUser();
   const state = useSidebarState();
+  const t = await getTranslations('ProfileDropdown');
   if (!user || !user?.id) return;
 
   const { image, name, email, id } = user;
@@ -63,7 +65,7 @@ export default async function Profile() {
                 type='submit'
                 className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-tickle hover:text-black hover:font-semibold group flex items-center'
               >
-                Log out
+                {t('log_out')}
                 <DropdownMenuShortcut>
                   <LogOut size={16} className='group-hover:text-black' />
                 </DropdownMenuShortcut>

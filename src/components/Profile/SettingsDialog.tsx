@@ -58,6 +58,8 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   });
 
   const noChange = false;
+
+  // TODO: correct noChange and lang switcher
   // currentFullNote == preferences?.fullNote &&
   // currentNoteFormat == preferences?.noteFormat;
 
@@ -75,13 +77,13 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button type='button' variant='dropdown' size='xs'>
-          Settings
+          {t('title')}
           <Bolt size={16} />
         </Button>
       </DialogTrigger>
       <DialogContent className='dark bg-black w-[524px] max-w-screen'>
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
         <Tabs>
           <TabsList defaultValue='appearance' className='w-full'>
@@ -93,7 +95,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
             </TabsTrigger>
           </TabsList>
           <TabsContent value='appearance'>
-            <TabsTitle>Appearance</TabsTitle>
+            <TabsTitle>{t('appearance')}</TabsTitle>
             <Form {...userPreferences}>
               <form
                 onSubmit={userPreferences.handleSubmit(
@@ -185,7 +187,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
             </Form>
           </TabsContent>
           <TabsContent value='profile'>
-            <TabsTitle>Edit Profile</TabsTitle>
+            <TabsTitle>{t('edit_profile')}</TabsTitle>
             <section className='flex flex-col items-center'>
               <EditProfile />
             </section>
