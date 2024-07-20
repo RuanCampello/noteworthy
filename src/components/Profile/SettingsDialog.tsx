@@ -25,8 +25,9 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition, type ReactNode } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
-
 import EditProfile from './EditProfile';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -37,7 +38,9 @@ interface SettingsProps {
 export default function SettingsDialog({ preferences }: SettingsProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
+  const t = useTranslations('Settings');
   const router = useRouter();
+
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
     defaultValues: {
@@ -54,9 +57,9 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
     name: 'noteFormat',
   });
 
-  const noChange =
-    currentFullNote == preferences?.fullNote &&
-    currentNoteFormat == preferences?.noteFormat;
+  const noChange = false;
+  // currentFullNote == preferences?.fullNote &&
+  // currentNoteFormat == preferences?.noteFormat;
 
   function handleSaveUserPreferences(values: UserPreferences) {
     startTransition(async () => {
@@ -83,10 +86,10 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
         <Tabs>
           <TabsList defaultValue='appearance' className='w-full'>
             <TabsTrigger className='w-full' value='appearance'>
-              Appearance
+              {t('appearance')}
             </TabsTrigger>
             <TabsTrigger className='w-full' value='profile'>
-              Profile
+              {t('profile')}
             </TabsTrigger>
           </TabsList>
           <TabsContent value='appearance'>
@@ -99,12 +102,10 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                 className='flex flex-col gap-6 justify-center'
                 id='user-preferences-form'
               >
-                <section className='grid grid-cols-5 gap-4 items-start'>
+                <SettingsItem>
                   <div className='col-span-2'>
-                    <h4 className='text-base font-medium'>Note style</h4>
-                    <p className='text-silver text-sm'>
-                      How are notes displayed in sidebar.
-                    </p>
+                    <h4 className='text-base font-medium'>{t('note_style')}</h4>
+                    <p className='text-silver text-sm'>{t('note_style_dsc')}</p>
                   </div>
                   <FormField
                     control={userPreferences.control}
@@ -137,14 +138,12 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                       </ToggleGroup>
                     )}
                   />
-                </section>
+                </SettingsItem>
                 <Separator />
-                <section className='grid grid-cols-5 gap-4 place-items-start'>
+                <SettingsItem>
                   <div className='col-span-2'>
-                    <h4 className='text-base font-medium'>Full width note</h4>
-                    <p className='text-silver text-sm'>
-                      Makes note occupy window full width.
-                    </p>
+                    <h4 className='text-base font-medium'>{t('full_note')}</h4>
+                    <p className='text-silver text-sm'>{t('full_note_dsc')}</p>
                   </div>
                   <FormField
                     control={userPreferences.control}
@@ -158,7 +157,20 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                       />
                     )}
                   />
-                </section>
+                </SettingsItem>
+                <Separator />
+                <SettingsItem>
+                  <div className='col-span-2'>
+                    <h4 className='text-base font-medium'>{t('lang')}</h4>
+                  </div>
+                  <FormField
+                    control={userPreferences.control}
+                    name='language'
+                    render={({ field }) => (
+                      <LanguageSwitcher onChange={field.onChange} />
+                    )}
+                  />
+                </SettingsItem>
               </form>
               <Button
                 variant='default'
@@ -168,7 +180,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                 className='float-end mt-4'
                 disabled={loading || noChange}
               >
-                Save changes
+                {t('button')}
               </Button>
             </Form>
           </TabsContent>
@@ -181,6 +193,12 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
         </Tabs>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function SettingsItem({ children }: { children: ReactNode }) {
+  return (
+    <section className='grid grid-cols-5 gap-4 items-start'>{children}</section>
   );
 }
 

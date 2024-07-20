@@ -1,5 +1,6 @@
-import { ColourType } from '@/utils/colours';
-import { NoteFormat } from '@prisma/client';
+import { type ColourType } from '@/utils/colours';
+import { type Locale } from '@/utils/constants/locales';
+import { type NoteFormat } from '@prisma/client';
 import { z } from 'zod';
 
 export const loginFormSchema = z.object({
@@ -45,4 +46,5 @@ export const newPasswordSchema = z.object({
 export const userPreferencesSchema = z.object({
   noteFormat: z.string().transform((s) => s as NoteFormat),
   fullNote: z.boolean(),
+  language: z.string().transform((s) => s as Locale),
 });

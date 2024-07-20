@@ -8,10 +8,12 @@ import { getAllUserOrdinaryNotes } from '@/queries/note';
 import { auth } from '@/auth/auth';
 import { ReactNode } from 'react';
 import { useSidebarState } from '@/utils/sidebar';
+import { getTranslations } from 'next-intl/server';
 
 export default async function Notes() {
   const session = await auth();
   const state = useSidebarState();
+  const t = await getTranslations('Sidebar');
 
   if (!session?.user || !session.user.id) return;
 
@@ -33,7 +35,7 @@ export default async function Notes() {
   }
   return (
     <div data-state={state} className='group/root'>
-      <SectionTitle title='Notes'>
+      <SectionTitle title={t('notes')}>
         <Counter />
       </SectionTitle>
       <div className='px-5 flex gap-2 items-center group-data-[state=closed]/root:hidden'>

@@ -1,0 +1,47 @@
+{
+  "Login": {
+    "password": "Password",
+    "not_registered": "Not registered yet?",
+    "create_account": "Create an account",
+    "forgot_password": "Forgot password?"
+  },
+  "Sidebar": {
+    "new_note": "New Note",
+    "notes": "Notes",
+    "search_note": "Search for a note",
+    "more": "More",
+    "favourites": "Favourites",
+    "archived": "Archived Notes"
+  },
+  "AddNote": {
+    "title": "Add New Note",
+    "description": "📝 Ready to capture a spark of inspiration? Create your note, let your thoughts soar, and sprinkle some magic into your digital world. Let's write wonders together! ✨",
+    "name_field": "Name",
+    "colour_field": "Colour",
+    "button": "Create note"
+  },
+  "SortDropdown": {
+    "sort_by": "Sort by",
+    "last_mod": "Last modified",
+    "title": "Title",
+    "date_new": "Date added (newest)",
+    "date_old": "Date added (oldest)"
+  },
+  "Header": {
+    "created": "Created",
+    "modified": "Modified",
+    "owner": "Owner",
+    "words": "Words"
+  },
+  "Settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "profile": "Profile",
+    "note_style": "Note style",
+    "note_style_dsc": "How are notes displayed in sidebar.",
+    "full_note": "Full witdh note",
+    "full_note_dsc": "Makes note occupy window full width.",
+    "lang": "Language",
+    "button": "Save changes"
+  }
+}

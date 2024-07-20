@@ -1,4 +1,4 @@
-import en from '../public/locales/en/translation.json';
+import en from '../public/locales/english/translation.json';
 
 type Messages = typeof en;
 declare global {

@@ -12,6 +12,7 @@ import { NoteFormat } from '@prisma/client';
 export default async function Sidebar() {
   const state = useSidebarState();
   const user = await currentUser();
+
   if (!user || !user.id) return;
 
   let format: NoteFormat = 'full';

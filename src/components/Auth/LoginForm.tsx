@@ -127,7 +127,9 @@ export default function LoginForm() {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='font-semibold'>Password</FormLabel>
+                  <FormLabel className='font-semibold'>
+                    {t('password')}
+                  </FormLabel>
                   <FormControl>
                     <CustomForm.PasswordWrapper
                       value={isPasswordVisible}
@@ -158,9 +160,9 @@ export default function LoginForm() {
         <CustomForm.Button disableWhen={isPending} title='Login' />
         <CustomForm.Redirect
           disableWhen={isPending}
-          text='Not registered yet?'
+          text={t('not_registered')}
           path='/register'
-          link='Create an account'
+          link={t('create_account')}
         />
       </form>
     </Form>
