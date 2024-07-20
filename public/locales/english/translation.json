@@ -73,5 +73,22 @@
   "Profile": {
     "field_name": "Name",
     "button": "Save changes"
+  },
+  "NoteDropdown": {
+    "fav": "Favourite",
+    "unfav": "Unfavourite",
+    "arc": "Archive",
+    "unarc": "Unarchive",
+    "edit": "Edit",
+    "del": "Delete"
+  },
+  "Publish": {
+    "pub": "Publish",
+    "unpub": "Unpublish",
+    "title": "Publish this note",
+    "unpub_title": "Unpublish this note",
+    "description": "Ready to ignite your ideas? Share your note with the world, let your creativity shine. Let's publish brilliance together! 🚀",
+    "unpub_description": "Anyone who has this is will be able to view the note.",
+    "cancel": "Cancel"
   }
 }
