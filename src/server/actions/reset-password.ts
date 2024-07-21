@@ -5,16 +5,18 @@ import { sendPasswordResetEmail } from '@/lib/mail';
 import { generatePasswordResetToken } from '@/lib/tokens';
 import { resetPasswordSchema } from '@/schemas';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 
 export async function resetPassword(
   values: z.infer<typeof resetPasswordSchema>,
 ) {
   const fields = resetPasswordSchema.safeParse(values);
-  if (!fields.success) return { error: 'Invalid e-mail' };
+  const t = await getTranslations('ServerErrors');
+  if (!fields.success) return { error: t('inv_email') };
 
   const { email } = fields.data;
   const user = await getUserByEmail(email);
-  if (!user) return { error: 'No user found with this e-mail' };
+  if (!user) return { error: t('email_not_found') };
 
   const { value: isProviderAccount, provider } = await userHasProviderAccount(
     user.id,
@@ -22,14 +24,14 @@ export async function resetPassword(
 
   if (isProviderAccount) {
     return {
-      message: `It looks like your account was created by a provider. Try resetting your password with ${provider}.`,
+      message: `${t('is_provider')} ${provider}.`,
     };
   }
 
   const passwordResetToken = await generatePasswordResetToken(email);
   if (passwordResetToken.currentToken) {
     return {
-      message: `You still have a valid reset token until ${passwordResetToken.currentToken.expires.toLocaleTimeString()}, check out your e-mail.`,
+      message: `${t('already_has_a_token')} ${passwordResetToken?.currentToken?.expires.toLocaleTimeString()}, ${t('check_out')}`,
     };
   }
   if (passwordResetToken.newToken)
@@ -37,5 +39,5 @@ export async function resetPassword(
       passwordResetToken.newToken.email,
       passwordResetToken.newToken.token,
     );
-  return { success: 'Reset password e-mail sent' };
+  return { success: t('email_sent') };
 }

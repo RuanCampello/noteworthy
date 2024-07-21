@@ -154,5 +154,26 @@
   },
   "SaveButton": {
     "title": "Salvar alterações"
+  },
+  "Toast": {
+    "sv_note_title": "Nota salva",
+    "sv_note_dsc": "Sua nota foi salva! Está pronta quando você precisar. 📌"
+  },
+  "ServerErrors": {
+    "inv_field": "Campo inválido",
+    "email_not_found": "Esse Email não está registrado",
+    "inv_credentials": "Credenciais inválidas",
+    "default_error": "Algo de errado acontenceu",
+    "no_token": "Um token é necessário",
+    "inv_password": "Essa senha é inválida",
+    "inv_token": "Token inválido",
+    "token_exp": "O token expirou",
+    "password_update": "Senha alterada!",
+    "email_taken": "Esse Email já está em uso!",
+    "inv_email": "Email inválido",
+    "is_provider": "Parece que sua conta foi criada por um provedor. Tente redefinir sua senha com",
+    "already_has_a_token": "Você ainda tem um token válido até",
+    "check_out": "cheque seu email.",
+    "email_sent": "Email para redefinição de senha enviado"
   }
 }
