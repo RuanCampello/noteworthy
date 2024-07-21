@@ -90,5 +90,25 @@
     "description": "Pronto para acender suas ideias? Compartilhe sua nota com o mundo, deixe sua criatividade brilhar. Vamos publicar brilhos juntos! 🚀",
     "unpub_description": "Qualquer pessoa com este link é capaz de ver essa nota.",
     "cancel": "Cancelar"
+  },
+  "HomePlaceholder": {
+    "title": "Selecione uma nota para ver",
+    "description": "Escolha uma nota da lista à esquerda para ver seu conteúdo ou crie uma nova e adicione à sua coleção."
+  },
+  "FavouritePlaceholder": {
+    "title": "Selecione uma nota favoritada para ver",
+    "description": "Escolha uma nota favoritada da lista à esquerda para ver seu conteúdo ou favorite uma nota e adicione à sua coleção.",
+    "no_fav_title": "Você não tem nenhuma nota favoritada",
+    "no_fav_description": "Escolha uma nota para favoritar e a faça cintilar!"
+  },
+  "ArchivePlaceholder": {
+    "title": "Selecione uma nota arquivada para ver",
+    "description": "Escolha uma nota arquivada da lista à esquerda para ver seu conteúdo ou arquive uma nota e adicione à sua coleção.",
+    "no_arc_title": "Você não tem nenhuma nota arquivada",
+    "no_arc_description": "Selecione uma nota para arquivar e a observe brilhar em seus arquivos!"
+  },
+  "SubsidebarTitles": {
+    "fav": "Notas favoritas",
+    "arc": "Notas arquivadas"
   }
 }

@@ -90,5 +90,25 @@
     "description": "Ready to ignite your ideas? Share your note with the world, let your creativity shine. Let's publish brilliance together! 🚀",
     "unpub_description": "Anyone who has this is will be able to view the note.",
     "cancel": "Cancel"
+  },
+  "HomePlaceholder": {
+    "title": "Select a note to view",
+    "description": "Choose a note from the list on the left to view its contents, or create a new note to add to your collection."
+  },
+  "FavouritePlaceholder": {
+    "title": "Select a favourite note to view",
+    "description": "Choose a favourite note from the list on the left to view its contents, or favourite a note to add to your collection.",
+    "no_fav_title": "You don't have any favourite note",
+    "no_fav_description": "Choose a note to favourite and make it sparkle!"
+  },
+  "ArchivePlaceholder": {
+    "title": "Select an archived note to view",
+    "description": "Choose an archived note from the list on the left to view its contents, or archived a note to add to your collection.",
+    "no_arc_title": "You don't have any archived note",
+    "no_arc_description": "Select a note to archive and watch it shimmer away into your archives!"
+  },
+  "SubsidebarTitles": {
+    "fav": "Favourites",
+    "arc": "Archived notes"
   }
 }
