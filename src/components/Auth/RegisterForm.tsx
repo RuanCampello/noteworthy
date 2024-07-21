@@ -23,6 +23,7 @@ import { register } from '@/actions/register';
 import GoogleLogo from '@/assets/third-part-login/Google.png';
 import GithubLogo from '@/assets/third-part-login/GitHub.svg';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
@@ -31,6 +32,7 @@ export default function RegisterForm() {
   const [error, setError] = useState(String);
   const [isSubmitting, startTransition] = useTransition();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const t = useTranslations('Register');
 
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
@@ -88,7 +90,7 @@ export default function RegisterForm() {
             name='username'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>Username</FormLabel>
+                <FormLabel className='font-semibold'>{t('username')}</FormLabel>
                 <FormControl>
                   <CustomForm.Input
                     type='text'
@@ -97,7 +99,7 @@ export default function RegisterForm() {
                   />
                 </FormControl>
                 <FormDescription className='text-white/60'>
-                  This is your public display name.
+                  {t('username_dsc')}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -125,7 +127,7 @@ export default function RegisterForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>Password</FormLabel>
+                <FormLabel className='font-semibold'>{t('password')}</FormLabel>
                 <FormControl>
                   <CustomForm.PasswordWrapper
                     value={isPasswordVisible}
@@ -144,12 +146,12 @@ export default function RegisterForm() {
             )}
           />
         </div>
-        <CustomForm.Button disableWhen={isSubmitting} title='Register' />
+        <CustomForm.Button disableWhen={isSubmitting} title={t('button')} />
         <CustomForm.Redirect
           disableWhen={isSubmitting}
-          text='Have an account?'
+          text={t('have_account')}
           path='/login'
-          link='Log in now'
+          link={t('log_in')}
         />
       </form>
     </Form>

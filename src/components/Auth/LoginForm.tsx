@@ -157,7 +157,7 @@ export default function LoginForm() {
             </Button>
           </div>
         </div>
-        <CustomForm.Button disableWhen={isPending} title='Login' />
+        <CustomForm.Button disableWhen={isPending} title={t('button')} />
         <CustomForm.Redirect
           disableWhen={isPending}
           text={t('not_registered')}

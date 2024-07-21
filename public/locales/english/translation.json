@@ -3,7 +3,24 @@
     "password": "Password",
     "not_registered": "Not registered yet?",
     "create_account": "Create an account",
-    "forgot_password": "Forgot password?"
+    "forgot_password": "Forgot password?",
+    "login_with": "Login with",
+    "sign_with": "Sign up with",
+    "or": "or",
+    "button": "Login"
+  },
+  "Register": {
+    "username": "Username",
+    "username_dsc": "This is your public display name.",
+    "password": "Password",
+    "have_account": "Have an account?",
+    "log_in": "Log in now",
+    "button": "Register"
+  },
+  "NewPassword": {
+    "button": "Reset password",
+    "return_to": "Return to",
+    "new_password": "New Password"
   },
   "Sidebar": {
     "new_note": "New Note",

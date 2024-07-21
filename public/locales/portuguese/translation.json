@@ -3,7 +3,24 @@
     "password": "Senha",
     "not_registered": "Ainda não se registrou?",
     "create_account": "Crie sua conta",
-    "forgot_password": "Esqueceu sua senha?"
+    "forgot_password": "Esqueceu sua senha?",
+    "login_with": "Login com",
+    "sign_with": "Sign up com",
+    "or": "ou",
+    "button": "Entrar"
+  },
+  "Register": {
+    "username": "Username",
+    "username_dsc": "Esse é o seu nome público de usuário.",
+    "password": "Senha",
+    "have_account": "Já tem uma conta?",
+    "log_in": "Entre agora",
+    "button": "Criar conta"
+  },
+  "NewPassword": {
+    "button": "Redefinir senha",
+    "return_to": "Retornar para",
+    "new_password": "Senha nova"
   },
   "Sidebar": {
     "new_note": "Criar nota",
