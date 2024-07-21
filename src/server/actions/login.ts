@@ -2,21 +2,23 @@
 
 import { signIn } from '@/auth/auth';
 import { getUserByEmail } from '@/queries/user';
-import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';
+import { DEFAULT_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 
 export async function login(
   values: z.infer<typeof loginFormSchema>,
 ): Promise<{ error: string | null }> {
   const fields = loginFormSchema.safeParse(values);
+  const t = await getTranslations('ServerErrors');
 
-  if (!fields.success) return { error: 'Invalid Fields' };
+  if (!fields.success) return { error: t('inv_field') };
 
   const { email, password } = fields.data;
   const user = await getUserByEmail(email);
-  if (!user) return { error: 'This Email is not registered' };
+  if (!user) return { error: t('email_not_found') };
 
   try {
     await signIn('credentials', {
@@ -29,9 +31,9 @@ export async function login(
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return { error: 'Invalid credentials' };
+          return { error: t('inv_credentials') };
         default:
-          return { error: 'Something went wrong' };
+          return { error: t('default_error') };
       }
     }
     throw error;

@@ -154,5 +154,26 @@
   },
   "SaveButton": {
     "title": "Save changes"
+  },
+  "Toast": {
+    "sv_note_title": "Note Saved",
+    "sv_note_dsc": "Your note has been saved! It's ready whenever you need it. 📌"
+  },
+  "ServerErrors": {
+    "inv_field": "Invalid Fields",
+    "email_not_found": "This Email is not registered",
+    "inv_credentials": "Invalid credentials",
+    "default_error": "Something went wrong",
+    "no_token": "Token is required",
+    "inv_password": "This password is invalid",
+    "inv_token": "Invalid token",
+    "token_exp": "Token has expired",
+    "password_update": "Password updated!",
+    "email_taken": "Email already in use!",
+    "inv_email": "Invalid Email",
+    "is_provider": "It looks like your account was created by a provider. Try resetting your password with",
+    "already_has_a_token": "You still have a valid reset token until",
+    "check_out": "check out your email.",
+    "email_sent": "Reset password email sent"
   }
 }
