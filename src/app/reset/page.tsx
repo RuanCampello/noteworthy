@@ -14,6 +14,7 @@ import { toast } from '@/components/ui/use-toast';
 import { resetPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Check, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -22,6 +23,7 @@ type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPage() {
   const [loading, startTransition] = useTransition();
+  const t = useTranslations('NewPassword');
   const resetPasswordForm = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -105,10 +107,10 @@ export default function ResetPage() {
               )}
             />
 
-            <CustomForm.Button title='Reset password' disableWhen={loading} />
+            <CustomForm.Button title={t('button')} disableWhen={loading} />
           </form>
         </Form>
-        <CustomForm.Redirect text='Return to' path='/login' link='Login' />
+        <CustomForm.Redirect text={t('return_to')} path='/login' link='Login' />
       </div>
     </main>
   );
