@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/select';
+import { useLocale } from 'next-intl';
 import Image from 'next/image';
 
 interface LanguageSwitcherProps {
@@ -15,10 +16,12 @@ interface LanguageSwitcherProps {
 }
 
 export default function LanguageSwitcher({ onChange }: LanguageSwitcherProps) {
+  const locale = useLocale();
+
   return (
-    <Select onValueChange={onChange}>
+    <Select onValueChange={onChange} defaultValue={locale}>
       <SelectTrigger className='bg-black col-span-2'>
-        <SelectValue className='w-full' placeholder='English' />
+        <SelectValue className='w-full' placeholder={locale} />
       </SelectTrigger>
       <SelectContent className='dark bg-black'>
         <SelectGroup>
