@@ -68,7 +68,18 @@
     "italic": "Itálico",
     "underline": "Sublinhar",
     "strike": "Tachar",
-    "highlight": "Destacar"
+    "highlight": "Destacar",
+    "sup": "Sobrescrito",
+    "sub": "Subscrito",
+    "define_w": "Definir palavra",
+    "dfn": "Definir"
+  },
+  "Format": {
+    "style": "Estilos",
+    "font_f": "Fonte",
+    "font_s": "Tamanho da fonte",
+    "p": "Parágrafo",
+    "h": "Título"
   },
   "Profile": {
     "field_name": "Nome",
@@ -91,6 +102,19 @@
     "unpub_description": "Qualquer pessoa com este link é capaz de ver essa nota.",
     "cancel": "Cancelar"
   },
+  "Edit": {
+    "title": "Editar",
+    "description": "📝 Vamos capturar a inspiração e criar maravilhas juntos! Edite sua nota, deixe a criatividade voar! ✨",
+    "field_name": "Nome",
+    "field_colour": "Cor",
+    "button": "Salvar alterações"
+  },
+  "Delete": {
+    "title": "Tem certeza absoluta?",
+    "description": "Essa ação não poderá ser desfeita. Isso vai permanentemente deletar sua nota e remover todos seus dados dos nossos servidores.",
+    "cancel": "Cancelar",
+    "button": "Deletar nota"
+  },
   "HomePlaceholder": {
     "title": "Selecione uma nota para ver",
     "description": "Escolha uma nota da lista à esquerda para ver seu conteúdo ou crie uma nova e adicione à sua coleção."
@@ -110,5 +134,8 @@
   "SubsidebarTitles": {
     "fav": "Notas favoritas",
     "arc": "Notas arquivadas"
+  },
+  "SaveButton": {
+    "title": "Salvar alterações"
   }
 }

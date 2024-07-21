@@ -27,9 +27,10 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const lang = locale === 'portuguese' ? 'pt' : 'en';
 
   return (
-    <html lang={locale} spellCheck={false}>
+    <html lang={lang} spellCheck={false}>
       <body
         className={`${sourceSans.className} bg-black text-neutral-100 text-base`}
       >

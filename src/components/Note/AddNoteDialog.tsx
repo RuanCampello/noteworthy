@@ -108,7 +108,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               name='colour'
               control={noteDialog.control}
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 gap-4 items-center'>
+                <FormItem className='grid grid-cols-4 gap-4 items-center space-y-0'>
                   <FormLabel className='text-base text-neutral-200 text-right'>
                     {t('colour_field')}
                   </FormLabel>
