@@ -21,6 +21,19 @@ export const getNoteById = cache(async (id: string) => {
   }
 });
 
+export const getNoteByIdWithPreferences = cache(async (id: string) => {
+  try {
+    return await db.note.findUnique({
+      where: { id },
+      include: {
+        owner: { select: { name: true, id: true, Preferences: true } },
+      },
+    });
+  } catch (error) {
+    return null;
+  }
+});
+
 export async function getAllUserNotes(userId: string) {
   try {
     return await db.note.findMany({ where: { userId } });
