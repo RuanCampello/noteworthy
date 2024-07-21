@@ -24,9 +24,8 @@ const config = {
       typography: {
         DEFAULT: {
           css: {
-            maxWidth: '100%',
             overflowY: 'scroll',
-            maxHeight: '79vh',
+            height: '78vh',
             paddingBottom: '24px',
             textUnderlineOffset: '2px',
           },

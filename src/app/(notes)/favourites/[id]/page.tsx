@@ -3,6 +3,7 @@ import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
 import { currentUser, getNoteById } from '@/queries/note';
+import { getUserPreferences } from '@/server/actions/user-preferences';
 
 type Props = { params: { id: string } };
 
@@ -18,9 +19,13 @@ export default async function Favourite({ params }: Props) {
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
+  const preferences = await getUserPreferences(owner.id);
+  const fullNote =
+    preferences?.fullNote !== undefined ? preferences.fullNote : true;
+
   return (
     <div className='w-full pb-6 overflow-y-clip flex flex-col'>
-      <NoteEditor owner={owner.id} content={content}>
+      <NoteEditor fullNote={fullNote} owner={owner.id} content={content}>
         <NoteHeader
           title={title}
           date={createdAt}
