@@ -13,6 +13,7 @@ import { EditorProvider, Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import FontSize from 'tiptap-extension-font-size';
 import EditorMenuBar from './EditorMenuBar';
+import { type EditorProps } from '@tiptap/pm/view';
 
 import { DoubleClickLink } from '@/utils/double-click-link';
 import { useSession } from 'next-auth/react';
@@ -23,16 +24,19 @@ interface NoteEditorProps {
   content: string;
   children: ReactNode;
   owner: string | null;
+  fullNote: boolean;
 }
 
 export default function NoteEditor({
   content,
   children,
   owner,
+  fullNote,
 }: NoteEditorProps) {
   const { data: session } = useSession();
   if (!session?.user) return;
   const isEditable = session.user.id === owner;
+  console.log(fullNote);
   const extensions = [
     StarterKit,
     Underline,
@@ -68,10 +72,9 @@ export default function NoteEditor({
       },
     }),
   ];
-  const editorProps = {
+  const editorProps: EditorProps = {
     attributes: {
-      class:
-        'prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2',
+      class: `prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2 ${fullNote ? 'max-w-[100%]' : 'max-w-[40vw] left-[20vw]'}`,
     },
   };
   return (

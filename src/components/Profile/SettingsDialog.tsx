@@ -46,7 +46,8 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
     defaultValues: {
-      fullNote: preferences?.fullNote || true,
+      fullNote:
+        preferences?.fullNote !== undefined ? preferences.fullNote : true,
       language: locale as Locale,
       noteFormat: preferences?.noteFormat || 'full',
     },

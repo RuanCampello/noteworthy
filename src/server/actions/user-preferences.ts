@@ -29,6 +29,7 @@ export async function updateUserPreferences(
 ) {
   const user = await currentUser();
   const fields = userPreferencesSchema.safeParse(values);
+
   if (!fields.success || !user || !user?.id) return;
 
   const { noteFormat, fullNote, language } = fields.data;
