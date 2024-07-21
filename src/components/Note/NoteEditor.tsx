@@ -74,7 +74,7 @@ export default function NoteEditor({
   ];
   const editorProps: EditorProps = {
     attributes: {
-      class: `prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2 ${fullNote ? 'max-w-[100%]' : 'max-w-[40vw] left-[20vw]'}`,
+      class: `prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2 ${fullNote ? 'max-w-[100%]' : 'max-w-[50vw] left-[15vw]'}`,
     },
   };
   return (
