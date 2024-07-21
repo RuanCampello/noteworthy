@@ -23,11 +23,12 @@ import {
 import { Bolt } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition, type ReactNode } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/utils/constants/locales';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -39,29 +40,17 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
   const t = useTranslations('Settings');
+  const locale = useLocale();
   const router = useRouter();
 
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
     defaultValues: {
-      ...preferences,
+      fullNote: preferences?.fullNote || true,
+      language: locale as Locale,
+      noteFormat: preferences?.noteFormat || 'full',
     },
   });
-
-  const currentFullNote = useWatch({
-    control: userPreferences.control,
-    name: 'fullNote',
-  });
-  const currentNoteFormat = useWatch({
-    control: userPreferences.control,
-    name: 'noteFormat',
-  });
-
-  const noChange = false;
-
-  // TODO: correct noChange and lang switcher
-  // currentFullNote == preferences?.fullNote &&
-  // currentNoteFormat == preferences?.noteFormat;
 
   function handleSaveUserPreferences(values: UserPreferences) {
     startTransition(async () => {
@@ -152,7 +141,9 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                     name='fullNote'
                     render={({ field }) => (
                       <Switch
+                        type='button'
                         checked={field.value}
+                        defaultChecked
                         onCheckedChange={field.onChange}
                         className='dark'
                         id='full-note-switch'
@@ -180,7 +171,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
                 type='submit'
                 size='sm'
                 className='float-end mt-4'
-                disabled={loading || noChange}
+                disabled={loading}
               >
                 {t('button')}
               </Button>

@@ -7,14 +7,16 @@ import {
   SelectValue,
   SelectContent,
   SelectGroup,
-} from './ui/select';
+} from '@/ui/select';
 import { useCurrentEditor } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 import MenuTooltip from './Tooltip';
+import { useTranslations } from 'next-intl';
 
 export default function SelectFontSize() {
   const { editor } = useCurrentEditor();
   const [fontSize, setFontSize] = useState<number>(12);
+  const t = useTranslations('Format');
   const fontSizes = generateSequence();
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function SelectFontSize() {
   if (!editor) return;
   return (
     <Select value={fontSize.toString()}>
-      <MenuTooltip content='Font size' sideOffset={6}>
+      <MenuTooltip content={t('font_s')} sideOffset={6}>
         <SelectTrigger className='w-16 bg-black border-none font-semibold'>
           <SelectValue>{fontSize.toString()}</SelectValue>
         </SelectTrigger>

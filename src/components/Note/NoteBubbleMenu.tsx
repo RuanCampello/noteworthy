@@ -2,6 +2,7 @@
 
 import { BubbleMenu, useCurrentEditor } from '@tiptap/react';
 import { BookA } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
@@ -10,6 +11,7 @@ export default function NoteBubbleMenu() {
   const [selectedWord, setSelectedWord] = useState(String);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations('Shortcuts');
   const params = new URLSearchParams(searchParams);
 
   if (!editor) return;
@@ -38,8 +40,8 @@ export default function NoteBubbleMenu() {
       >
         <BookA size={18} strokeWidth={1.7} />
         <div>
-          Define{' '}
-          <span className='text-black/80 lowercase'>{`'${selectedWord}'`}</span>
+          {t('dfn')}
+          <span className='text-black/80 lowercase'>{` '${selectedWord}'`}</span>
         </div>
       </button>
     </BubbleMenu>

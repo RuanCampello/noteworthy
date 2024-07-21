@@ -68,7 +68,18 @@
     "italic": "Italic",
     "underline": "Underline",
     "strike": "Strike",
-    "highlight": "Highlight"
+    "highlight": "Highlight",
+    "sup": "Superscript",
+    "sub": "Subscript",
+    "define_w": "Define word",
+    "dfn": "Define"
+  },
+  "Format": {
+    "style": "Styles",
+    "font_f": "Font family",
+    "font_s": "Font size",
+    "p": "Paragraph",
+    "h": "Heading"
   },
   "Profile": {
     "field_name": "Name",
@@ -91,6 +102,19 @@
     "unpub_description": "Anyone who has this is will be able to view the note.",
     "cancel": "Cancel"
   },
+  "Edit": {
+    "title": "Edit",
+    "description": "📝 Let's capture inspiration and craft wonders together! Edit your note, let creativity soar! ✨",
+    "field_name": "Name",
+    "field_colour": "Colour",
+    "button": "Save changes"
+  },
+  "Delete": {
+    "title": "Are absolutly sure?",
+    "description": "This action cannot be undone. This will permanently delete your note and remove all data from our servers.",
+    "cancel": "Cancel",
+    "button": "Delete note"
+  },
   "HomePlaceholder": {
     "title": "Select a note to view",
     "description": "Choose a note from the list on the left to view its contents, or create a new note to add to your collection."
@@ -110,5 +134,8 @@
   "SubsidebarTitles": {
     "fav": "Favourites",
     "arc": "Archived notes"
+  },
+  "SaveButton": {
+    "title": "Save changes"
   }
 }
