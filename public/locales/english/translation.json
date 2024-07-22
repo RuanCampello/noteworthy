@@ -175,5 +175,12 @@
     "already_has_a_token": "You still have a valid reset token until",
     "check_out": "check out your email.",
     "email_sent": "Reset password email sent"
+  },
+  "Dictionary": {
+    "title": "Dictionary",
+    "close_dic": "Close dictionary",
+    "src": "Source",
+    "srcs": "Sources",
+    "lic": "Licence"
   }
 }
