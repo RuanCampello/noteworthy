@@ -49,7 +49,7 @@ function MeaningSection({ meanings, word }: MeaningSectionProps) {
         <p className='italic font-medium text-lg'>{meaning.partOfSpeech}</p>
         <Separator orientation='horizontal' className='bg-silver/40' />
       </div>
-      {meaning.definitions.slice(0, 3).map((def, index: number) => (
+      {meaning.definitions.map((def, index: number) => (
         <div className='mb-2 mx-2' key={def.definition}>
           <p className='text-white/80 flex gap-1.5'>
             <span className='px-2 rounded-full text-sm leading-6 h-fit items-center text-silver bg-midnight'>
