@@ -175,5 +175,12 @@
     "already_has_a_token": "Você ainda tem um token válido até",
     "check_out": "cheque seu email.",
     "email_sent": "Email para redefinição de senha enviado"
+  },
+  "Dictionary": {
+    "title": "Dicionário",
+    "close_dic": "Fechar dicionário",
+    "src": "Fonte",
+    "srcs": "Fontes",
+    "lic": "Licença"
   }
 }
