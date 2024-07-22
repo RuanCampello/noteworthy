@@ -32,7 +32,7 @@ export default async function RootLayout({
   return (
     <html lang={lang} spellCheck={false}>
       <body
-        className={`${sourceSans.className} bg-black text-neutral-100 text-base`}
+        className={`${sourceSans.className} bg-black text-neutral-100 text-base overflow-hidden`}
       >
         <SessionProvider>
           <NextIntlClientProvider messages={messages}>
