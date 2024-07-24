@@ -1,7 +1,8 @@
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
-import { currentUser, getAllUserArchivedNotes } from '@/queries/note';
+import { currentUser } from '@/queries/note';
+import { API } from '@/server/api';
 import { ArchiveX, ArchiveRestore } from 'lucide-react';
 import { type ReactNode } from 'react';
 
@@ -12,7 +13,8 @@ export default async function FavouriteLayout({
 }>) {
   const user = await currentUser();
   if (!user?.id) return;
-  const archivedNotes = await getAllUserArchivedNotes(user.id);
+  const api = new API(user.id);
+  const archivedNotes = await api.notes.archived.get();
   return (
     <div className='flex h-screen w-full'>
       <Sidebar />

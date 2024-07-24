@@ -1,0 +1,186 @@
+{
+  "Login": {
+    "password": "Password",
+    "not_registered": "Not registered yet?",
+    "create_account": "Create an account",
+    "forgot_password": "Forgot password?",
+    "login_with": "Login with",
+    "sign_with": "Sign up with",
+    "or": "or",
+    "button": "Login"
+  },
+  "Register": {
+    "username": "Username",
+    "username_dsc": "This is your public display name.",
+    "password": "Password",
+    "have_account": "Have an account?",
+    "log_in": "Log in now",
+    "button": "Register"
+  },
+  "NewPassword": {
+    "button": "Reset password",
+    "return_to": "Return to",
+    "new_password": "New Password"
+  },
+  "Sidebar": {
+    "new_note": "New Note",
+    "notes": "Notes",
+    "search_note": "Search for a note",
+    "more": "More",
+    "favourites": "Favourites",
+    "archived": "Archived Notes"
+  },
+  "AddNote": {
+    "title": "Add New Note",
+    "description": "📝 Ready to capture a spark of inspiration? Create your note, let your thoughts soar, and sprinkle some magic into your digital world. Let's write wonders together! ✨",
+    "name_field": "Name",
+    "colour_field": "Colour",
+    "button": "Create note"
+  },
+  "SortDropdown": {
+    "sort_by": "Sort by",
+    "last_mod": "Last modified",
+    "title": "Title",
+    "date_new": "Date added (newest)",
+    "date_old": "Date added (oldest)"
+  },
+  "Header": {
+    "created": "Created",
+    "modified": "Modified",
+    "owner": "Owner",
+    "words": "Words"
+  },
+  "Settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "profile": "Profile",
+    "note_style": "Note style",
+    "note_style_dsc": "How are notes displayed in sidebar.",
+    "full_note": "Full witdh note",
+    "full_note_dsc": "Makes note occupy window full width.",
+    "lang": "Language",
+    "button": "Save changes",
+    "edit_profile": "Edit Profile"
+  },
+  "ProfileDropdown": {
+    "settings": "Settings",
+    "log_out": "Log out"
+  },
+  "Keyboard": {
+    "title": "Keyboard Shortcuts",
+    "description": "Learn essential key combinations to navigate and optimise your experience.",
+    "note": "Note",
+    "global": "Global",
+    "editor": "Editor"
+  },
+  "Shortcuts": {
+    "save_note": "Save note",
+    "create_note": "Create new note",
+    "toggle_sidebar": "Toggle sidebar",
+    "alg_l": "Align left",
+    "alg_r": "Align right",
+    "alg_c": "Align center",
+    "justify": "Justify",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strike",
+    "highlight": "Highlight",
+    "sup": "Superscript",
+    "sub": "Subscript",
+    "define_w": "Define word",
+    "dfn": "Define"
+  },
+  "Format": {
+    "style": "Styles",
+    "font_f": "Font family",
+    "font_s": "Font size",
+    "p": "Paragraph",
+    "h": "Heading"
+  },
+  "Profile": {
+    "field_name": "Name",
+    "button": "Save changes"
+  },
+  "NoteDropdown": {
+    "fav": "Favourite",
+    "unfav": "Unfavourite",
+    "arc": "Archive",
+    "unarc": "Unarchive",
+    "edit": "Edit",
+    "del": "Delete"
+  },
+  "Publish": {
+    "pub": "Publish",
+    "unpub": "Unpublish",
+    "title": "Publish this note",
+    "unpub_title": "Unpublish this note",
+    "description": "Ready to ignite your ideas? Share your note with the world, let your creativity shine. Let's publish brilliance together! 🚀",
+    "unpub_description": "Anyone who has this is will be able to view the note.",
+    "cancel": "Cancel"
+  },
+  "Edit": {
+    "title": "Edit",
+    "description": "📝 Let's capture inspiration and craft wonders together! Edit your note, let creativity soar! ✨",
+    "field_name": "Name",
+    "field_colour": "Colour",
+    "button": "Save changes"
+  },
+  "Delete": {
+    "title": "Are absolutly sure?",
+    "description": "This action cannot be undone. This will permanently delete your note and remove all data from our servers.",
+    "cancel": "Cancel",
+    "button": "Delete note"
+  },
+  "HomePlaceholder": {
+    "title": "Select a note to view",
+    "description": "Choose a note from the list on the left to view its contents, or create a new note to add to your collection."
+  },
+  "FavouritePlaceholder": {
+    "title": "Select a favourite note to view",
+    "description": "Choose a favourite note from the list on the left to view its contents, or favourite a note to add to your collection.",
+    "no_fav_title": "You don't have any favourite note",
+    "no_fav_description": "Choose a note to favourite and make it sparkle!"
+  },
+  "ArchivePlaceholder": {
+    "title": "Select an archived note to view",
+    "description": "Choose an archived note from the list on the left to view its contents, or archived a note to add to your collection.",
+    "no_arc_title": "You don't have any archived note",
+    "no_arc_description": "Select a note to archive and watch it shimmer away into your archives!"
+  },
+  "SubsidebarTitles": {
+    "fav": "Favourites",
+    "arc": "Archived notes"
+  },
+  "SaveButton": {
+    "title": "Save changes"
+  },
+  "Toast": {
+    "sv_note_title": "Note Saved",
+    "sv_note_dsc": "Your note has been saved! It's ready whenever you need it. 📌"
+  },
+  "ServerErrors": {
+    "inv_field": "Invalid Fields",
+    "email_not_found": "This Email is not registered",
+    "inv_credentials": "Invalid credentials",
+    "default_error": "Something went wrong",
+    "no_token": "Token is required",
+    "inv_password": "This password is invalid",
+    "inv_token": "Invalid token",
+    "token_exp": "Token has expired",
+    "password_update": "Password updated!",
+    "email_taken": "Email already in use!",
+    "inv_email": "Invalid Email",
+    "is_provider": "It looks like your account was created by a provider. Try resetting your password with",
+    "already_has_a_token": "You still have a valid reset token until",
+    "check_out": "check out your email.",
+    "email_sent": "Reset password email sent"
+  },
+  "Dictionary": {
+    "title": "Dictionary",
+    "close_dic": "Close dictionary",
+    "src": "Source",
+    "srcs": "Sources",
+    "lic": "Licence"
+  }
+}

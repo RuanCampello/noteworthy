@@ -1,0 +1,186 @@
+{
+  "Login": {
+    "password": "Senha",
+    "not_registered": "Ainda não se registrou?",
+    "create_account": "Crie sua conta",
+    "forgot_password": "Esqueceu sua senha?",
+    "login_with": "Login com",
+    "sign_with": "Sign up com",
+    "or": "ou",
+    "button": "Entrar"
+  },
+  "Register": {
+    "username": "Username",
+    "username_dsc": "Esse é o seu nome público de usuário.",
+    "password": "Senha",
+    "have_account": "Já tem uma conta?",
+    "log_in": "Entre agora",
+    "button": "Criar conta"
+  },
+  "NewPassword": {
+    "button": "Redefinir senha",
+    "return_to": "Retornar para",
+    "new_password": "Senha nova"
+  },
+  "Sidebar": {
+    "new_note": "Criar nota",
+    "notes": "Notas",
+    "search_note": "Procure por uma nota",
+    "more": "Mais",
+    "favourites": "Favoritos",
+    "archived": "Notas Arquivadas"
+  },
+  "AddNote": {
+    "title": "Criar nova nota",
+    "description": "📝 Pronto para capturar uma faísca de inspiração? Crie sua nota, deixe seus pensamentos voarem e salpique um pouco de magia em seu mundo digital. Vamos escrever maravilhas juntos! ✨",
+    "name_field": "Nome",
+    "colour_field": "Cor",
+    "button": "Criar nota"
+  },
+  "SortDropdown": {
+    "sort_by": "Ordernar por",
+    "last_mod": "Último modificado",
+    "title": "Título",
+    "date_new": "Data de adição (mais novo)",
+    "date_old": "Data de adição (mais velho)"
+  },
+  "Header": {
+    "created": "Criado em",
+    "modified": "Modificado em",
+    "owner": "Dono",
+    "words": "Palavras"
+  },
+  "Settings": {
+    "title": "Configurações",
+    "appearance": "Aparência",
+    "profile": "Perfil",
+    "note_style": "Estilo da nota",
+    "note_style_dsc": "Como as notas são mostradas na barra lateral.",
+    "full_note": "Nota do tamanho da tela",
+    "full_note_dsc": "Faz com que a nota ocupe a tela inteira.",
+    "lang": "Linguagem",
+    "button": "Salvar alterações",
+    "edit_profile": "Editar perfil"
+  },
+  "ProfileDropdown": {
+    "settings": "Configurações",
+    "log_out": "Sair"
+  },
+  "Keyboard": {
+    "title": "Atalhos",
+    "description": "Aprenda as combinações de teclas essênciais para navegar e otimizar sua experiência.",
+    "note": "Nota",
+    "global": "Global",
+    "editor": "Editor"
+  },
+  "Shortcuts": {
+    "save_note": "Salvar nota",
+    "create_note": "Criar nova nota",
+    "toggle_sidebar": "Fechar/Abrir barra lateral",
+    "alg_l": "Alinhar à esquerda",
+    "alg_r": "Alinhar à direita",
+    "alg_c": "Alinhar ao centro",
+    "justify": "Justificar",
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "underline": "Sublinhar",
+    "strike": "Tachar",
+    "highlight": "Destacar",
+    "sup": "Sobrescrito",
+    "sub": "Subscrito",
+    "define_w": "Definir palavra",
+    "dfn": "Definir"
+  },
+  "Format": {
+    "style": "Estilos",
+    "font_f": "Fonte",
+    "font_s": "Tamanho da fonte",
+    "p": "Parágrafo",
+    "h": "Título"
+  },
+  "Profile": {
+    "field_name": "Nome",
+    "button": "Salvar alterações"
+  },
+  "NoteDropdown": {
+    "fav": "Favoritar",
+    "unfav": "Desfavoritar",
+    "arc": "Arquivar",
+    "unarc": "Desarquivar",
+    "edit": "Editar",
+    "del": "Apagar"
+  },
+  "Publish": {
+    "pub": "Publicar",
+    "unpub": "Despublicar",
+    "title": "Publicar essa nota",
+    "unpub_title": "Despublicar essa nota",
+    "description": "Pronto para acender suas ideias? Compartilhe sua nota com o mundo, deixe sua criatividade brilhar. Vamos publicar brilhos juntos! 🚀",
+    "unpub_description": "Qualquer pessoa com este link é capaz de ver essa nota.",
+    "cancel": "Cancelar"
+  },
+  "Edit": {
+    "title": "Editar",
+    "description": "📝 Vamos capturar a inspiração e criar maravilhas juntos! Edite sua nota, deixe a criatividade voar! ✨",
+    "field_name": "Nome",
+    "field_colour": "Cor",
+    "button": "Salvar alterações"
+  },
+  "Delete": {
+    "title": "Tem certeza absoluta?",
+    "description": "Essa ação não poderá ser desfeita. Isso vai permanentemente deletar sua nota e remover todos seus dados dos nossos servidores.",
+    "cancel": "Cancelar",
+    "button": "Deletar nota"
+  },
+  "HomePlaceholder": {
+    "title": "Selecione uma nota para ver",
+    "description": "Escolha uma nota da lista à esquerda para ver seu conteúdo ou crie uma nova e adicione à sua coleção."
+  },
+  "FavouritePlaceholder": {
+    "title": "Selecione uma nota favoritada para ver",
+    "description": "Escolha uma nota favoritada da lista à esquerda para ver seu conteúdo ou favorite uma nota e adicione à sua coleção.",
+    "no_fav_title": "Você não tem nenhuma nota favoritada",
+    "no_fav_description": "Escolha uma nota para favoritar e a faça cintilar!"
+  },
+  "ArchivePlaceholder": {
+    "title": "Selecione uma nota arquivada para ver",
+    "description": "Escolha uma nota arquivada da lista à esquerda para ver seu conteúdo ou arquive uma nota e adicione à sua coleção.",
+    "no_arc_title": "Você não tem nenhuma nota arquivada",
+    "no_arc_description": "Selecione uma nota para arquivar e a observe brilhar em seus arquivos!"
+  },
+  "SubsidebarTitles": {
+    "fav": "Notas favoritas",
+    "arc": "Notas arquivadas"
+  },
+  "SaveButton": {
+    "title": "Salvar alterações"
+  },
+  "Toast": {
+    "sv_note_title": "Nota salva",
+    "sv_note_dsc": "Sua nota foi salva! Está pronta quando você precisar. 📌"
+  },
+  "ServerErrors": {
+    "inv_field": "Campo inválido",
+    "email_not_found": "Esse Email não está registrado",
+    "inv_credentials": "Credenciais inválidas",
+    "default_error": "Algo de errado acontenceu",
+    "no_token": "Um token é necessário",
+    "inv_password": "Essa senha é inválida",
+    "inv_token": "Token inválido",
+    "token_exp": "O token expirou",
+    "password_update": "Senha alterada!",
+    "email_taken": "Esse Email já está em uso!",
+    "inv_email": "Email inválido",
+    "is_provider": "Parece que sua conta foi criada por um provedor. Tente redefinir sua senha com",
+    "already_has_a_token": "Você ainda tem um token válido até",
+    "check_out": "cheque seu email.",
+    "email_sent": "Email para redefinição de senha enviado"
+  },
+  "Dictionary": {
+    "title": "Dicionário",
+    "close_dic": "Fechar dicionário",
+    "src": "Fonte",
+    "srcs": "Fontes",
+    "lic": "Licença"
+  }
+}

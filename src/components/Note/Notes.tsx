@@ -4,18 +4,18 @@ import Counter from '@/components/Counter';
 import SearchNote from '@/components/Note/SearchNote';
 import SortDropdown from '@/components/SortDropdown';
 import { getFilteredNotes, getFilter } from '@/utils/format-notes';
-import { getAllUserOrdinaryNotes } from '@/queries/note';
-import { auth } from '@/auth/auth';
-import { ReactNode } from 'react';
+import { API } from '@/server/api';
+import { type ReactNode } from 'react';
 import { useSidebarState } from '@/utils/sidebar';
+import { currentUser } from '@/server/queries/note';
 
 export default async function Notes() {
-  const session = await auth();
+  const user = await currentUser();
   const state = useSidebarState();
+  if (!user || !user.id) return;
 
-  if (!session?.user || !session.user.id) return;
-
-  const notes = await getAllUserOrdinaryNotes(session.user.id);
+  const api = new API(user.id);
+  const notes = await api.notes.ordinary.get();
   if (!notes) return;
   const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
   const filter = getFilter();
