@@ -3,7 +3,7 @@ import SectionTitle from '@/components/SectionTitle';
 import Counter from '@/components/Counter';
 import SearchNote from '@/components/Note/SearchNote';
 import SortDropdown from '@/components/SortDropdown';
-import { getFilteredNotes, getFilter } from '@/utils/format-notes';
+import { getFilter } from '@/utils/format-notes';
 import { API } from '@/server/api';
 import { type ReactNode } from 'react';
 import { useSidebarState } from '@/utils/sidebar';
@@ -17,21 +17,19 @@ export default async function Notes() {
   const t = await getTranslations('Sidebar');
 
   const api = new API(user.id);
-  const notes = await api.notes.ordinary.get();
-  if (!notes) return;
-  const { notes: filteredNotes, searchParam } = getFilteredNotes(notes);
+  const result = await api.notes.ordinary.filter();
+  if (!result) return;
+  const { notes, searchParam } = result;
   const filter = getFilter();
 
   if (filter === 'date-new') {
-    filteredNotes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    notes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   } else if (filter === 'date-old') {
-    filteredNotes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    notes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   } else if (filter === 'title') {
-    filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+    notes.sort((a, b) => a.title.localeCompare(b.title));
   } else {
-    filteredNotes.sort(
-      (a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime(),
-    );
+    notes.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
   }
   return (
     <div data-state={state} className='group/root'>
@@ -43,15 +41,15 @@ export default async function Notes() {
         <SortDropdown />
       </div>
       <div className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver xl:max-h-[400px] lg:max-h-[300px] max-h-[230px] px-5 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden'>
-        {filteredNotes.length === 0 && searchParam ? (
+        {notes.length === 0 && searchParam ? (
           <PlaceholderWrapper>
             <h1>
               No note with such name as{' '}
               <span className='italic font-medium'>{searchParam}</span>
             </h1>
           </PlaceholderWrapper>
-        ) : filteredNotes.length > 0 ? (
-          filteredNotes.map((note) => {
+        ) : notes.length > 0 ? (
+          notes.map((note) => {
             const { id, title, colour, content, createdAt } = note;
             return (
               <Note

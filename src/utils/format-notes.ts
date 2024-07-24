@@ -1,14 +1,28 @@
 import { headers } from 'next/headers';
 import { formatSearchParams } from './format';
-import { Note } from '@prisma/client';
+import { type Note } from '@prisma/client';
+import { type Filters, allowedFilters } from './constants/filters';
 
-interface FilteredResults {
+export type FilteredResults = {
   notes: Note[];
   searchParam?: string;
+};
+
+function getSearchParams(): string | null {
+  return headers().get('search-params');
+}
+
+export function getFilter() {
+  const searchParams = getSearchParams();
+  if (!searchParams) return;
+  const sortParamsMatch = searchParams.match(/filter=([^&]*)/);
+  if (!sortParamsMatch) return;
+  const sortParams = sortParamsMatch[1] as Filters;
+  if (Object.values(allowedFilters).includes(sortParams)) return sortParams;
 }
 
 export function getFilteredNotes(notes: Note[]): FilteredResults {
-  const searchParams = headers().get('search-params');
+  const searchParams = getSearchParams();
   if (!searchParams) return { notes: notes };
   const search = searchParams.match(/name=([^&]*)/);
   if (!search) return { notes: notes };
@@ -16,31 +30,11 @@ export function getFilteredNotes(notes: Note[]): FilteredResults {
   if (searchParamsString) {
     return {
       notes: notes.filter((note) =>
-        note.title
-          .toLowerCase()
-          .includes(searchParamsString.toLocaleLowerCase()),
+        note.title.toLowerCase().includes(searchParamsString.toLowerCase()),
       ),
       searchParam: searchParamsString,
     };
   } else {
     return { notes: notes, searchParam: searchParamsString };
   }
-}
-
-type Filters = 'date-new' | 'date-old' | 'title' | 'last-modified';
-
-const allowedFilters: Filters[] = [
-  'date-new',
-  'date-old',
-  'title',
-  'last-modified',
-];
-
-export function getFilter() {
-  const searchParams = headers().get('search-params');
-  if (!searchParams) return;
-  const sortParamsMatch = searchParams.match(/filter=([^&]*)/);
-  if (!sortParamsMatch) return;
-  const sortParams = sortParamsMatch[1] as Filters;
-  if (Object.values(allowedFilters).includes(sortParams)) return sortParams;
 }

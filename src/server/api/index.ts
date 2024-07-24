@@ -1,35 +1,42 @@
 import 'server-only';
 
-import { Note } from '@prisma/client';
+import { type Note as NoteType } from '@prisma/client';
 import { getAllUserNotes } from '@/queries/note';
+import { FilteredResults, getFilteredNotes } from '@/utils/format-notes';
 
 export class API {
   public readonly notes: {
-    ordinary: OrdinaryNotes;
-    favourite: FavouriteNotes;
-    archived: ArchivedNotes;
+    ordinary: OrdinaryNote;
+    favourite: FavouriteNote;
+    archived: ArchivedNote;
   };
 
   public constructor(userId: string) {
     this.notes = {
-      ordinary: new OrdinaryNotes(userId),
-      favourite: new FavouriteNotes(userId),
-      archived: new ArchivedNotes(userId),
+      ordinary: new OrdinaryNote(userId),
+      favourite: new FavouriteNote(userId),
+      archived: new ArchivedNote(userId),
     };
   }
 }
 
-export interface Notes {
-  get(): Promise<Note[] | null>;
+export abstract class Note {
+  abstract get(): Promise<NoteType[] | null>;
+  async filter(): Promise<FilteredResults | null> {
+    const notes = await this.get();
+    if (!notes) return null;
+    return getFilteredNotes(notes);
+  }
 }
 
-export class OrdinaryNotes implements Notes {
+class OrdinaryNote extends Note {
   private readonly userId: string;
   public constructor(userId: string) {
+    super();
     this.userId = userId;
   }
 
-  async get(): Promise<Note[] | null> {
+  async get() {
     const notes = await getAllUserNotes(this.userId, {
       isArchived: false,
       isFavourite: false,
@@ -38,13 +45,14 @@ export class OrdinaryNotes implements Notes {
     return notes;
   }
 }
-export class FavouriteNotes implements Notes {
+class FavouriteNote extends Note {
   private readonly userId: string;
   public constructor(userId: string) {
+    super();
     this.userId = userId;
   }
 
-  async get(): Promise<Note[] | null> {
+  async get() {
     const notes = await getAllUserNotes(this.userId, {
       isArchived: false,
       isFavourite: true,
@@ -53,15 +61,16 @@ export class FavouriteNotes implements Notes {
     return notes;
   }
 }
-export class ArchivedNotes implements Notes {
+class ArchivedNote extends Note {
   private readonly userId: string;
   public constructor(userId: string) {
+    super();
     this.userId = userId;
   }
 
-  async get(): Promise<Note[] | null> {
+  async get() {
     const notes = await getAllUserNotes(this.userId, {
-      isArchived: true,
+      isArchived: false,
       isFavourite: false,
     });
     if (!notes) return null;
