@@ -8,6 +8,7 @@ import Example from './Example';
 import NotFound from './NotFound';
 import { Definition, Meaning } from '@/types/definition';
 import CloseButton from './CloseButton';
+import { getTranslations } from 'next-intl/server';
 
 interface DictionaryProps {
   word?: string;
@@ -70,12 +71,14 @@ interface FooterSectionProps {
   definition: Definition;
 }
 
-function FooterSection({ definition }: FooterSectionProps) {
+async function FooterSection({ definition }: FooterSectionProps) {
+  const t = await getTranslations('Dictionary');
+
   return (
     <footer className='flex flex-col gap-3 mt-4 underline-offset-4 text-silver text-sm'>
       <Separator orientation='horizontal' />
       <div className='grid grid-cols-4'>
-        <p>{definition.sourceUrls.length > 1 ? 'Sources' : 'Source'}</p>
+        <p>{definition.sourceUrls.length > 1 ? t('srcs') : t('src')}</p>
         <div className='flex flex-col col-span-3'>
           {definition.sourceUrls.map((source: string) => (
             <a key={source} href={source} className='underline' target='_blank'>
@@ -85,7 +88,7 @@ function FooterSection({ definition }: FooterSectionProps) {
         </div>
       </div>
       <div className='grid grid-cols-4'>
-        <p>Licence</p>
+        <p>{t('lic')}</p>
         <a className='underline col-span-3' href={definition.license.url}>
           {definition.license.name}
         </a>
@@ -96,6 +99,7 @@ function FooterSection({ definition }: FooterSectionProps) {
 
 export default async function Dictionary({ word }: DictionaryProps) {
   const definition = await getDefinition(word!);
+  const t = await getTranslations('Dictionary');
   const hasContent = definition && word;
 
   return (
@@ -104,7 +108,7 @@ export default async function Dictionary({ word }: DictionaryProps) {
         <header className='flex mb-6 items-center justify-between'>
           <div className='flex items-center gap-1.5'>
             <BookA size={26} />
-            <h2 className='text-xl font-medium'>Dictionary</h2>
+            <h2 className='text-xl font-medium'>{t('title')}</h2>
           </div>
           <CloseButton />
         </header>

@@ -6,15 +6,17 @@ import {
   SelectValue,
   SelectContent,
   SelectGroup,
-} from './ui/select';
+} from '@/ui/select';
 import { useState, useEffect } from 'react';
 import MenuTooltip from './Tooltip';
 import { useCurrentEditor } from '@tiptap/react';
+import { useTranslations } from 'next-intl';
 
 type FontFamily = { name: string; value: string };
 
 export default function SelectFontFamily() {
   const { editor } = useCurrentEditor();
+  const t = useTranslations('Format');
   const [fontFamily, setFontFamily] = useState<FontFamily>({
     name: 'Source Sans 3',
     value: 'Source Sans 3',
@@ -31,13 +33,14 @@ export default function SelectFontFamily() {
   useEffect(() => {
     if (!editor) return;
 
-    const handleFontChange = () => {
+    function handleFontChange() {
+      if (!editor) return;
       const activeFont = fontFamilies.find((fontFamily) =>
         editor.isActive('textStyle', { fontFamily: fontFamily.value }),
       );
       if (activeFont) setFontFamily(activeFont);
       else setFontFamily({ name: 'Source Sans 3', value: 'Source Sans 3' });
-    };
+    }
     editor.on('transaction', handleFontChange);
     return () => {
       editor.off('transaction', handleFontChange);
@@ -47,7 +50,7 @@ export default function SelectFontFamily() {
   if (!editor) return;
   return (
     <Select value={fontFamily.name}>
-      <MenuTooltip content='Font Family' sideOffset={6}>
+      <MenuTooltip content={t('font_f')} sideOffset={6}>
         <SelectTrigger className='bg-black border-none w-[8.5rem] font-semibold'>
           <SelectValue>{fontFamily.name}</SelectValue>
         </SelectTrigger>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useTransition } from 'react';
+import { type ReactNode, useTransition } from 'react';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,10 +10,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
+} from '@/ui/alert-dialog';
 
 import { deleteNote } from '@/actions/note';
 import { Button } from '@/ui/button';
+import { useTranslations } from 'next-intl';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
@@ -27,21 +28,21 @@ export default function DeleteNoteDialog({
   noteId,
 }: DeleteNoteDialogProps) {
   const [loading, startTransition] = useTransition();
+  const t = useTranslations('Delete');
+
   function handleDeleteNote() {
     startTransition(async () => {
       await deleteNote(noteId);
     });
   }
+
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger>{children}</AlertDialogTrigger>
       <AlertDialogContent className='dark bg-black border-red-500 w-96'>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are absolutly sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            note: <b>{noteName}</b> and remove all data from our servers.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t('title')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('description')}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
@@ -49,7 +50,7 @@ export default function DeleteNoteDialog({
               size='sm'
               className='h-fit bg-secondary text-sm text-secondary-foreground hover:bg-secondary/80'
             >
-              Cancel
+              {t('cancel')}
             </Button>
           </AlertDialogCancel>
           <Button
@@ -58,7 +59,7 @@ export default function DeleteNoteDialog({
             size='sm'
             onClick={handleDeleteNote}
           >
-            Delete note
+            {t('button')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

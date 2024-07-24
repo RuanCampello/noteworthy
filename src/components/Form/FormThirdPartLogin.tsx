@@ -1,5 +1,6 @@
 import { DEFAULT_REDIRECT } from '@/routes';
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { StaticImageData } from 'next/image';
 
@@ -16,11 +17,14 @@ export default function FormThirdPartLogin({
   type,
   disableWhen,
 }: FormThirdPartLoginProps) {
+  const t = useTranslations('Login');
+
   async function handleLogin() {
     await signIn(name.toLowerCase(), {
       redirectTo: DEFAULT_REDIRECT,
     });
   }
+
   return (
     <button
       onClick={handleLogin}
@@ -30,9 +34,13 @@ export default function FormThirdPartLogin({
     >
       <Image width={24} height={24} src={image} alt={`${name}'s logo`} />
       {type === 'login' ? (
-        <span>Login with {name}</span>
+        <span>
+          {t('login_with')} {name}
+        </span>
       ) : (
-        <span>Sign up with {name}</span>
+        <span>
+          {t('sign_with')} {name}
+        </span>
       )}
     </button>
   );

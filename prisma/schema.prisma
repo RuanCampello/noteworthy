@@ -28,14 +28,15 @@ model Account {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?          @unique
   emailVerified DateTime?
   image         String?
   password      String?
   accounts      Account[]
   Note          Note[]
+  Preferences   UserPreferences?
 
   @@map("users")
 }
@@ -53,6 +54,11 @@ enum Colour {
   slate
 }
 
+enum NoteFormat {
+  full
+  slim
+}
+
 model Note {
   id          String   @id @default(uuid())
   title       String
@@ -67,6 +73,16 @@ model Note {
   userId      String
 
   @@map("notes")
+}
+
+model UserPreferences {
+  id         Int        @id @default(autoincrement())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  noteFormat NoteFormat @default(full) @map("note_format")
+  fullNote   Boolean    @default(true) @map("full_note")
+
+  @@map("users_preferences")
 }
 
 model PasswordResetToken {

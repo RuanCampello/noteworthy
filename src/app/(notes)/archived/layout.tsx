@@ -4,6 +4,7 @@ import SubSidebar from '@/components/SubSidebar';
 import { currentUser } from '@/queries/note';
 import { API } from '@/server/api';
 import { ArchiveX, ArchiveRestore } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
 
 export default async function FavouriteLayout({
@@ -15,18 +16,18 @@ export default async function FavouriteLayout({
   if (!user?.id) return;
   const api = new API(user.id);
   const archivedNotes = await api.notes.archived.get();
+
+  const t = await getTranslations('ArchivePlaceholder');
+  const st = await getTranslations('SubsidebarTitles');
+
   return (
     <div className='flex h-screen w-full'>
       <Sidebar />
-      <SubSidebar
-        notes={archivedNotes!}
-        title={'Archived notes '}
-        href='archived'
-      >
+      <SubSidebar notes={archivedNotes!} title={st('arc')} href='archived'>
         <NoNotes
           headerIcon={<ArchiveX size={80} strokeWidth={1} />}
-          text="You don't have any archived note"
-          paragraph='Select a note to archive and watch it shimmer away into your archives!'
+          text={t('no_arc_title')}
+          paragraph={t('no_arc_description')}
           paragraphIcon={<ArchiveRestore size={16} fill='#A3A3A3' />}
         />
       </SubSidebar>

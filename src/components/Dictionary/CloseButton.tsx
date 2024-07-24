@@ -3,10 +3,12 @@
 import { X } from 'lucide-react';
 import MenuTooltip from '../Tooltip';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function CloseButton() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations('Dictionary');
 
   async function closeDictionary() {
     const params = new URLSearchParams(searchParams);
@@ -19,7 +21,7 @@ export default function CloseButton() {
     } else router.refresh();
   }
   return (
-    <MenuTooltip content='Close dictionary' side='left'>
+    <MenuTooltip content={t('close_dic')} side='left'>
       <button
         onClick={closeDictionary}
         className='p-1.5 rounded-full text-silver hover:bg-midnight z-50'

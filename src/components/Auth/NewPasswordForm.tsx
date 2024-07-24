@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { newPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,6 +27,7 @@ export default function NewPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const router = useRouter();
+  const t = useTranslations('NewPassword');
 
   const newPasswordForm = useForm<NewPasswordSchema>({
     resolver: zodResolver(newPasswordSchema),
@@ -54,7 +56,9 @@ export default function NewPasswordForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='font-semibold'>New Password</FormLabel>
+                <FormLabel className='font-semibold'>
+                  {t('new_password')}
+                </FormLabel>
                 <FormControl>
                   <CustomForm.PasswordWrapper
                     value={isPasswordVisible}
@@ -73,10 +77,10 @@ export default function NewPasswordForm() {
             )}
           />
 
-          <CustomForm.Button title='Reset password' disableWhen={loading} />
+          <CustomForm.Button title={t('button')} disableWhen={loading} />
         </form>
       </Form>
-      <CustomForm.Redirect text='Return to' path='/login' link='Login' />
+      <CustomForm.Redirect text={t('return_to')} path='/login' link='Login' />
     </div>
   );
 }

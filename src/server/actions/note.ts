@@ -21,7 +21,8 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
 
   if (!fields.success) return;
-  let { name, colour } = fields.data;
+  let { colour } = fields.data;
+  const { name } = fields.data;
 
   colour === 'random' ? (colour = getRandomColour().name) : colour;
 
@@ -113,7 +114,8 @@ export async function editNote(
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
 
-  let { name, colour } = fields.data;
+  let { colour } = fields.data;
+  const { name } = fields.data;
   colour === 'random' ? (colour = getRandomColour().name) : colour;
   try {
     await db.note.update({ where: { id }, data: { title: name, colour } });
@@ -124,14 +126,14 @@ export async function editNote(
 }
 
 export async function deleteNote(id: string) {
-  const user = await currentUser();
+  const [user, selectedNote] = await Promise.all([
+    currentUser(),
+    getNoteById(id),
+  ]);
 
-  if (!user) return;
-
-  const selectedNote = await getNoteById(id);
-
-  if (!selectedNote?.id) return;
-  if (selectedNote.userId !== user.id) return;
+  if (!user || !selectedNote?.id || selectedNote.userId !== user.id) {
+    return;
+  }
 
   await db.note.delete({ where: { id } });
   redirect('/');
@@ -169,11 +171,8 @@ export async function updateNoteContent(
 
 export async function togglePublishState(id: string, currentState: boolean) {
   try {
-    const note = await getNoteById(id);
-    if (!note) return;
-
-    const user = await currentUser();
-    if (user?.id !== note.userId) return;
+    const [note, user] = await Promise.all([getNoteById(id), currentUser()]);
+    if (!note || user?.id !== note.userId) return;
 
     await db.note.update({ where: { id }, data: { isPublic: !currentState } });
     const { basePath } = getPathnameParams();

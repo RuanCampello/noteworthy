@@ -13,7 +13,9 @@ export default function ListenWord({ url }: ListenWordProps) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
-  const handleAudioEnd = () => setIsPlaying(false);
+  function handleAudioEnd() {
+    setIsPlaying(false);
+  }
 
   useEffect(() => {
     if (!url) return;

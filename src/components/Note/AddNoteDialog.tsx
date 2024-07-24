@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState, useTransition } from 'react';
+import { type ReactNode, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,7 @@ import {
 import { Button } from '@/ui/button';
 import { ColourType, Colours } from '@/utils/colours';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -39,6 +40,8 @@ export type NoteDialog = z.infer<typeof noteDialogSchema>;
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
+  const t = useTranslations('AddNote');
+
   useKeyboardShortcut(['Control', 'E'], () => setOpen(true), {
     overrideSystem: true,
     repeatOnHold: false,
@@ -75,12 +78,8 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
             className='flex flex-col gap-3'
           >
             <DialogHeader className='flex flex-col gap-3'>
-              <DialogTitle>Add New Note</DialogTitle>
-              <DialogDescription>
-                📝 Ready to capture a spark of inspiration? Create your note,
-                let your thoughts soar, and sprinkle some magic into your
-                digital world. Let&apos;s write wonders together! ✨
-              </DialogDescription>
+              <DialogTitle>{t('title')}</DialogTitle>
+              <DialogDescription>{t('description')}</DialogDescription>
             </DialogHeader>
             <FormField
               control={noteDialog.control}
@@ -89,7 +88,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                 <FormItem>
                   <div className='grid grid-cols-4 gap-4 items-center'>
                     <FormLabel className='text-base text-neutral-200 text-right'>
-                      Name
+                      {t('name_field')}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -109,9 +108,9 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
               name='colour'
               control={noteDialog.control}
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 gap-4 items-center'>
+                <FormItem className='grid grid-cols-4 gap-4 items-center space-y-0'>
                   <FormLabel className='text-base text-neutral-200 text-right'>
-                    Colour
+                    {t('colour_field')}
                   </FormLabel>
                   <FormControl>
                     <ColourSelect
@@ -134,7 +133,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
                 type='submit'
                 className='transition-colors duration-200 ease-in flex gap-1 items-center'
               >
-                Create note
+                {t('button')}
                 {loading && <Loader2 size={16} className='animate-spin' />}
               </Button>
             </DialogFooter>

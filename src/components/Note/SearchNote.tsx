@@ -3,6 +3,7 @@
 import { formatSearchParams } from '@/utils/format';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,6 +19,7 @@ export default function SearchNote() {
   const searchParamsString = searchParams?.toString();
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('Sidebar');
   const params = new URLSearchParams(searchParamsString);
 
   const { register, handleSubmit, reset } = useForm<FiltersSchema>({
@@ -55,7 +57,7 @@ export default function SearchNote() {
         {...register('name')}
         defaultValue={formatSearchParams(searchParamsString || '')}
         className='w-full rounded-sm text-base leading-5 bg-midnight text-silver focus:outline-none font-medium placeholder:truncate'
-        placeholder='Search a note'
+        placeholder={t('search_note')}
       />
       {searchParams && (
         <button

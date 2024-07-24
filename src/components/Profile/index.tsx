@@ -1,7 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
-
-import { Bolt, Key, LogOut } from 'lucide-react';
-import EditProfileDialog from '@/components/EditProfileDialog';
+import { Bolt, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,13 +11,22 @@ import { env } from '@/env';
 import { currentUser } from '@/server/queries/note';
 import { useSidebarState } from '@/utils/sidebar';
 import KeyboardDialog from './KeyboardDialog';
+import SettingsDialog from './SettingsDialog';
+import Avatar from './Avatar';
+import { getUserPreferences } from '@/server/actions/user-preferences';
+import { getTranslations } from 'next-intl/server';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Profile() {
   const user = await currentUser();
   const state = useSidebarState();
-  if (!user) return;
+  const t = await getTranslations('ProfileDropdown');
+  if (!user || !user?.id) return;
 
   const { image, name, email, id } = user;
+  const preferences = await getUserPreferences(id);
   if (!name) return null;
 
   async function handleLogout() {
@@ -34,14 +40,11 @@ export default async function Profile() {
       className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
     >
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar className='dark'>
-          <AvatarImage
-            src={image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` || ''}
-          />
-          <AvatarFallback className='bg-slate font-semibold text-neutral-100'>
-            {name[0].toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
+        <Avatar
+          providerImage={image}
+          cloudflareImage={`${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}`}
+          name={name}
+        />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
@@ -52,7 +55,7 @@ export default async function Profile() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
-              <EditProfileDialog />
+              <SettingsDialog preferences={preferences} />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />
@@ -62,7 +65,7 @@ export default async function Profile() {
                 type='submit'
                 className='w-full text-sm focus:outline-none text-start px-3 p-1 rounded-sm hover:bg-tickle hover:text-black hover:font-semibold group flex items-center'
               >
-                Log out
+                {t('log_out')}
                 <DropdownMenuShortcut>
                   <LogOut size={16} className='group-hover:text-black' />
                 </DropdownMenuShortcut>

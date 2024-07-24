@@ -1,3 +1,14 @@
 {
-  "extends": ["eslint:recommended", "next"]
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "prefer-arrow-callback": ["error", { "allowNamedFunctions": false }],
+    "func-style": ["error", "declaration", { "allowArrowFunctions": false }]
+  }
 }

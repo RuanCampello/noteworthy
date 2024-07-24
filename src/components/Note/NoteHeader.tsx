@@ -15,6 +15,7 @@ import { currentUser } from '@/queries/note';
 import StatusTooltip from '../StatusTooltip';
 import { headers } from 'next/headers';
 import PublishNoteDialog from './PublishNoteDialog';
+import { getTranslations } from 'next-intl/server';
 
 type Owner = {
   name: string | null;
@@ -32,12 +33,12 @@ export default async function NoteHeader({
   title,
   date,
   owner,
-  id,
   lastUpdate,
 }: NoteHeaderProps) {
   const longLastUpdate = toLocaleDateLong(lastUpdate);
   const longDate = toLocaleDateLong(date);
   const user = await currentUser();
+  const t = await getTranslations('Header');
 
   const params = headers().get('search-params');
   const isDictionaryOpen = new URLSearchParams(params!).has('dfn-open');
@@ -69,16 +70,16 @@ export default async function NoteHeader({
           data-dictionary={isDictionaryOpen}
           className='font-medium grow text-silver data-[dictionary=true]:justify-items-center xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'
         >
-          <NoteHeaderItem name='Created' value={longDate}>
+          <NoteHeaderItem name={t('created')} value={longDate}>
             <CalendarDays size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <NoteHeaderItem
-            name='Modified'
+            name={t('modified')}
             value={lastUpdate ? longLastUpdate : longDate}
           >
             <CalendarClock size={20} strokeWidth={2} />
           </NoteHeaderItem>
-          <NoteHeaderItem name='Owner' value={owner.name!}>
+          <NoteHeaderItem name={t('owner')} value={owner.name!}>
             <SquareUserRound size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <WordCounter />

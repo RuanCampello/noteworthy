@@ -8,11 +8,13 @@ import { API } from '@/server/api';
 import { type ReactNode } from 'react';
 import { useSidebarState } from '@/utils/sidebar';
 import { currentUser } from '@/server/queries/note';
+import { getTranslations } from 'next-intl/server';
 
 export default async function Notes() {
   const user = await currentUser();
   const state = useSidebarState();
   if (!user || !user.id) return;
+  const t = await getTranslations('Sidebar');
 
   const api = new API(user.id);
   const notes = await api.notes.ordinary.get();
@@ -33,7 +35,7 @@ export default async function Notes() {
   }
   return (
     <div data-state={state} className='group/root'>
-      <SectionTitle title='Notes'>
+      <SectionTitle title={t('notes')}>
         <Counter />
       </SectionTitle>
       <div className='px-5 flex gap-2 items-center group-data-[state=closed]/root:hidden'>

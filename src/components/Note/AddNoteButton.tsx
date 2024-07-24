@@ -1,9 +1,11 @@
 import { useSidebarState } from '@/utils/sidebar';
 import AddNoteDialog from './AddNoteDialog';
 import { Plus } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
-export default function AddNoteButton() {
+export default async function AddNoteButton() {
   const state = useSidebarState();
+  const t = await getTranslations('Sidebar');
 
   return (
     <div
@@ -20,7 +22,7 @@ export default function AddNoteButton() {
             className='text-white group-active/button:scale-105 group-active/button:rotate-90 group-focus/button:rotate-90 group-focus/button:scale-105 group-hover/button:rotate-90 group-hover/button:scale-105 transition-transform duration-200'
           />
           <span className='md:inline hidden group-data-[state=closed]/root:hidden'>
-            New Note
+            {t('new_note')}
           </span>
         </button>
       </AddNoteDialog>

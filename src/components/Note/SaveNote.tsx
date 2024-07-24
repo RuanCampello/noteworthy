@@ -8,12 +8,15 @@ import { useToast } from '../ui/use-toast';
 import { updateNoteContent } from '@/actions/note';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
   const { toast } = useToast();
   const [loading, startTransition] = useTransition();
   const session = useSession();
+  const t = useTranslations('SaveButton');
+  const tt = useTranslations('Toast');
   const userId = session.data?.user?.id;
 
   const openNote = useParams<{ id: string }>().id;
@@ -29,9 +32,8 @@ export default function SaveNote() {
         currentEditor.editor?.getHTML(),
       );
       toast({
-        title: 'Note Saved',
-        description:
-          "Your note has been saved! It's ready whenever you need it. 📌",
+        title: tt('sv_note_title'),
+        description: tt('sv_note_dsc'),
         variant: 'success',
         action: (
           <div className='bg-blue/20 p-2 rounded-md w-fit'>
@@ -45,7 +47,7 @@ export default function SaveNote() {
     });
   }
   return (
-    <MenuTooltip content='Save changes (Ctrl+S)' sideOffset={8}>
+    <MenuTooltip content={`${t('title')} (Ctrl+S)`} sideOffset={8}>
       <form action={handleSaveClick}>
         <button
           type='submit'

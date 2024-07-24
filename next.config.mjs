@@ -1,3 +1,6 @@
+import createNextIntlPlugin from 'next-intl/plugin';
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['lucide-react'],
@@ -17,9 +20,10 @@ const nextConfig = {
       {
         hostname: process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL,
         protocol: 'https',
+        pathname: '**',
       },
     ],
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

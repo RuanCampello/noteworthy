@@ -12,7 +12,7 @@ const s3Client = new S3Client({
 });
 
 export async function getSignedUrlForObject(key: string, type: string) {
-  return await getSignedUrl(
+  const response = await getSignedUrl(
     s3Client,
     new PutObjectCommand({
       Bucket: env.CLOUDFLARE_BUCKET_NAME,
@@ -21,4 +21,6 @@ export async function getSignedUrlForObject(key: string, type: string) {
     }),
     { expiresIn: 3600 },
   );
+  console.log(response);
+  return response;
 }

@@ -1,4 +1,6 @@
-import { ColourType } from '@/utils/colours';
+import { type ColourType } from '@/utils/colours';
+import { type Locale } from '@/utils/constants/locales';
+import { type NoteFormat } from '@prisma/client';
 import { z } from 'zod';
 
 export const loginFormSchema = z.object({
@@ -39,4 +41,10 @@ export const newPasswordSchema = z.object({
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters',
   }),
+});
+
+export const userPreferencesSchema = z.object({
+  noteFormat: z.string().transform((s) => s as NoteFormat),
+  fullNote: z.boolean(),
+  language: z.string().transform((s) => s as Locale),
 });

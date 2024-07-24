@@ -1,6 +1,8 @@
 'use client';
 
-import { ReactNode, useState, useTransition } from 'react';
+import { editNote } from '@/actions/note';
+import { noteDialogSchema } from '@/schemas';
+import { Button } from '@/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,14 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
-import { Input } from '../ui/input';
-import ColourSelect from '../ColourSelect';
-import { ColourType, Colours } from '@/utils/colours';
-import { useForm, useWatch } from 'react-hook-form';
-import { noteDialogSchema } from '@/schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { NoteDialog } from './AddNoteDialog';
+} from '@/ui/dialog';
 import {
   Form,
   FormControl,
@@ -24,9 +19,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Button } from '../ui/button';
-import { editNote } from '@/actions/note';
+} from '@/ui/form';
+import { Input } from '@/ui/input';
+import { type ColourType, Colours } from '@/utils/colours';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type ReactNode, useState, useTransition } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import ColourSelect from '../ColourSelect';
+import { NoteDialog } from './AddNoteDialog';
+import { useTranslations } from 'next-intl';
 
 interface EditNoteDialogProps {
   children: ReactNode;
@@ -45,6 +46,7 @@ export default function EditNoteDialog({
 }: EditNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const t = useTranslations('Edit');
   const noteDialog = useForm<NoteDialog>({
     resolver: zodResolver(noteDialogSchema),
     defaultValues: {
@@ -78,16 +80,13 @@ export default function EditNoteDialog({
           >
             <DialogHeader className='flex flex-col gap-3'>
               <DialogTitle className='flex gap-2'>
-                Edit{' '}
+                {t('title')}{' '}
                 <p
                   title={noteName}
                   className='text-silver line-clamp-1'
                 >{`"${noteName}"`}</p>
               </DialogTitle>
-              <DialogDescription>
-                📝 Let&apos;s capture inspiration and craft wonders together!
-                Edit your note, let creativity soar! ✨
-              </DialogDescription>
+              <DialogDescription>{t('description')}</DialogDescription>
             </DialogHeader>
             <FormField
               control={noteDialog.control}
@@ -96,7 +95,7 @@ export default function EditNoteDialog({
                 <FormItem>
                   <div className='grid grid-cols-4 gap-4 items-center'>
                     <FormLabel className='text-base text-neutral-200 text-right'>
-                      Name
+                      {t('field_name')}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -115,9 +114,9 @@ export default function EditNoteDialog({
               name='colour'
               control={noteDialog.control}
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 gap-4 items-center'>
+                <FormItem className='grid grid-cols-4 gap-4 items-center space-y-0'>
                   <FormLabel className='text-base text-neutral-200 text-right'>
-                    Colour
+                    {t('field_colour')}
                   </FormLabel>
                   <FormControl>
                     <ColourSelect
@@ -138,7 +137,7 @@ export default function EditNoteDialog({
                 size='sm'
                 type='submit'
               >
-                Save changes
+                {t('button')}
               </Button>
             </DialogFooter>
           </form>

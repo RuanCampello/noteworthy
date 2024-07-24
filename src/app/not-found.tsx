@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Logo from '../../public/assets/logo.svg';
+import Logo from '@/assets/logo.svg';
 import { Dela_Gothic_One } from 'next/font/google';
 
 const gothicOne = Dela_Gothic_One({
