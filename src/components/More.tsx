@@ -21,7 +21,7 @@ export default async function More() {
           name={t('favourites')}
           icon={'star'}
         >
-          <Counter isFavourite />
+          {state !== 'closed' && <Counter isFavourite />}
         </MoreItem>
         <MoreItem
           colour={archiveColour}
@@ -29,7 +29,7 @@ export default async function More() {
           name={t('archived')}
           icon={'archive'}
         >
-          <Counter isArchived />
+          {state !== 'closed' && <Counter isArchived />}
         </MoreItem>
       </div>
     </div>

@@ -162,7 +162,7 @@ NEXT_PUBLIC_HOSTNAME=http://localhost:3000
 5. Start the development server using `npm run dev`.
 6. Open your web browser and visit http://localhost:3000.
 
-## Internationalization (i18n) Support
+## Internationalisation (i18n) Support
 
 Noteworthy supports multiple languages, allowing users to switch between languages seamlessly.
 
