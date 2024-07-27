@@ -162,6 +162,25 @@ NEXT_PUBLIC_HOSTNAME=http://localhost:3000
 5. Start the development server using `npm run dev`.
 6. Open your web browser and visit http://localhost:3000.
 
+## Internationalization (i18n) Support
+
+Noteworthy supports multiple languages, allowing users to switch between languages seamlessly.
+
+### Supported Languages
+
+- English
+- Portuguese (BR)
+
+### How to Switch Languages
+
+You can switch the language of the application using the language selector available in settings. The language files are stored in the public/locales directory, and the translations are managed via cookies using next-intl.
+
+### To add a new language, follow these steps:
+
+Create a new folder in the public/locales directory with the language name in English (e.g. spanish, dutch).
+Add translation JSON files (translations.json) in the new folder with the necessary translations.
+Update the locales.ts file at `src/utils/constants/locales.ts` to include the new language in the locales array.
+
 ## Contributing
 
 Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue or submit a pull request.
