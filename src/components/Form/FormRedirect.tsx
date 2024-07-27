@@ -20,7 +20,7 @@ export default function FormRedirect({
       <Link
         aria-disabled={disableWhen}
         href={path}
-        className={`flex items-center group ${disableWhen ? 'text-tickle/80 pointer-events-none' : 'text-tickle hover:underline underline-offset-2 focus:outline-none'}`}
+        className={`flex items-center group ${disableWhen ? 'text-slate/80 pointer-events-none' : 'text-slate hover:underline underline-offset-2 focus:outline-none'}`}
       >
         {link} <ArrowUpRight size={20} />
       </Link>

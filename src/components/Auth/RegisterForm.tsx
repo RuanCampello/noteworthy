@@ -84,7 +84,7 @@ export default function RegisterForm() {
           name='Github'
         />
         <CustomForm.Separator />
-        <div className='gap-3 flex flex-col mb-10'>
+        <div className='gap-3 flex flex-col mb-8'>
           <FormField
             control={form.control}
             name='username'
@@ -136,7 +136,7 @@ export default function RegisterForm() {
                     <Input
                       type={isPasswordVisible ? 'text' : 'password'}
                       placeholder='•••••••'
-                      className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                      className='bg-midnight text-base border-none focus:ring-transparent'
                       {...field}
                     />
                   </CustomForm.PasswordWrapper>

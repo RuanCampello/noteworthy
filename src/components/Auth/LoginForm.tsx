@@ -103,7 +103,7 @@ export default function LoginForm() {
           name='Github'
         />
         <CustomForm.Separator />
-        <div className='gap-3 flex flex-col mb-10'>
+        <div className='gap-3 flex flex-col mb-6'>
           <FormField
             control={form.control}
             name='email'
@@ -138,7 +138,7 @@ export default function LoginForm() {
                       <Input
                         type={isPasswordVisible ? 'text' : 'password'}
                         placeholder='•••••••'
-                        className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                        className='bg-midnight text-base border-none focus:ring-transparent'
                         {...field}
                       />
                     </CustomForm.PasswordWrapper>

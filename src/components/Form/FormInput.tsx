@@ -8,7 +8,7 @@ const FormInput = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         value={value}
         type={props.type}
-        className='placeholder:text-midnight/50 placeholder:font-medium bg-neutral-200 h-11 text-base text-midnight focus-visible:ring focus-visible:ring-tickle border-none ring-offset-tickle'
+        className='placeholder:text-white/50 placeholder:font-medium bg-midnight h-12 text-base text-neutral-100 focus-visible:ring focus-visible:ring-slate border border-night focus-visible:border-transparent ring-offset-slate rounded-md'
         {...props}
       />
     );

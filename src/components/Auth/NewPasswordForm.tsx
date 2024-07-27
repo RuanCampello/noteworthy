@@ -67,7 +67,7 @@ export default function NewPasswordForm() {
                     <Input
                       type={isPasswordVisible ? 'text' : 'password'}
                       placeholder='•••••••'
-                      className='bg-neutral-200 text-base border-none focus:ring-transparent'
+                      className='bg-midnight text-base border-none focus:ring-transparent'
                       {...field}
                     />
                   </CustomForm.PasswordWrapper>

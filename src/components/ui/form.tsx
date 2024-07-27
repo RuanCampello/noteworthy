@@ -92,7 +92,7 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && 'text-tickle', className)}
+      className={cn(error && 'text-slate', className)}
       htmlFor={formItemId}
       {...props}
     />
@@ -156,7 +156,7 @@ const FormMessage = React.forwardRef<
       ref={ref}
       id={formMessageId}
       className={cn(
-        'text-sm text-tickle rounded flex items-center gap-2',
+        'text-sm text-slate rounded flex items-center gap-2',
         className,
       )}
       {...props}

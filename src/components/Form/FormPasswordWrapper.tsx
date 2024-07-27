@@ -13,7 +13,7 @@ export default function FormPasswordWrapper({
   children,
 }: FormPasswordWrapperProps) {
   return (
-    <div className='flex focus-within:ring-2 focus-within:ring-offset-1 ring-tickle ring-offset-tickle items-center bg-neutral-200 rounded-md h-11 text-midnight pe-3'>
+    <div className='flex focus-within:ring-2 focus-within:ring-offset-1 ring-slate ring-offset-slate items-center bg-midnight rounded-md h-12 text-neutral-100 pe-3 border border-night focus-within:border-transparent'>
       {children}
       <button
         className='focus:outline-none'
