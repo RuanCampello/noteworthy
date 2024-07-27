@@ -168,8 +168,8 @@ Noteworthy supports multiple languages, allowing users to switch between languag
 
 ### Supported Languages
 
-- English
-- Portuguese (BR)
+- English 🇬🇧
+- Portuguese (BR) 🇧🇷
 
 ### How to Switch Languages
 
