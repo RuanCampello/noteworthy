@@ -187,6 +187,9 @@
     "placeholder": "Search anything...",
     "quick_act": "Quick actions",
     "search_res": "Search results",
-    "new_note": "Create new note"
+    "new_note": "Create new note",
+    "not_found_t": "Nothing found",
+    "not_found": "did not match anything.",
+    "try_again": "Please try again or create a new note."
   }
 }

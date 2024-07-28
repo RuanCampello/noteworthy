@@ -7,16 +7,19 @@ import {
   CommandList,
   CommandItem,
   CommandGroup,
+  CommandEmpty,
 } from '@/ui/command';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useTransition } from 'react';
 import useKeyboardShortcut from 'use-keyboard-shortcut';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { FilePlus2, NotebookText } from 'lucide-react';
+import { FilePlus2, NotebookText, NotepadTextDashed } from 'lucide-react';
 import { NoteItemWrapper } from './Item';
 import { stripHTMLTags } from '@/utils/format';
 import { createFastNote } from '@/server/actions/note';
+import NotFound from '@/assets/svg/oooscillate.svg';
+import Image from 'next/image';
 
 export default function Search() {
   const [open, setOpen] = useState<boolean>(false);
@@ -38,7 +41,7 @@ export default function Search() {
     ignoreInputFields: true,
   });
 
-  const { data: results } = useQuery({
+  const { data: results, isLoading } = useQuery({
     queryKey: ['search', query],
     queryFn: async () => {
       const results = await searchNotes(query);
@@ -47,15 +50,23 @@ export default function Search() {
     enabled: !!query,
   });
 
+  console.log(isLoading);
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
+        loading={isLoading}
         onValueChange={(v) => setQuery(v)}
         placeholder={t('placeholder')}
       />
       <CommandList>
-        {/* <CommandEmpty>No results found.</CommandEmpty> */}
-        {results && (
+        {isLoading && <LoadingFallback />}
+        {!isLoading && (
+          <CommandEmpty>
+            <NotFoundFallback query={query} />
+          </CommandEmpty>
+        )}
+        {results && Array.isArray(results) && (
           <CommandGroup heading={t('search_res')}>
             {results.map((r) => {
               const content = stripHTMLTags(r.content);
@@ -101,5 +112,41 @@ export default function Search() {
         </CommandGroup>
       </CommandList>
     </CommandDialog>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className='bg-transparent h-12 px-2 rounded-sm flex items-center gap-2'>
+      <div className='w-7 h-7 bg-midnight animate-pulse rounded-sm shrink-0' />
+      <div className='flex gap-2 w-full items-center'>
+        <div className='flex flex-col h-fit w-full gap-1'>
+          <div className='w-full bg-midnight h-4 rounded-sm animate-pulse' />
+          <div className='w-full bg-midnight h-2 rounded-sm animate-pulse' />
+        </div>
+        <div className='w-5 shrink-0 h-5 bg-midnight rounded-sm animate-pulse' />
+      </div>
+    </div>
+  );
+}
+
+function NotFoundFallback({ query }: { query: string }) {
+  const t = useTranslations('Search');
+  return (
+    <div className='w-full flex justify-center'>
+      <div className='items-center flex flex-col'>
+        <NotepadTextDashed className='w-7 h-7' />
+        <h2 className='font-semibold text-base my-1.5'> {t('not_found_t')} </h2>
+        <div className='text-neutral-300'>
+          <p> {`"${query}" ${t('not_found')}`} </p>
+          <p>{t('try_again')}</p>
+        </div>
+      </div>
+      <Image
+        src={NotFound}
+        className='absolute -z-10 -translate-y-14 brightness-50'
+        alt='Not found'
+      />
+    </div>
   );
 }

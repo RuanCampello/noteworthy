@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Search } from 'lucide-react';
+import { Loader, Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -32,7 +32,7 @@ function CommandDialog({ children, ...props }: CommandDialogProps) {
         onMouseOut={(e) => e.preventDefault()}
         className='overflow-hidden p-0 shadow-lg dark bg-transparent rounded-lg'
       >
-        <Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 bg-black/40 backdrop-blur-md dark'>
+        <Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 bg-black/40 backdrop-blur dark'>
           {children}
         </Command>
       </DialogContent>
@@ -40,12 +40,24 @@ function CommandDialog({ children, ...props }: CommandDialogProps) {
   );
 }
 
+interface CommandInputProps
+  extends React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> {
+  loading: boolean;
+}
+
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <div className='flex items-center border-b px-3' cmdk-input-wrapper=''>
-    <Search className='mr-2 h-4 w-4 shrink-0 opacity-50' />
+  CommandInputProps
+>(({ className, loading, ...props }, ref) => (
+  <div
+    className='flex items-center border-b px-3 z-10 bg-inherit'
+    cmdk-input-wrapper=''
+  >
+    {loading ? (
+      <Loader className='mr-2 h-4 w-4 shrink-0 opacity-50 animate-spin' />
+    ) : (
+      <Search className='mr-2 h-4 w-4 shrink-0 opacity-50' />
+    )}
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
