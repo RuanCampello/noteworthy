@@ -182,5 +182,11 @@
     "src": "Source",
     "srcs": "Sources",
     "lic": "Licence"
+  },
+  "Search": {
+    "placeholder": "Search anything...",
+    "quick_act": "Quick actions",
+    "search_res": "Search results",
+    "new_note": "Create new note"
   }
 }

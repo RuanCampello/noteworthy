@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, InputProps } from '../ui/input';
+import { Input, InputProps } from '@/ui/input';
 
 const FormInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ value, ...props }, ref) => {
