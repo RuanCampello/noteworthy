@@ -10,6 +10,8 @@ interface ItemWrapper {
 }
 
 export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
+  const dividedContent = content.split(/<b\b[^>]*>(.*?)<\/b>/gi);
+
   return (
     <Link
       href={id}
@@ -23,7 +25,11 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
       </div>
       <div className='leading-none truncate'>
         <h4 className='group-aria-selected:text-slate font-medium'>{title}</h4>
-        <p className='text-xs text-muted-foreground truncate'>{content}</p>
+        <p className='text-xs text-muted-foreground truncate'>
+          {dividedContent[0]}
+          <span className='text-slate font-bold'>{dividedContent[1]}</span>
+          {dividedContent[2]}
+        </p>
       </div>
       <ChevronRight className='w-3 h-3 shrink-0' />
     </Link>

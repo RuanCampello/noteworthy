@@ -1,8 +1,8 @@
-import { Colour } from '@prisma/client';
-
 export type SearchResult = {
   id: string;
   title: string;
   content: string;
-  colour: Colour;
+  is_favourite: boolean;
+  is_archived: boolean;
+  highlighted_content: string;
 };

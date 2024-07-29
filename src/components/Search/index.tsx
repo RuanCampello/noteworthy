@@ -14,18 +14,18 @@ import { useState, useTransition } from 'react';
 import useKeyboardShortcut from 'use-keyboard-shortcut';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { FilePlus2, NotebookText, NotepadTextDashed } from 'lucide-react';
 import { NoteItemWrapper } from './Item';
 import { stripHTMLTags } from '@/utils/format';
 import { createFastNote } from '@/server/actions/note';
+import { FilePlus2, NotebookText, NotepadTextDashed } from 'lucide-react';
 import NotFound from '@/assets/svg/oooscillate.svg';
 import Image from 'next/image';
 
 export default function Search() {
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
-  const router = useRouter();
   const [loading, startTransition] = useTransition();
+  const router = useRouter();
   const t = useTranslations('Search');
 
   useKeyboardShortcut(['Control', 'K'], () => setOpen(true), {
@@ -47,10 +47,8 @@ export default function Search() {
       const results = await searchNotes(query);
       return results;
     },
-    enabled: !!query,
+    enabled: !!query && query.length > 2,
   });
-
-  console.log(isLoading);
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
@@ -70,6 +68,7 @@ export default function Search() {
           <CommandGroup heading={t('search_res')}>
             {results.map((r) => {
               const content = stripHTMLTags(r.content);
+              const hightlight = r.highlighted_content;
               const uniqueValue = r.id + r.title + r.content;
 
               return (
@@ -84,7 +83,7 @@ export default function Search() {
                 >
                   <NoteItemWrapper
                     id={r.id}
-                    content={content}
+                    content={hightlight || content}
                     title={r.title}
                     icon={<NotebookText />}
                   />
@@ -145,7 +144,7 @@ function NotFoundFallback({ query }: { query: string }) {
       <Image
         src={NotFound}
         className='absolute -z-10 -translate-y-14 brightness-50'
-        alt='Not found'
+        alt={t('not_found_t')}
       />
     </div>
   );
