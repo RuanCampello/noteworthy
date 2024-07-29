@@ -1,3 +1,4 @@
+import { stripHTMLTags } from '@/utils/format';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { cloneElement } from 'react';
@@ -10,7 +11,10 @@ interface ItemWrapper {
 }
 
 export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
-  const dividedContent = content.split(/<b\b[^>]*>(.*?)<\/b>/gi);
+  content = stripHTMLTags(content);
+  const searchRegex = /<search\b[^>]*>(.*?)<\/search>/gi;
+  const matchArray = Array.from(content.matchAll(searchRegex));
+  const contentArray = content.split(searchRegex);
 
   return (
     <Link
@@ -26,12 +30,41 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
       <div className='leading-none truncate'>
         <h4 className='group-aria-selected:text-slate font-medium'>{title}</h4>
         <p className='text-xs text-muted-foreground truncate'>
-          {dividedContent[0]}
-          <span className='text-slate font-bold'>{dividedContent[1]}</span>
-          {dividedContent[2]}
+          {matchArray && matchArray[0] ? (
+            <RenderContent content={contentArray} match={matchArray} />
+          ) : (
+            content
+          )}
         </p>
       </div>
       <ChevronRight className='w-3 h-3 shrink-0' />
     </Link>
+  );
+}
+
+interface RenderContentProps {
+  content: string[];
+  match: string[];
+}
+
+function RenderContent({ content, match }: RenderContentProps) {
+  const combinedContent = content.flatMap((c) =>
+    match.some((m) => m[1] === c)
+      ? [{ key: c, text: c, highlighted: true }]
+      : [{ key: c, text: c, highlighted: false }],
+  );
+
+  return (
+    <p>
+      {combinedContent.map(({ key, text, highlighted }) =>
+        highlighted ? (
+          <span key={key} className='text-slate font-semibold'>
+            {text}
+          </span>
+        ) : (
+          <span key={key}>{text}</span>
+        ),
+      )}
+    </p>
   );
 }

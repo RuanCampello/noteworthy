@@ -67,7 +67,6 @@ export default function Search() {
         {results && Array.isArray(results) && (
           <CommandGroup heading={t('search_res')}>
             {results.map((r) => {
-              const content = stripHTMLTags(r.content);
               const hightlight = r.highlighted_content;
               const uniqueValue = r.id + r.title + r.content;
 
@@ -83,7 +82,7 @@ export default function Search() {
                 >
                   <NoteItemWrapper
                     id={r.id}
-                    content={hightlight || content}
+                    content={hightlight || r.content}
                     title={r.title}
                     icon={<NotebookText />}
                   />
