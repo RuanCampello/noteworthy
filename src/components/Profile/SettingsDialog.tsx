@@ -22,13 +22,14 @@ import {
 } from '@prisma/client';
 import { Bolt } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition, type ReactNode } from 'react';
+import { useTransition, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale } from '@/utils/constants/locales';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
@@ -41,7 +42,7 @@ export const revalidate = 0;
 
 export default function SettingsDialog({ preferences }: SettingsProps) {
   const [loading, startTransition] = useTransition();
-  const [open, setOpen] = useState<boolean>(false);
+  const { isOpen, setOpen } = useSettingsDialogStore();
   const t = useTranslations('Settings');
   const locale = useLocale();
   const router = useRouter();
@@ -67,7 +68,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   const fieldClassname =
     'h-20 w-full bg-white/10 outline outline-2 outline-offset-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button type='button' variant='dropdown' size='xs'>
           {t('title')}

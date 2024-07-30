@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Loader, Search } from 'lucide-react';
+import { Loader, LucideProps, Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -143,6 +143,18 @@ const CommandItem = React.forwardRef<
 
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
+interface CommandIconProps {
+  icon: React.ComponentType<LucideProps>;
+}
+
+function CommandIcon({ icon: Icon }: CommandIconProps) {
+  return (
+    <div className='p-1 bg-night group-aria-selected:bg-slate rounded-sm'>
+      <Icon size={12} strokeWidth={1.75} />
+    </div>
+  );
+}
+
 function CommandShortcut({
   className,
   ...props
@@ -169,4 +181,5 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
+  CommandIcon,
 };

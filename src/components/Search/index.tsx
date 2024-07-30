@@ -8,6 +8,7 @@ import {
   CommandItem,
   CommandGroup,
   CommandEmpty,
+  CommandIcon,
 } from '@/ui/command';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useTransition } from 'react';
@@ -22,16 +23,21 @@ import {
   FilePlus2,
   NotebookText,
   NotepadTextDashed,
+  Settings,
   Undo2,
 } from 'lucide-react';
 import NotFound from '@/assets/svg/oooscillate.svg';
 import Image from 'next/image';
 import { CommandFooter } from './Footer';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { useSettingsStore } from '@/lib/zustand/settings';
 
 export default function Search() {
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
   const [loading, startTransition] = useTransition();
+  const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
+  const { setOpen: setSettingsOpen } = useSettingsStore();
   const router = useRouter();
   const t = useTranslations('Search');
 
@@ -109,10 +115,19 @@ export default function Search() {
               });
             }}
           >
-            <div className='p-1 bg-night group-aria-selected:bg-slate rounded-sm'>
-              <FilePlus2 size={12} strokeWidth={1.75} />
-            </div>
+            <CommandIcon icon={FilePlus2} />
             <span>{t('new_note')}</span>
+          </CommandItem>
+          <CommandItem
+            disabled={loading}
+            onSelect={() => {
+              setSettingsOpen(true);
+              setSettingsDialogOpen(true);
+              setOpen(false);
+            }}
+          >
+            <CommandIcon icon={Settings} />
+            <span>Open settings</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>
