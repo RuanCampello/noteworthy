@@ -9,12 +9,14 @@ import { type ReactNode } from 'react';
 import { useSidebarState } from '@/utils/sidebar';
 import { currentUser } from '@/server/queries/note';
 import { getTranslations } from 'next-intl/server';
+import { headers } from 'next/headers';
 
 export default async function Notes() {
   const user = await currentUser();
   const state = useSidebarState();
   if (!user || !user.id) return;
   const t = await getTranslations('Sidebar');
+  const isFirefox = headers().get('user-agent')?.includes('Firefox');
 
   const api = new API(user.id);
   const result = await api.notes.ordinary.filter();
@@ -40,7 +42,10 @@ export default async function Notes() {
         <SearchNote />
         <SortDropdown />
       </div>
-      <div className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-thin scrollbar-track-black scrollbar-thumb-silver xl:max-h-[396px] lg:max-h-[300px] max-h-[230px] px-5 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden'>
+      <div
+        data-firefox={isFirefox}
+        className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-w-1 scrollbar scrollbar-thumb-rounded-full scrollbar-thumb-silver xl:max-h-[396px] lg:max-h-[300px] max-h-[230px] px-5 pe-4 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden data-[firefox=true]:scrollbar-thin data-[firefox=true]:scrollbar-track-black'
+      >
         {notes.length === 0 && searchParam ? (
           <PlaceholderWrapper>
             <h1>
