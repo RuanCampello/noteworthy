@@ -16,9 +16,17 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { NoteItemWrapper } from './Item';
 import { createFastNote } from '@/server/actions/note';
-import { FilePlus2, NotebookText, NotepadTextDashed } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  FilePlus2,
+  NotebookText,
+  NotepadTextDashed,
+  Undo2,
+} from 'lucide-react';
 import NotFound from '@/assets/svg/oooscillate.svg';
 import Image from 'next/image';
+import { CommandFooter } from './Footer';
 
 export default function Search() {
   const [open, setOpen] = useState<boolean>(false);
@@ -108,6 +116,21 @@ export default function Search() {
           </CommandItem>
         </CommandGroup>
       </CommandList>
+      <CommandFooter.Root>
+        <CommandFooter.Group>
+          <CommandFooter.Icon icon={ArrowUp} />
+          <CommandFooter.Icon icon={ArrowDown} />
+          <p>navigate</p>
+        </CommandFooter.Group>
+        <CommandFooter.Group>
+          <CommandFooter.Icon icon={Undo2} className='-scale-y-100' />
+          <p>open</p>
+        </CommandFooter.Group>
+        <CommandFooter.Group>
+          <CommandFooter.Icon text='esc' />
+          <p>close</p>
+        </CommandFooter.Group>
+      </CommandFooter.Root>
     </CommandDialog>
   );
 }
