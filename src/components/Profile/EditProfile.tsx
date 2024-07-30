@@ -20,6 +20,7 @@ import { CustomForm } from '@/components/Form';
 import Compressor from 'compressorjs';
 import { getUploadUrl } from '@/actions/image';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z
@@ -34,6 +35,7 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const { data: session, update } = useSession();
+  const router = useRouter();
   const t = useTranslations('Profile');
   const user = session?.user;
 
@@ -71,9 +73,7 @@ export default function EditProfile() {
               method: 'PUT',
               body: result,
             });
-            if (typeof window !== 'undefined') {
-              window.location.reload();
-            }
+            router.refresh();
           },
         });
       }
@@ -129,8 +129,7 @@ export default function EditProfile() {
                   src={
                     selectedImage ||
                     image ||
-                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}` ||
-                    ''
+                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}`
                   }
                   loading='lazy'
                   alt={(name && name[0].toUpperCase()) || ''}

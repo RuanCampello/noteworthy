@@ -1,7 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 import { Bolt, LogOut } from 'lucide-react';
 import {
-  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
@@ -15,9 +13,8 @@ import KeyboardDialog from './KeyboardDialog';
 import SettingsDialog from './SettingsDialog';
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { getTranslations } from 'next-intl/server';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+import Menu from './Menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 
 export default async function Profile() {
   const user = await currentUser();
@@ -34,7 +31,9 @@ export default async function Profile() {
     await signOut();
   }
 
-  const source = image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${user.id}`;
+  const source =
+    image ||
+    `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${user.id}?${new Date().getTime()}`;
   const fallback = name[0].toUpperCase();
 
   return (
@@ -43,24 +42,17 @@ export default async function Profile() {
       className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
     >
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        {source ? (
-          <img
-            src={source}
-            width={64}
-            height={64}
-            className='w-8 h-8 object-cover rounded-full'
-            alt={fallback}
-          />
-        ) : (
-          <div className='w-8 h-8 rounded-full bg-slate text-xl font-semibold text-center leading-8 uppercase'>
+        <Avatar>
+          <AvatarImage className='object-cover' src={source} />
+          <AvatarFallback className='bg-slate font-semibold'>
             {fallback}
-          </div>
-        )}
+          </AvatarFallback>
+        </Avatar>
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>
         </div>
-        <DropdownMenu>
+        <Menu>
           <DropdownMenuTrigger asChild>
             <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden' />
           </DropdownMenuTrigger>
@@ -83,7 +75,7 @@ export default async function Profile() {
               </button>
             </form>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </Menu>
       </div>
     </div>
   );
