@@ -68,6 +68,7 @@ export default async function KeyboardDialog() {
 
   const globalShortcuts: Shortcut[] = [
     { action: t('toggle_sidebar'), commands: ['Alt', 'S'] },
+    { action: t('search'), commands: ['Ctrl', 'K'] },
   ];
 
   return (

@@ -39,7 +39,9 @@ export default function Search() {
   const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
   const { setOpen: setSettingsOpen } = useSettingsStore();
   const router = useRouter();
+
   const t = useTranslations('Search');
+  const tf = useTranslations('SearchFooter');
 
   useKeyboardShortcut(['Control', 'K'], () => setOpen(true), {
     overrideSystem: true,
@@ -127,7 +129,7 @@ export default function Search() {
             }}
           >
             <CommandIcon icon={Settings} />
-            <span>Open settings</span>
+            <span>{t('open_settings')}</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>
@@ -135,15 +137,15 @@ export default function Search() {
         <CommandFooter.Group>
           <CommandFooter.Icon icon={ArrowUp} />
           <CommandFooter.Icon icon={ArrowDown} />
-          <p>navigate</p>
+          <p>{tf('nav')}</p>
         </CommandFooter.Group>
         <CommandFooter.Group>
           <CommandFooter.Icon icon={Undo2} className='-scale-y-100' />
-          <p>open</p>
+          <p>{tf('open')}</p>
         </CommandFooter.Group>
         <CommandFooter.Group>
           <CommandFooter.Icon text='esc' />
-          <p>close</p>
+          <p>{tf('close')}</p>
         </CommandFooter.Group>
       </CommandFooter.Root>
     </CommandDialog>
