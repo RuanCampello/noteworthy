@@ -21,6 +21,9 @@ import Compressor from 'compressorjs';
 import { getUploadUrl } from '@/actions/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import Image from 'next/image';
 
 const formSchema = z.object({
   name: z
@@ -35,6 +38,8 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();
   const { data: session, update } = useSession();
+  const { setOpen: setSettings } = useSettingsStore();
+  const { setOpen: setSettingsDialog } = useSettingsDialogStore();
   const router = useRouter();
   const t = useTranslations('Profile');
   const user = session?.user;
@@ -74,6 +79,8 @@ export default function EditProfile() {
               body: result,
             });
             router.refresh();
+            setSettings(false);
+            setSettingsDialog(false);
           },
         });
       }
@@ -123,15 +130,16 @@ export default function EditProfile() {
                     <X size={16} />
                   </button>
                 )}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+
+                <Image
                   className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-md text-4xl font-semibold text-center items-center w-28 h-28 shrink-0 object-cover flex justify-center'
+                  width={128}
+                  height={128}
                   src={
                     selectedImage ||
                     image ||
-                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}`
+                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}?${new Date().getTime()}`
                   }
-                  loading='lazy'
                   alt={(name && name[0].toUpperCase()) || ''}
                 />
               </FormLabel>
