@@ -15,7 +15,6 @@ import useKeyboardShortcut from 'use-keyboard-shortcut';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { NoteItemWrapper } from './Item';
-import { stripHTMLTags } from '@/utils/format';
 import { createFastNote } from '@/server/actions/note';
 import { FilePlus2, NotebookText, NotepadTextDashed } from 'lucide-react';
 import NotFound from '@/assets/svg/oooscillate.svg';

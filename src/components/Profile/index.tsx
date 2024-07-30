@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Bolt, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
@@ -12,7 +13,6 @@ import { currentUser } from '@/server/queries/note';
 import { useSidebarState } from '@/utils/sidebar';
 import KeyboardDialog from './KeyboardDialog';
 import SettingsDialog from './SettingsDialog';
-import Avatar from './Avatar';
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { getTranslations } from 'next-intl/server';
 
@@ -34,17 +34,28 @@ export default async function Profile() {
     await signOut();
   }
 
+  const source = image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${user.id}`;
+  const fallback = name[0].toUpperCase();
+
   return (
     <div
       data-state={state}
       className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
     >
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar
-          providerImage={image}
-          cloudflareImage={`${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}`}
-          name={name}
-        />
+        {source ? (
+          <img
+            src={source}
+            width={64}
+            height={64}
+            className='w-8 h-8 object-cover rounded-full'
+            alt={fallback}
+          />
+        ) : (
+          <div className='w-8 h-8 rounded-full bg-slate text-xl font-semibold text-center leading-8 uppercase'>
+            {fallback}
+          </div>
+        )}
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>

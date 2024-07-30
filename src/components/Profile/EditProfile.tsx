@@ -30,9 +30,6 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [loading, startTransition] = useTransition();

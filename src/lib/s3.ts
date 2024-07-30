@@ -21,6 +21,5 @@ export async function getSignedUrlForObject(key: string, type: string) {
     }),
     { expiresIn: 3600 },
   );
-  console.log(response);
   return response;
 }

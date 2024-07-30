@@ -36,6 +36,9 @@ interface SettingsProps {
   preferences: Preferences | null;
 }
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function SettingsDialog({ preferences }: SettingsProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
