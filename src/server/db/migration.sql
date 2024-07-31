@@ -25,3 +25,9 @@ CREATE INDEX notes_content_idx ON "notes" USING GIN (to_tsvector('english', "con
 CREATE INDEX notes_content_title_idx ON "notes" USING GIN (
   to_tsvector('english', "title" || ' ' || "content")
 );
+
+-------------------------- correct note id type --------------------------
+
+ALTER TABLE notes
+ALTER COLUMN id TYPE UUID USING id::UUID,
+ALTER COLUMN id SET DEFAULT gen_random_uuid();

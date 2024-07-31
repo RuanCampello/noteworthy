@@ -68,13 +68,13 @@ export const account = pgTable(
 
 export const note = pgTable('notes', {
   id: uuid('id')
-    .default(sql`gen_random_uuid()`)
-    .primaryKey(),
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   title: text('title').notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow(),
   isFavourite: boolean('is_favourite').default(false),
   isArchived: boolean('is_archived').default(false),
-  isPublic: boolean('is_public').default(false),
+  isPublic: boolean('is_public').default(false).notNull(),
   userId: varchar('userId', { length: 36 })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
@@ -124,48 +124,3 @@ export const noteRelations = relations(note, ({ one }) => ({
 
 export type Note = InferSelectModel<typeof note>;
 export type User = InferSelectModel<typeof user>;
-
-// next auth tables //
-
-export const sessions = pgTable('session', {
-  sessionToken: text('sessionToken').primaryKey(),
-  userId: text('userId')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
-});
-
-export const verificationTokens = pgTable(
-  'verificationToken',
-  {
-    identifier: text('identifier').notNull(),
-    token: text('token').notNull(),
-    expires: timestamp('expires', { mode: 'date' }).notNull(),
-  },
-  (verificationToken) => ({
-    compositePk: primaryKey({
-      columns: [verificationToken.identifier, verificationToken.token],
-    }),
-  }),
-);
-
-export const authenticators = pgTable(
-  'authenticator',
-  {
-    credentialID: text('credentialID').notNull().unique(),
-    userId: text('userId')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-    providerAccountId: text('providerAccountId').notNull(),
-    credentialPublicKey: text('credentialPublicKey').notNull(),
-    counter: integer('counter').notNull(),
-    credentialDeviceType: text('credentialDeviceType').notNull(),
-    credentialBackedUp: boolean('credentialBackedUp').notNull(),
-    transports: text('transports'),
-  },
-  (authenticator) => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  }),
-);

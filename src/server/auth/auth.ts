@@ -4,7 +4,7 @@ import { getUserById } from '@/queries/user';
 import { createPlaceholderNote } from '@/actions/note';
 import { drizzle as db } from '@/server/db';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { accounts, users } from '@/server/db/schema';
+import { account, user as userTable } from '@/server/db/schema';
 import { type Adapter } from 'next-auth/adapters';
 import { eq } from 'drizzle-orm';
 
@@ -22,11 +22,11 @@ export const {
     async linkAccount({ user }) {
       if (!user.id) return;
       await db
-        .update(users)
+        .update(userTable)
         .set({
           emailVerified: new Date(),
         })
-        .where(eq(users.id, user.id));
+        .where(eq(userTable.id, user.id));
     },
     async createUser({ user }) {
       if (user.id) {
@@ -50,11 +50,11 @@ export const {
       if (trigger === 'update') {
         if (session?.name && session.name !== user.name) {
           await db
-            .update(users)
+            .update(userTable)
             .set({
               name: session.name,
             })
-            .where(eq(users.id, user.id));
+            .where(eq(userTable.id, user.id));
 
           //update token with new data
           token.name = session.name;
@@ -65,8 +65,8 @@ export const {
     },
   },
   adapter: DrizzleAdapter(db, {
-    accountsTable: accounts,
-    usersTable: users,
+    accountsTable: account,
+    usersTable: userTable,
   }) as Adapter,
   session: { strategy: 'jwt' },
   ...authConfig,

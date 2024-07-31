@@ -65,12 +65,12 @@ export const getNoteByIdWithPreferences = cache(async (id: string) => {
 
 export const getNoteIsPublic = cache(async (noteId: string) => {
   try {
-    const publicity = await db.query.note.findFirst({
+    const response = await db.query.note.findFirst({
       where: eq(note.id, noteId),
       columns: { isPublic: true },
     });
-    if (!publicity) return null;
-    return !!publicity;
+
+    return !!response?.isPublic;
   } catch (error) {
     console.error(error);
     return null;

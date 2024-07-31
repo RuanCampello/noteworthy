@@ -1,7 +1,7 @@
 'use server';
 
 import { currentUser, getNoteById } from '@/queries/note';
-import { db, drizzle } from '@/server/db';
+import { drizzle as db } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
@@ -10,6 +10,8 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { cache } from 'react';
+import { note } from '@/server/db/schema';
+import { and, eq } from 'drizzle-orm';
 
 function getPathnameParams() {
   const origin = headers().get('origin');
@@ -29,41 +31,41 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const user = await currentUser();
   if (!user || !user.id) return;
 
-  // const note = await db.note.create({
-  //   data: {
-  //     title: name,
-  //     colour: colour,
-  //     userId: user.id,
-  //     content: '',
-  //   },
-  // });
-
+  const [{ id }] = await db
+    .insert(note)
+    .values({
+      title: name,
+      colour: colour,
+      userId: user.id,
+      content: '',
+    })
+    .returning({ id: note.id });
   const { origin, basePath } = getPathnameParams();
 
   if (!basePath || basePath === 'favourites' || basePath === 'archived') {
-    redirect(`${origin}/notes/${note.id}`);
+    redirect(`${origin}/notes/${id}`);
   }
   //if user is already in notes path, but not on favourite/archive page
-  redirect(`${origin}/${basePath}/${note.id}`);
+  redirect(`${origin}/${basePath}/${id}`);
 }
 
 export async function toggleNoteFavourite(id: string, userId: string) {
   const { basePath, origin } = getPathnameParams();
 
-  const note = await db.note.findUnique({ where: { id, userId } });
-  if (!note) return;
+  const selectedNote = await getNoteById(id);
+  if (!selectedNote) return;
 
-  if (!note.isArchived) {
-    if (note.isFavourite === true) {
-      await db.note.update({
-        where: { id, userId },
-        data: { isFavourite: false, lastUpdate: new Date() },
-      });
-    } else if (note.isFavourite === false) {
-      await db.note.update({
-        where: { id, userId },
-        data: { isFavourite: true, lastUpdate: new Date() },
-      });
+  if (!selectedNote.isArchived) {
+    if (selectedNote.isFavourite === true) {
+      await db
+        .update(note)
+        .set({ isFavourite: false, lastUpdate: new Date() })
+        .where(eq(note.id, id));
+    } else {
+      await db
+        .update(note)
+        .set({ isFavourite: true, lastUpdate: new Date() })
+        .where(eq(note.id, id));
     }
   }
 
@@ -81,20 +83,20 @@ export async function toggleNoteFavourite(id: string, userId: string) {
 export async function toggleNoteArchive(id: string, userId: string) {
   const { basePath, origin } = getPathnameParams();
 
-  const note = await db.note.findUnique({ where: { id, userId } });
-  if (!note) return;
+  const selectedNote = await getNoteById(id);
+  if (!selectedNote) return;
 
-  if (!note.isFavourite) {
-    if (note.isArchived === true) {
-      await db.note.update({
-        where: { id, userId },
-        data: { isArchived: false, lastUpdate: new Date() },
-      });
-    } else if (note.isArchived === false) {
-      await db.note.update({
-        where: { id, userId },
-        data: { isArchived: true, lastUpdate: new Date() },
-      });
+  if (!selectedNote.isFavourite) {
+    if (selectedNote.isArchived == true) {
+      await db
+        .update(note)
+        .set({ isArchived: false, lastUpdate: new Date() })
+        .where(eq(note.id, id));
+    } else {
+      await db
+        .update(note)
+        .set({ isArchived: true, lastUpdate: new Date() })
+        .where(eq(note.id, id));
     }
   }
 
@@ -113,16 +115,20 @@ export async function editNote(
 ) {
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
+  const { basePath } = getPathnameParams();
 
   let { colour } = fields.data;
   const { name } = fields.data;
   colour === 'random' ? (colour = getRandomColour().name) : colour;
   try {
-    await db.note.update({ where: { id }, data: { title: name, colour } });
+    await db
+      .update(note)
+      .set({ title: name, colour: colour, lastUpdate: new Date() })
+      .where(eq(note.id, id));
   } catch (error) {
     console.error(error);
   }
-  redirect(`/notes/${id}`);
+  redirect(`/${basePath}/${id}`);
 }
 
 export async function deleteNote(id: string) {
@@ -135,19 +141,18 @@ export async function deleteNote(id: string) {
     return;
   }
 
-  await db.note.delete({ where: { id } });
+  await db.delete(note).where(eq(note.id, id));
   redirect('/');
 }
 
 export async function createPlaceholderNote(userId: string) {
   const { name } = getRandomColour();
-  await db.note.create({
-    data: {
-      colour: name,
-      content: helloWorld,
-      title: 'Hello World 📝',
-      userId,
-    },
+
+  await db.insert(note).values({
+    colour: name,
+    content: helloWorld,
+    title: 'Hello World 📝',
+    userId,
   });
 }
 
@@ -156,13 +161,17 @@ export async function updateNoteContent(
   userId: string,
   content: string,
 ) {
+  const { basePath } = getPathnameParams();
   try {
-    const note = await db.note.update({
-      where: { id, userId },
-      data: { content, lastUpdate: new Date() },
-    });
-    revalidatePath('/notes');
-    return note;
+    const updatedNote = await db
+      .update(note)
+      .set({
+        content: content,
+        lastUpdate: new Date(),
+      })
+      .where(and(eq(note.id, id), eq(note.userId, userId)));
+    revalidatePath(`/${basePath}`, 'layout');
+    return updatedNote;
   } catch (error) {
     console.error(error);
     return;
@@ -171,10 +180,18 @@ export async function updateNoteContent(
 
 export async function togglePublishState(id: string, currentState: boolean) {
   try {
-    const [note, user] = await Promise.all([getNoteById(id), currentUser()]);
-    if (!note || user?.id !== note.userId) return;
+    const [selectedNote, user] = await Promise.all([
+      getNoteById(id),
+      currentUser(),
+    ]);
+    if (!selectedNote || user?.id !== selectedNote.userId) return;
 
-    await db.note.update({ where: { id }, data: { isPublic: !currentState } });
+    await db
+      .update(note)
+      .set({
+        isPublic: !currentState,
+      })
+      .where(eq(note.id, id));
     const { basePath } = getPathnameParams();
 
     if (basePath) {
@@ -182,15 +199,13 @@ export async function togglePublishState(id: string, currentState: boolean) {
     }
   } catch (error) {
     console.error(error);
-    return;
+    return null;
   }
 }
 
 export const getNote = cache(async (id: string) => {
   try {
-    const note = await db.note.findUnique({ where: { id } });
-
-    return note;
+    return await db.query.note.findFirst({ where: eq(note.id, id) });
   } catch (error) {
     return null;
   }
@@ -205,10 +220,9 @@ export async function createFastNote() {
     const response = await fetch('https://dummyjson.com/quotes/random');
     const data = await response.json();
 
-    const note = await db.note.create({
-      data: { colour, content: '', title: data['quote'], userId: user.id },
-    });
-    return note;
+    return await db
+      .insert(note)
+      .values({ colour, content: '', title: data['quote'], userId: user.id });
   } catch (error) {
     return null;
   }

@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
-import { type Note } from '@prisma/client';
+import { type Note } from '@/server/db/schema';
 import {
   Archive,
   ArchiveX,
@@ -90,7 +90,7 @@ export default function Dropdown({ children }: DropdownProps) {
           <DropdownButton
             loading={favouriteLoading}
             disabled={isArchived || favouriteLoading}
-            active={isFavourite}
+            active={!!isFavourite}
             color='favourite'
             text={isFavourite ? t('unfav') : t('fav')}
             icon={isFavourite ? <StarOff /> : <Star />}
@@ -103,7 +103,7 @@ export default function Dropdown({ children }: DropdownProps) {
             color='archive'
             text={isArchived ? t('unarc') : t('arc')}
             disabled={isFavourite || archiveLoading}
-            active={isArchived}
+            active={!!isArchived}
           />
         </form>
         <EditNoteDialog
