@@ -1,7 +1,7 @@
 'use server';
 
 import { currentUser, getNoteById } from '@/queries/note';
-import { db } from '@/server/db';
+import { db, drizzle } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
@@ -29,14 +29,14 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const user = await currentUser();
   if (!user || !user.id) return;
 
-  const note = await db.note.create({
-    data: {
-      title: name,
-      colour: colour,
-      userId: user.id,
-      content: '',
-    },
-  });
+  // const note = await db.note.create({
+  //   data: {
+  //     title: name,
+  //     colour: colour,
+  //     userId: user.id,
+  //     content: '',
+  //   },
+  // });
 
   const { origin, basePath } = getPathnameParams();
 

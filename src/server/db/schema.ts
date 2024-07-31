@@ -31,7 +31,7 @@ export const colour = pgEnum('colour', [
 
 export const noteFormat = pgEnum('note_format', ['full', 'slim']);
 
-export const users = pgTable('users', {
+export const user = pgTable('users', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -42,12 +42,12 @@ export const users = pgTable('users', {
   password: text('password'),
 });
 
-export const accounts = pgTable(
+export const account = pgTable(
   'accounts',
   {
     userId: varchar('userId', { length: 36 })
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     type: varchar('type', { length: 8 }).$type<AdapterAccount>().notNull(),
     provider: varchar('provider', { length: 8 }).$type<Provider>().notNull(),
     providerAccountId: integer('providerAccountId').notNull(),
@@ -66,7 +66,7 @@ export const accounts = pgTable(
   }),
 );
 
-export const notes = pgTable('notes', {
+export const note = pgTable('notes', {
   id: uuid('id')
     .default(sql`gen_random_uuid()`)
     .primaryKey(),
@@ -77,7 +77,7 @@ export const notes = pgTable('notes', {
   isPublic: boolean('is_public').default(false),
   userId: varchar('userId', { length: 36 })
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => user.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
   colour: colour('colour').notNull(),
   lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow(),
@@ -87,7 +87,7 @@ export const userPreferences = pgTable('users_preferences', {
   id: serial('id').unique().primaryKey(),
   userId: varchar('userId', { length: 36 })
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => user.id, { onDelete: 'cascade' }),
   noteFormat: noteFormat('note_format').default('full').notNull(),
   fullNote: boolean('full_note').default(true).notNull(),
 });
@@ -99,31 +99,31 @@ export const passwordResetToken = pgTable('password_reset_tokens', {
   expires: timestamp('expires', { mode: 'date' }).notNull(),
 });
 
-export const accountRelations = relations(accounts, ({ one }) => ({
-  user: one(users, {
-    fields: [accounts.userId],
-    references: [users.id],
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
   }),
 }));
 
-export const userRelations = relations(users, ({ one, many }) => ({
-  notes: many(notes),
-  accounts: many(accounts),
+export const userRelations = relations(user, ({ one, many }) => ({
+  note: many(note),
+  account: many(account),
   preferences: one(userPreferences, {
-    fields: [users.id],
+    fields: [user.id],
     references: [userPreferences.userId],
   }),
 }));
 
-export const notesRelations = relations(notes, ({ one }) => ({
-  owner: one(users, {
-    fields: [notes.userId],
-    references: [users.id],
+export const noteRelations = relations(note, ({ one }) => ({
+  owner: one(user, {
+    fields: [note.userId],
+    references: [user.id],
   }),
 }));
 
-export type Note = InferSelectModel<typeof notes>;
-export type User = InferSelectModel<typeof users>;
+export type Note = InferSelectModel<typeof note>;
+export type User = InferSelectModel<typeof user>;
 
 // next auth tables //
 
@@ -131,7 +131,7 @@ export const sessions = pgTable('session', {
   sessionToken: text('sessionToken').primaryKey(),
   userId: text('userId')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => user.id, { onDelete: 'cascade' }),
   expires: timestamp('expires', { mode: 'date' }).notNull(),
 });
 
@@ -155,7 +155,7 @@ export const authenticators = pgTable(
     credentialID: text('credentialID').notNull().unique(),
     userId: text('userId')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     providerAccountId: text('providerAccountId').notNull(),
     credentialPublicKey: text('credentialPublicKey').notNull(),
     counter: integer('counter').notNull(),

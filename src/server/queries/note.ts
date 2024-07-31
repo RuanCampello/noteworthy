@@ -4,7 +4,7 @@ import { auth } from '@/auth/auth';
 import { drizzle as db } from '@/server/db';
 import { cache } from 'react';
 import { and, eq } from 'drizzle-orm';
-import { type Note, notes, users } from '@/server/db/schema';
+import { type Note, note, user } from '@/server/db/schema';
 
 export const currentUser = cache(async () => {
   const session = await auth();
@@ -13,8 +13,8 @@ export const currentUser = cache(async () => {
 
 export const getNoteById = cache(async (id: string) => {
   try {
-    return await db.query.notes.findFirst({
-      where: eq(notes.id, id),
+    return await db.query.note.findFirst({
+      where: eq(note.id, id),
       with: { owner: { columns: { name: true, id: true } } },
     });
   } catch (error) {
@@ -33,12 +33,12 @@ export const getAllUserNotes = cache(
     try {
       return await db
         .select()
-        .from(notes)
+        .from(note)
         .where(
           and(
-            eq(notes.userId, userId),
-            eq(notes.isArchived, isArchived),
-            eq(notes.isFavourite, isFavourite),
+            eq(note.userId, userId),
+            eq(note.isArchived, isArchived),
+            eq(note.isFavourite, isFavourite),
           ),
         );
     } catch (error) {
@@ -48,8 +48,8 @@ export const getAllUserNotes = cache(
 );
 export const getNoteByIdWithPreferences = cache(async (id: string) => {
   try {
-    return db.query.notes.findFirst({
-      where: eq(users.id, id),
+    return db.query.note.findFirst({
+      where: eq(user.id, id),
       with: {
         owner: {
           columns: { id: true, name: true },
@@ -65,8 +65,8 @@ export const getNoteByIdWithPreferences = cache(async (id: string) => {
 
 export const getNoteIsPublic = cache(async (noteId: string) => {
   try {
-    const publicity = await db.query.notes.findFirst({
-      where: eq(notes.id, noteId),
+    const publicity = await db.query.note.findFirst({
+      where: eq(note.id, noteId),
       columns: { isPublic: true },
     });
     if (!publicity) return null;
