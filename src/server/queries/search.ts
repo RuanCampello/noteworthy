@@ -1,15 +1,14 @@
 'use server';
 
-import { db, drizzle } from '@/server/db';
+import { drizzle as db } from '@/server/db';
 import { SearchResult } from '@/types/search-result';
-import { currentUser } from './note';
 import { sql } from 'drizzle-orm';
 import { notes } from '@/server/db/schema';
 
 export async function searchNotes(query: string, userId: string) {
   query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
 
-  const results = await drizzle.execute(sql`
+  const results = await db.execute(sql`
     select ${notes.id}, ${notes.title}, ${notes.content}, ${notes.isFavourite}, ${notes.isArchived},
     ts_headline('english', "content", to_tsquery('english', ${query} || ':*'), 'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') as highlighted_content
     from ${notes}

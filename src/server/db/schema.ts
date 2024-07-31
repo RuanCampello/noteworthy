@@ -16,6 +16,21 @@ import type { AdapterAccount } from 'next-auth/adapters';
 
 type Provider = 'github' | 'google';
 
+export const colour = pgEnum('colour', [
+  'tiffany',
+  'blue',
+  'mindaro',
+  'sunset',
+  'melon',
+  'tickle',
+  'wisteria',
+  'cambridge',
+  'mikado',
+  'slate',
+]);
+
+export const noteFormat = pgEnum('note_format', ['full', 'slim']);
+
 export const users = pgTable('users', {
   id: text('id')
     .primaryKey()
@@ -51,19 +66,6 @@ export const accounts = pgTable(
   }),
 );
 
-export const colour = pgEnum('colour', [
-  'tiffany',
-  'blue',
-  'mindaro',
-  'sunset',
-  'melon',
-  'tickle',
-  'wisteria',
-  'cambridge',
-  'mikado',
-  'slate',
-]);
-
 export const notes = pgTable('notes', {
   id: uuid('id')
     .default(sql`gen_random_uuid()`)
@@ -81,8 +83,6 @@ export const notes = pgTable('notes', {
   lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow(),
 });
 
-export const noteFormat = pgEnum('note_format', ['full', 'slim']);
-
 export const userPreferences = pgTable('users_preferences', {
   id: serial('id').unique().primaryKey(),
   userId: varchar('userId', { length: 36 })
@@ -90,6 +90,13 @@ export const userPreferences = pgTable('users_preferences', {
     .references(() => users.id, { onDelete: 'cascade' }),
   noteFormat: noteFormat('note_format').default('full').notNull(),
   fullNote: boolean('full_note').default(true).notNull(),
+});
+
+export const passwordResetToken = pgTable('password_reset_tokens', {
+  id: serial('id').unique().primaryKey(),
+  email: varchar('email').notNull(),
+  token: varchar('token').unique().notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
 });
 
 export const accountRelations = relations(accounts, ({ one }) => ({

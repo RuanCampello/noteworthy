@@ -1,12 +1,12 @@
-import NextAuth, { Account } from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+import NextAuth, { type Account } from 'next-auth';
 import authConfig from '@/auth/auth.config';
 import { getUserById } from '@/queries/user';
 import { createPlaceholderNote } from '@/actions/note';
-import { db, drizzle } from '@/server/db';
+import { drizzle as db } from '@/server/db';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { accounts, users } from '@/server/db/schema';
-import { Adapter } from 'next-auth/adapters';
+import { type Adapter } from 'next-auth/adapters';
+import { eq } from 'drizzle-orm';
 
 export const {
   handlers: { GET, POST },
@@ -20,10 +20,13 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
+      if (!user.id) return;
+      await db
+        .update(users)
+        .set({
+          emailVerified: new Date(),
+        })
+        .where(eq(users.id, user.id));
     },
     async createUser({ user }) {
       if (user.id) {
@@ -46,10 +49,12 @@ export const {
 
       if (trigger === 'update') {
         if (session?.name && session.name !== user.name) {
-          await db.user.update({
-            data: { name: session.name },
-            where: { id: user.id },
-          });
+          await db
+            .update(users)
+            .set({
+              name: session.name,
+            })
+            .where(eq(users.id, user.id));
 
           //update token with new data
           token.name = session.name;
@@ -59,7 +64,7 @@ export const {
       return token;
     },
   },
-  adapter: DrizzleAdapter(drizzle, {
+  adapter: DrizzleAdapter(db, {
     accountsTable: accounts,
     usersTable: users,
   }) as Adapter,
