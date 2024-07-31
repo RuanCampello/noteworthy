@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { formatSearchParams } from './format';
-import { type Note } from '@prisma/client';
+import { type Note } from '@/server/db/schema';
 import { type Filters, allowedFilters } from './constants/filters';
 
 export type FilteredResults = {

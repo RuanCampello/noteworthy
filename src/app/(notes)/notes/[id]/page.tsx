@@ -14,11 +14,11 @@ export default async function NotePage({ params }: Props) {
     currentUser(),
   ]);
 
-  if (!note) return <NotFound />;
+  if (!note || !user) return <NotFound />;
   const { content, title, createdAt, lastUpdate, isPublic, owner } = note;
-  const { Preferences: preferences } = owner;
+  const { preferences } = owner;
 
-  const isNoteVisible = user?.id === owner.id || isPublic;
+  const isNoteVisible = user.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   const fullNote =

@@ -65,9 +65,11 @@ export const colour = pgEnum('colour', [
 ]);
 
 export const notes = pgTable('notes', {
-  id: uuid('id').default(sql`gen_random_uuid()`),
-  title: text('title'),
-  createdAt: timestamp('created_at', { mode: 'date' }),
+  id: uuid('id')
+    .default(sql`gen_random_uuid()`)
+    .primaryKey(),
+  title: text('title').notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
   isFavourite: boolean('is_favourite').default(false),
   isArchived: boolean('is_archived').default(false),
   isPublic: boolean('is_public').default(false),
@@ -76,17 +78,18 @@ export const notes = pgTable('notes', {
     .references(() => users.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
   colour: colour('colour').notNull(),
+  lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow(),
 });
 
 export const noteFormat = pgEnum('note_format', ['full', 'slim']);
 
-export const userPreferences = pgTable('user_preferences', {
+export const userPreferences = pgTable('users_preferences', {
   id: serial('id').unique().primaryKey(),
   userId: varchar('userId', { length: 36 })
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  noteFormat: noteFormat('note_format').default('full'),
-  fullNote: boolean('full_note').default(true),
+  noteFormat: noteFormat('note_format').default('full').notNull(),
+  fullNote: boolean('full_note').default(true).notNull(),
 });
 
 export const accountRelations = relations(accounts, ({ one }) => ({

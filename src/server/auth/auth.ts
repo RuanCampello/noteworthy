@@ -6,6 +6,7 @@ import { createPlaceholderNote } from '@/actions/note';
 import { db, drizzle } from '@/server/db';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { accounts, users } from '@/server/db/schema';
+import { Adapter } from 'next-auth/adapters';
 
 export const {
   handlers: { GET, POST },
@@ -61,7 +62,7 @@ export const {
   adapter: DrizzleAdapter(drizzle, {
     accountsTable: accounts,
     usersTable: users,
-  }),
+  }) as Adapter,
   session: { strategy: 'jwt' },
   ...authConfig,
 });

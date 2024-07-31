@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { type Note as NoteType } from '@prisma/client';
+import { type Note as NoteType } from '@/server/db/schema';
 import { getAllUserNotes } from '@/queries/note';
 import { FilteredResults, getFilteredNotes } from '@/utils/format-notes';
 
@@ -70,7 +70,7 @@ class ArchivedNote extends Note {
 
   async get() {
     const notes = await getAllUserNotes(this.userId, {
-      isArchived: false,
+      isArchived: true,
       isFavourite: false,
     });
     if (!notes) return null;

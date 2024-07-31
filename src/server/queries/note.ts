@@ -1,9 +1,10 @@
 import 'server-only';
 
 import { auth } from '@/auth/auth';
-import { db } from '@/server/db';
+import { drizzle as db } from '@/server/db';
 import { cache } from 'react';
-import { Note } from '@prisma/client';
+import { and, eq } from 'drizzle-orm';
+import { type Note, notes, users } from '@/server/db/schema';
 
 export const currentUser = cache(async () => {
   const session = await auth();
@@ -12,11 +13,10 @@ export const currentUser = cache(async () => {
 
 export const getNoteById = cache(async (id: string) => {
   try {
-    const note = await db.note.findUnique({
-      where: { id },
-      include: { owner: { select: { name: true, id: true } } },
+    return await db.query.notes.findFirst({
+      where: eq(notes.id, id),
+      with: { owner: { columns: { name: true, id: true } } },
     });
-    return note;
   } catch (error) {
     return null;
   }
@@ -27,11 +27,20 @@ export const getAllUserNotes = cache(
     userId: string,
     conditions: Record<string, boolean>,
   ): Promise<Note[] | null> => {
+    const isArchived = conditions.isArchived;
+    const isFavourite = conditions.isFavourite;
+
     try {
-      const notes = await db.note.findMany({
-        where: { userId, ...conditions },
-      });
-      return notes;
+      return await db
+        .select()
+        .from(notes)
+        .where(
+          and(
+            eq(notes.userId, userId),
+            eq(notes.isArchived, isArchived),
+            eq(notes.isFavourite, isFavourite),
+          ),
+        );
     } catch (error) {
       return null;
     }
@@ -39,25 +48,29 @@ export const getAllUserNotes = cache(
 );
 export const getNoteByIdWithPreferences = cache(async (id: string) => {
   try {
-    return await db.note.findUnique({
-      where: { id },
-      include: {
-        owner: { select: { name: true, id: true, Preferences: true } },
+    return db.query.notes.findFirst({
+      where: eq(users.id, id),
+      with: {
+        owner: {
+          columns: { id: true, name: true },
+          with: { preferences: true },
+        },
       },
     });
   } catch (error) {
+    console.error(error);
     return null;
   }
 });
 
 export const getNoteIsPublic = cache(async (noteId: string) => {
   try {
-    const note = await db.note.findUnique({
-      where: { id: noteId },
+    const publicity = await db.query.notes.findFirst({
+      where: eq(notes.id, noteId),
+      columns: { isPublic: true },
     });
-    if (!note) return null;
-    if (note.isPublic) return true;
-    return false;
+    if (!publicity) return null;
+    return !!publicity;
   } catch (error) {
     console.error(error);
     return null;
