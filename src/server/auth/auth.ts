@@ -1,9 +1,11 @@
-import NextAuth from 'next-auth';
+import NextAuth, { Account } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import authConfig from '@/auth/auth.config';
 import { getUserById } from '@/queries/user';
 import { createPlaceholderNote } from '@/actions/note';
-import { db } from '@/server/db';
+import { db, drizzle } from '@/server/db';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { accounts, users } from '@/server/db/schema';
 
 export const {
   handlers: { GET, POST },
@@ -56,7 +58,10 @@ export const {
       return token;
     },
   },
-  adapter: PrismaAdapter(db),
+  adapter: DrizzleAdapter(drizzle, {
+    accountsTable: accounts,
+    usersTable: users,
+  }),
   session: { strategy: 'jwt' },
   ...authConfig,
 });
