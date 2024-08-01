@@ -2,10 +2,10 @@
 import 'server-only';
 
 import { env } from '@/env';
-import { PrismaClient } from '@prisma/client';
-import { neon } from '@neondatabase/serverless';
-import { drizzle as Drizzle } from 'drizzle-orm/neon-http';
 import * as schema from '@/server/db/schema';
+import { neon } from '@neondatabase/serverless';
+import { PrismaClient } from '@prisma/client';
+import { drizzle as Drizzle } from 'drizzle-orm/neon-http';
 
 declare global {
   var prisma: PrismaClient | undefined;

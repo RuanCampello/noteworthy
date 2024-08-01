@@ -31,3 +31,14 @@ CREATE INDEX notes_content_title_idx ON "notes" USING GIN (
 ALTER TABLE notes
 ALTER COLUMN id TYPE UUID USING id::UUID,
 ALTER COLUMN id SET DEFAULT gen_random_uuid();
+
+-------------------------- remove prisma foreign keys --------------------------
+
+ALTER TABLE "notes"
+DROP CONSTRAINT "notes_userId_fkey";
+
+ALTER TABLE "account"
+DROP CONSTRAINT "accounts_userId_fkey";
+
+ALTER TABLE "users_preferences"
+DROP CONSTRAINT "users_preferences_userId_fkey";
