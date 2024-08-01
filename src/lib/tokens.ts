@@ -1,5 +1,5 @@
 import { getPasswordResetTokenByEmail } from '@/queries/password-reset-token';
-import { db, drizzle } from '@/server/db';
+import { drizzle as db } from '@/server/db';
 import { passwordResetToken } from '@/server/db/schema';
 import { v4 as uuid } from 'uuid';
 
@@ -21,7 +21,7 @@ export async function generatePasswordResetToken(
   if (currentToken && new Date(currentToken.expires) > new Date()) {
     return { currentToken };
   } else {
-    const [passwordToken] = await drizzle
+    const [passwordToken] = await db
       .insert(passwordResetToken)
       .values({
         email,

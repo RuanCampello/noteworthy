@@ -1,9 +1,9 @@
 'use server';
 
 import { drizzle as db } from '@/server/db';
-import { SearchResult } from '@/types/search-result';
-import { sql } from 'drizzle-orm';
 import { note } from '@/server/db/schema';
+import { type SearchResult } from '@/types/search-result';
+import { sql } from 'drizzle-orm';
 
 export async function searchNotes(query: string, userId: string) {
   query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();

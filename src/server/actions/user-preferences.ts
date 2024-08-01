@@ -1,15 +1,17 @@
 'use server';
 
-import { db } from '@/server/db';
+import { currentUser } from '@/queries/note';
+import { userPreferencesSchema } from '@/schemas';
+import { drizzle as db } from '@/server/db';
+import { userPreferences } from '@/server/db/schema';
+import { eq } from 'drizzle-orm';
 import { cache } from 'react';
 import { z } from 'zod';
-import { userPreferencesSchema } from '@/schemas';
-import { currentUser } from '@/queries/note';
 import { setUserLocale } from './locate';
 
 export const getUserPreferences = cache(async (userId: string) => {
-  const preferences = await db.userPreferences.findUnique({
-    where: { userId },
+  const preferences = await db.query.userPreferences.findFirst({
+    where: eq(userPreferences.userId, userId),
   });
 
   if (!preferences) return null;
@@ -17,10 +19,8 @@ export const getUserPreferences = cache(async (userId: string) => {
 });
 
 export async function createUserPreferences(userId: string) {
-  await db.userPreferences.create({
-    data: {
-      userId,
-    },
+  await db.insert(userPreferences).values({
+    userId,
   });
 }
 
@@ -39,11 +39,11 @@ export async function updateUserPreferences(
     await createUserPreferences(user.id);
   }
 
-  await db.userPreferences.update({
-    where: { userId: user.id },
-    data: {
+  await db
+    .update(userPreferences)
+    .set({
       noteFormat,
       fullNote,
-    },
-  });
+    })
+    .where(eq(userPreferences.userId, user.id));
 }

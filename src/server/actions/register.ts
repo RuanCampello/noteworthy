@@ -1,15 +1,16 @@
 'use server';
 
-import { registerFormSchema } from '@/schemas';
-import { z } from 'zod';
-import bcrypt from 'bcryptjs';
-import { db } from '@/server/db';
-import { getUserByEmail } from '@/queries/user';
 import { signIn } from '@/auth/auth';
+import { getUserByEmail } from '@/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
+import { registerFormSchema } from '@/schemas';
+import { drizzle as db } from '@/server/db';
+import { user as userTable } from '@/server/db/schema';
+import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
-import { createPlaceholderNote } from './note';
 import { getTranslations } from 'next-intl/server';
+import { z } from 'zod';
+import { createPlaceholderNote } from './note';
 
 export async function register(
   values: z.infer<typeof registerFormSchema>,
@@ -22,17 +23,18 @@ export async function register(
   const { email, password, username } = fields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await getUserByEmail(email);
-  if (user) return { error: t('email_taken') };
+  const owner = await getUserByEmail(email);
+  if (owner) return { error: t('email_taken') };
 
-  const owner = await db.user.create({
-    data: {
+  const [user] = await db
+    .insert(userTable)
+    .values({
       name: username,
       email,
       password: hashedPassword,
-    },
-  });
-  await createPlaceholderNote(owner.id);
+    })
+    .returning();
+  await createPlaceholderNote(user.id);
   try {
     await signIn('credentials', {
       email,
