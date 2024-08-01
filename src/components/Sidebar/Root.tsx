@@ -1,7 +1,7 @@
 'use client';
 
 import { useSidebarState } from '@/lib/zustand/sidebar';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export default function Root({ children }: { children: ReactNode }) {
   const { state } = useSidebarState();
