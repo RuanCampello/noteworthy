@@ -1,17 +1,17 @@
 'use server';
 
 import { currentUser, getNoteById } from '@/queries/note';
-import { drizzle as db } from '@/server/db';
 import { noteDialogSchema } from '@/schemas';
+import { drizzle as db } from '@/server/db';
+import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
+import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
 import { cache } from 'react';
-import { note } from '@/server/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 function getPathnameParams() {
   const origin = headers().get('origin');
@@ -53,19 +53,19 @@ export async function toggleNoteFavourite(id: string, userId: string) {
   const { basePath, origin } = getPathnameParams();
 
   const selectedNote = await getNoteById(id);
-  if (!selectedNote) return;
+  if (!selectedNote || selectedNote.userId !== userId) return;
 
   if (!selectedNote.isArchived) {
     if (selectedNote.isFavourite === true) {
       await db
         .update(note)
         .set({ isFavourite: false, lastUpdate: new Date() })
-        .where(eq(note.id, id));
+        .where(and(eq(note.id, id), eq(note.userId, userId)));
     } else {
       await db
         .update(note)
         .set({ isFavourite: true, lastUpdate: new Date() })
-        .where(eq(note.id, id));
+        .where(and(eq(note.id, id), eq(note.userId, userId)));
     }
   }
 
@@ -84,19 +84,19 @@ export async function toggleNoteArchive(id: string, userId: string) {
   const { basePath, origin } = getPathnameParams();
 
   const selectedNote = await getNoteById(id);
-  if (!selectedNote) return;
+  if (!selectedNote || selectedNote.userId !== userId) return;
 
   if (!selectedNote.isFavourite) {
     if (selectedNote.isArchived == true) {
       await db
         .update(note)
         .set({ isArchived: false, lastUpdate: new Date() })
-        .where(eq(note.id, id));
+        .where(and(eq(note.id, id), eq(note.userId, userId)));
     } else {
       await db
         .update(note)
         .set({ isArchived: true, lastUpdate: new Date() })
-        .where(eq(note.id, id));
+        .where(and(eq(note.id, id), eq(note.userId, userId)));
     }
   }
 
