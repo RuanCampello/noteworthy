@@ -16,6 +16,8 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
   const matchArray = Array.from(content.matchAll(searchRegex));
   const contentArray = content.split(searchRegex);
 
+  const matches = matchArray.map((match) => match[1]);
+
   return (
     <Link
       href={id}
@@ -44,7 +46,7 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
 
 interface RenderContentProps {
   content: string[];
-  match: string[];
+  match: RegExpExecArray[];
 }
 
 function RenderContent({ content, match }: RenderContentProps) {

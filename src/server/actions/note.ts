@@ -220,9 +220,12 @@ export async function createFastNote() {
     const response = await fetch('https://dummyjson.com/quotes/random');
     const data = await response.json();
 
-    return await db
+    const newNote = await db
       .insert(note)
-      .values({ colour, content: '', title: data['quote'], userId: user.id });
+      .values({ colour, content: '', title: data['quote'], userId: user.id })
+      .returning();
+
+    return newNote[0];
   } catch (error) {
     return null;
   }

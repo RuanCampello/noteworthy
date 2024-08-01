@@ -14,7 +14,7 @@ export default async function Archived({ params }: Props) {
 
   if (!note) return <NotFound />;
   const { content, title, createdAt, id, lastUpdate, isPublic, owner } = note;
-  const { Preferences: preferences } = owner;
+  const { preferences } = owner;
 
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;

@@ -12,7 +12,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { InferSelectModel, relations, sql } from 'drizzle-orm';
-import type { AdapterAccount } from 'next-auth/adapters';
+import type { AdapterAccountType } from '@auth/core/adapters';
 
 type Provider = 'github' | 'google';
 
@@ -43,18 +43,18 @@ export const user = pgTable('users', {
 });
 
 export const account = pgTable(
-  'accounts',
+  'account',
   {
-    userId: varchar('userId', { length: 36 })
+    userId: text('userId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    type: varchar('type', { length: 8 }).$type<AdapterAccount>().notNull(),
-    provider: varchar('provider', { length: 8 }).$type<Provider>().notNull(),
-    providerAccountId: integer('providerAccountId').notNull(),
-    refresh_token: varchar('refresh_token'),
+    type: text('type').$type<AdapterAccountType>().notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('providerAccountId').notNull(),
+    refresh_token: text('refresh_token'),
     access_token: text('access_token'),
     expires_at: integer('expires_at'),
-    token_type: varchar('token_type', { length: 24 }),
+    token_type: text('token_type'),
     scope: text('scope'),
     id_token: text('id_token'),
     session_state: text('session_state'),
@@ -71,7 +71,7 @@ export const note = pgTable('notes', {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   title: text('title').notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   isFavourite: boolean('is_favourite').default(false),
   isArchived: boolean('is_archived').default(false),
   isPublic: boolean('is_public').default(false).notNull(),
@@ -80,7 +80,7 @@ export const note = pgTable('notes', {
     .references(() => user.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
   colour: colour('colour').notNull(),
-  lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow(),
+  lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow().notNull(),
 });
 
 export const userPreferences = pgTable('users_preferences', {
@@ -124,3 +124,48 @@ export const noteRelations = relations(note, ({ one }) => ({
 
 export type Note = InferSelectModel<typeof note>;
 export type User = InferSelectModel<typeof user>;
+
+// next-auth tables
+
+export const sessions = pgTable('session', {
+  sessionToken: text('sessionToken').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
+});
+
+export const verificationTokens = pgTable(
+  'verificationToken',
+  {
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  (verificationToken) => ({
+    compositePk: primaryKey({
+      columns: [verificationToken.identifier, verificationToken.token],
+    }),
+  }),
+);
+
+export const authenticators = pgTable(
+  'authenticator',
+  {
+    credentialID: text('credentialID').notNull().unique(),
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    providerAccountId: text('providerAccountId').notNull(),
+    credentialPublicKey: text('credentialPublicKey').notNull(),
+    counter: integer('counter').notNull(),
+    credentialDeviceType: text('credentialDeviceType').notNull(),
+    credentialBackedUp: boolean('credentialBackedUp').notNull(),
+    transports: text('transports'),
+  },
+  (authenticator) => ({
+    compositePK: primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID],
+    }),
+  }),
+);

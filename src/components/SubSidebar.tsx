@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Note as NoteType } from '@prisma/client';
+import { Note as NoteType } from '@/server/db/schema';
 import Note from './Note/Note';
 
 interface SubSidebarProps {

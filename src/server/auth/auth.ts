@@ -1,12 +1,12 @@
-import NextAuth, { type Account } from 'next-auth';
+import NextAuth from 'next-auth';
 import authConfig from '@/auth/auth.config';
 import { getUserById } from '@/queries/user';
 import { createPlaceholderNote } from '@/actions/note';
 import { drizzle as db } from '@/server/db';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { account, user as userTable } from '@/server/db/schema';
-import { type Adapter } from 'next-auth/adapters';
 import { eq } from 'drizzle-orm';
+import { account as accountTable, user as userTable } from '@/server/db/schema';
+import type { Adapter } from 'next-auth/adapters';
 
 export const {
   handlers: { GET, POST },
@@ -65,8 +65,8 @@ export const {
     },
   },
   adapter: DrizzleAdapter(db, {
-    accountsTable: account,
     usersTable: userTable,
+    accountsTable: accountTable,
   }) as Adapter,
   session: { strategy: 'jwt' },
   ...authConfig,
