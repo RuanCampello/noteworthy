@@ -1,6 +1,6 @@
-import { db } from '@/server/db';
-import AnimatedCounter from './AnimatedCounter';
 import { currentUser } from '@/queries/note';
+import { API } from '@/server/api';
+import AnimatedCounter from './AnimatedCounter';
 
 interface CounterProps {
   isFavourite?: boolean;
@@ -12,16 +12,17 @@ export default async function Counter({
   isArchived,
 }: CounterProps) {
   const user = await currentUser();
-  const userId = user?.id;
-  if (!userId) return;
+  if (!user || !user.id) return;
+  const api = new API();
 
-  const condition = isFavourite
-    ? { userId, isFavourite }
-    : isArchived
-      ? { userId, isArchived }
-      : { userId, isArchived: false, isFavourite: false };
-
-  const notesNumber: number = await db.note.count({ where: condition });
+  let notesNumber;
+  if (isFavourite) {
+    notesNumber = await api.notes(user.id).favourite.count();
+  } else if (isArchived) {
+    notesNumber = await api.notes(user.id).archived.count();
+  } else {
+    notesNumber = await api.notes(user.id).ordinary.count();
+  }
 
   return (
     <div

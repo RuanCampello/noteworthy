@@ -2,9 +2,9 @@ import 'server-only';
 
 import { auth } from '@/auth/auth';
 import { drizzle as db } from '@/server/db';
-import { cache } from 'react';
-import { and, eq } from 'drizzle-orm';
 import { type Note, note, user } from '@/server/db/schema';
+import { and, count, eq } from 'drizzle-orm';
+import { cache } from 'react';
 
 export const currentUser = cache(async () => {
   const session = await auth();
@@ -76,3 +76,19 @@ export const getNoteIsPublic = cache(async (noteId: string) => {
     return null;
   }
 });
+
+export const countNoteNumber = cache(
+  async (userId: string, favourite: boolean, archive: boolean) => {
+    const [{ count: noteNumber }] = await db
+      .select({ count: count() })
+      .from(note)
+      .where(
+        and(
+          eq(note.userId, userId),
+          eq(note.isFavourite, favourite),
+          eq(note.isArchived, archive),
+        ),
+      );
+    return noteNumber;
+  },
+);

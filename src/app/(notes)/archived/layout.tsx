@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser } from '@/queries/note';
 import { API } from '@/server/api';
-import { ArchiveX, ArchiveRestore } from 'lucide-react';
+import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
 
@@ -14,8 +14,7 @@ export default async function FavouriteLayout({
 }>) {
   const user = await currentUser();
   if (!user?.id) return;
-  const api = new API(user.id);
-  const archivedNotes = await api.notes.archived.get();
+  const archivedNotes = await new API().notes(user.id).archived.get();
 
   const t = await getTranslations('ArchivePlaceholder');
   const st = await getTranslations('SubsidebarTitles');

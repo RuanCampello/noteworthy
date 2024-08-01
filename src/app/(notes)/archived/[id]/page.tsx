@@ -2,21 +2,22 @@ import NotFound from '@/app/not-found';
 import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
-import { currentUser, getNoteByIdWithPreferences } from '@/queries/note';
+import { currentUser } from '@/queries/note';
+import { API } from '@/server/api';
 
 type Props = { params: { id: string } };
 
 export default async function Archived({ params }: Props) {
-  const [note, user] = await Promise.all([
-    getNoteByIdWithPreferences(params.id),
-    currentUser(),
+  const [user, note] = await Promise.all([
+    await currentUser(),
+    await new API().note.get(params.id),
   ]);
+  if (!note || !user) return <NotFound />;
 
-  if (!note) return <NotFound />;
   const { content, title, createdAt, id, lastUpdate, isPublic, owner } = note;
   const { preferences } = owner;
 
-  const isNoteVisible = user?.id === owner.id || isPublic;
+  const isNoteVisible = user.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   const fullNote =

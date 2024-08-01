@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser } from '@/queries/note';
 import { API } from '@/server/api';
-import { StarOff, Sparkles } from 'lucide-react';
+import { Sparkles, StarOff } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
 
@@ -14,8 +14,7 @@ export default async function FavouriteLayout({
 }>) {
   const user = await currentUser();
   if (!user?.id) return;
-  const api = new API(user.id);
-  const favouriteNotes = await api.notes.favourite.get();
+  const favouriteNotes = await new API().notes(user.id).favourite.get();
 
   const t = await getTranslations('FavouritePlaceholder');
   const st = await getTranslations('SubsidebarTitles');

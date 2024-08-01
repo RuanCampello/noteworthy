@@ -1,79 +1,18 @@
 import 'server-only';
 
-import { type Note as NoteType } from '@/server/db/schema';
-import { getAllUserNotes } from '@/queries/note';
-import { FilteredResults, getFilteredNotes } from '@/utils/format-notes';
+import { ArchivedNote, FavouriteNote, OrdinaryNote, SingleNote } from './Note';
 
 export class API {
-  public readonly notes: {
-    ordinary: OrdinaryNote;
-    favourite: FavouriteNote;
-    archived: ArchivedNote;
-  };
-
-  public constructor(userId: string) {
-    this.notes = {
+  public notes(userId: string) {
+    return {
       ordinary: new OrdinaryNote(userId),
       favourite: new FavouriteNote(userId),
       archived: new ArchivedNote(userId),
     };
   }
-}
+  public readonly note: SingleNote;
 
-export abstract class Note {
-  abstract get(): Promise<NoteType[] | null>;
-  async filter(): Promise<FilteredResults | null> {
-    const notes = await this.get();
-    if (!notes) return null;
-    return getFilteredNotes(notes);
-  }
-}
-
-class OrdinaryNote extends Note {
-  private readonly userId: string;
-  public constructor(userId: string) {
-    super();
-    this.userId = userId;
-  }
-
-  async get() {
-    const notes = await getAllUserNotes(this.userId, {
-      isArchived: false,
-      isFavourite: false,
-    });
-    if (!notes) return null;
-    return notes;
-  }
-}
-class FavouriteNote extends Note {
-  private readonly userId: string;
-  public constructor(userId: string) {
-    super();
-    this.userId = userId;
-  }
-
-  async get() {
-    const notes = await getAllUserNotes(this.userId, {
-      isArchived: false,
-      isFavourite: true,
-    });
-    if (!notes) return null;
-    return notes;
-  }
-}
-class ArchivedNote extends Note {
-  private readonly userId: string;
-  public constructor(userId: string) {
-    super();
-    this.userId = userId;
-  }
-
-  async get() {
-    const notes = await getAllUserNotes(this.userId, {
-      isArchived: true,
-      isFavourite: false,
-    });
-    if (!notes) return null;
-    return notes;
+  public constructor() {
+    this.note = new SingleNote();
   }
 }
