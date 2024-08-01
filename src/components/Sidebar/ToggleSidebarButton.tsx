@@ -2,13 +2,12 @@
 
 import { useSidebarState } from '@/lib/zustand/sidebar';
 import { Button } from '@/ui/button';
+import { setCookie } from 'cookies-next';
 import { PanelRightClose, PanelRightOpen } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import useKeyboardShortcut from 'use-keyboard-shortcut';
 
 export default function ToggleSidebarButton() {
   const { state, toggleState } = useSidebarState();
-  const router = useRouter();
   useKeyboardShortcut(['Shift', 'Alt', 'S'], () => toggleState(state), {
     overrideSystem: true,
     repeatOnHold: false,
@@ -20,12 +19,18 @@ export default function ToggleSidebarButton() {
     strokeWidth: 2.2,
   };
 
+  function toggleSidebarState() {
+    const value = state === 'open' ? 'closed' : 'open';
+    toggleState(value);
+    setCookie('sidebar-state', value);
+  }
+
   return (
     <Button
       size='icon'
       variant='secondary'
       className='dark'
-      onClick={() => toggleState(state)}
+      onClick={() => toggleSidebarState()}
     >
       {state === 'open' ? (
         <PanelRightOpen {...iconProps} />

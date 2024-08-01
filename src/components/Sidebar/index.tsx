@@ -1,14 +1,13 @@
 import Logo from '@/components/Logo';
-import Notes from '@/components/Note/Notes';
 import More from '@/components/More';
 import AddNoteButton from '@/components/Note/AddNoteButton';
+import Notes from '@/components/Note/Notes';
 import Profile from '@/components/Profile';
 import ToggleSidebarButton from '@/components/Sidebar/ToggleSidebarButton';
-import Root from './Root';
-
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { currentUser } from '@/server/queries/note';
 import type { NoteFormat } from '@prisma/client';
+import Root from './Root';
 
 export default async function Sidebar() {
   const user = await currentUser();

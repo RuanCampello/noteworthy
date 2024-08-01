@@ -31,7 +31,7 @@ export default async function Notes() {
     notes.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
   }
   return (
-    <div data-className='group/root'>
+    <div className='group/root'>
       <SectionTitle title={t('notes')}>
         <Counter />
       </SectionTitle>

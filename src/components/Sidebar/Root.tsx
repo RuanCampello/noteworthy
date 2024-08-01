@@ -1,10 +1,18 @@
 'use client';
 
 import { useSidebarState } from '@/lib/zustand/sidebar';
-import { type ReactNode } from 'react';
+import { getCookie } from 'cookies-next';
+import { useEffect, type ReactNode } from 'react';
 
 export default function Root({ children }: { children: ReactNode }) {
-  const { state } = useSidebarState();
+  const { state, toggleState } = useSidebarState();
+
+  useEffect(() => {
+    const cookie = getCookie('sidebar-state');
+    if (cookie === 'closed' || cookie === 'open') {
+      toggleState(cookie);
+    }
+  }, []);
 
   return (
     <aside

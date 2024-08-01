@@ -4,7 +4,7 @@ import {
   getNoteByIdWithPreferences,
 } from '@/queries/note';
 import { type Note as NoteType } from '@/server/db/schema';
-import { FilteredResults, getFilteredNotes } from '@/utils/format-notes';
+import { type FilteredResults, getFilteredNotes } from '@/utils/format-notes';
 
 export abstract class Note {
   protected userId: string;

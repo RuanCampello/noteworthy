@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-
-type State = 'open' | 'closed';
+import { type State } from './types';
 
 interface SidebarState {
   state: State;
@@ -9,9 +8,5 @@ interface SidebarState {
 
 export const useSidebarState = create<SidebarState>((set) => ({
   state: 'open',
-  toggleState: (state: State) => {
-    set((prevState) => ({
-      state: state === 'open' ? 'closed' : 'open',
-    }));
-  },
+  toggleState: (state: State) => set({ state }),
 }));
