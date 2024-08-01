@@ -25,7 +25,7 @@ export default async function Counter({
 
   return (
     <div
-      className={`bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent ${
+      className={`bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent group-data-[state=closed]/root:hidden ${
         notesNumber <= 0 && 'md:hidden hidden'
       }`}
     >

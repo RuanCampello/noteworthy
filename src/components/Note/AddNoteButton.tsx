@@ -1,17 +1,12 @@
-import { useSidebarState } from '@/utils/sidebar';
 import AddNoteDialog from './AddNoteDialog';
 import { Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export default async function AddNoteButton() {
-  const state = useSidebarState();
   const t = await getTranslations('Sidebar');
 
   return (
-    <div
-      className='px-5 data-[state=closed]:px-0 data-[state=closed]:self-center group/root'
-      data-state={state}
-    >
+    <div className='px-5 group-data-[state=closed]/root:px-0 group-data-[state=closed]/root:self-center group/root'>
       <AddNoteDialog>
         <button
           type='button'
