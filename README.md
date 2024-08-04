@@ -13,8 +13,8 @@
     <a href="https://ui.shadcn.com/" target="_blank">
       <img src="https://img.shields.io/badge/shadcn-ui?style=flat-square&logo=shadcn%2Fui&color=000" alt="Shadcn" />
     </a>
-    <a href="https://prisma.io" target="_blank">
-      <img src="https://img.shields.io/badge/prisma-0?style=flat-square&logo=Prisma&color=121212" alt="Prisma" />
+    <a href="https://orm.drizzle.team/" target="_blank">
+      <img src="https://img.shields.io/badge/drizzle-0?style=flat-square&logo=drizzle&logoColor=%23C5F74F&color=121212" alt="Drizzle">
     </a>
     <a href="https://resend.com" target="_blank">
       <img src="https://img.shields.io/badge/resend-0?style=flat-square&logo=resend&color=101010" alt="Resend" />
@@ -54,11 +54,11 @@ A significant portion of Noteworthy's UI design is inspired by the Figma communi
 
 ## Backend Architecture
 
-Noteworthy's backend is built with Next.js server actions, Neon, and Prisma:
+Noteworthy's backend is built with Next.js server actions, Neon, and Drizle:
 
 - **Next.js Server Actions**: Server-side logic is handled using Next.js server actions, providing efficient and scalable backend functionality.
 - **Neon**: A serverless PostgreSQL database, Neon offers a powerful and flexible data storage solution for Noteworthy's backend operations.
-- **Prisma**: Prisma serves as the ORM (Object-Relational Mapping) layer, simplifying database interactions and ensuring data integrity and security.
+- **Drizzle**: Drizzle serves as the ORM (Object-Relational Mapping) layer, providing fast and efficient database interactions while ensuring data integrity and security.
 
 Forms across Noteworthy, including those for authentication and other user interactions, are validated using Zod, providing robust validation and ensuring data integrity.
 

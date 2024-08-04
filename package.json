@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run prettier:write && next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,html,json,md}\"",
-    "prettier:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,html,json,md}\""
+    "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,html,json,md}\"",
+    "prettier:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,json,md}\""
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
