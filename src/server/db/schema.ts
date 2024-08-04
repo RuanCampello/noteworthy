@@ -1,16 +1,15 @@
-import type { AdapterAccountType } from '@auth/core/adapters';
-import { createId } from '@paralleldrive/cuid2';
-import { InferSelectModel, relations, sql } from 'drizzle-orm';
+import { relations, sql, type InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
   serial,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
-  varchar,
 } from 'drizzle-orm/pg-core';
 
 export const colour = pgEnum('colour', [
@@ -28,68 +27,114 @@ export const colour = pgEnum('colour', [
 
 export const noteFormat = pgEnum('note_format', ['full', 'slim']);
 
-export const user = pgTable('users', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  name: text('name'),
-  email: text('email').unique(),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  image: text('image'),
-  password: text('password'),
-});
-
 export const account = pgTable('account', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  userId: text('userId')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  type: text('type').$type<AdapterAccountType>().notNull(),
-  provider: text('provider').notNull(),
-  providerAccountId: text('providerAccountId').notNull(),
-  refresh_token: text('refresh_token'),
-  access_token: text('access_token'),
-  expires_at: integer('expires_at'),
-  token_type: text('token_type'),
+  id: text('id'),
+  userId: text('userId').references(() => user.id, { onDelete: 'cascade' }),
+  type: text('type'),
+  provider: text('provider'),
+  providerAccountId: text('providerAccountId'),
+  refreshToken: text('refresh_token'),
+  accessToken: text('access_token'),
+  expiresAt: integer('expires_at'),
+  tokenType: text('token_type'),
   scope: text('scope'),
-  id_token: text('id_token'),
-  session_state: text('session_state'),
+  idToken: text('id_token'),
+  sessionState: text('session_state'),
 });
 
-export const note = pgTable('notes', {
-  id: uuid('id')
-    .primaryKey()
-    .default(sql`gen_random_uuid()`),
-  title: text('title').notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
-  isFavourite: boolean('is_favourite').default(false),
-  isArchived: boolean('is_archived').default(false),
-  isPublic: boolean('is_public').default(false).notNull(),
-  userId: varchar('userId', { length: 36 })
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  content: text('content').notNull(),
-  colour: colour('colour').notNull(),
-  lastUpdate: timestamp('last_update', { mode: 'date' }).defaultNow().notNull(),
-});
+export const passwordResetTokens = pgTable(
+  'password_reset_tokens',
+  {
+    id: text('id').primaryKey().notNull(),
+    email: text('email').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { precision: 3, mode: 'date' }).notNull(),
+  },
+  (table) => {
+    return {
+      tokenEmailKey: uniqueIndex('password_reset_tokens_token_email_key').using(
+        'btree',
+        table.token,
+        table.email,
+      ),
+      tokenKey: uniqueIndex('password_reset_tokens_token_key').using(
+        'btree',
+        table.token,
+      ),
+    };
+  },
+);
 
-export const userPreferences = pgTable('users_preferences', {
-  id: serial('id').unique().primaryKey(),
-  userId: varchar('userId', { length: 36 })
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  noteFormat: noteFormat('note_format').default('full').notNull(),
-  fullNote: boolean('full_note').default(true).notNull(),
-});
+export const userPreferences = pgTable(
+  'users_preferences',
+  {
+    id: serial('id').primaryKey().notNull(),
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    noteFormat: noteFormat('note_format').default('full').notNull(),
+    fullNote: boolean('full_note').default(true).notNull(),
+  },
+  (table) => {
+    return {
+      userIdKey: uniqueIndex('users_preferences_userId_key').using(
+        'btree',
+        table.userId,
+      ),
+    };
+  },
+);
 
-export const passwordResetToken = pgTable('password_reset_tokens', {
-  id: serial('id').unique().primaryKey(),
-  email: varchar('email').notNull(),
-  token: varchar('token').unique().notNull(),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
-});
+export const user = pgTable(
+  'users',
+  {
+    id: text('id').primaryKey().notNull(),
+    name: text('name'),
+    email: text('email'),
+    emailVerified: timestamp('emailVerified', { precision: 3, mode: 'date' }),
+    password: text('password'),
+    image: text('image'),
+  },
+  (table) => {
+    return {
+      emailKey: uniqueIndex('users_email_key').using('btree', table.email),
+    };
+  },
+);
+
+export const note = pgTable(
+  'notes',
+  {
+    id: uuid('id').defaultRandom().primaryKey().notNull(),
+    title: text('title').notNull(),
+    content: text('content').notNull(),
+    colour: colour('colour').notNull(),
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { precision: 3, mode: 'date' })
+      .defaultNow()
+      .notNull(),
+    isArchived: boolean('is_archived').default(false).notNull(),
+    isFavourite: boolean('is_favourite').default(false).notNull(),
+    isPublic: boolean('is_public').default(false).notNull(),
+    lastUpdate: timestamp('last_update', { precision: 3, mode: 'date' })
+      .defaultNow()
+      .notNull(),
+  },
+  () => {
+    return {
+      contentIdx: index('notes_content_idx').using(
+        'gin',
+        sql`to_tsvector('english'::regconfig`,
+      ),
+      contentTitleIdx: index('notes_content_title_idx').using(
+        'gin',
+        sql`to_tsvector('english'::regconfig`,
+      ),
+    };
+  },
+);
 
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
@@ -98,21 +143,27 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
-export const userRelations = relations(user, ({ one, many }) => ({
-  note: many(note, { relationName: 'users notes' }),
-  account: many(account),
-  preferences: one(userPreferences, {
-    fields: [user.id],
-    references: [userPreferences.userId],
-  }),
+export const usersRelations = relations(user, ({ one, many }) => ({
+  accounts: many(account),
+  usersPreferences: one(userPreferences),
+  notes: many(note),
 }));
 
-export const noteRelations = relations(note, ({ one }) => ({
-  owner: one(user, {
+export const usersPreferencesRelations = relations(
+  userPreferences,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [userPreferences.userId],
+      references: [user.id],
+    }),
+  }),
+);
+
+export const notesRelations = relations(note, ({ one }) => ({
+  user: one(user, {
     fields: [note.userId],
     references: [user.id],
   }),
 }));
 
 export type Note = InferSelectModel<typeof note>;
-export type User = InferSelectModel<typeof user>;

@@ -33,15 +33,8 @@
     {
       "idx": 4,
       "version": "7",
-      "when": 1722523156134,
-      "tag": "0004_correct-account-table",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1722523263769,
-      "tag": "0005_friendly_zuras",
+      "when": 1722771767016,
+      "tag": "0004_introspect-from-db",
       "breakpoints": true
     }
   ]

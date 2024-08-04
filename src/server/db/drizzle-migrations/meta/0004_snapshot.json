@@ -1,6 +1,6 @@
 {
-  "id": "4730a1a0-695b-4049-90bf-0571f2d43e67",
-  "prevId": "4b5d6972-0fd1-49e4-9423-a4e3f9d4db56",
+  "id": "6eff77a0-3b35-4db8-b4be-e7cfb521a798",
+  "prevId": "4730a1a0-695b-4049-90bf-0571f2d43e67",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -11,32 +11,32 @@
         "id": {
           "name": "id",
           "type": "text",
-          "primaryKey": true,
-          "notNull": true
+          "primaryKey": false,
+          "notNull": false
         },
         "userId": {
           "name": "userId",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "type": {
           "name": "type",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "provider": {
           "name": "provider",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "providerAccountId": {
           "name": "providerAccountId",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "refresh_token": {
           "name": "refresh_token",
@@ -117,40 +117,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "is_favourite": {
-          "name": "is_favourite",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "is_archived": {
-          "name": "is_archived",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "is_public": {
-          "name": "is_public",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "varchar(36)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "content": {
           "name": "content",
           "type": "text",
@@ -164,15 +130,80 @@
           "primaryKey": false,
           "notNull": true
         },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "is_archived": {
+          "name": "is_archived",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_favourite": {
+          "name": "is_favourite",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_public": {
+          "name": "is_public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "last_update": {
           "name": "last_update",
-          "type": "timestamp",
+          "type": "timestamp (3)",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "notes_content_idx": {
+          "name": "notes_content_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('english'::regconfig",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "notes_content_title_idx": {
+          "name": "notes_content_title_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('english'::regconfig",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "notes_userId_users_id_fk": {
           "name": "notes_userId_users_id_fk",
@@ -197,48 +228,70 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "email": {
           "name": "email",
-          "type": "varchar",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "token": {
           "name": "token",
-          "type": "varchar",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "expires": {
           "name": "expires",
-          "type": "timestamp",
+          "type": "timestamp (3)",
           "primaryKey": false,
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "password_reset_tokens_token_email_key": {
+          "name": "password_reset_tokens_token_email_key",
+          "columns": [
+            {
+              "expression": "token",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "password_reset_tokens_token_key": {
+          "name": "password_reset_tokens_token_key",
+          "columns": [
+            {
+              "expression": "token",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "password_reset_tokens_id_unique": {
-          "name": "password_reset_tokens_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        },
-        "password_reset_tokens_token_unique": {
-          "name": "password_reset_tokens_token_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.users": {
       "name": "users",
@@ -264,13 +317,7 @@
         },
         "emailVerified": {
           "name": "emailVerified",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "image": {
-          "name": "image",
-          "type": "text",
+          "type": "timestamp (3)",
           "primaryKey": false,
           "notNull": false
         },
@@ -279,20 +326,34 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "users_email_key": {
+          "name": "users_email_key",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.users_preferences": {
       "name": "users_preferences",
@@ -306,7 +367,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "varchar(36)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -326,7 +387,23 @@
           "default": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "users_preferences_userId_key": {
+          "name": "users_preferences_userId_key",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "users_preferences_userId_users_id_fk": {
           "name": "users_preferences_userId_users_id_fk",
@@ -343,15 +420,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_preferences_id_unique": {
-          "name": "users_preferences_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     }
   },
   "enums": {

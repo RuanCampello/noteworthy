@@ -80,10 +80,7 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+          "columns": ["provider", "providerAccountId"]
         }
       },
       "uniqueConstraints": {}
@@ -201,16 +198,12 @@
         "password_reset_tokens_id_unique": {
           "name": "password_reset_tokens_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         },
         "password_reset_tokens_token_unique": {
           "name": "password_reset_tokens_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       }
     },
@@ -262,9 +255,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     },
@@ -307,9 +298,7 @@
         "users_preferences_id_unique": {
           "name": "users_preferences_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       }
     }
@@ -334,10 +323,7 @@
     "public.note_format": {
       "name": "note_format",
       "schema": "public",
-      "values": [
-        "full",
-        "slim"
-      ]
+      "values": ["full", "slim"]
     }
   },
   "schemas": {},
