@@ -1,6 +1,6 @@
 'use server';
 
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
 import { type SearchResult } from '@/types/search-result';
 import { sql } from 'drizzle-orm';

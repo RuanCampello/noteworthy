@@ -15,8 +15,16 @@ export default async function Favourite({ params }: Props) {
 
   if (!note || !user) return <NotFound />;
 
-  const { content, title, createdAt, id, lastUpdate, isPublic, owner } = note;
-  const { preferences } = owner;
+  const {
+    content,
+    title,
+    createdAt,
+    id,
+    lastUpdate,
+    isPublic,
+    user: owner,
+  } = note;
+  const { usersPreferences: preferences } = owner;
 
   const isNoteVisible = user?.id === owner.id || isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;

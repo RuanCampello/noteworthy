@@ -4,7 +4,7 @@ import { signIn } from '@/auth/auth';
 import { getUserByEmail } from '@/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { registerFormSchema } from '@/schemas';
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
 import { user as userTable } from '@/server/db/schema';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';

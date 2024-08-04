@@ -3,12 +3,12 @@
 import { getPasswordResetTokenByToken } from '@/queries/password-reset-token';
 import { getUserByEmail } from '@/queries/user';
 import { newPasswordSchema } from '@/schemas';
-import { z } from 'zod';
+import { db } from '@/server/db';
+import { passwordResetTokens, user } from '@/server/db/schema';
 import bycrpt from 'bcryptjs';
-import { drizzle as db } from '@/server/db';
-import { getTranslations } from 'next-intl/server';
-import { passwordResetToken, user } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { getTranslations } from 'next-intl/server';
+import { z } from 'zod';
 
 export async function newPassword(
   values: z.infer<typeof newPasswordSchema>,
@@ -38,8 +38,8 @@ export async function newPassword(
     })
     .where(eq(user.id, existingUser.id));
   await db
-    .delete(passwordResetToken)
-    .where(eq(passwordResetToken.id, existingToken.id));
+    .delete(passwordResetTokens)
+    .where(eq(passwordResetTokens.id, existingToken.id));
 
   return { success: t('password_update') };
 }

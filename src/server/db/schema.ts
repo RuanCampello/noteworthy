@@ -1,10 +1,12 @@
-import { relations, sql, type InferSelectModel } from 'drizzle-orm';
+import { createId } from '@paralleldrive/cuid2';
+import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
   index,
   integer,
   pgEnum,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -27,25 +29,36 @@ export const colour = pgEnum('colour', [
 
 export const noteFormat = pgEnum('note_format', ['full', 'slim']);
 
-export const account = pgTable('account', {
-  id: text('id'),
-  userId: text('userId').references(() => user.id, { onDelete: 'cascade' }),
-  type: text('type'),
-  provider: text('provider'),
-  providerAccountId: text('providerAccountId'),
-  refreshToken: text('refresh_token'),
-  accessToken: text('access_token'),
-  expiresAt: integer('expires_at'),
-  tokenType: text('token_type'),
-  scope: text('scope'),
-  idToken: text('id_token'),
-  sessionState: text('session_state'),
-});
+export const account = pgTable(
+  'account',
+  {
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    type: text('type').notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('providerAccountId').notNull(),
+    refresh_token: text('refresh_token'),
+    access_token: text('access_token'),
+    expires_at: integer('expires_at'),
+    token_type: text('token_type'),
+    scope: text('scope'),
+    id_token: text('id_token'),
+    session_state: text('session_state'),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  }),
+);
 
 export const passwordResetTokens = pgTable(
   'password_reset_tokens',
   {
-    id: text('id').primaryKey().notNull(),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     email: text('email').notNull(),
     token: text('token').notNull(),
     expires: timestamp('expires', { precision: 3, mode: 'date' }).notNull(),
@@ -88,7 +101,9 @@ export const userPreferences = pgTable(
 export const user = pgTable(
   'users',
   {
-    id: text('id').primaryKey().notNull(),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     name: text('name'),
     email: text('email'),
     emailVerified: timestamp('emailVerified', { precision: 3, mode: 'date' }),
@@ -165,5 +180,3 @@ export const notesRelations = relations(note, ({ one }) => ({
     references: [user.id],
   }),
 }));
-
-export type Note = InferSelectModel<typeof note>;

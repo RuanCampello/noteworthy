@@ -1,7 +1,7 @@
+import type { Note } from '@/types/database-types';
 import { headers } from 'next/headers';
-import { formatSearchParams } from './format';
-import { type Note } from '@/server/db/schema';
 import { type Filters, allowedFilters } from './constants/filters';
+import { formatSearchParams } from './format';
 
 export type FilteredResults = {
   notes: Note[];

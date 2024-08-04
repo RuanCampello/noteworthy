@@ -1,6 +1,6 @@
 {
-  "id": "6eff77a0-3b35-4db8-b4be-e7cfb521a798",
-  "prevId": "4730a1a0-695b-4049-90bf-0571f2d43e67",
+  "id": "d7cf4079-f499-435b-bc11-a0e0f41b4e5e",
+  "prevId": "6eff77a0-3b35-4db8-b4be-e7cfb521a798",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -8,35 +8,29 @@
       "name": "account",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "userId": {
           "name": "userId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "type": {
           "name": "type",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "provider": {
           "name": "provider",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "providerAccountId": {
           "name": "providerAccountId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "refresh_token": {
           "name": "refresh_token",
@@ -87,13 +81,25 @@
           "name": "account_userId_users_id_fk",
           "tableFrom": "account",
           "tableTo": "users",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "account_provider_providerAccountId_pk": {
+          "name": "account_provider_providerAccountId_pk",
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "public.notes": {
@@ -205,8 +211,12 @@
           "name": "notes_userId_users_id_fk",
           "tableFrom": "notes",
           "tableTo": "users",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -401,8 +411,12 @@
           "name": "users_preferences_userId_users_id_fk",
           "tableFrom": "users_preferences",
           "tableTo": "users",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -431,7 +445,10 @@
     "public.note_format": {
       "name": "note_format",
       "schema": "public",
-      "values": ["full", "slim"]
+      "values": [
+        "full",
+        "slim"
+      ]
     }
   },
   "schemas": {},

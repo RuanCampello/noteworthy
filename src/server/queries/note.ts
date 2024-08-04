@@ -1,8 +1,9 @@
 import 'server-only';
 
 import { auth } from '@/auth/auth';
-import { drizzle as db } from '@/server/db';
-import { type Note, note, user } from '@/server/db/schema';
+import { db } from '@/server/db';
+import { note, user } from '@/server/db/schema';
+import type { Note } from '@/types/database-types';
 import { and, count, eq } from 'drizzle-orm';
 import { cache } from 'react';
 
@@ -15,7 +16,7 @@ export const getNoteById = cache(async (id: string) => {
   try {
     return await db.query.note.findFirst({
       where: eq(note.id, id),
-      with: { owner: { columns: { name: true, id: true } } },
+      with: { user: { columns: { name: true, id: true } } },
     });
   } catch (error) {
     return null;
@@ -51,9 +52,9 @@ export const getNoteByIdWithPreferences = cache(async (id: string) => {
     return db.query.note.findFirst({
       where: eq(user.id, id),
       with: {
-        owner: {
+        user: {
           columns: { id: true, name: true },
-          with: { preferences: true },
+          with: { usersPreferences: true },
         },
       },
     });

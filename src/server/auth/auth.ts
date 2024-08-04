@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth';
+import { createPlaceholderNote } from '@/actions/note';
 import authConfig from '@/auth/auth.config';
 import { getUserById } from '@/queries/user';
-import { createPlaceholderNote } from '@/actions/note';
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
+import { account as accountTable, user as userTable } from '@/server/db/schema';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { eq } from 'drizzle-orm';
-import { account as accountTable, user as userTable } from '@/server/db/schema';
+import NextAuth from 'next-auth';
 import type { Adapter } from 'next-auth/adapters';
 
 export const {

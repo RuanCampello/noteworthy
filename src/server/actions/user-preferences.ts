@@ -2,7 +2,7 @@
 
 import { currentUser } from '@/queries/note';
 import { userPreferencesSchema } from '@/schemas';
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
 import { userPreferences } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { cache } from 'react';

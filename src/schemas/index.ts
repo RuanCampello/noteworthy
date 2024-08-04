@@ -1,6 +1,5 @@
-import { type ColourType } from '@/utils/colours';
+import type { Colour, NoteFormat } from '@/types/database-types';
 import { type Locale } from '@/utils/constants/locales';
-import { type NoteFormat } from '@prisma/client';
 import { z } from 'zod';
 
 export const loginFormSchema = z.object({
@@ -28,7 +27,7 @@ export const noteDialogSchema = z.object({
   name: z
     .string({ required_error: 'Note must have a name' })
     .min(4, { message: 'Note name must have at least 4 characters' }),
-  colour: z.string().transform((s) => s as ColourType | 'random'),
+  colour: z.string().transform((s) => s as Colour | 'random'),
 });
 
 export const resetPasswordSchema = z.object({

@@ -6,7 +6,7 @@ import {
   toggleNoteFavourite,
 } from '@/actions/note';
 import DropdownButton from '@/components/DropdownButton';
-import { type Note } from '@/server/db/schema';
+import type { Note } from '@/types/database-types';
 import {
   DropdownMenu,
   DropdownMenuContent,

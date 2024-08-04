@@ -2,7 +2,7 @@
 
 import { currentUser, getNoteById } from '@/queries/note';
 import { noteDialogSchema } from '@/schemas';
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';

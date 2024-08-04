@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { drizzle as db } from '@/server/db';
+import { db } from '@/server/db';
 import { account, user } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 
