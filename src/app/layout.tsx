@@ -6,6 +6,8 @@ import { SessionProvider } from 'next-auth/react';
 import { type ReactNode } from 'react';
 import { getLocale, getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
+import Search from '@/components/Search';
+import QueryProvider from '@/components/QueryProvider';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -35,9 +37,12 @@ export default async function RootLayout({
         className={`${sourceSans.className} bg-black text-neutral-100 text-base overflow-hidden`}
       >
         <SessionProvider>
-          <NextIntlClientProvider messages={messages}>
-            {children}
-          </NextIntlClientProvider>
+          <QueryProvider>
+            <NextIntlClientProvider messages={messages}>
+              {children}
+              <Search />
+            </NextIntlClientProvider>
+          </QueryProvider>
         </SessionProvider>
         <Toaster />
       </body>

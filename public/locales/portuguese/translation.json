@@ -89,7 +89,8 @@
     "sup": "Sobrescrito",
     "sub": "Subscrito",
     "define_w": "Definir palavra",
-    "dfn": "Definir"
+    "dfn": "Definir",
+    "search": "Abrir busca inteligente"
   },
   "Format": {
     "style": "Estilos",
@@ -182,5 +183,20 @@
     "src": "Fonte",
     "srcs": "Fontes",
     "lic": "Licença"
+  },
+  "Search": {
+    "placeholder": "Procure qualquer coisa...",
+    "quick_act": "Ações rápidas",
+    "search_res": "Resultados da busca",
+    "new_note": "Crie uma nova nota",
+    "open_settings": "Abrir configurações",
+    "not_found_t": "Nada encontrado",
+    "not_found": "não correspondeu a nada.",
+    "try_again": "Por favor, tente novamente ou crie uma nova nota."
+  },
+  "SearchFooter": {
+    "nav": "navegar",
+    "close": "fechar",
+    "open": "abrir"
   }
 }

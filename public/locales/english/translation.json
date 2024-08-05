@@ -89,7 +89,8 @@
     "sup": "Superscript",
     "sub": "Subscript",
     "define_w": "Define word",
-    "dfn": "Define"
+    "dfn": "Define",
+    "search": "Open smart search"
   },
   "Format": {
     "style": "Styles",
@@ -182,5 +183,20 @@
     "src": "Source",
     "srcs": "Sources",
     "lic": "Licence"
+  },
+  "Search": {
+    "placeholder": "Search anything...",
+    "quick_act": "Quick actions",
+    "search_res": "Search results",
+    "new_note": "Create new note",
+    "open_settings": "Open settings",
+    "not_found_t": "Nothing found",
+    "not_found": "did not match anything.",
+    "try_again": "Please try again or create a new note."
+  },
+  "SearchFooter": {
+    "nav": "navigate",
+    "close": "close",
+    "open": "open"
   }
 }

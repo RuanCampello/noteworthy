@@ -195,3 +195,21 @@ export const getNote = cache(async (id: string) => {
     return null;
   }
 });
+
+export async function createFastNote() {
+  const user = await currentUser();
+  if (!user || !user?.id) return;
+
+  try {
+    const colour = getRandomColour().name;
+    const response = await fetch('https://dummyjson.com/quotes/random');
+    const data = await response.json();
+
+    const note = await db.note.create({
+      data: { colour, content: '', title: data['quote'], userId: user.id },
+    });
+    return note;
+  } catch (error) {
+    return null;
+  }
+}

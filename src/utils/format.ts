@@ -1,6 +1,6 @@
 export function stripHTMLTags(htmlString: string): string {
   if (htmlString) {
-    return htmlString.replace(/(<([^>]+)>|&nbsp;)/gi, '');
+    return htmlString.replace(/<(?!\/?search\b)[^>]+>|&nbsp;/gi, '');
   }
   return '';
 }

@@ -18,3 +18,10 @@ ALTER TABLE "notes"
     DROP COLUMN "isFavourite",
     DROP COLUMN "isPublic",
     DROP COLUMN "lastUpdate";
+
+-------------------------- indexes for search --------------------------
+
+CREATE INDEX notes_content_idx ON "notes" USING GIN (to_tsvector('english', "content"));
+CREATE INDEX notes_content_title_idx ON "notes" USING GIN (
+  to_tsvector('english', "title" || ' ' || "content")
+);

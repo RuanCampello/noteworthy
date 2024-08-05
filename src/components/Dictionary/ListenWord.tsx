@@ -34,7 +34,6 @@ export default function ListenWord({ url }: ListenWordProps) {
 
     if (audio) {
       if (isPlaying) {
-        console.log('source audio', audio);
         audio.play();
       } else {
         audio.pause();
