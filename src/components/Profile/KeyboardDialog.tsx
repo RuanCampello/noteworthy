@@ -67,7 +67,7 @@ export default async function KeyboardDialog() {
   ];
 
   const globalShortcuts: Shortcut[] = [
-    { action: t('toggle_sidebar'), commands: ['Alt', 'S'] },
+    { action: t('toggle_sidebar'), commands: ['Shift', 'Alt', 'S'] },
     { action: t('search'), commands: ['Ctrl', 'K'] },
   ];
 
@@ -81,7 +81,7 @@ export default async function KeyboardDialog() {
           </DropdownMenuShortcut>
         </Button>
       </DialogTrigger>
-      <DialogContent className='dark bg-black w-[524px]'>
+      <DialogContent className='dark bg-black max-w-[564px]'>
         <DialogHeader>
           <DialogTitle>{tk('title')}</DialogTitle>
           <DialogDescription>{tk('description')}</DialogDescription>
@@ -125,7 +125,7 @@ export default async function KeyboardDialog() {
 function ShortcutItem({ action, commands }: Shortcut) {
   return (
     <div className='flex justify-between items-center text-sm'>
-      <p className='font-semibold'>{action}</p>
+      <p className='font-semibold text-[13px]'>{action}</p>
       <div className='flex gap-1 bg-neutral-800/40 rounded-md p-1'>
         {commands.map((command) => (
           <div

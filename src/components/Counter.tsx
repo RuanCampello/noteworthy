@@ -1,6 +1,6 @@
-import { db } from '@/server/db';
-import AnimatedCounter from './AnimatedCounter';
 import { currentUser } from '@/queries/note';
+import { API } from '@/server/api';
+import AnimatedCounter from './AnimatedCounter';
 
 interface CounterProps {
   isFavourite?: boolean;
@@ -12,20 +12,21 @@ export default async function Counter({
   isArchived,
 }: CounterProps) {
   const user = await currentUser();
-  const userId = user?.id;
-  if (!userId) return;
+  if (!user || !user.id) return;
+  const api = new API();
 
-  const condition = isFavourite
-    ? { userId, isFavourite }
-    : isArchived
-      ? { userId, isArchived }
-      : { userId, isArchived: false, isFavourite: false };
-
-  const notesNumber: number = await db.note.count({ where: condition });
+  let notesNumber;
+  if (isFavourite) {
+    notesNumber = await api.notes(user.id).favourite.count();
+  } else if (isArchived) {
+    notesNumber = await api.notes(user.id).archived.count();
+  } else {
+    notesNumber = await api.notes(user.id).ordinary.count();
+  }
 
   return (
     <div
-      className={`bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent ${
+      className={`bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent group-data-[state=closed]/root:hidden ${
         notesNumber <= 0 && 'md:hidden hidden'
       }`}
     >

@@ -1,7 +1,9 @@
 'use client';
 
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { userPreferencesSchema } from '@/schemas';
 import { updateUserPreferences } from '@/server/actions/user-preferences';
+import type { NoteFormat, Preferences } from '@/types/database-types';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -15,21 +17,16 @@ import { Separator } from '@/ui/separator';
 import { Switch } from '@/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from '@/ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from '@/ui/toggle-group';
+import { Locale } from '@/utils/constants/locales';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  type NoteFormat,
-  type UserPreferences as Preferences,
-} from '@prisma/client';
 import { Bolt } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useTransition, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/utils/constants/locales';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 
 type UserPreferences = z.infer<typeof userPreferencesSchema>;
 

@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useTransition, type ChangeEvent } from 'react';
+import { getUploadUrl } from '@/actions/image';
+import { CustomForm } from '@/components/Form';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { Button } from '@/ui/button';
-import { Input } from '@/ui/input';
-import { z } from 'zod';
-import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, X } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import {
   Form,
   FormControl,
@@ -16,14 +13,17 @@ import {
   FormLabel,
   FormMessage,
 } from '@/ui/form';
-import { CustomForm } from '@/components/Form';
+import { Input } from '@/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Compressor from 'compressorjs';
-import { getUploadUrl } from '@/actions/image';
+import { Loader2, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition, type ChangeEvent } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   name: z

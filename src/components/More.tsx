@@ -2,7 +2,6 @@ import SectionTitle from '@/components/SectionTitle';
 import MoreItem from '@/components/MoreItem';
 import Counter from '@/components/Counter';
 import { Colours } from '@/utils/colours';
-import { useSidebarState } from '@/utils/sidebar';
 import { getTranslations } from 'next-intl/server';
 
 export default async function More() {
@@ -10,9 +9,8 @@ export default async function More() {
   const archiveColour = Colours['cambridge'];
   const t = await getTranslations('Sidebar');
 
-  const state = useSidebarState();
   return (
-    <div className='group/root' data-state={state}>
+    <div className='group/root'>
       <SectionTitle title={t('more')} />
       <div className='font-semibold flex flex-col'>
         <MoreItem
@@ -21,7 +19,7 @@ export default async function More() {
           name={t('favourites')}
           icon={'star'}
         >
-          {state !== 'closed' && <Counter isFavourite />}
+          <Counter isFavourite />
         </MoreItem>
         <MoreItem
           colour={archiveColour}
@@ -29,7 +27,7 @@ export default async function More() {
           name={t('archived')}
           icon={'archive'}
         >
-          {state !== 'closed' && <Counter isArchived />}
+          <Counter isArchived />
         </MoreItem>
       </div>
     </div>

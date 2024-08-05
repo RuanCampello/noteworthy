@@ -1,11 +1,14 @@
 import 'server-only';
 
 import { db } from '@/server/db';
+import { account, user } from '@/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function getUserByEmail(email: string) {
   try {
-    const user = await db.user.findUnique({ where: { email } });
-    return user;
+    return await db.query.user.findFirst({
+      where: eq(user.email, email),
+    });
   } catch (error) {
     return null;
   }
@@ -13,8 +16,9 @@ export async function getUserByEmail(email: string) {
 
 export async function getUserById(id: string) {
   try {
-    const user = await db.user.findUnique({ where: { id } });
-    return user;
+    return await db.query.user.findFirst({
+      where: eq(user.id, id),
+    });
   } catch (error) {
     return null;
   }
@@ -23,13 +27,14 @@ export async function getUserById(id: string) {
 export async function userHasProviderAccount(
   id: string,
 ): Promise<{ value: boolean; provider?: string }> {
-  const user = await db.account.findFirst({ where: { userId: id } });
-  if (user) {
-    const provider = user.provider;
-    const fistLetter = provider.charAt(0).toUpperCase();
-    const capilizedProvider = fistLetter + provider.slice(1);
-
-    return { value: true, provider: capilizedProvider };
+  const response = await db.query.account.findFirst({
+    where: eq(account.userId, id),
+    columns: {
+      provider: true,
+    },
+  });
+  if (response?.provider) {
+    return { value: true, provider: response.provider };
   }
   return { value: false };
 }

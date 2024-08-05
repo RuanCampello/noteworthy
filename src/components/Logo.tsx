@@ -15,7 +15,7 @@ export default function Logo() {
     <form action={redirectToHome}>
       <button
         type='submit'
-        className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full focus:outline-none'
+        className='p-2 px-5 flex items-center sm:justify-start justify-center md:text-xl text-neutral-300 font-semibold group w-full focus:outline-none group-data-[state=closed]/root:hidden'
       >
         <Image
           alt='noteworthy'

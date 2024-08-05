@@ -6,12 +6,12 @@ import {
   toggleNoteFavourite,
 } from '@/actions/note';
 import DropdownButton from '@/components/DropdownButton';
+import type { Note } from '@/types/database-types';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
-import { type Note } from '@prisma/client';
 import {
   Archive,
   ArchiveX,
@@ -22,6 +22,7 @@ import {
   Trash,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import {
   type ReactNode,
@@ -32,7 +33,6 @@ import {
 } from 'react';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
-import { useTranslations } from 'next-intl';
 
 interface DropdownProps {
   children: ReactNode;
@@ -40,7 +40,7 @@ interface DropdownProps {
 
 export default function Dropdown({ children }: DropdownProps) {
   const { data: session } = useSession();
-  const [favouriteLoading, starFavouriteTransition] = useTransition();
+  const [favouriteLoading, startFavouriteTransition] = useTransition();
   const [archiveLoading, startArchiveTransition] = useTransition();
   const userId = session?.user?.id;
   const params = useParams<{ id: string }>();
@@ -60,7 +60,7 @@ export default function Dropdown({ children }: DropdownProps) {
 
   function handleToggleFavourite() {
     if (!userId || !noteId) return;
-    starFavouriteTransition(async () => {
+    startFavouriteTransition(async () => {
       await toggleNoteFavourite(noteId, userId);
     });
   }
@@ -90,7 +90,7 @@ export default function Dropdown({ children }: DropdownProps) {
           <DropdownButton
             loading={favouriteLoading}
             disabled={isArchived || favouriteLoading}
-            active={isFavourite}
+            active={!!isFavourite}
             color='favourite'
             text={isFavourite ? t('unfav') : t('fav')}
             icon={isFavourite ? <StarOff /> : <Star />}
@@ -103,7 +103,7 @@ export default function Dropdown({ children }: DropdownProps) {
             color='archive'
             text={isArchived ? t('unarc') : t('arc')}
             disabled={isFavourite || archiveLoading}
-            active={isArchived}
+            active={!!isArchived}
           />
         </form>
         <EditNoteDialog

@@ -1,24 +1,22 @@
-import { Bolt, LogOut } from 'lucide-react';
+import { signOut } from '@/auth/auth';
+import { env } from '@/env';
+import { getUserPreferences } from '@/server/actions/user-preferences';
+import { currentUser } from '@/server/queries/note';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
-import { signOut } from '@/auth/auth';
-import { env } from '@/env';
-import { currentUser } from '@/server/queries/note';
-import { useSidebarState } from '@/utils/sidebar';
-import KeyboardDialog from './KeyboardDialog';
-import SettingsDialog from './SettingsDialog';
-import { getUserPreferences } from '@/server/actions/user-preferences';
+import { Bolt, LogOut } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import KeyboardDialog from './KeyboardDialog';
 import Menu from './Menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
+import SettingsDialog from './SettingsDialog';
 
 export default async function Profile() {
   const user = await currentUser();
-  const state = useSidebarState();
   const t = await getTranslations('ProfileDropdown');
   if (!user || !user?.id) return;
 
@@ -37,10 +35,7 @@ export default async function Profile() {
   const fallback = name[0].toUpperCase();
 
   return (
-    <div
-      data-state={state}
-      className='mt-auto data-[state=closed]:p-2 p-5 md:ps-4 data-[state=open]:bg-midnight relative rounded-md m-1 select-none'
-    >
+    <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar>
           <AvatarImage className='object-cover' src={source} />

@@ -1,25 +1,22 @@
-import Note from '@/components/Note/Note';
-import SectionTitle from '@/components/SectionTitle';
 import Counter from '@/components/Counter';
+import Note from '@/components/Note/Note';
 import SearchNote from '@/components/Note/SearchNote';
+import SectionTitle from '@/components/SectionTitle';
 import SortDropdown from '@/components/SortDropdown';
-import { getFilter } from '@/utils/format-notes';
 import { API } from '@/server/api';
-import { type ReactNode } from 'react';
-import { useSidebarState } from '@/utils/sidebar';
 import { currentUser } from '@/server/queries/note';
+import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
+import { type ReactNode } from 'react';
 
 export default async function Notes() {
   const user = await currentUser();
-  const state = useSidebarState();
   if (!user || !user.id) return;
   const t = await getTranslations('Sidebar');
   const isFirefox = headers().get('user-agent')?.includes('Firefox');
 
-  const api = new API(user.id);
-  const result = await api.notes.ordinary.filter();
+  const result = await new API().notes(user.id).ordinary.filter();
   if (!result) return;
   const { notes, searchParam } = result;
   const filter = getFilter();
@@ -34,7 +31,7 @@ export default async function Notes() {
     notes.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
   }
   return (
-    <div data-state={state} className='group/root'>
+    <div className='group/root'>
       <SectionTitle title={t('notes')}>
         <Counter />
       </SectionTitle>

@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1722520396823,
+      "tag": "0000_initial-database",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1722520510600,
+      "tag": "0001_remove-unused-auth-tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1722521700714,
+      "tag": "0002_remove-duplicate-references",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1722521852839,
+      "tag": "0003_remove-duplicate-references",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1722771767016,
+      "tag": "0004_introspect-from-db",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1722779235882,
+      "tag": "0005_correct-account-mismatch",
+      "breakpoints": true
+    }
+  ]
+}

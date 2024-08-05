@@ -44,7 +44,7 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
 
 interface RenderContentProps {
   content: string[];
-  match: string[];
+  match: RegExpExecArray[];
 }
 
 function RenderContent({ content, match }: RenderContentProps) {

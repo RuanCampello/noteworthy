@@ -2,8 +2,10 @@ import 'server-only';
 
 import { auth } from '@/auth/auth';
 import { db } from '@/server/db';
+import { note, user } from '@/server/db/schema';
+import type { Note } from '@/types/database-types';
+import { and, count, eq } from 'drizzle-orm';
 import { cache } from 'react';
-import { Note } from '@prisma/client';
 
 export const currentUser = cache(async () => {
   const session = await auth();
@@ -12,11 +14,10 @@ export const currentUser = cache(async () => {
 
 export const getNoteById = cache(async (id: string) => {
   try {
-    const note = await db.note.findUnique({
-      where: { id },
-      include: { owner: { select: { name: true, id: true } } },
+    return await db.query.note.findFirst({
+      where: eq(note.id, id),
+      with: { user: { columns: { name: true, id: true } } },
     });
-    return note;
   } catch (error) {
     return null;
   }
@@ -27,11 +28,20 @@ export const getAllUserNotes = cache(
     userId: string,
     conditions: Record<string, boolean>,
   ): Promise<Note[] | null> => {
+    const isArchived = conditions.isArchived;
+    const isFavourite = conditions.isFavourite;
+
     try {
-      const notes = await db.note.findMany({
-        where: { userId, ...conditions },
-      });
-      return notes;
+      return await db
+        .select()
+        .from(note)
+        .where(
+          and(
+            eq(note.userId, userId),
+            eq(note.isArchived, isArchived),
+            eq(note.isFavourite, isFavourite),
+          ),
+        );
     } catch (error) {
       return null;
     }
@@ -39,27 +49,47 @@ export const getAllUserNotes = cache(
 );
 export const getNoteByIdWithPreferences = cache(async (id: string) => {
   try {
-    return await db.note.findUnique({
-      where: { id },
-      include: {
-        owner: { select: { name: true, id: true, Preferences: true } },
+    return db.query.note.findFirst({
+      where: eq(user.id, id),
+      with: {
+        user: {
+          columns: { id: true, name: true },
+          with: { usersPreferences: true },
+        },
       },
     });
   } catch (error) {
+    console.error(error);
     return null;
   }
 });
 
 export const getNoteIsPublic = cache(async (noteId: string) => {
   try {
-    const note = await db.note.findUnique({
-      where: { id: noteId },
+    const response = await db.query.note.findFirst({
+      where: eq(note.id, noteId),
+      columns: { isPublic: true },
     });
-    if (!note) return null;
-    if (note.isPublic) return true;
-    return false;
+
+    return !!response?.isPublic;
   } catch (error) {
     console.error(error);
     return null;
   }
 });
+
+export const countNoteNumber = cache(
+  async (userId: string, favourite: boolean, archive: boolean) => {
+    const [{ count: noteNumber }] = await db
+      .select({ count: count() })
+      .from(note)
+      .where(
+        and(
+          eq(note.userId, userId),
+          eq(note.isFavourite, favourite),
+          eq(note.isArchived, archive),
+        ),
+      );
+    return noteNumber;
+  },
+);

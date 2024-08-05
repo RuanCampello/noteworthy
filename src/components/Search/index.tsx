@@ -31,8 +31,11 @@ import Image from 'next/image';
 import { CommandFooter } from './Footer';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSession } from 'next-auth/react';
 
 export default function Search() {
+  const { data: session } = useSession();
+
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
   const [loading, startTransition] = useTransition();
@@ -59,7 +62,8 @@ export default function Search() {
   const { data: results, isLoading } = useQuery({
     queryKey: ['search', query],
     queryFn: async () => {
-      const results = await searchNotes(query);
+      if (!session?.user?.id) return;
+      const results = await searchNotes(query, session.user.id);
       return results;
     },
     enabled: !!query && query.length > 2,
