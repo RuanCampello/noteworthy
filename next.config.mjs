@@ -19,7 +19,9 @@ const nextConfig = {
         protocol: 'https',
       },
       {
-        hostname: process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_HOST,
+        hostname:
+          process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_HOST ||
+          'cloudflare-supposed-url.dev',
         protocol: 'https',
         pathname: '**',
       },
