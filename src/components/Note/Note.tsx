@@ -1,6 +1,7 @@
 'use client';
 
-import { ColourType, Colours, darkenColour } from '@/utils/colours';
+import type { Colour } from '@/types/database-types';
+import { Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import Link from 'next/link';
@@ -11,7 +12,7 @@ interface NoteProps {
   uid: string;
   name: string;
   text: HTMLContent;
-  colour: ColourType;
+  colour: Colour;
   date: Date;
   href: 'notes' | 'favourites' | 'archived';
 }

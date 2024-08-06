@@ -37,7 +37,7 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
           )}
         </p>
       </div>
-      <ChevronRight className='w-3 h-3 shrink-0' />
+      <ChevronRight className='w-3 h-3 shrink-0 ms-auto' />
     </Link>
   );
 }

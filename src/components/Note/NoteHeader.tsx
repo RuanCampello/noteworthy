@@ -1,3 +1,6 @@
+import { currentUser } from '@/queries/note';
+import type { Note } from '@/types/database-types';
+import { toLocaleDateLong } from '@/utils/date';
 import {
   CalendarClock,
   CalendarDays,
@@ -5,38 +8,30 @@ import {
   SquareUserRound,
   View,
 } from 'lucide-react';
-import Dropdown from './NoteDropdown';
-import { Separator } from '../ui/separator';
-import SaveNote from './SaveNote';
-import WordCounter from '../WordCounter';
-import NoteHeaderItem from './NoteHeaderItem';
-import { toLocaleDateLong } from '@/utils/date';
-import { currentUser } from '@/queries/note';
-import StatusTooltip from '../StatusTooltip';
-import { headers } from 'next/headers';
-import PublishNoteDialog from './PublishNoteDialog';
 import { getTranslations } from 'next-intl/server';
+import { headers } from 'next/headers';
+import StatusTooltip from '../StatusTooltip';
+import { Separator } from '../ui/separator';
+import WordCounter from '../WordCounter';
+import Dropdown from './NoteDropdown';
+import NoteHeaderItem from './NoteHeaderItem';
+import PublishNoteDialog from './PublishNoteDialog';
+import SaveNote from './SaveNote';
 
-type Owner = {
-  name: string | null;
-  id: string;
-};
+interface NoteWithOwner extends Note {
+  owner: {
+    id: string;
+    name: string;
+  };
+}
 
 interface NoteHeaderProps {
-  title: string;
-  date: Date;
-  owner: Owner;
-  id: string;
-  lastUpdate: Date;
+  note: NoteWithOwner;
 }
-export default async function NoteHeader({
-  title,
-  date,
-  owner,
-  lastUpdate,
-}: NoteHeaderProps) {
+export default async function NoteHeader({ note }: NoteHeaderProps) {
+  const { lastUpdate, owner, title, createdAt } = note;
   const longLastUpdate = toLocaleDateLong(lastUpdate);
-  const longDate = toLocaleDateLong(date);
+  const longDate = toLocaleDateLong(createdAt);
   const user = await currentUser();
   const t = await getTranslations('Header');
 
@@ -58,7 +53,7 @@ export default async function NoteHeader({
         {isEditor && (
           <div className='flex gap-2 items-center'>
             <SaveNote />
-            <Dropdown>
+            <Dropdown note={note}>
               <PublishNoteDialog />
             </Dropdown>
           </div>

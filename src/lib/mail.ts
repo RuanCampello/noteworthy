@@ -4,6 +4,11 @@ import { Resend } from 'resend';
 const resend = new Resend(env.RESEND_API_KEY);
 
 export async function sendPasswordResetEmail(email: string, token: string) {
+  if (process.env.NODE_ENV !== 'development') {
+    throw new Error(
+      'Resend operations are not available in the development environment.',
+    );
+  }
   const hostname = env.NEXT_PUBLIC_HOSTNAME;
 
   const resetLink = `${hostname}/new-password?token=${token}`;

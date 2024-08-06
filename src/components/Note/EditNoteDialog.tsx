@@ -2,6 +2,7 @@
 
 import { editNote } from '@/actions/note';
 import { noteDialogSchema } from '@/schemas';
+import type { Colour } from '@/types/database-types';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -21,20 +22,19 @@ import {
   FormMessage,
 } from '@/ui/form';
 import { Input } from '@/ui/input';
-import { type ColourType, Colours } from '@/utils/colours';
+import { Colours } from '@/utils/colours';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ColourSelect from '../ColourSelect';
 import { NoteDialog } from './AddNoteDialog';
-import { useTranslations } from 'next-intl';
 
 interface EditNoteDialogProps {
   children: ReactNode;
   noteName: string;
-  noteColour: ColourType;
+  noteColour: Colour;
   noteId: string;
-  callback: () => void;
 }
 
 export default function EditNoteDialog({
@@ -42,7 +42,6 @@ export default function EditNoteDialog({
   noteName,
   noteColour,
   noteId,
-  callback,
 }: EditNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -59,14 +58,13 @@ export default function EditNoteDialog({
     startTransition(async () => {
       await editNote(values, noteId);
       setOpen(false);
-      callback();
     });
   }
 
   const colour = useWatch({
     control: noteDialog.control,
     name: 'colour',
-  }) as ColourType;
+  }) as Colour;
   const selectedColour = Colours[colour];
 
   return (

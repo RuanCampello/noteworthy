@@ -1,4 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+
 const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
@@ -23,6 +24,15 @@ const nextConfig = {
         pathname: '**',
       },
     ],
+  },
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
+      }),
+    );
+
+    return config;
   },
 };
 

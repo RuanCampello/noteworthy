@@ -10,7 +10,6 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { cache } from 'react';
 import { z } from 'zod';
 
 function getPathnameParams() {
@@ -39,7 +38,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
       userId: user.id,
       content: '',
     })
-    .returning({ id: note.id });
+    .returning();
   const { origin, basePath } = getPathnameParams();
 
   if (!basePath || basePath === 'favourites' || basePath === 'archived') {
@@ -203,30 +202,33 @@ export async function togglePublishState(id: string, currentState: boolean) {
   }
 }
 
-export const getNote = cache(async (id: string) => {
-  try {
-    return await db.query.note.findFirst({ where: eq(note.id, id) });
-  } catch (error) {
-    return null;
-  }
-});
-
 export async function createFastNote() {
   const user = await currentUser();
   if (!user || !user?.id) return;
 
   try {
     const colour = getRandomColour().name;
-    const response = await fetch('https://dummyjson.com/quotes/random');
-    const data = await response.json();
 
-    const newNote = await db
+    const response = await fetch('https://dummyjson.com/quotes/random');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const quote = 'some random quote that (not) came from api';
+
+    const [{ id }] = await db
       .insert(note)
-      .values({ colour, content: '', title: data['quote'], userId: user.id })
+      .values({
+        colour,
+        content: '',
+        title: data['quote'] || quote,
+        userId: user.id,
+      })
       .returning();
 
-    return newNote[0];
+    return id;
   } catch (error) {
+    console.error('Error creating fast note:', error);
     return null;
   }
 }

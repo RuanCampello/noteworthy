@@ -1,0 +1,29 @@
+services:
+  nextjs:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    command: sh -c "npm install && npx drizzle-kit push && npm run dev"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - AUTH_SECRET=123456789
+      - NEXT_PUBLIC_HOSTNAME=http://localhost:3000
+    depends_on:
+      - postgres
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+  postgres:
+    image: 'postgres:15-alpine'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+volumes:
+  postgres_data:

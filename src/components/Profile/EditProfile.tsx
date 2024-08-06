@@ -2,6 +2,7 @@
 
 import { getUploadUrl } from '@/actions/image';
 import { CustomForm } from '@/components/Form';
+import { useImageAge } from '@/lib/zustand/image';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { Button } from '@/ui/button';
@@ -40,6 +41,7 @@ export default function EditProfile() {
   const { data: session, update } = useSession();
   const { setOpen: setSettings } = useSettingsStore();
   const { setOpen: setSettingsDialog } = useSettingsDialogStore();
+  const { age, updateAge } = useImageAge();
   const router = useRouter();
   const t = useTranslations('Profile');
   const user = session?.user;
@@ -78,9 +80,10 @@ export default function EditProfile() {
               method: 'PUT',
               body: result,
             });
-            router.refresh();
             setSettings(false);
             setSettingsDialog(false);
+            updateAge();
+            router.refresh();
           },
         });
       }
@@ -138,7 +141,7 @@ export default function EditProfile() {
                   src={
                     selectedImage ||
                     image ||
-                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}?${new Date().getTime()}`
+                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}?${age.toISOString()}`
                   }
                   alt={(name && name[0].toUpperCase()) || ''}
                 />
