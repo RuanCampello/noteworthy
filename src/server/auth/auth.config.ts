@@ -1,24 +1,34 @@
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
-import Credentials from 'next-auth/providers/credentials';
 
-import type { NextAuthConfig } from 'next-auth';
-import { loginFormSchema } from '@/schemas';
+import { devEnv, env } from '@/env';
 import { getUserByEmail } from '@/queries/user';
+import { loginFormSchema } from '@/schemas';
 import bcrypt from 'bcryptjs';
-import { env } from '@/env';
+
+const isProd = process.env.NODE_ENV === 'production';
+
+const providers = isProd
+  ? [
+      GitHub({
+        clientId: env.GITHUB_CLIENT_ID,
+        clientSecret: env.GITHUB_CLIENT_SECRET,
+      }),
+      Google({
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      }),
+    ]
+  : [];
+
+const secret = isProd ? env.AUTH_SECRET : devEnv.AUTH_SECRET;
 
 export default {
-  secret: env.AUTH_SECRET,
+  secret,
   providers: [
-    GitHub({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
-    Google({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
+    ...providers,
     Credentials({
       async authorize(credentials) {
         const fields = loginFormSchema.safeParse(credentials);
