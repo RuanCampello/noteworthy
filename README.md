@@ -132,35 +132,25 @@ Enhance your productivity with these keyboard shortcuts:
 
 To run Noteworthy locally, follow these steps:
 
-1. Clone this repository to your local machine.
-2. Navigate to the project directory.
-3. Create a `.env` file and fill it with your configuration. Use the following template:
+1. Clone this repository to your local machine:
 
-```
-DATABASE_URL=
+   ```sh
+   git clone https://github.com/RuanCampello/noteworthy.git
+   cd noteworthy
+   ```
 
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
+2. Ensure Docker and Docker Compose are installed on your machine. If not, follow the installation instructions [here](https://docs.docker.com/get-docker/) and [here](https://docs.docker.com/compose/install/).
 
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+3. Build and start the services using Docker Compose:
 
-AUTH_SECRET=
+   ```sh
+   docker-compose up --build # or docker compose up --build
+   ```
 
-CLOUDFLARE_ACCOUNT_ID=
-CLOUDFLARE_BUCKET_NAME=
-CLOUDFLARE_ACCESS_KEY=
-CLOUDFLARE_SECRET_KEY=
-NEXT_PUBLIC_CLOUDFLARE_DEV_URL=
+4. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
 
-RESEND_API_KEY=
-
-NEXT_PUBLIC_HOSTNAME=http://localhost:3000
-```
-
-4. Install dependencies using `npm install`.
-5. Start the development server using `npm run dev`.
-6. Open your web browser and visit http://localhost:3000.
+> [!IMPORTANT]
+> OAuth and Profile Image Uploads: In the development environment, OAuth authentication and profile image updates are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment. Image uploads use Cloudflare environment variables, which are also not set in Docker.
 
 ## Internationalisation (i18n) Support
 
