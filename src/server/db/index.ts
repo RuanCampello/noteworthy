@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { devEnv, env } from '@/env';
+import { env } from '@/env';
 import * as schema from '@/server/db/schema';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
@@ -10,6 +10,6 @@ import { Pool } from 'pg';
 export const db =
   process.env.NODE_ENV === 'production'
     ? drizzle(neon(env.DATABASE_URL), { schema })
-    : drizzleDev(new Pool({ connectionString: devEnv.DATABASE_URL }), {
+    : drizzleDev(new Pool({ connectionString: env.DATABASE_URL }), {
         schema,
       });

@@ -3,7 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
-import { devEnv, env } from '@/env';
+import { env } from '@/env';
 import { getUserByEmail } from '@/queries/user';
 import { loginFormSchema } from '@/schemas';
 import bcrypt from 'bcryptjs';
@@ -23,10 +23,8 @@ const providers = isProd
     ]
   : [];
 
-const secret = isProd ? env.AUTH_SECRET : devEnv.AUTH_SECRET;
-
 export default {
-  secret,
+  secret: env.AUTH_SECRET,
   providers: [
     ...providers,
     Credentials({

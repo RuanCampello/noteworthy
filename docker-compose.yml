@@ -10,6 +10,8 @@ services:
     command: sh -c "npm install && npx drizzle-kit push && npm run dev"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - AUTH_SECRET=123456789
+      - NEXT_PUBLIC_HOSTNAME=http://localhost:3000
     depends_on:
       - postgres
   postgres:

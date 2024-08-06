@@ -17,13 +17,4 @@ const envSchema = z.object({
   AUTH_SECRET: z.string(),
 });
 
-const devEnvSchema = z.object({
-  DATABASE_URL: z.string().url(),
-  NEXT_PUBLIC_HOSTNAME: z.string().url(),
-  AUTH_SECRET: z.string(),
-});
-
-const envPath = process.env;
-
-export const env = envSchema.parse(envPath);
-export const devEnv = devEnvSchema.parse(envPath);
+export const env = envSchema.parse(process.env);
