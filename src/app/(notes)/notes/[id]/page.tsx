@@ -15,32 +15,24 @@ export default async function NotePage({ params }: Props) {
 
   if (!user || !note) return <NotFound />;
 
-  const {
-    content,
-    title,
-    createdAt,
-    id,
-    lastUpdate,
-    isPublic,
-    user: owner,
-  } = note;
-  const { usersPreferences: preferences } = owner;
+  const noteWithOwner = {
+    ...note,
+    owner: {
+      id: note.user.id,
+      name: note.user.name!,
+    },
+  };
+  const { usersPreferences: preferences } = note.user;
 
-  const isNoteVisible = user.id === owner.id || isPublic;
+  const isNoteVisible = user.id === note.user.id || note.isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   const fullNote =
     preferences?.fullNote !== undefined ? preferences.fullNote : true;
 
   return (
-    <NoteEditor fullNote={fullNote} owner={owner.id} content={content}>
-      <NoteHeader
-        id={id}
-        title={title}
-        date={createdAt}
-        owner={owner}
-        lastUpdate={lastUpdate || createdAt}
-      />
+    <NoteEditor fullNote={fullNote} owner={note.user.id} content={note.content}>
+      <NoteHeader note={noteWithOwner} />
     </NoteEditor>
   );
 }

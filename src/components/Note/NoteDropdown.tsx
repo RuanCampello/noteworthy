@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  getNote,
-  toggleNoteArchive,
-  toggleNoteFavourite,
-} from '@/actions/note';
+import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 import DropdownButton from '@/components/DropdownButton';
 import type { Note } from '@/types/database-types';
 import {
@@ -24,39 +20,23 @@ import {
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-  useTransition,
-} from 'react';
+import { type ReactNode, useTransition } from 'react';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
 
 interface DropdownProps {
   children: ReactNode;
+  note: Note;
 }
 
-export default function Dropdown({ children }: DropdownProps) {
+export default function Dropdown({ note, children }: DropdownProps) {
   const { data: session } = useSession();
   const [favouriteLoading, startFavouriteTransition] = useTransition();
   const [archiveLoading, startArchiveTransition] = useTransition();
   const userId = session?.user?.id;
   const params = useParams<{ id: string }>();
   const noteId = params.id;
-  const [note, setNote] = useState<Note>();
   const t = useTranslations('NoteDropdown');
-
-  const fetchNote = useCallback(async () => {
-    if (!noteId) return;
-    const note = await getNote(noteId);
-    if (note) setNote(note);
-  }, [noteId]);
-
-  useEffect(() => {
-    fetchNote();
-  }, [fetchNote]);
 
   function handleToggleFavourite() {
     if (!userId || !noteId) return;
@@ -72,7 +52,6 @@ export default function Dropdown({ children }: DropdownProps) {
     });
   }
 
-  if (!note) return;
   const { id, title, colour, isFavourite, isArchived } = note;
   return (
     <DropdownMenu>
@@ -106,12 +85,7 @@ export default function Dropdown({ children }: DropdownProps) {
             active={!!isArchived}
           />
         </form>
-        <EditNoteDialog
-          noteId={id}
-          noteName={title}
-          noteColour={colour}
-          callback={fetchNote}
-        >
+        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
           <DropdownButton text={t('edit')} icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         {children}

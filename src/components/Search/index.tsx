@@ -115,8 +115,9 @@ export default function Search() {
             disabled={loading}
             onSelect={() => {
               startTransition(async () => {
-                const note = await createFastNote();
-                router.push(`/notes/${note?.id}`);
+                const id = await createFastNote();
+                console.log('received id', id);
+                router.push(`/notes/${id}`);
                 setOpen(false);
               });
             }}

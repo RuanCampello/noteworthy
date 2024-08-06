@@ -23,18 +23,17 @@ import {
 import { Input } from '@/ui/input';
 import { type ColourType, Colours } from '@/utils/colours';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ColourSelect from '../ColourSelect';
 import { NoteDialog } from './AddNoteDialog';
-import { useTranslations } from 'next-intl';
 
 interface EditNoteDialogProps {
   children: ReactNode;
   noteName: string;
   noteColour: ColourType;
   noteId: string;
-  callback: () => void;
 }
 
 export default function EditNoteDialog({
@@ -42,7 +41,6 @@ export default function EditNoteDialog({
   noteName,
   noteColour,
   noteId,
-  callback,
 }: EditNoteDialogProps) {
   const [loading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -59,7 +57,6 @@ export default function EditNoteDialog({
     startTransition(async () => {
       await editNote(values, noteId);
       setOpen(false);
-      callback();
     });
   }
 

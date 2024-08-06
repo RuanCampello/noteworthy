@@ -14,6 +14,9 @@ services:
       - NEXT_PUBLIC_HOSTNAME=http://localhost:3000
     depends_on:
       - postgres
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
   postgres:
     image: 'postgres:15-alpine'
     environment:
