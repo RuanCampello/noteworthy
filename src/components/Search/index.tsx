@@ -1,22 +1,20 @@
 'use client';
 
+import NotFound from '@/assets/svg/oooscillate.svg';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { createFastNote } from '@/server/actions/note';
 import { searchNotes } from '@/server/queries/search';
 import {
   CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandItem,
-  CommandGroup,
   CommandEmpty,
+  CommandGroup,
   CommandIcon,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from '@/ui/command';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useTransition } from 'react';
-import useKeyboardShortcut from 'use-keyboard-shortcut';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { NoteItemWrapper } from './Item';
-import { createFastNote } from '@/server/actions/note';
 import {
   ArrowDown,
   ArrowUp,
@@ -26,12 +24,14 @@ import {
   Settings,
   Undo2,
 } from 'lucide-react';
-import NotFound from '@/assets/svg/oooscillate.svg';
-import Image from 'next/image';
-import { CommandFooter } from './Footer';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
-import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import useKeyboardShortcut from 'use-keyboard-shortcut';
+import { CommandFooter } from './Footer';
+import { NoteItemWrapper } from './Item';
 
 export default function Search() {
   const { data: session } = useSession();
