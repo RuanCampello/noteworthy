@@ -1,14 +1,14 @@
 'use client';
 
-import { Check, Save } from 'lucide-react';
-import MenuTooltip from '../Tooltip';
-import { useCurrentEditor } from '@tiptap/react';
-import { useTransition } from 'react';
-import { useToast } from '../ui/use-toast';
 import { updateNoteContent } from '@/actions/note';
+import { useCurrentEditor } from '@tiptap/react';
+import { Check, Save } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useTransition } from 'react';
+import MenuTooltip from '../Tooltip';
+import { useToast } from '../ui/use-toast';
 
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
