@@ -1,16 +1,6 @@
-export type ColourType =
-  | 'tiffany'
-  | 'blue'
-  | 'mindaro'
-  | 'sunset'
-  | 'melon'
-  | 'tickle'
-  | 'wisteria'
-  | 'cambridge'
-  | 'mikado'
-  | 'slate';
+import type { Colour } from '@/types/database-types';
 
-export const Colours: { [key in ColourType]: string } = {
+export const Colours: { [key in Colour]: string } = {
   tiffany: '#80CBC4',
   cambridge: '#93CBAE',
   blue: '#80DEEA',
@@ -43,13 +33,13 @@ export function darkenColour(colour: string, percent: number) {
 }
 
 interface ColourInfo {
-  name: ColourType;
+  name: Colour;
   hex: string;
 }
 
 export function getRandomColour(): ColourInfo {
   const keys = Object.keys(Colours);
   const randomIndex = Math.floor(Math.random() * keys.length);
-  const randomColourKey = keys[randomIndex] as ColourType;
+  const randomColourKey = keys[randomIndex] as Colour;
   return { name: randomColourKey, hex: Colours[randomColourKey] };
 }

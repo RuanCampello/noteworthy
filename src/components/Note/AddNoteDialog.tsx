@@ -1,6 +1,9 @@
 'use client';
 
-import { type ReactNode, useState, useTransition } from 'react';
+import { createNote } from '@/actions/note';
+import { noteDialogSchema } from '@/schemas';
+import type { Colour } from '@/types/database-types';
+import { Button } from '@/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,14 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog';
-import { Input } from '@/ui/input';
-import ColourSelect from '../ColourSelect';
-import { createNote } from '@/actions/note';
-import { z } from 'zod';
-import { noteDialogSchema } from '@/schemas';
-import { useForm, useWatch } from 'react-hook-form';
-import useKeyboardShortcut from 'use-keyboard-shortcut';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -26,10 +21,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/ui/form';
-import { Button } from '@/ui/button';
-import { ColourType, Colours } from '@/utils/colours';
+import { Input } from '@/ui/input';
+import { Colours } from '@/utils/colours';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { type ReactNode, useState, useTransition } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import useKeyboardShortcut from 'use-keyboard-shortcut';
+import { z } from 'zod';
+import ColourSelect from '../ColourSelect';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -65,7 +66,7 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const colour = useWatch({
     control: noteDialog.control,
     name: 'colour',
-  }) as ColourType;
+  }) as Colour;
   const selectedColour = Colours[colour];
 
   return (

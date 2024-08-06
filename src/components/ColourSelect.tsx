@@ -1,4 +1,4 @@
-import { ColourType } from '@/utils/colours';
+import type { Colour } from '@/types/database-types';
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
 import HoverableSelectItem from './HoverableSelectItem';
 
 interface ColourSelectProps {
-  defaultColour: 'random' | ColourType;
+  defaultColour: 'random' | Colour;
   onValueChange: () => void;
   disabled?: boolean;
   colour?: string;
@@ -66,7 +66,7 @@ export default function ColourSelect({
           {colours.map((colour) => (
             <HoverableSelectItem
               key={colour.value}
-              value={colour.value as ColourType}
+              value={colour.value as Colour}
               name={colour.name}
             />
           ))}

@@ -2,6 +2,7 @@
 
 import { editNote } from '@/actions/note';
 import { noteDialogSchema } from '@/schemas';
+import type { Colour } from '@/types/database-types';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -21,7 +22,7 @@ import {
   FormMessage,
 } from '@/ui/form';
 import { Input } from '@/ui/input';
-import { type ColourType, Colours } from '@/utils/colours';
+import { Colours } from '@/utils/colours';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
@@ -32,7 +33,7 @@ import { NoteDialog } from './AddNoteDialog';
 interface EditNoteDialogProps {
   children: ReactNode;
   noteName: string;
-  noteColour: ColourType;
+  noteColour: Colour;
   noteId: string;
 }
 
@@ -63,7 +64,7 @@ export default function EditNoteDialog({
   const colour = useWatch({
     control: noteDialog.control,
     name: 'colour',
-  }) as ColourType;
+  }) as Colour;
   const selectedColour = Colours[colour];
 
   return (
