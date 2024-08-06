@@ -3,9 +3,9 @@ let s3Client: {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  s3Client = require('./s3Client.prod');
+  s3Client = require('./s3.prod.ts');
 } else {
-  s3Client = require('./s3Client.dev');
+  s3Client = require('./s3.dev.ts');
 }
 
 export const { getSignedUrlForObject } = s3Client;
