@@ -150,7 +150,7 @@ To run Noteworthy locally, follow these steps:
 4. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
 
 > [!IMPORTANT]
-> OAuth and Profile Image Uploads: In the development environment, OAuth authentication and profile image updates are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment. Image uploads use Cloudflare environment variables, which are also not set in Docker.
+> OAuth, Password Reset and Profile Image Uploads: In the development environment, OAuth authentication, password reset mailer and profile image updates are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment. Image uploads use Cloudflare environment variables, which are also not set in Docker. So do Resend.
 
 ## Internationalisation (i18n) Support
 
