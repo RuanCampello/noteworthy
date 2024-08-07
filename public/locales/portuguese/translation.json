@@ -186,6 +186,8 @@
   },
   "Search": {
     "placeholder": "Procure qualquer coisa...",
+    "fav_placeholder": "Procure por notas favoritas...",
+    "arc_placeholder": "Procure por notas arquivadas...",
     "quick_act": "Ações rápidas",
     "search_res": "Resultados da busca",
     "new_note": "Crie uma nova nota",
