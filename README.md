@@ -143,9 +143,9 @@ To run Noteworthy locally, follow these steps:
 
 3. Install the dependecies:
 
-```sh
- npm install
-```
+  ```sh
+  npm install
+  ```
 
 4. Build and start the services using Docker Compose:
 
