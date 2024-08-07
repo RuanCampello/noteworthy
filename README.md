@@ -141,7 +141,7 @@ To run Noteworthy locally, follow these steps:
 
 2. Ensure Docker and Docker Compose are installed on your machine. If not, follow the installation instructions [here](https://docs.docker.com/get-docker/) and [here](https://docs.docker.com/compose/install/).
 
-3. Install the dependecies:
+3. Install the dependencies:
 
   ```sh
   npm install
