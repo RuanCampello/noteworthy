@@ -141,13 +141,19 @@ To run Noteworthy locally, follow these steps:
 
 2. Ensure Docker and Docker Compose are installed on your machine. If not, follow the installation instructions [here](https://docs.docker.com/get-docker/) and [here](https://docs.docker.com/compose/install/).
 
-3. Build and start the services using Docker Compose:
+3. Install the dependecies:
+
+```sh
+   npm install
+   ```
+
+4. Build and start the services using Docker Compose:
 
    ```sh
    docker-compose up --build # or docker compose up --build
    ```
 
-4. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
+5. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
 
 > [!IMPORTANT]
 > OAuth, Password Reset and Profile Image Uploads: In the development environment, OAuth authentication, password reset mailer and profile image updates are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment. Image uploads use Cloudflare environment variables, which are also not set in Docker. So do Resend.
