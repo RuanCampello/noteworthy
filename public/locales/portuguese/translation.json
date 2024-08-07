@@ -1,4 +1,5 @@
 {
+  "$schema": "../schema.json",
   "Login": {
     "password": "Senha",
     "not_registered": "Ainda não se registrou?",
