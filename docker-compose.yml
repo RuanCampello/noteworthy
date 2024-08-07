@@ -4,10 +4,9 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      - /app/node_modules
     ports:
       - '3000:3000'
-    command: sh -c "npm install && npx drizzle-kit push && npm run dev"
+    command: sh -c "npx drizzle-kit push && npm run dev"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - AUTH_SECRET=123456789
