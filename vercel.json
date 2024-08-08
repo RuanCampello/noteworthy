@@ -1,8 +1,0 @@
-{
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    },
-    "command": "npm install && rm -rf ./node_modules/@noteworthy-modules/utils && npm run build"
-  }
-}
