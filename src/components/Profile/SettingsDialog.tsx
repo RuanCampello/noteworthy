@@ -1,5 +1,6 @@
 'use client';
 
+import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { userPreferencesSchema } from '@/schemas';
 import { updateUserPreferences } from '@/server/actions/user-preferences';
@@ -21,7 +22,6 @@ import { Locale } from '@/utils/constants/locales';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bolt } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { useTransition, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -40,9 +40,9 @@ export const revalidate = 0;
 export default function SettingsDialog({ preferences }: SettingsProps) {
   const [loading, startTransition] = useTransition();
   const { isOpen, setOpen } = useSettingsDialogStore();
+  const { setOpen: setSettingsOpen } = useSettingsStore();
   const t = useTranslations('Settings');
   const locale = useLocale();
-  const router = useRouter();
 
   const userPreferences = useForm<UserPreferences>({
     resolver: zodResolver(userPreferencesSchema),
@@ -57,10 +57,10 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   function handleSaveUserPreferences(values: UserPreferences) {
     startTransition(async () => {
       await updateUserPreferences(values);
-      router.refresh();
       setOpen(false);
+      setSettingsOpen(false);
     });
-  }
+  } // TODO: correct note full width revalidation after change
 
   const fieldClassname =
     'h-20 w-full bg-white/10 outline outline-2 outline-offset-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
@@ -81,11 +81,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
             <TabsTrigger className='w-full' value='appearance'>
               {t('appearance')}
             </TabsTrigger>
-            <TabsTrigger
-              className='w-full'
-              value='profile'
-              disabled={process.env.NODE_ENV !== 'production'}
-            >
+            <TabsTrigger className='w-full' value='profile'>
               {t('profile')}
             </TabsTrigger>
           </TabsList>
