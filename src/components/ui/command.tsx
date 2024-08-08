@@ -1,12 +1,13 @@
 'use client';
 
-import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Loader, LucideProps, Search } from 'lucide-react';
+import { Loader, LucideProps, Package, Search, Sparkle } from 'lucide-react';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { useFilter } from '@/lib/zustand/search-filter';
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -45,6 +46,41 @@ interface CommandInputProps
   loading: boolean;
 }
 
+interface RenderInputIconProps {
+  loading: boolean;
+}
+
+function RenderInputIcon({ loading }: RenderInputIconProps) {
+  const { filter } = useFilter();
+  const baseIcon = 'mr-2 h-4 w-4 shrink-0  opacity-50';
+
+  if (loading) {
+    return <Loader className={cn(baseIcon, 'animate-spin')} />;
+  } else {
+    if (filter === 'arc') {
+      return (
+        <Package
+          className={cn(
+            baseIcon,
+            'text-cambridge animate-in duration-200 fade-in-40 opacity-70 zoom-in-[.3]',
+          )}
+        />
+      );
+    } else if (filter === 'fav') {
+      return (
+        <Sparkle
+          className={cn(
+            baseIcon,
+            'text-sunset text-opacity-70 transition-colors fade-in-50 opacity-100 animate-in spin-in-45 duration-200',
+          )}
+        />
+      );
+    } else {
+      return <Search className={baseIcon} />;
+    }
+  }
+}
+
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   CommandInputProps
@@ -53,11 +89,7 @@ const CommandInput = React.forwardRef<
     className='flex items-center border-b px-3 z-10 bg-inherit'
     cmdk-input-wrapper=''
   >
-    {loading ? (
-      <Loader className='mr-2 h-4 w-4 shrink-0 opacity-50 animate-spin' />
-    ) : (
-      <Search className='mr-2 h-4 w-4 shrink-0 opacity-50' />
-    )}
+    <RenderInputIcon loading={loading} />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -174,12 +206,12 @@ CommandShortcut.displayName = 'CommandShortcut';
 export {
   Command,
   CommandDialog,
-  CommandInput,
-  CommandList,
   CommandEmpty,
   CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
   CommandIcon,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
 };

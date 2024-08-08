@@ -1,6 +1,7 @@
 'use client';
 
 import NotFound from '@/assets/svg/oooscillate.svg';
+import { useFilter } from '@/lib/zustand/search-filter';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { createFastNote } from '@/server/actions/note';
@@ -41,16 +42,24 @@ export default function Search() {
   const [loading, startTransition] = useTransition();
   const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
   const { setOpen: setSettingsOpen } = useSettingsStore();
+  const { filter, placeholder, toggleFilter } = useFilter();
   const router = useRouter();
 
   const t = useTranslations('Search');
   const tf = useTranslations('SearchFooter');
 
-  useKeyboardShortcut(['Control', 'K'], () => setOpen(true), {
-    overrideSystem: true,
-    repeatOnHold: false,
-    ignoreInputFields: true,
-  });
+  useKeyboardShortcut(
+    ['Control', 'K'],
+    () => {
+      setSettingsOpen(false);
+      setOpen(true);
+    },
+    {
+      overrideSystem: true,
+      repeatOnHold: false,
+      ignoreInputFields: true,
+    },
+  );
 
   // ignore ctrl + j to prevent miss click and bug the browser
   useKeyboardShortcut(['Control', 'J'], () => {}, {
@@ -60,10 +69,10 @@ export default function Search() {
   });
 
   const { data: results, isLoading } = useQuery({
-    queryKey: ['search', query],
+    queryKey: ['search', query, filter],
     queryFn: async () => {
       if (!session?.user?.id) return;
-      const results = await searchNotes(query, session.user.id);
+      const results = await searchNotes(query, session.user.id, filter);
       return results;
     },
     enabled: !!query && query.length > 2,
@@ -74,7 +83,13 @@ export default function Search() {
       <CommandInput
         loading={isLoading}
         onValueChange={(v) => setQuery(v)}
-        placeholder={t('placeholder')}
+        placeholder={t(placeholder)}
+        onKeyDown={(e) => {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            toggleFilter();
+          }
+        }}
       />
       <CommandList>
         {isLoading && <LoadingFallback />}
@@ -151,6 +166,10 @@ export default function Search() {
         <CommandFooter.Group>
           <CommandFooter.Icon text='esc' />
           <p>{tf('close')}</p>
+        </CommandFooter.Group>
+        <CommandFooter.Group>
+          <CommandFooter.Icon text='tab' />
+          <p>{tf('chg-filter')}</p>
         </CommandFooter.Group>
       </CommandFooter.Root>
     </CommandDialog>
