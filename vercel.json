@@ -1,8 +1,0 @@
-{
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    },
-    "ignoreCommand": "rm -rf node_modules/@noteworthy-modules/utils"
-  }
-}
