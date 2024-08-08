@@ -48,11 +48,18 @@ export default function Search() {
   const t = useTranslations('Search');
   const tf = useTranslations('SearchFooter');
 
-  useKeyboardShortcut(['Control', 'K'], () => setOpen(true), {
-    overrideSystem: true,
-    repeatOnHold: false,
-    ignoreInputFields: true,
-  });
+  useKeyboardShortcut(
+    ['Control', 'K'],
+    () => {
+      setSettingsOpen(false);
+      setOpen(true);
+    },
+    {
+      overrideSystem: true,
+      repeatOnHold: false,
+      ignoreInputFields: true,
+    },
+  );
 
   // ignore ctrl + j to prevent miss click and bug the browser
   useKeyboardShortcut(['Control', 'J'], () => {}, {
