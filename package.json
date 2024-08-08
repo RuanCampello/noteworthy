@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,html,json,md}\"",
-    "prettier:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,json,md}\""
+    "prettier:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,json,md}\"",
+    "schema:generate": "node public/locales/schema.mjs"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
@@ -81,6 +82,7 @@
     "@eslint/compat": "^1.1.1",
     "@eslint/js": "^9.7.0",
     "@next/eslint-plugin-next": "^14.2.5",
+    "@noteworthy-modules/utils": "^0.0.4",
     "@tailwindcss/typography": "^0.5.10",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",

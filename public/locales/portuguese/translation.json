@@ -1,205 +1,203 @@
 {
   "$schema": "../schema.json",
   "Login": {
-    "password": "Senha",
-    "not_registered": "Ainda não se registrou?",
-    "create_account": "Crie sua conta",
-    "forgot_password": "Esqueceu sua senha?",
-    "login_with": "Login com",
-    "sign_with": "Sign up com",
-    "or": "ou",
-    "button": "Entrar"
+    "password": "Password",
+    "not_registered": "Not registered yet?",
+    "create_account": "Create an account",
+    "forgot_password": "Forgot password?",
+    "login_with": "Login with",
+    "sign_with": "Sign up with",
+    "or": "or",
+    "button": "Login"
   },
   "Register": {
     "username": "Username",
-    "username_dsc": "Esse é o seu nome público de usuário.",
-    "password": "Senha",
-    "have_account": "Já tem uma conta?",
-    "log_in": "Entre agora",
-    "button": "Criar conta"
+    "username_dsc": "This is your public display name.",
+    "password": "Password",
+    "have_account": "Have an account?",
+    "log_in": "Log in now",
+    "button": "Register"
   },
   "NewPassword": {
-    "button": "Redefinir senha",
-    "return_to": "Retornar para",
-    "new_password": "Senha nova"
+    "button": "Reset password",
+    "return_to": "Return to",
+    "new_password": "New Password"
   },
   "Sidebar": {
-    "new_note": "Criar nota",
-    "notes": "Notas",
-    "search_note": "Procure por uma nota",
-    "more": "Mais",
-    "favourites": "Favoritos",
-    "archived": "Notas Arquivadas"
+    "new_note": "New Note",
+    "notes": "Notes",
+    "search_note": "Search for a note",
+    "more": "More",
+    "favourites": "Favourites",
+    "archived": "Archived Notes"
   },
   "AddNote": {
-    "title": "Criar nova nota",
-    "description": "📝 Pronto para capturar uma faísca de inspiração? Crie sua nota, deixe seus pensamentos voarem e salpique um pouco de magia em seu mundo digital. Vamos escrever maravilhas juntos! ✨",
-    "name_field": "Nome",
-    "colour_field": "Cor",
-    "button": "Criar nota"
+    "title": "Add New Note",
+    "description": "📝 Ready to capture a spark of inspiration? Create your note, let your thoughts soar, and sprinkle some magic into your digital world. Let's write wonders together! ✨",
+    "name_field": "Name",
+    "colour_field": "Colour",
+    "button": "Create note"
   },
   "SortDropdown": {
-    "sort_by": "Ordernar por",
-    "last_mod": "Último modificado",
-    "title": "Título",
-    "date_new": "Data de adição (mais novo)",
-    "date_old": "Data de adição (mais velho)"
+    "sort_by": "Sort by",
+    "last_mod": "Last modified",
+    "title": "Title",
+    "date_new": "Date added (newest)",
+    "date_old": "Date added (oldest)"
   },
   "Header": {
-    "created": "Criado em",
-    "modified": "Modificado em",
-    "owner": "Dono",
-    "words": "Palavras"
+    "created": "Created",
+    "modified": "Modified",
+    "owner": "Owner",
+    "words": "Words"
   },
   "Settings": {
-    "title": "Configurações",
-    "appearance": "Aparência",
-    "profile": "Perfil",
-    "note_style": "Estilo da nota",
-    "note_style_dsc": "Como as notas são mostradas na barra lateral.",
-    "full_note": "Nota do tamanho da tela",
-    "full_note_dsc": "Faz com que a nota ocupe a tela inteira.",
-    "lang": "Linguagem",
-    "button": "Salvar alterações",
-    "edit_profile": "Editar perfil"
+    "title": "Settings",
+    "appearance": "Appearance",
+    "profile": "Profile",
+    "note_style": "Note style",
+    "note_style_dsc": "How are notes displayed in sidebar.",
+    "full_note": "Full witdh note",
+    "full_note_dsc": "Makes note occupy window full width.",
+    "lang": "Language",
+    "button": "Save changes",
+    "edit_profile": "Edit Profile"
   },
   "ProfileDropdown": {
-    "settings": "Configurações",
-    "log_out": "Sair"
+    "settings": "Settings",
+    "log_out": "Log out"
   },
   "Keyboard": {
-    "title": "Atalhos",
-    "description": "Aprenda as combinações de teclas essênciais para navegar e otimizar sua experiência.",
-    "note": "Nota",
+    "title": "Keyboard Shortcuts",
+    "description": "Learn essential key combinations to navigate and optimise your experience.",
+    "note": "Note",
     "global": "Global",
     "editor": "Editor"
   },
   "Shortcuts": {
-    "save_note": "Salvar nota",
-    "create_note": "Criar nova nota",
-    "toggle_sidebar": "Fechar/Abrir barra lateral",
-    "alg_l": "Alinhar à esquerda",
-    "alg_r": "Alinhar à direita",
-    "alg_c": "Alinhar ao centro",
-    "justify": "Justificar",
-    "bold": "Negrito",
-    "italic": "Itálico",
-    "underline": "Sublinhar",
-    "strike": "Tachar",
-    "highlight": "Destacar",
-    "sup": "Sobrescrito",
-    "sub": "Subscrito",
-    "define_w": "Definir palavra",
-    "dfn": "Definir",
-    "search": "Abrir busca inteligente"
+    "save_note": "Save note",
+    "create_note": "Create new note",
+    "toggle_sidebar": "Toggle sidebar",
+    "alg_l": "Align left",
+    "alg_r": "Align right",
+    "alg_c": "Align center",
+    "justify": "Justify",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strike",
+    "highlight": "Highlight",
+    "sup": "Superscript",
+    "sub": "Subscript",
+    "define_w": "Define word",
+    "dfn": "Define",
+    "search": "Open smart search"
   },
   "Format": {
-    "style": "Estilos",
-    "font_f": "Fonte",
-    "font_s": "Tamanho da fonte",
-    "p": "Parágrafo",
-    "h": "Título"
+    "style": "Styles",
+    "font_f": "Font family",
+    "font_s": "Font size",
+    "p": "Paragraph",
+    "h": "Heading"
   },
   "Profile": {
-    "field_name": "Nome",
-    "button": "Salvar alterações"
+    "field_name": "Name",
+    "button": "Save changes"
   },
   "NoteDropdown": {
-    "fav": "Favoritar",
-    "unfav": "Desfavoritar",
-    "arc": "Arquivar",
-    "unarc": "Desarquivar",
-    "edit": "Editar",
-    "del": "Apagar"
+    "fav": "Favourite",
+    "unfav": "Unfavourite",
+    "arc": "Archive",
+    "unarc": "Unarchive",
+    "edit": "Edit",
+    "del": "Delete"
   },
   "Publish": {
-    "pub": "Publicar",
-    "unpub": "Despublicar",
-    "title": "Publicar essa nota",
-    "unpub_title": "Despublicar essa nota",
-    "description": "Pronto para acender suas ideias? Compartilhe sua nota com o mundo, deixe sua criatividade brilhar. Vamos publicar brilhos juntos! 🚀",
-    "unpub_description": "Qualquer pessoa com este link é capaz de ver essa nota.",
-    "cancel": "Cancelar"
+    "pub": "Publish",
+    "unpub": "Unpublish",
+    "title": "Publish this note",
+    "unpub_title": "Unpublish this note",
+    "description": "Ready to ignite your ideas? Share your note with the world, let your creativity shine. Let's publish brilliance together! 🚀",
+    "unpub_description": "Anyone who has this is will be able to view the note.",
+    "cancel": "Cancel"
   },
   "Edit": {
-    "title": "Editar",
-    "description": "📝 Vamos capturar a inspiração e criar maravilhas juntos! Edite sua nota, deixe a criatividade voar! ✨",
-    "field_name": "Nome",
-    "field_colour": "Cor",
-    "button": "Salvar alterações"
+    "title": "Edit",
+    "description": "📝 Let's capture inspiration and craft wonders together! Edit your note, let creativity soar! ✨",
+    "field_name": "Name",
+    "field_colour": "Colour",
+    "button": "Save changes"
   },
   "Delete": {
-    "title": "Tem certeza absoluta?",
-    "description": "Essa ação não poderá ser desfeita. Isso vai permanentemente deletar sua nota e remover todos seus dados dos nossos servidores.",
-    "cancel": "Cancelar",
-    "button": "Deletar nota"
+    "title": "Are absolutly sure?",
+    "description": "This action cannot be undone. This will permanently delete your note and remove all data from our servers.",
+    "cancel": "Cancel",
+    "button": "Delete note"
   },
   "HomePlaceholder": {
-    "title": "Selecione uma nota para ver",
-    "description": "Escolha uma nota da lista à esquerda para ver seu conteúdo ou crie uma nova e adicione à sua coleção."
+    "title": "Select a note to view",
+    "description": "Choose a note from the list on the left to view its contents, or create a new note to add to your collection."
   },
   "FavouritePlaceholder": {
-    "title": "Selecione uma nota favoritada para ver",
-    "description": "Escolha uma nota favoritada da lista à esquerda para ver seu conteúdo ou favorite uma nota e adicione à sua coleção.",
-    "no_fav_title": "Você não tem nenhuma nota favoritada",
-    "no_fav_description": "Escolha uma nota para favoritar e a faça cintilar!"
+    "title": "Select a favourite note to view",
+    "description": "Choose a favourite note from the list on the left to view its contents, or favourite a note to add to your collection.",
+    "no_fav_title": "You don't have any favourite note",
+    "no_fav_description": "Choose a note to favourite and make it sparkle!"
   },
   "ArchivePlaceholder": {
-    "title": "Selecione uma nota arquivada para ver",
-    "description": "Escolha uma nota arquivada da lista à esquerda para ver seu conteúdo ou arquive uma nota e adicione à sua coleção.",
-    "no_arc_title": "Você não tem nenhuma nota arquivada",
-    "no_arc_description": "Selecione uma nota para arquivar e a observe brilhar em seus arquivos!"
+    "title": "Select an archived note to view",
+    "description": "Choose an archived note from the list on the left to view its contents, or archived a note to add to your collection.",
+    "no_arc_title": "You don't have any archived note",
+    "no_arc_description": "Select a note to archive and watch it shimmer away into your archives!"
   },
   "SubsidebarTitles": {
-    "fav": "Notas favoritas",
-    "arc": "Notas arquivadas"
+    "fav": "Favourites",
+    "arc": "Archived notes"
   },
   "SaveButton": {
-    "title": "Salvar alterações"
+    "title": "Save changes"
   },
   "Toast": {
-    "sv_note_title": "Nota salva",
-    "sv_note_dsc": "Sua nota foi salva! Está pronta quando você precisar. 📌"
+    "sv_note_title": "Note Saved",
+    "sv_note_dsc": "Your note has been saved! It's ready whenever you need it. 📌"
   },
   "ServerErrors": {
-    "inv_field": "Campo inválido",
-    "email_not_found": "Esse Email não está registrado",
-    "inv_credentials": "Credenciais inválidas",
-    "default_error": "Algo de errado acontenceu",
-    "no_token": "Um token é necessário",
-    "inv_password": "Essa senha é inválida",
-    "inv_token": "Token inválido",
-    "token_exp": "O token expirou",
-    "password_update": "Senha alterada!",
-    "email_taken": "Esse Email já está em uso!",
-    "inv_email": "Email inválido",
-    "is_provider": "Parece que sua conta foi criada por um provedor. Tente redefinir sua senha com",
-    "already_has_a_token": "Você ainda tem um token válido até",
-    "check_out": "cheque seu email.",
-    "email_sent": "Email para redefinição de senha enviado"
+    "inv_field": "Invalid Fields",
+    "email_not_found": "This Email is not registered",
+    "inv_credentials": "Invalid credentials",
+    "default_error": "Something went wrong",
+    "no_token": "Token is required",
+    "inv_password": "This password is invalid",
+    "inv_token": "Invalid token",
+    "token_exp": "Token has expired",
+    "password_update": "Password updated!",
+    "email_taken": "Email already in use!",
+    "inv_email": "Invalid Email",
+    "is_provider": "It looks like your account was created by a provider. Try resetting your password with",
+    "already_has_a_token": "You still have a valid reset token until",
+    "check_out": "check out your email.",
+    "email_sent": "Reset password email sent"
   },
   "Dictionary": {
-    "title": "Dicionário",
-    "close_dic": "Fechar dicionário",
-    "src": "Fonte",
-    "srcs": "Fontes",
-    "lic": "Licença"
+    "title": "Dictionary",
+    "close_dic": "Close dictionary",
+    "src": "Source",
+    "srcs": "Sources",
+    "lic": "Licence"
   },
   "Search": {
-    "placeholder": "Procure qualquer coisa...",
-    "fav_placeholder": "Procure por notas favoritas...",
-    "arc_placeholder": "Procure por notas arquivadas...",
-    "quick_act": "Ações rápidas",
-    "search_res": "Resultados da busca",
-    "new_note": "Crie uma nova nota",
-    "open_settings": "Abrir configurações",
-    "not_found_t": "Nada encontrado",
-    "not_found": "não correspondeu a nada.",
-    "try_again": "Por favor, tente novamente ou crie uma nova nota."
+    "placeholder": "Search anything...",
+    "quick_act": "Quick actions",
+    "search_res": "Search results",
+    "new_note": "Create new note",
+    "open_settings": "Open settings",
+    "not_found_t": "Nothing found",
+    "not_found": "did not match anything.",
+    "try_again": "Please try again or create a new note."
   },
   "SearchFooter": {
-    "nav": "navegar",
-    "close": "fechar",
-    "open": "abrir"
+    "nav": "navigate",
+    "close": "close",
+    "open": "open"
   }
 }

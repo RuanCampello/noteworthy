@@ -1,129 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Schema for translations",
-  "description": "Generated schema for making translations",
-  "type": "object",
   "properties": {
-    "Login": {
-      "type": "object",
-      "properties": {
-        "password": {
-          "type": "string"
-        },
-        "not_registered": {
-          "type": "string"
-        },
-        "create_account": {
-          "type": "string"
-        },
-        "forgot_password": {
-          "type": "string"
-        },
-        "login_with": {
-          "type": "string"
-        },
-        "sign_with": {
-          "type": "string"
-        },
-        "or": {
-          "type": "string"
-        },
-        "button": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "password",
-        "not_registered",
-        "create_account",
-        "forgot_password",
-        "login_with",
-        "sign_with",
-        "or",
-        "button"
-      ]
-    },
-    "Register": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "username_dsc": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "have_account": {
-          "type": "string"
-        },
-        "log_in": {
-          "type": "string"
-        },
-        "button": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "username",
-        "username_dsc",
-        "password",
-        "have_account",
-        "log_in",
-        "button"
-      ]
-    },
-    "NewPassword": {
-      "type": "object",
-      "properties": {
-        "button": {
-          "type": "string"
-        },
-        "return_to": {
-          "type": "string"
-        },
-        "new_password": {
-          "type": "string"
-        }
-      },
-      "required": ["button", "return_to", "new_password"]
-    },
-    "Sidebar": {
-      "type": "object",
-      "properties": {
-        "new_note": {
-          "type": "string"
-        },
-        "notes": {
-          "type": "string"
-        },
-        "search_note": {
-          "type": "string"
-        },
-        "more": {
-          "type": "string"
-        },
-        "favourites": {
-          "type": "string"
-        },
-        "archived": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "new_note",
-        "notes",
-        "search_note",
-        "more",
-        "favourites",
-        "archived"
-      ]
+    "$schema": {
+      "type": "string"
     },
     "AddNote": {
-      "type": "object",
       "properties": {
-        "title": {
+        "button": {
+          "type": "string"
+        },
+        "colour_field": {
           "type": "string"
         },
         "description": {
@@ -132,44 +18,170 @@
         "name_field": {
           "type": "string"
         },
-        "colour_field": {
-          "type": "string"
-        },
-        "button": {
+        "title": {
           "type": "string"
         }
       },
       "required": [
-        "title",
+        "button",
+        "colour_field",
         "description",
         "name_field",
-        "colour_field",
-        "button"
-      ]
+        "title"
+      ],
+      "type": "object"
     },
-    "SortDropdown": {
-      "type": "object",
+    "ArchivePlaceholder": {
       "properties": {
-        "sort_by": {
+        "description": {
           "type": "string"
         },
-        "last_mod": {
+        "no_arc_description": {
+          "type": "string"
+        },
+        "no_arc_title": {
           "type": "string"
         },
         "title": {
           "type": "string"
-        },
-        "date_new": {
+        }
+      },
+      "required": [
+        "description",
+        "no_arc_description",
+        "no_arc_title",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Delete": {
+      "properties": {
+        "button": {
           "type": "string"
         },
-        "date_old": {
+        "cancel": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "title": {
           "type": "string"
         }
       },
-      "required": ["sort_by", "last_mod", "title", "date_new", "date_old"]
+      "required": [
+        "button",
+        "cancel",
+        "description",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Dictionary": {
+      "properties": {
+        "close_dic": {
+          "type": "string"
+        },
+        "lic": {
+          "type": "string"
+        },
+        "src": {
+          "type": "string"
+        },
+        "srcs": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "close_dic",
+        "lic",
+        "src",
+        "srcs",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Edit": {
+      "properties": {
+        "button": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "field_colour": {
+          "type": "string"
+        },
+        "field_name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "button",
+        "description",
+        "field_colour",
+        "field_name",
+        "title"
+      ],
+      "type": "object"
+    },
+    "FavouritePlaceholder": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "no_fav_description": {
+          "type": "string"
+        },
+        "no_fav_title": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "no_fav_description",
+        "no_fav_title",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Format": {
+      "properties": {
+        "font_f": {
+          "type": "string"
+        },
+        "font_s": {
+          "type": "string"
+        },
+        "h": {
+          "type": "string"
+        },
+        "p": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "font_f",
+        "font_s",
+        "h",
+        "p",
+        "style"
+      ],
+      "type": "object"
     },
     "Header": {
-      "type": "object",
       "properties": {
         "created": {
           "type": "string"
@@ -184,24 +196,394 @@
           "type": "string"
         }
       },
-      "required": ["created", "modified", "owner", "words"]
+      "required": [
+        "created",
+        "modified",
+        "owner",
+        "words"
+      ],
+      "type": "object"
     },
-    "Settings": {
-      "type": "object",
+    "HomePlaceholder": {
       "properties": {
+        "description": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Keyboard": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "editor": {
+          "type": "string"
+        },
+        "global": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "editor",
+        "global",
+        "note",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Login": {
+      "properties": {
+        "button": {
+          "type": "string"
+        },
+        "create_account": {
+          "type": "string"
+        },
+        "forgot_password": {
+          "type": "string"
+        },
+        "login_with": {
+          "type": "string"
+        },
+        "not_registered": {
+          "type": "string"
+        },
+        "or": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "sign_with": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "button",
+        "create_account",
+        "forgot_password",
+        "login_with",
+        "not_registered",
+        "or",
+        "password",
+        "sign_with"
+      ],
+      "type": "object"
+    },
+    "NewPassword": {
+      "properties": {
+        "button": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        },
+        "return_to": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "button",
+        "new_password",
+        "return_to"
+      ],
+      "type": "object"
+    },
+    "NoteDropdown": {
+      "properties": {
+        "arc": {
+          "type": "string"
+        },
+        "del": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "string"
+        },
+        "fav": {
+          "type": "string"
+        },
+        "unarc": {
+          "type": "string"
+        },
+        "unfav": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "arc",
+        "del",
+        "edit",
+        "fav",
+        "unarc",
+        "unfav"
+      ],
+      "type": "object"
+    },
+    "Profile": {
+      "properties": {
+        "button": {
+          "type": "string"
+        },
+        "field_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "button",
+        "field_name"
+      ],
+      "type": "object"
+    },
+    "ProfileDropdown": {
+      "properties": {
+        "log_out": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "log_out",
+        "settings"
+      ],
+      "type": "object"
+    },
+    "Publish": {
+      "properties": {
+        "cancel": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pub": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },
+        "unpub": {
+          "type": "string"
+        },
+        "unpub_description": {
+          "type": "string"
+        },
+        "unpub_title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "cancel",
+        "description",
+        "pub",
+        "title",
+        "unpub",
+        "unpub_description",
+        "unpub_title"
+      ],
+      "type": "object"
+    },
+    "Register": {
+      "properties": {
+        "button": {
+          "type": "string"
+        },
+        "have_account": {
+          "type": "string"
+        },
+        "log_in": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "username_dsc": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "button",
+        "have_account",
+        "log_in",
+        "password",
+        "username",
+        "username_dsc"
+      ],
+      "type": "object"
+    },
+    "SaveButton": {
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "Search": {
+      "properties": {
+        "arc_placeholder": {
+          "type": "string"
+        },
+        "fav_placeholder": {
+          "type": "string"
+        },
+        "new_note": {
+          "type": "string"
+        },
+        "not_found": {
+          "type": "string"
+        },
+        "not_found_t": {
+          "type": "string"
+        },
+        "open_settings": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "quick_act": {
+          "type": "string"
+        },
+        "search_res": {
+          "type": "string"
+        },
+        "try_again": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "arc_placeholder",
+        "fav_placeholder",
+        "new_note",
+        "not_found",
+        "not_found_t",
+        "open_settings",
+        "placeholder",
+        "quick_act",
+        "search_res",
+        "try_again"
+      ],
+      "type": "object"
+    },
+    "SearchFooter": {
+      "properties": {
+        "close": {
+          "type": "string"
+        },
+        "nav": {
+          "type": "string"
+        },
+        "open": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "close",
+        "nav",
+        "open"
+      ],
+      "type": "object"
+    },
+    "ServerErrors": {
+      "properties": {
+        "already_has_a_token": {
+          "type": "string"
+        },
+        "check_out": {
+          "type": "string"
+        },
+        "default_error": {
+          "type": "string"
+        },
+        "email_not_found": {
+          "type": "string"
+        },
+        "email_sent": {
+          "type": "string"
+        },
+        "email_taken": {
+          "type": "string"
+        },
+        "inv_credentials": {
+          "type": "string"
+        },
+        "inv_email": {
+          "type": "string"
+        },
+        "inv_field": {
+          "type": "string"
+        },
+        "inv_password": {
+          "type": "string"
+        },
+        "inv_token": {
+          "type": "string"
+        },
+        "is_provider": {
+          "type": "string"
+        },
+        "no_token": {
+          "type": "string"
+        },
+        "password_update": {
+          "type": "string"
+        },
+        "token_exp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "already_has_a_token",
+        "check_out",
+        "default_error",
+        "email_not_found",
+        "email_sent",
+        "email_taken",
+        "inv_credentials",
+        "inv_email",
+        "inv_field",
+        "inv_password",
+        "inv_token",
+        "is_provider",
+        "no_token",
+        "password_update",
+        "token_exp"
+      ],
+      "type": "object"
+    },
+    "Settings": {
+      "properties": {
         "appearance": {
           "type": "string"
         },
-        "profile": {
+        "button": {
           "type": "string"
         },
-        "note_style": {
-          "type": "string"
-        },
-        "note_style_dsc": {
+        "edit_profile": {
           "type": "string"
         },
         "full_note": {
@@ -213,69 +595,36 @@
         "lang": {
           "type": "string"
         },
-        "button": {
+        "note_style": {
           "type": "string"
         },
-        "edit_profile": {
+        "note_style_dsc": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "title": {
           "type": "string"
         }
       },
       "required": [
-        "title",
         "appearance",
-        "profile",
-        "note_style",
-        "note_style_dsc",
+        "button",
+        "edit_profile",
         "full_note",
         "full_note_dsc",
         "lang",
-        "button",
-        "edit_profile"
-      ]
-    },
-    "ProfileDropdown": {
-      "type": "object",
-      "properties": {
-        "settings": {
-          "type": "string"
-        },
-        "log_out": {
-          "type": "string"
-        }
-      },
-      "required": ["settings", "log_out"]
-    },
-    "Keyboard": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
-        "global": {
-          "type": "string"
-        },
-        "editor": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "description", "note", "global", "editor"]
+        "note_style",
+        "note_style_dsc",
+        "profile",
+        "title"
+      ],
+      "type": "object"
     },
     "Shortcuts": {
-      "type": "object",
       "properties": {
-        "save_note": {
-          "type": "string"
-        },
-        "create_note": {
-          "type": "string"
-        },
-        "toggle_sidebar": {
+        "alg_c": {
           "type": "string"
         },
         "alg_l": {
@@ -284,31 +633,10 @@
         "alg_r": {
           "type": "string"
         },
-        "alg_c": {
-          "type": "string"
-        },
-        "justify": {
-          "type": "string"
-        },
         "bold": {
           "type": "string"
         },
-        "italic": {
-          "type": "string"
-        },
-        "underline": {
-          "type": "string"
-        },
-        "strike": {
-          "type": "string"
-        },
-        "highlight": {
-          "type": "string"
-        },
-        "sup": {
-          "type": "string"
-        },
-        "sub": {
+        "create_note": {
           "type": "string"
         },
         "define_w": {
@@ -317,426 +645,177 @@
         "dfn": {
           "type": "string"
         },
+        "highlight": {
+          "type": "string"
+        },
+        "italic": {
+          "type": "string"
+        },
+        "justify": {
+          "type": "string"
+        },
+        "save_note": {
+          "type": "string"
+        },
         "search": {
           "type": "string"
+        },
+        "strike": {
+          "type": "string"
+        },
+        "sub": {
+          "type": "string"
+        },
+        "sup": {
+          "type": "string"
+        },
+        "toggle_sidebar": {
+          "type": "string"
+        },
+        "underline": {
+          "type": "string"
         }
       },
       "required": [
-        "save_note",
-        "create_note",
-        "toggle_sidebar",
+        "alg_c",
         "alg_l",
         "alg_r",
-        "alg_c",
-        "justify",
         "bold",
-        "italic",
-        "underline",
-        "strike",
-        "highlight",
-        "sup",
-        "sub",
+        "create_note",
         "define_w",
         "dfn",
-        "search"
-      ]
+        "highlight",
+        "italic",
+        "justify",
+        "save_note",
+        "search",
+        "strike",
+        "sub",
+        "sup",
+        "toggle_sidebar",
+        "underline"
+      ],
+      "type": "object"
     },
-    "Format": {
-      "type": "object",
+    "Sidebar": {
       "properties": {
-        "style": {
+        "archived": {
           "type": "string"
         },
-        "font_f": {
+        "favourites": {
           "type": "string"
         },
-        "font_s": {
-          "type": "string"
-        },
-        "p": {
-          "type": "string"
-        },
-        "h": {
-          "type": "string"
-        }
-      },
-      "required": ["style", "font_f", "font_s", "p", "h"]
-    },
-    "Profile": {
-      "type": "object",
-      "properties": {
-        "field_name": {
-          "type": "string"
-        },
-        "button": {
-          "type": "string"
-        }
-      },
-      "required": ["field_name", "button"]
-    },
-    "NoteDropdown": {
-      "type": "object",
-      "properties": {
-        "fav": {
-          "type": "string"
-        },
-        "unfav": {
-          "type": "string"
-        },
-        "arc": {
-          "type": "string"
-        },
-        "unarc": {
-          "type": "string"
-        },
-        "edit": {
-          "type": "string"
-        },
-        "del": {
-          "type": "string"
-        }
-      },
-      "required": ["fav", "unfav", "arc", "unarc", "edit", "del"]
-    },
-    "Publish": {
-      "type": "object",
-      "properties": {
-        "pub": {
-          "type": "string"
-        },
-        "unpub": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "unpub_title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "unpub_description": {
-          "type": "string"
-        },
-        "cancel": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "pub",
-        "unpub",
-        "title",
-        "unpub_title",
-        "description",
-        "unpub_description",
-        "cancel"
-      ]
-    },
-    "Edit": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "field_name": {
-          "type": "string"
-        },
-        "field_colour": {
-          "type": "string"
-        },
-        "button": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title",
-        "description",
-        "field_name",
-        "field_colour",
-        "button"
-      ]
-    },
-    "Delete": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "cancel": {
-          "type": "string"
-        },
-        "button": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "description", "cancel", "button"]
-    },
-    "HomePlaceholder": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "description"]
-    },
-    "FavouritePlaceholder": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "no_fav_title": {
-          "type": "string"
-        },
-        "no_fav_description": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "description", "no_fav_title", "no_fav_description"]
-    },
-    "ArchivePlaceholder": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "no_arc_title": {
-          "type": "string"
-        },
-        "no_arc_description": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "description", "no_arc_title", "no_arc_description"]
-    },
-    "SubsidebarTitles": {
-      "type": "object",
-      "properties": {
-        "fav": {
-          "type": "string"
-        },
-        "arc": {
-          "type": "string"
-        }
-      },
-      "required": ["fav", "arc"]
-    },
-    "SaveButton": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        }
-      },
-      "required": ["title"]
-    },
-    "Toast": {
-      "type": "object",
-      "properties": {
-        "sv_note_title": {
-          "type": "string"
-        },
-        "sv_note_dsc": {
-          "type": "string"
-        }
-      },
-      "required": ["sv_note_title", "sv_note_dsc"]
-    },
-    "ServerErrors": {
-      "type": "object",
-      "properties": {
-        "inv_field": {
-          "type": "string"
-        },
-        "email_not_found": {
-          "type": "string"
-        },
-        "inv_credentials": {
-          "type": "string"
-        },
-        "default_error": {
-          "type": "string"
-        },
-        "no_token": {
-          "type": "string"
-        },
-        "inv_password": {
-          "type": "string"
-        },
-        "inv_token": {
-          "type": "string"
-        },
-        "token_exp": {
-          "type": "string"
-        },
-        "password_update": {
-          "type": "string"
-        },
-        "email_taken": {
-          "type": "string"
-        },
-        "inv_email": {
-          "type": "string"
-        },
-        "is_provider": {
-          "type": "string"
-        },
-        "already_has_a_token": {
-          "type": "string"
-        },
-        "check_out": {
-          "type": "string"
-        },
-        "email_sent": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "inv_field",
-        "email_not_found",
-        "inv_credentials",
-        "default_error",
-        "no_token",
-        "inv_password",
-        "inv_token",
-        "token_exp",
-        "password_update",
-        "email_taken",
-        "inv_email",
-        "is_provider",
-        "already_has_a_token",
-        "check_out",
-        "email_sent"
-      ]
-    },
-    "Dictionary": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "close_dic": {
-          "type": "string"
-        },
-        "src": {
-          "type": "string"
-        },
-        "srcs": {
-          "type": "string"
-        },
-        "lic": {
-          "type": "string"
-        }
-      },
-      "required": ["title", "close_dic", "src", "srcs", "lic"]
-    },
-    "Search": {
-      "type": "object",
-      "properties": {
-        "placeholder": {
-          "type": "string"
-        },
-        "fav_placeholder": {
-          "type": "string"
-        },
-        "arc_placeholder": {
-          "type": "string"
-        },
-        "quick_act": {
-          "type": "string"
-        },
-        "search_res": {
+        "more": {
           "type": "string"
         },
         "new_note": {
           "type": "string"
         },
-        "open_settings": {
+        "notes": {
           "type": "string"
         },
-        "not_found_t": {
-          "type": "string"
-        },
-        "not_found": {
-          "type": "string"
-        },
-        "try_again": {
+        "search_note": {
           "type": "string"
         }
       },
       "required": [
-        "placeholder",
-        "fav_placeholder",
-        "arc_placeholder",
-        "quick_act",
-        "search_res",
+        "archived",
+        "favourites",
+        "more",
         "new_note",
-        "open_settings",
-        "not_found_t",
-        "not_found",
-        "try_again"
-      ]
+        "notes",
+        "search_note"
+      ],
+      "type": "object"
     },
-    "SearchFooter": {
-      "type": "object",
+    "SortDropdown": {
       "properties": {
-        "nav": {
+        "date_new": {
           "type": "string"
         },
-        "close": {
+        "date_old": {
           "type": "string"
         },
-        "open": {
+        "last_mod": {
+          "type": "string"
+        },
+        "sort_by": {
+          "type": "string"
+        },
+        "title": {
           "type": "string"
         }
       },
-      "required": ["nav", "close", "open"]
+      "required": [
+        "date_new",
+        "date_old",
+        "last_mod",
+        "sort_by",
+        "title"
+      ],
+      "type": "object"
+    },
+    "SubsidebarTitles": {
+      "properties": {
+        "arc": {
+          "type": "string"
+        },
+        "fav": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "arc",
+        "fav"
+      ],
+      "type": "object"
+    },
+    "Toast": {
+      "properties": {
+        "sv_note_dsc": {
+          "type": "string"
+        },
+        "sv_note_title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sv_note_dsc",
+        "sv_note_title"
+      ],
+      "type": "object"
     }
   },
   "required": [
-    "Login",
-    "Register",
-    "NewPassword",
-    "Sidebar",
+    "$schema",
     "AddNote",
-    "SortDropdown",
-    "Header",
-    "Settings",
-    "ProfileDropdown",
-    "Keyboard",
-    "Shortcuts",
-    "Format",
-    "Profile",
-    "NoteDropdown",
-    "Publish",
-    "Edit",
-    "Delete",
-    "HomePlaceholder",
-    "FavouritePlaceholder",
     "ArchivePlaceholder",
-    "SubsidebarTitles",
-    "SaveButton",
-    "Toast",
-    "ServerErrors",
+    "Delete",
     "Dictionary",
+    "Edit",
+    "FavouritePlaceholder",
+    "Format",
+    "Header",
+    "HomePlaceholder",
+    "Keyboard",
+    "Login",
+    "NewPassword",
+    "NoteDropdown",
+    "Profile",
+    "ProfileDropdown",
+    "Publish",
+    "Register",
+    "SaveButton",
     "Search",
-    "SearchFooter"
-  ]
+    "SearchFooter",
+    "ServerErrors",
+    "Settings",
+    "Shortcuts",
+    "Sidebar",
+    "SortDropdown",
+    "SubsidebarTitles",
+    "Toast"
+  ],
+  "title": "Generated schema for translations",
+  "type": "object"
 }

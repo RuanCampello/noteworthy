@@ -160,6 +160,10 @@ export default function Search() {
           <CommandFooter.Icon text='esc' />
           <p>{tf('close')}</p>
         </CommandFooter.Group>
+        <CommandFooter.Group>
+          <CommandFooter.Icon text='tab' />
+          <p>{tf('close')}</p>
+        </CommandFooter.Group>
       </CommandFooter.Root>
     </CommandDialog>
   );
