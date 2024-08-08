@@ -162,7 +162,7 @@ export default function Search() {
         </CommandFooter.Group>
         <CommandFooter.Group>
           <CommandFooter.Icon text='tab' />
-          <p>{tf('close')}</p>
+          <p>{tf('chg-filter')}</p>
         </CommandFooter.Group>
       </CommandFooter.Root>
     </CommandDialog>

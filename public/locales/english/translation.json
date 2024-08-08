@@ -200,6 +200,7 @@
   "SearchFooter": {
     "nav": "navigate",
     "close": "close",
-    "open": "open"
+    "open": "open",
+    "chg-filter": "change filter"
   }
 }

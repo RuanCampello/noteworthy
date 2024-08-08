@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "$schema": {
       "type": "string"
@@ -441,6 +441,9 @@
     },
     "SearchFooter": {
       "properties": {
+        "chg-filter": {
+          "type": "string"
+        },
         "close": {
           "type": "string"
         },
@@ -451,7 +454,7 @@
           "type": "string"
         }
       },
-      "required": ["close", "nav", "open"],
+      "required": ["chg-filter", "close", "nav", "open"],
       "type": "object"
     },
     "ServerErrors": {
@@ -721,7 +724,6 @@
     }
   },
   "required": [
-    "$schema",
     "AddNote",
     "ArchivePlaceholder",
     "Delete",
