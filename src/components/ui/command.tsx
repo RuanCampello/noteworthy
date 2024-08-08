@@ -62,7 +62,7 @@ function RenderInputIcon({ loading }: RenderInputIconProps) {
         <Package
           className={cn(
             baseIcon,
-            'text-cambridge animate-in duration-200 zoom-in-[.3]',
+            'text-cambridge animate-in duration-200 fade-in-40 opacity-70 zoom-in-[.3]',
           )}
         />
       );
@@ -71,7 +71,7 @@ function RenderInputIcon({ loading }: RenderInputIconProps) {
         <Sparkle
           className={cn(
             baseIcon,
-            'text-sunset text-opacity-50 opacity-100 animate-in spin-in-45 duration-200',
+            'text-sunset text-opacity-70 transition-colors fade-in-50 opacity-100 animate-in spin-in-45 duration-200',
           )}
         />
       );
