@@ -81,7 +81,11 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
             <TabsTrigger className='w-full' value='appearance'>
               {t('appearance')}
             </TabsTrigger>
-            <TabsTrigger className='w-full' value='profile'>
+            <TabsTrigger
+              className='w-full'
+              value='profile'
+              disabled={process.env.NODE_ENV !== 'production'}
+            >
               {t('profile')}
             </TabsTrigger>
           </TabsList>
