@@ -28,7 +28,9 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
         })}
       </div>
       <div className='leading-none truncate'>
-        <h4 className='group-aria-selected:text-slate font-medium'>{title}</h4>
+        <h4 className='group-aria-selected:text-slate font-medium truncate'>
+          {title}
+        </h4>
         <p className='text-xs text-muted-foreground truncate'>
           {matchArray && matchArray[0] ? (
             <RenderContent content={contentArray} match={matchArray} />
@@ -55,7 +57,7 @@ function RenderContent({ content, match }: RenderContentProps) {
   );
 
   return (
-    <p>
+    <p className='truncate'>
       {combinedContent.map(({ key, text, highlighted }) =>
         highlighted ? (
           <span key={key} className='text-slate font-semibold'>
