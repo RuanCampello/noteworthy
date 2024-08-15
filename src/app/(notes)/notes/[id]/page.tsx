@@ -31,8 +31,14 @@ export default async function NotePage({ params }: Props) {
     preferences?.fullNote !== undefined ? preferences.fullNote : true;
 
   return (
-    <NoteEditor fullNote={fullNote} owner={note.user.id} content={note.content}>
-      <NoteHeader note={noteWithOwner} />
-    </NoteEditor>
+    <article className='mx-20'>
+      <NoteEditor
+        fullNote={fullNote}
+        owner={note.user.id}
+        content={note.content}
+      >
+        <NoteHeader note={noteWithOwner} />
+      </NoteEditor>
+    </article>
   );
 }

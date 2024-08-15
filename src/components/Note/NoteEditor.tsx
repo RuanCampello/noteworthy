@@ -9,11 +9,11 @@ import Superscript from '@tiptap/extension-superscript';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+import { type EditorProps } from '@tiptap/pm/view';
 import { EditorProvider, Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import FontSize from 'tiptap-extension-font-size';
 import EditorMenuBar from './EditorMenuBar';
-import { type EditorProps } from '@tiptap/pm/view';
 
 import { DoubleClickLink } from '@/utils/double-click-link';
 import { useSession } from 'next-auth/react';
@@ -74,7 +74,7 @@ export default function NoteEditor({
   ];
   const editorProps: EditorProps = {
     attributes: {
-      class: `prose prose-neutral selection:bg-night selection:text-neutral-200 px-14 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2 ${fullNote ? 'max-w-[100%]' : 'max-w-[50vw] left-[15vw]'}`,
+      class: `prose prose-neutral selection:bg-night selection:text-neutral-200 px-2 pb-12 prose-invert prose-p:m-0 prose-p:leading-snug prose-headings:my-1 focus:outline-none scrollbar-thin scrollbar-thumb-silver scrollbar-track-black placeholder:text-black pt-2 ${fullNote ? 'max-w-[100%]' : 'max-w-[50vw] left-[15vw]'}`,
     },
   };
   return (

@@ -2,15 +2,6 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { updateNoteContent } from '@/actions/note';
-import { useCurrentEditor } from '@tiptap/react';
-import { Check } from 'lucide-react';
-import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import MenuItems from '../MenuItems';
-import SelectFontFamily from '../SelectFontFamily';
-import SelectFontSize from '../SelectFontSize';
-import MenuTooltip from '../Tooltip';
 import {
   Select,
   SelectContent,
@@ -20,7 +11,16 @@ import {
 } from '@/ui/select';
 import { Separator } from '@/ui/separator';
 import { toast } from '@/ui/use-toast';
+import { useCurrentEditor } from '@tiptap/react';
+import { Check } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import MenuItems from '../MenuItems';
+import SelectFontFamily from '../SelectFontFamily';
+import SelectFontSize from '../SelectFontSize';
+import MenuTooltip from '../Tooltip';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -111,7 +111,7 @@ export default function EditorMenuBar() {
     setSelectedValue(t('p'));
   }
   return (
-    <div className='flex flex-col gap-1 xl:px-11 px-4'>
+    <div className='flex flex-col gap-1 xl:px-0 px-4'>
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content={t('style')} sideOffset={6}>
