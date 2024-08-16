@@ -1,8 +1,9 @@
-import SectionTitle from '@/components/SectionTitle';
-import MoreItem from '@/components/MoreItem';
 import Counter from '@/components/Counter';
+import FolderCollapsible from '@/components/Folder/FolderCollapsible';
+import SectionTitle from '@/components/SectionTitle';
 import { Colours } from '@/utils/colours';
 import { getTranslations } from 'next-intl/server';
+import MoreItem from './MoreItem';
 
 export default async function More() {
   const favouriteColour = Colours['sunset'];
@@ -29,6 +30,7 @@ export default async function More() {
         >
           <Counter isArchived />
         </MoreItem>
+        <FolderCollapsible />
       </div>
     </div>
   );

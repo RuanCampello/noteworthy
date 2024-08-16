@@ -33,7 +33,7 @@ export default async function Profile() {
   const source = image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${user.id}`;
 
   return (
-    <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
+    <div className='group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar source={source} fallback={name[0].toUpperCase()} />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
