@@ -7,11 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog';
-import { Keyboard } from 'lucide-react';
 import { DropdownMenuShortcut } from '@/ui/dropdown-menu';
 import { Separator } from '@/ui/separator';
-import { type ReactNode } from 'react';
+import { Keyboard } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { type ReactNode } from 'react';
 
 type Shortcut = {
   action: string;
@@ -67,7 +67,7 @@ export default async function KeyboardDialog() {
   ];
 
   const globalShortcuts: Shortcut[] = [
-    { action: t('toggle_sidebar'), commands: ['Shift', 'Alt', 'S'] },
+    { action: t('toggle_sidebar'), commands: ['Ctrl', 'L'] },
     { action: t('search'), commands: ['Ctrl', 'K'] },
   ];
 
