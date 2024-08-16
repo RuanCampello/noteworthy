@@ -29,7 +29,7 @@ const config = {
         DEFAULT: {
           css: {
             overflowY: 'scroll',
-            height: '78vh',
+            height: '75vh',
             paddingBottom: '24px',
             textUnderlineOffset: '2px',
           },
