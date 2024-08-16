@@ -202,5 +202,9 @@
     "close": "fechar",
     "open": "abrir",
     "chg-filter": "trocar filtro"
+  },
+  "NoteHeader": {
+    "editor": "Você pode editar este documento diretamente",
+    "viewer": "Você pode pode ler este documento"
   }
 }

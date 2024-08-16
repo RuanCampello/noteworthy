@@ -202,5 +202,9 @@
     "close": "close",
     "open": "open",
     "chg-filter": "change filter"
+  },
+  "NoteHeader": {
+    "editor": "You're an editor able to edit the document directly",
+    "viewer": "You're a viewer able to read the document"
   }
 }

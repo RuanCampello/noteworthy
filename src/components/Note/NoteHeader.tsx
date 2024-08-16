@@ -34,6 +34,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
   const longDate = toLocaleDateLong(createdAt);
   const user = await currentUser();
   const t = await getTranslations('Header');
+  const th = await getTranslations('NoteHeader');
 
   const params = headers().get('search-params');
   const isDictionaryOpen = new URLSearchParams(params!).has('dfn-open');
@@ -42,7 +43,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
   const isEditor = user.id === owner.id;
 
   return (
-    <header className='sticky xl:px-0 px-6 xl:pt-8 pt-8'>
+    <header className='sticky xl:px-0 px-6 xl:pt-16 pt-8'>
       <div className='flex justify-between items-center xl:mb-8 mb-8'>
         <h1
           className='text-3xl font-semibold line-clamp-1 w-[90%] font-garamound'
@@ -60,7 +61,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
         )}
       </div>
       <Separator className='mb-1.5' />
-      <div className='flex justify-between w-full'>
+      <div className='flex justify-between w-full items-center'>
         <div
           data-dictionary={isDictionaryOpen}
           className='font-medium grow text-silver data-[dictionary=true]:justify-items-center xl:grid xl:grid-cols-4 xl:gap-0 px-2 flex flex-col gap-1'
@@ -82,14 +83,14 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
         {isEditor ? (
           <StatusTooltip
             icon={<Pencil />}
-            className='bg-slate'
-            content={"You're an editor able to edit the document directly"}
+            className='bg-slate h-fit'
+            content={th('editor')}
           />
         ) : (
           <StatusTooltip
             icon={<View />}
-            className='bg-tickle'
-            content={"You're a view able to read the document"}
+            className='bg-tickle h-fit'
+            content={th('viewer')}
           />
         )}
       </div>
