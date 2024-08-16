@@ -30,7 +30,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import useKeyboardShortcut from 'use-keyboard-shortcut';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { CommandFooter } from './Footer';
 import { NoteItemWrapper } from './Item';
 
@@ -48,24 +48,10 @@ export default function Search() {
   const t = useTranslations('Search');
   const tf = useTranslations('SearchFooter');
 
-  useKeyboardShortcut(
-    ['Control', 'K'],
-    () => {
-      setSettingsOpen(false);
-      setOpen(true);
-    },
-    {
-      overrideSystem: true,
-      repeatOnHold: false,
-      ignoreInputFields: true,
-    },
-  );
-
-  // ignore ctrl + j to prevent miss click and bug the browser
-  useKeyboardShortcut(['Control', 'J'], () => {}, {
-    overrideSystem: true,
-    repeatOnHold: false,
-    ignoreInputFields: true,
+  useHotkeys('ctrl+k', () => setOpen(true), {
+    enableOnContentEditable: true,
+    preventDefault: true,
+    enableOnFormTags: true,
   });
 
   const { data: results, isLoading } = useQuery({

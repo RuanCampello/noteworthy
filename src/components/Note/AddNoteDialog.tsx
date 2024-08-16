@@ -28,7 +28,7 @@ import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import useKeyboardShortcut from 'use-keyboard-shortcut';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { z } from 'zod';
 import ColourSelect from '../ColourSelect';
 
@@ -43,10 +43,10 @@ export default function AddNoteDialog({ children }: AddNoteDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const t = useTranslations('AddNote');
 
-  useKeyboardShortcut(['Control', 'E'], () => setOpen(true), {
-    overrideSystem: true,
-    repeatOnHold: false,
-    ignoreInputFields: true,
+  useHotkeys(['ctrl+e'], () => setOpen(true), {
+    preventDefault: true,
+    enableOnFormTags: true,
+    enableOnContentEditable: true,
   });
 
   function handleAddNote(values: NoteDialog) {

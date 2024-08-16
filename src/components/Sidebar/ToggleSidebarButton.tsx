@@ -4,13 +4,14 @@ import { useSidebarState } from '@/lib/zustand/sidebar';
 import { Button } from '@/ui/button';
 import { setCookie } from 'cookies-next';
 import { PanelRightClose, PanelRightOpen } from 'lucide-react';
-import useKeyboardShortcut from 'use-keyboard-shortcut';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export default function ToggleSidebarButton() {
   const { state, toggleState } = useSidebarState();
-  useKeyboardShortcut(['Shift', 'Alt', 'S'], () => toggleState(state), {
-    overrideSystem: true,
-    repeatOnHold: false,
+  useHotkeys('ctrl+l', () => toggleSidebarState(), {
+    preventDefault: true,
+    enableOnFormTags: true,
+    enableOnContentEditable: true,
   });
 
   const iconProps = {

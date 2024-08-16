@@ -87,6 +87,7 @@ export default function NoteEditor({
           {isEditable && <EditorMenuBar />}
         </>
       }
+      immediatelyRender={false}
       extensions={extensions}
       editorProps={editorProps}
     >

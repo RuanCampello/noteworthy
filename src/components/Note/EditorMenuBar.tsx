@@ -1,7 +1,6 @@
 'use client';
 
 /* eslint-disable react-hooks/exhaustive-deps */
-import { updateNoteContent } from '@/actions/note';
 import {
   Select,
   SelectContent,
@@ -10,12 +9,8 @@ import {
   SelectValue,
 } from '@/ui/select';
 import { Separator } from '@/ui/separator';
-import { toast } from '@/ui/use-toast';
 import { useCurrentEditor } from '@tiptap/react';
-import { Check } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import MenuItems from '../MenuItems';
 import SelectFontFamily from '../SelectFontFamily';
@@ -26,9 +21,6 @@ type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function EditorMenuBar() {
   const { editor } = useCurrentEditor();
-
-  const session = useSession();
-  const openNote = useParams<{ id: string }>().id;
   const t = useTranslations('Format');
 
   function getDefaultValue() {
@@ -41,41 +33,6 @@ export default function EditorMenuBar() {
 
   const defaultValue = getDefaultValue();
   const [selectedValue, setSelectedValue] = useState(defaultValue);
-
-  useEffect(() => {
-    async function handleSaveShortcut(event: KeyboardEvent) {
-      if (event.ctrlKey && event.key === 's') {
-        event.preventDefault();
-        const currentContent = editor?.getHTML();
-        const userId = session.data?.user?.id;
-        if (
-          !currentContent ||
-          !userId ||
-          !openNote ||
-          session.status === 'loading'
-        ) {
-          return null;
-        }
-        await updateNoteContent(openNote, userId, currentContent);
-        toast({
-          title: 'Note Saved',
-          description:
-            "Your note has been saved! It's ready whenever you need it. 📌",
-          variant: 'success',
-          action: (
-            <div className='bg-blue/20 p-2 rounded-md w-fit'>
-              <Check
-                size={24}
-                className='bg-blue text-midnight p-1 rounded-full'
-              />
-            </div>
-          ),
-        });
-      }
-    }
-    window.addEventListener('keydown', handleSaveShortcut);
-    return () => window.removeEventListener('keydown', handleSaveShortcut);
-  }, [session.status]);
 
   useEffect(() => {
     if (!editor) return;
