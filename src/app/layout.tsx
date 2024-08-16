@@ -1,17 +1,25 @@
-import type { Metadata } from 'next';
-import { Source_Sans_3 } from 'next/font/google';
-import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import { SessionProvider } from 'next-auth/react';
-import { type ReactNode } from 'react';
-import { getLocale, getMessages } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
-import Search from '@/components/Search';
 import QueryProvider from '@/components/QueryProvider';
+import Search from '@/components/Search';
+import { Toaster } from '@/components/ui/toaster';
+import type { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
+import { EB_Garamond, Source_Sans_3 } from 'next/font/google';
+import { type ReactNode } from 'react';
+import './globals.css';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
+  preload: true,
   weight: 'variable',
+  variable: '--font-sans',
+});
+
+const garamound = EB_Garamond({
+  preload: true,
+  subsets: ['latin'],
+  variable: '--font-garamound',
 });
 
 export const metadata: Metadata = {
@@ -34,7 +42,7 @@ export default async function RootLayout({
   return (
     <html lang={lang} spellCheck={false}>
       <body
-        className={`${sourceSans.className} bg-black text-neutral-100 text-base overflow-hidden`}
+        className={`${sourceSans.variable} ${garamound.variable} font-sans bg-black text-neutral-100 text-base overflow-hidden`}
       >
         <SessionProvider>
           <QueryProvider>

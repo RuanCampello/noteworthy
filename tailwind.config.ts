@@ -21,6 +21,10 @@ const config = {
       screens: {
         lg: '1028px',
       },
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+        garamound: ['var(--font-garamound)'],
+      },
       typography: {
         DEFAULT: {
           css: {

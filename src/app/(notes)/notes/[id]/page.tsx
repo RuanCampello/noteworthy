@@ -4,6 +4,7 @@ import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
 import { currentUser } from '@/queries/note';
 import { API } from '@/server/api';
+import { headers } from 'next/headers';
 
 type Props = { params: { id: string } };
 
@@ -30,8 +31,10 @@ export default async function NotePage({ params }: Props) {
   const fullNote =
     preferences?.fullNote !== undefined ? preferences.fullNote : true;
 
+  const isSubView = !headers().get('pathname')?.includes('/notes/');
+
   return (
-    <article className='mx-20'>
+    <article data-view={isSubView} className='mx-40 data-[view=true]:mx-28'>
       <NoteEditor
         fullNote={fullNote}
         owner={note.user.id}
