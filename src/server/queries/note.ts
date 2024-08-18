@@ -63,7 +63,16 @@ export const getNoteByIdWithPreferences = cache(async (id: string) => {
     return null;
   }
 });
-
+export const getAllNotes = cache(async (userId: string) => {
+  return db.query.note.findMany({
+    where: eq(note.userId, userId),
+    with: {
+      user: {
+        columns: { id: true, name: true },
+      },
+    },
+  });
+});
 export const getNoteIsPublic = cache(async (noteId: string) => {
   try {
     const response = await db.query.note.findFirst({
@@ -77,7 +86,6 @@ export const getNoteIsPublic = cache(async (noteId: string) => {
     return null;
   }
 });
-
 export const countNoteNumber = cache(
   async (userId: string, favourite: boolean, archive: boolean) => {
     const [{ count: noteNumber }] = await db
@@ -93,3 +101,10 @@ export const countNoteNumber = cache(
     return noteNumber;
   },
 );
+export const countTotalNotes = cache(async (userId: string) => {
+  const [{ count: noteNumber }] = await db
+    .select({ count: count() })
+    .from(note)
+    .where(eq(note.userId, userId));
+  return noteNumber;
+});

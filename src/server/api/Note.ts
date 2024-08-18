@@ -1,5 +1,7 @@
 import {
   countNoteNumber,
+  countTotalNotes,
+  getAllNotes,
   getAllUserNotes,
   getNoteByIdWithPreferences,
 } from '@/queries/note';
@@ -65,7 +67,6 @@ export class FavouriteNote extends Note {
     return count;
   }
 }
-
 export class ArchivedNote extends Note {
   public constructor(userId: string) {
     super(userId);
@@ -82,5 +83,17 @@ export class ArchivedNote extends Note {
   async count(): Promise<number> {
     const count = await countNoteNumber(this.userId, false, true);
     return count;
+  }
+}
+export class AllNote extends Note {
+  public constructor(userId: string) {
+    super(userId);
+  }
+
+  async get() {
+    return await getAllNotes(this.userId);
+  }
+  async count() {
+    return await countTotalNotes(this.userId);
   }
 }

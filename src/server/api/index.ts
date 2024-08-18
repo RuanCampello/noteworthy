@@ -1,6 +1,12 @@
 import 'server-only';
 
-import { ArchivedNote, FavouriteNote, OrdinaryNote, SingleNote } from './Note';
+import {
+  AllNote,
+  ArchivedNote,
+  FavouriteNote,
+  OrdinaryNote,
+  SingleNote,
+} from './Note';
 
 export class API {
   public notes(userId: string) {
@@ -8,6 +14,7 @@ export class API {
       ordinary: new OrdinaryNote(userId),
       favourite: new FavouriteNote(userId),
       archived: new ArchivedNote(userId),
+      all: new AllNote(userId),
     };
   }
   public readonly note: SingleNote;

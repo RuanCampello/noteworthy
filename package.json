@@ -9,7 +9,7 @@
     "lint": "next lint",
     "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,html,json,md}\"",
     "prettier:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,json,md}\"",
-    "schema:generate": "node public/locales/schema.mjs"
+    "schema:generate": "node public/locales/schema.mjs && prettier --write public/locales/schema.json"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
@@ -19,6 +19,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@neondatabase/serverless": "^0.9.4",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-context-menu": "^2.1.5",
@@ -58,6 +59,7 @@
     "cmdk": "^1.0.0",
     "compressorjs": "^1.2.1",
     "cookies-next": "^4.2.1",
+    "date-fns": "^3.6.0",
     "drizzle-orm": "^0.32.1",
     "framer-motion": "^11.0.6",
     "lucide-react": "^0.331.0",
