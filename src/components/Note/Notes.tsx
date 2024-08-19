@@ -11,9 +11,13 @@ import { headers } from 'next/headers';
 import { type ReactNode } from 'react';
 
 export default async function Notes() {
-  const user = await currentUser();
+  const [user, t, tp] = await Promise.all([
+    currentUser(),
+    getTranslations('Sidebar'),
+    getTranslations('NotePlaceholder'),
+  ]);
+
   if (!user || !user.id) return;
-  const t = await getTranslations('Sidebar');
   const isFirefox = headers().get('user-agent')?.includes('Firefox');
 
   const result = await new API().notes(user.id).ordinary.filter();
@@ -46,8 +50,8 @@ export default async function Notes() {
         {notes.length === 0 && searchParam ? (
           <PlaceholderWrapper>
             <h1>
-              No note with such name as{' '}
-              <span className='italic font-medium'>{searchParam}</span>
+              {tp('not_found')}
+              <span className='italic font-medium'> {searchParam}</span>
             </h1>
           </PlaceholderWrapper>
         ) : notes.length > 0 ? (
@@ -68,8 +72,8 @@ export default async function Notes() {
         ) : (
           <PlaceholderWrapper>
             <div className='flex flex-col h-full justify-between'>
-              <h1 className='italic'>Darkness here, and nothing more.</h1>
-              <p className='h-fit'>Try to fill with some note</p>
+              <h1 className='italic'>{tp('title')}</h1>
+              <p className='h-fit'>{tp('p')}</p>
             </div>
           </PlaceholderWrapper>
         )}
