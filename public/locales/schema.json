@@ -305,6 +305,21 @@
       "required": ["editor", "viewer"],
       "type": "object"
     },
+    "NotePlaceholder": {
+      "properties": {
+        "not_found": {
+          "type": "string"
+        },
+        "p": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": ["not_found", "p", "title"],
+      "type": "object"
+    },
     "Profile": {
       "properties": {
         "button": {
@@ -751,6 +766,7 @@
     "NewPassword",
     "NoteDropdown",
     "NoteHeader",
+    "NotePlaceholder",
     "Profile",
     "ProfileDropdown",
     "Publish",

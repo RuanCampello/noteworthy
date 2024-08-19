@@ -206,5 +206,10 @@
   "NoteHeader": {
     "editor": "Você pode editar este documento diretamente",
     "viewer": "Você pode pode ler este documento"
+  },
+  "NotePlaceholder": {
+    "title": "Trevas, trevas e nada mais.",
+    "p": "Tente preencher com alguma nota",
+    "not_found": "Nada encontrado com nome tal qual"
   }
 }

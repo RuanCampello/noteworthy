@@ -47,3 +47,9 @@ export const userPreferencesSchema = z.object({
   fullNote: z.boolean(),
   language: z.string().transform((s) => s as Locale),
 });
+
+export const newFolderSchema = z.object({
+  name: z
+    .string({ required_error: 'Folder must have a name' })
+    .min(4, { message: 'Folder name must have at least 4 characters' }),
+});
