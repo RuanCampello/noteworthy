@@ -43,6 +43,13 @@
       "when": 1722779235882,
       "tag": "0005_correct-account-mismatch",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1724069596729,
+      "tag": "0006_add-folders",
+      "breakpoints": true
     }
   ]
 }

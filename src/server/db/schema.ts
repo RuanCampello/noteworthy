@@ -4,6 +4,7 @@ import {
   boolean,
   index,
   integer,
+  type PgColumn,
   pgEnum,
   pgTable,
   primaryKey,
@@ -151,6 +152,15 @@ export const note = pgTable(
   },
 );
 
+export const folder = pgTable('folders', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  noteIds: integer('note_ids').array().default([]),
+  parentId: integer('parent_folder_id').references((): PgColumn => folder.id, {
+    onDelete: 'cascade',
+  }),
+});
+
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
@@ -178,5 +188,16 @@ export const notesRelations = relations(note, ({ one }) => ({
   user: one(user, {
     fields: [note.userId],
     references: [user.id],
+  }),
+}));
+
+export const foldersRelations = relations(folder, ({ one, many }) => ({
+  parentFolder: one(folder, {
+    relationName: 'parentFolder',
+    fields: [folder.parentId],
+    references: [folder.id],
+  }),
+  childFolders: many(folder, {
+    relationName: 'childFolders',
   }),
 }));
