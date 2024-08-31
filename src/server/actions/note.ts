@@ -162,7 +162,7 @@ export async function updateNoteContent(
 ) {
   const { basePath } = getPathnameParams();
   try {
-    const updatedNote = await db
+    await db
       .update(note)
       .set({
         content: content,
@@ -170,7 +170,6 @@ export async function updateNoteContent(
       })
       .where(and(eq(note.id, id), eq(note.userId, userId)));
     revalidatePath(`/${basePath}`, 'layout');
-    return updatedNote;
   } catch (error) {
     console.error(error);
     return;

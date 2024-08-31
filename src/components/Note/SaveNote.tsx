@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useTransition } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import MenuTooltip from '../Tooltip';
 import { useToast } from '../ui/use-toast';
 
@@ -20,6 +21,11 @@ export default function SaveNote() {
   const userId = session.data?.user?.id;
 
   const openNote = useParams<{ id: string }>().id;
+  useHotkeys('ctrl+s', () => handleSaveClick(), {
+    preventDefault: true,
+    enableOnFormTags: true,
+    enableOnContentEditable: true,
+  });
 
   if (!currentEditor) return;
 

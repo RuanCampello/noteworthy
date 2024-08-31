@@ -21,11 +21,15 @@ const config = {
       screens: {
         lg: '1028px',
       },
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+        garamound: ['var(--font-garamound)'],
+      },
       typography: {
         DEFAULT: {
           css: {
             overflowY: 'scroll',
-            height: '78vh',
+            height: '75vh',
             paddingBottom: '24px',
             textUnderlineOffset: '2px',
           },
