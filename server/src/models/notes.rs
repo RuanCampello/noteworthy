@@ -1,5 +1,7 @@
-use super::sea_orm_active_enums::Colour;
+// use super::sea_orm_active_enums::Colour;
 use sea_orm::entity::prelude::*;
+
+use super::sea_orm_active_enums::Colour;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
 #[sea_orm(table_name = "notes")]

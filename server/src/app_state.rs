@@ -32,9 +32,10 @@ impl AppState {
 
         let mut opt = ConnectOptions::new(env.database_url.to_owned());
         opt.max_connections(80)
-            .connect_timeout(Duration::from_secs(8))
-            .idle_timeout(Duration::from_secs(8))
-            .max_lifetime(Duration::from_secs(15));
+            .connect_timeout(Duration::from_secs(60))
+            .idle_timeout(Duration::from_secs(60))
+            .max_lifetime(Duration::from_secs(200))
+            .sqlx_logging(true);
 
         let db = Database::connect(opt).await?;
 
