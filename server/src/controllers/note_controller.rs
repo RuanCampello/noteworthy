@@ -27,7 +27,7 @@ pub async fn create_note(
         Ok(id) => id,
         Err(e) => {
             error!("Something went wrong: {:#?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())).into_response();
+            return (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!").into_response();
         }
     };
 

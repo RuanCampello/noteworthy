@@ -5,7 +5,6 @@ use std::sync::Arc;
 use crate::{
     errors::NoteError,
     models::{notes, sea_orm_active_enums::Colour, users::Entity as User},
-    utils::colour::get_random_colour,
 };
 
 #[derive(Clone)]
@@ -14,9 +13,9 @@ pub struct NoteRepository {
 }
 
 #[derive(Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum ColourOption {
-    Defined(Colour),
-    Random,
+    Colour(String),
 }
 
 impl NoteRepository {
@@ -32,8 +31,7 @@ impl NoteRepository {
         colour_opt: ColourOption,
     ) -> Result<Uuid, NoteError> {
         let colour = match colour_opt {
-            ColourOption::Defined(c) => c,
-            ColourOption::Random => get_random_colour(),
+            ColourOption::Colour(c) => Colour::from(c),
         };
 
         let user = User::find_by_id(user_id)
