@@ -1,9 +1,9 @@
 use axum::{
     http::{header, Method},
-    routing::post,
+    routing::{delete, post},
     Extension, Router,
 };
-use controllers::note_controller::create_note;
+use controllers::note_controller::{create_note, delete_note};
 use repositories::note_repository;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
@@ -27,7 +27,7 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods(Method::GET);
 
     let router = Router::new()
-        .route("/notes", post(create_note))
+        .route("/notes", post(create_note).delete(delete_note))
         .layer(Extension(note_repository))
         .with_state(state)
         .layer(cors);

@@ -36,8 +36,8 @@ pub enum NoteFormat {
     Slim,
 }
 
-impl From<String> for Colour {
-    fn from(s: String) -> Self {
+impl From<&str> for Colour {
+    fn from(s: &str) -> Self {
         match s.to_lowercase().as_str() {
             "blue" => Colour::Blue,
             "cambridge" => Colour::Cambridge,
