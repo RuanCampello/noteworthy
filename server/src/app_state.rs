@@ -6,6 +6,7 @@ use std::{borrow::Cow, time::Duration};
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
     pub database_url: Cow<'static, str>,
+    pub jwt_secret: Cow<'static, str>,
 }
 
 impl EnvVariables {
@@ -17,6 +18,10 @@ impl EnvVariables {
                 Ok(url) => url.into(),
                 Err(err) => bail!("DATABASE_URL must be set: {err}"),
             },
+            jwt_secret: match dotenv::var("AUTH_SECRET") {
+                Ok(url) => url.into(),
+                Err(err) => bail!("AUTH_SECRET must be set: {err}"),
+            },
         })
     }
 }
@@ -24,6 +29,7 @@ impl EnvVariables {
 #[derive(Clone)]
 pub struct AppState {
     pub database: DatabaseConnection,
+    pub jwt_secret: String,
 }
 
 impl AppState {
@@ -39,6 +45,9 @@ impl AppState {
 
         let db = Database::connect(opt).await?;
 
-        Ok(Self { database: db })
+        Ok(Self {
+            database: db,
+            jwt_secret: env.jwt_secret.to_string(),
+        })
     }
 }

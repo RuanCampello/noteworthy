@@ -60,6 +60,7 @@
     "cookies-next": "^4.2.1",
     "drizzle-orm": "^0.32.1",
     "framer-motion": "^11.0.6",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.331.0",
     "next": "14.2.3",
     "next-auth": "^5.0.0-beta.16",

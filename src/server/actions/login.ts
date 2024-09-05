@@ -2,11 +2,11 @@
 
 import { signIn } from '@/auth/auth';
 import { getUserByEmail } from '@/queries/user';
-import { loginFormSchema } from '@/schemas';
 import { DEFAULT_REDIRECT } from '@/routes';
+import { loginFormSchema } from '@/schemas';
 import { AuthError } from 'next-auth';
-import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
+import { z } from 'zod';
 
 export async function login(
   values: z.infer<typeof loginFormSchema>,

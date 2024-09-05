@@ -1,12 +1,9 @@
 import { createPlaceholderNote } from '@/actions/note';
 import authConfig from '@/auth/auth.config';
-import { getUserById } from '@/queries/user';
 import { db } from '@/server/db';
-import { account as accountTable, user as userTable } from '@/server/db/schema';
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { user as userTable } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import NextAuth from 'next-auth';
-import type { Adapter } from 'next-auth/adapters';
 
 export const {
   handlers: { GET, POST },
@@ -36,38 +33,28 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+      if (session.user && (token.user as { id: string }).id) {
+        console.log('session', session);
+        console.log('token', token);
+
+        // @ts-expect-error need to type the user on module
+        session.user = token.user;
       }
       return session;
     },
-    async jwt({ token, session, trigger }) {
-      if (!token.sub) return token;
-
-      const user = await getUserById(token.sub);
-      if (!user) return token;
-
-      if (trigger === 'update') {
-        if (session?.name && session.name !== user.name) {
-          await db
-            .update(userTable)
-            .set({
-              name: session.name,
-            })
-            .where(eq(userTable.id, user.id));
-
-          //update token with new data
-          token.name = session.name;
-          token.id = user.id;
-        }
+    async jwt({ token, user, account }) {
+      if (user && account) {
+        console.log(user, account);
+        return { ...token, user: user };
       }
+
+      if (Date.now() < (token as { exp: number }).exp) {
+        return token;
+      }
+
       return token;
     },
   },
-  adapter: DrizzleAdapter(db, {
-    usersTable: userTable,
-    accountsTable: accountTable,
-  }) as Adapter,
   session: { strategy: 'jwt' },
   ...authConfig,
 });
