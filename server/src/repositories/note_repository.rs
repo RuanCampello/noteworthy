@@ -25,7 +25,7 @@ impl NoteRepository {
 
     pub async fn new_note(
         &self,
-        user_id: String,
+        user_id: &str,
         title: String,
         content: Option<String>,
         colour_opt: ColourOption,

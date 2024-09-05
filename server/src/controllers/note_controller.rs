@@ -1,4 +1,7 @@
-use crate::repositories::note_repository::{ColourOption, NoteRepository};
+use crate::{
+    errors::NoteError,
+    repositories::note_repository::{ColourOption, NoteRepository},
+};
 use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
 use tracing::error;
@@ -17,7 +20,7 @@ pub async fn create_note(
 ) -> impl IntoResponse {
     let id = match repository
         .new_note(
-            payload.user_id,
+            &payload.user_id,
             payload.title,
             payload.content,
             payload.colour,
@@ -27,7 +30,19 @@ pub async fn create_note(
         Ok(id) => id,
         Err(e) => {
             error!("Something went wrong: {:#?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!").into_response();
+            match e {
+                NoteError::NoteOwnerNotFound => {
+                    return (
+                        StatusCode::NOT_FOUND,
+                        format!("User with id ${} was not found", &payload.user_id),
+                    )
+                        .into_response();
+                }
+                _ => {
+                    return (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong")
+                        .into_response()
+                }
+            }
         }
     };
 
