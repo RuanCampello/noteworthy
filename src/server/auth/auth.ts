@@ -3,7 +3,16 @@ import authConfig from '@/auth/auth.config';
 import { db } from '@/server/db';
 import { user as userTable } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
-import NextAuth from 'next-auth';
+import NextAuth, { type DefaultSession } from 'next-auth';
+import {} from 'next-auth/jwt';
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      accessToken?: string;
+    } & DefaultSession['user'];
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -33,18 +42,17 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
-      if (session.user && (token.user as { id: string }).id) {
-        console.log('session', session);
-        console.log('token', token);
-
-        // @ts-expect-error need to type the user on module
+      // @ts-expect-error undeclared type
+      if (session.user && token.user.id) {
+        // @ts-expect-error undeclared type
         session.user = token.user;
+        // @ts-expect-error undeclared type
+        session.user.accessToken = token.user.accessToken;
       }
       return session;
     },
     async jwt({ token, user, account }) {
       if (user && account) {
-        console.log(user, account);
         return { ...token, user: user };
       }
 

@@ -22,30 +22,35 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
 
   if (!fields.success) return;
-  let { colour } = fields.data;
-  const { name } = fields.data;
-
-  colour === 'random' ? (colour = getRandomColour().name) : colour;
+  const { colour, name } = fields.data;
 
   const user = await currentUser();
-  if (!user || !user.id) return;
+  if (!user) return;
 
-  const [{ id }] = await db
-    .insert(note)
-    .values({
+  // @ts-ignore
+  const response = await fetch('http://localhost:6969/notes', {
+    method: 'post',
+    headers: [
+      { 'content-type': 'application/json' },
+      { 'authorization bearer: ': user },
+    ],
+    body: JSON.stringify({
+      // user_id: 'clwf5smlj0000feuj3qzj3pd',
+      user_id: user.id!,
       title: name,
+      content: 'this must have been hard...',
       colour: colour,
-      userId: user.id,
-      content: '',
-    })
-    .returning();
-  const { origin, basePath } = getPathnameParams();
+    }),
+  });
+  console.log(response);
 
-  if (!basePath || basePath === 'favourites' || basePath === 'archived') {
-    redirect(`${origin}/notes/${id}`);
-  }
-  //if user is already in notes path, but not on favourite/archive page
-  redirect(`${origin}/${basePath}/${id}`);
+  // const { origin, basePath } = getPathnameParams();
+
+  // if (!basePath || basePath === 'favourites' || basePath === 'archived') {
+  //   redirect(`${origin}/notes/${id}`);
+  // }
+  // //if user is already in notes path, but not on favourite/archive page
+  // redirect(`${origin}/${basePath}/${id}`);
 }
 
 export async function toggleNoteFavourite(id: string, userId: string) {

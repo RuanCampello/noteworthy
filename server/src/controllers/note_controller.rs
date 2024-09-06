@@ -1,8 +1,12 @@
 use crate::{errors::NoteError, repositories::note_repository::NoteRepository};
-use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
+use axum::{
+    http::{HeaderMap, StatusCode},
+    response::IntoResponse,
+    Extension, Json,
+};
 use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
-use tracing::error;
+use tracing::{error, info};
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -19,9 +23,11 @@ pub struct CreateNoteRequest {
 }
 
 pub async fn create_note(
+    headers: HeaderMap,
     Extension(repository): Extension<NoteRepository>,
     Json(payload): Json<CreateNoteRequest>,
 ) -> impl IntoResponse {
+    info!("headers of request: {:#?}", headers);
     let id = match repository.new_note(&payload).await {
         Ok(id) => id,
         Err(e) => {

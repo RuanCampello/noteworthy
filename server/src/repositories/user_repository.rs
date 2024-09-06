@@ -1,11 +1,10 @@
 use ::chrono::Duration;
 use bcrypt::verify;
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sea_orm::{sqlx::types::chrono, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use serde::Serialize;
 use std::sync::Arc;
-use tracing::info;
 
 use crate::{
     controllers::user_controller::LoginRequest,

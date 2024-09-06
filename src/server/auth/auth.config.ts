@@ -43,7 +43,7 @@ export default {
         const token = await response.json();
         const claims: User = jwtDecode(token);
 
-        return claims;
+        return { ...claims, accessToken: token };
       },
     }),
   ],
