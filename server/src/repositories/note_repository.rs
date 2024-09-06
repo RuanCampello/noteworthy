@@ -24,19 +24,23 @@ impl NoteRepository {
         Self { database }
     }
 
-    pub async fn new_note(&self, req: &CreateNoteRequest) -> Result<Uuid, NoteError> {
+    pub async fn new_note(
+        &self,
+        req: &CreateNoteRequest,
+        user_id: &str,
+    ) -> Result<Uuid, NoteError> {
         let colour = match &req.colour {
             ColourOption::Colour(c) => Colour::from(c.as_str()),
         };
 
-        let user = User::find_by_id(&req.user_id)
+        let user = User::find_by_id(user_id)
             .one(&*self.database)
             .await
-            .map_err(|_| NoteError::NoteOwnerNotFound(req.user_id.to_string()))?;
+            .map_err(|_| NoteError::NoteOwnerNotFound(user_id.to_string()))?;
 
         let user_id = match user {
             Some(user) => user.id,
-            None => return Err(NoteError::NoteOwnerNotFound(req.user_id.to_string())),
+            None => return Err(NoteError::NoteOwnerNotFound(user_id.to_string())),
         };
 
         let note = notes::ActiveModel {

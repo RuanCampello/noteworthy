@@ -1,8 +1,11 @@
 use std::error::Error;
 
+use axum::http::HeaderMap;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
+
+use crate::{app_state::EnvVariables, errors::TokenError};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -14,7 +17,6 @@ pub struct Claims {
 }
 
 pub fn generate_jwt(
-    secret: &str,
     user_id: String,
     email: String,
     name: Option<String>,
@@ -33,21 +35,51 @@ pub fn generate_jwt(
         image,
     };
 
+    let env = EnvVariables::from_env()?;
+
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_base64_secret(secret)?,
+        &EncodingKey::from_base64_secret(&env.jwt_secret)?,
     )?;
 
     Ok(token)
 }
 
-pub fn decode_jwt(secret: &str, token: &str) -> Result<TokenData<Claims>, Box<dyn Error>> {
-    let token_data = decode::<Claims>(
-        token,
-        &DecodingKey::from_base64_secret(secret)?,
-        &Validation::default(),
-    )?;
+pub trait JwtDecoder {
+    fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>>;
+}
 
-    Ok(token_data)
+impl JwtDecoder for String {
+    fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>> {
+        let env = EnvVariables::from_env()?;
+        let token_data = decode::<Claims>(
+            self,
+            &DecodingKey::from_base64_secret(&env.jwt_secret)?,
+            &Validation::default(),
+        )?;
+
+        Ok(token_data)
+    }
+}
+
+pub trait TokenExtractor {
+    fn extract_bearer_token(&self) -> Result<String, TokenError>;
+}
+
+impl TokenExtractor for HeaderMap {
+    fn extract_bearer_token(&self) -> Result<String, TokenError> {
+        let auth_header = self
+            .get("Authorization")
+            .ok_or_else(|| TokenError::NotFound)?;
+
+        let auth_str = auth_header.to_str().unwrap();
+
+        if !auth_str.starts_with("Bearer ") {
+            return Err(TokenError::InvalidFormat);
+        }
+
+        let token = auth_str.trim_start_matches("Bearer ");
+        Ok(token.to_string())
+    }
 }

@@ -23,3 +23,11 @@ pub enum UserError {
     #[error("Error during decryption: {0}")]
     DecryptError(#[from] BcryptError),
 }
+
+#[derive(Error, Debug)]
+pub enum TokenError {
+    #[error("Token was not found in headers")]
+    NotFound,
+    #[error("Token format provided is invalid")]
+    InvalidFormat,
+}

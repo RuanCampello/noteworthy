@@ -28,11 +28,7 @@ impl UserRepository {
     pub fn new(database: Arc<DatabaseConnection>) -> Self {
         Self { database }
     }
-    pub async fn log_user(
-        &self,
-        req: &LoginRequest,
-        auth_secret: &str,
-    ) -> Result<String, UserError> {
+    pub async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
         let user = User::find()
             .filter(users::Column::Email.eq(&req.email))
             .one(&*self.database)
@@ -47,14 +43,8 @@ impl UserRepository {
             return Err(UserError::InvalidCredentials);
         }
 
-        let token = generate_jwt(
-            auth_secret,
-            user.id,
-            user.email.unwrap(),
-            user.name,
-            user.image,
-        )
-        .expect("Error generation JWT token");
+        let token = generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
+            .expect("Error generation JWT token");
 
         Ok(token)
     }
