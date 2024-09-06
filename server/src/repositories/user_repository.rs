@@ -1,8 +1,5 @@
-use ::chrono::Duration;
 use bcrypt::verify;
-use chrono::Utc;
-use jsonwebtoken::{encode, EncodingKey, Header};
-use sea_orm::{sqlx::types::chrono, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use serde::Serialize;
 use std::sync::Arc;
 
@@ -10,6 +7,7 @@ use crate::{
     controllers::user_controller::LoginRequest,
     errors::UserError,
     models::users::{self, Entity as User},
+    utils::jwt::generate_jwt,
 };
 
 #[derive(Clone)]
@@ -49,25 +47,14 @@ impl UserRepository {
             return Err(UserError::InvalidCredentials);
         }
 
-        let expiration = Utc::now()
-            .checked_add_signed(Duration::hours(24))
-            .expect("valid timestamp")
-            .timestamp() as usize;
-
-        let claims = Claims {
-            id: user.id,
-            email: user.email.unwrap(),
-            exp: expiration,
-            image: user.image,
-            name: user.name,
-        };
-
-        let token = encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_base64_secret(auth_secret).unwrap(),
+        let token = generate_jwt(
+            auth_secret,
+            user.id,
+            user.email.unwrap(),
+            user.name,
+            user.image,
         )
-        .expect("Error generating token");
+        .expect("Error generation JWT token");
 
         Ok(token)
     }

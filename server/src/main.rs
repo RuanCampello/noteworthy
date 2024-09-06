@@ -1,5 +1,7 @@
+use app_state::AppState;
 use axum::{
     http::{header, Method},
+    middleware,
     routing::post,
     Extension, Router,
 };
@@ -7,12 +9,10 @@ use controllers::{
     note_controller::{create_note, delete_note},
     user_controller::login,
 };
-use repositories::{
-    note_repository::{self, NoteRepository},
-    user_repository::UserRepository,
-};
+use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
+use utils::middleware::private_route;
 
 mod app_state;
 mod controllers;
@@ -23,10 +23,12 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let state = app_state::AppState::new().await?;
+    let state = AppState::new().await?;
     let database = Arc::new(state.database.to_owned());
+
     let note_repository = NoteRepository::new(database.clone());
     let user_repository = UserRepository::new(database);
+
     tracing_subscriber::fmt::init();
 
     let cors = CorsLayer::new()
@@ -37,6 +39,7 @@ async fn main() -> anyhow::Result<()> {
     let router = Router::new()
         .route("/notes", post(create_note).delete(delete_note))
         .layer(Extension(note_repository))
+        .route_layer(middleware::from_fn(private_route))
         .route("/login", post(login))
         .layer(Extension(user_repository))
         .with_state(state)

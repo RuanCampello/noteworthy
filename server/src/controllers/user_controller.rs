@@ -1,9 +1,4 @@
-use axum::{
-    extract::State,
-    http::{header, StatusCode},
-    response::IntoResponse,
-    Extension, Json,
-};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
@@ -16,8 +11,8 @@ pub struct LoginRequest {
 }
 
 pub async fn login(
-    Extension(repository): Extension<UserRepository>,
     State(app_state): State<AppState>,
+    Extension(repository): Extension<UserRepository>,
     Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
     return match repository.log_user(&payload, &app_state.jwt_secret).await {
