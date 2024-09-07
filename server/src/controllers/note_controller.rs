@@ -55,8 +55,6 @@ pub async fn create_note(
     (StatusCode::CREATED, Json(id)).into_response()
 }
 
-//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNsdnBnOTBtdDAwMDBzMXVzcTh3ZXJtdTUiLCJlbWFpbCI6InJ1YW5jYW1wZWxsbzk5OUBnbWFpbC5jb20iLCJleHAiOjE3MjU2NjY3NDEsIm5hbWUiOiJSdWFuIENhbXBlbGxvIiwiaW1hZ2UiOiJ4ZGRkIn0.UWVBudrcCzLdY0szS0Qlw2prot1MmQgOjg07tdQ_Bno
-
 pub async fn delete_note(
     headers: HeaderMap,
     Path(id): Path<Uuid>,
@@ -71,7 +69,7 @@ pub async fn delete_note(
         Ok(decoded_token) => decoded_token,
         Err(e) => return (StatusCode::UNAUTHORIZED, e.to_string()).into_response(),
     };
-    info!("Decoded Token: {:#?}", decoded_token);
+    info!("Decoded Token: {:#?}", decoded_token.claims.exp);
 
     match repository.delete_note(&decoded_token.claims.id, id).await {
         Ok(_) => (StatusCode::OK).into_response(),

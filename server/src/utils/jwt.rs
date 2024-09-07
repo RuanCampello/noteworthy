@@ -9,7 +9,7 @@ use axum::{
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
-use tracing::{error, info};
+use tracing::error;
 
 use crate::{app_state::EnvVariables, errors::TokenError};
 
@@ -54,14 +54,21 @@ pub fn generate_jwt(
 
 pub trait JwtDecoder {
     fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>>;
+    fn decode_jwt_with_exp(&self, validate_exp: bool) -> Result<TokenData<Claims>, Box<dyn Error>>;
 }
 
 impl JwtDecoder for String {
     fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>> {
+        self.decode_jwt_with_exp(true)
+    }
+    fn decode_jwt_with_exp(
+        &self,
+        should_validate_exp: bool,
+    ) -> Result<TokenData<Claims>, Box<dyn Error>> {
         let env = EnvVariables::from_env()?;
 
         let mut validation = Validation::default();
-        validation.validate_exp = false;
+        validation.validate_exp = should_validate_exp;
 
         let token_data = decode::<Claims>(
             self,
@@ -118,9 +125,8 @@ impl TokenExtractor for HeaderMap {
 }
 
 pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse {
-    info!("On refresh on server");
     let env = EnvVariables::from_env().expect("Env variables to be set");
-    let decoded_old_token = match old_token.decode_jwt() {
+    let decoded_old_token = match old_token.decode_jwt_with_exp(false) {
         Ok(token) => token,
         Err(_) => {
             return (
