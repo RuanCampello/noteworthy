@@ -76,7 +76,6 @@ pub async fn delete_note(
 #[derive(Serialize, Deserialize)]
 pub struct UpdateNoteRequest {
     pub title: Option<String>,
-    pub content: Option<String>,
     pub colour: ColourOption,
 }
 

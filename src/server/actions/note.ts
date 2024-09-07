@@ -26,8 +26,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
 
   const user = await currentUser();
   if (!user || !user.accessToken) return;
-
-  await fetch('http://localhost:6969/notes', {
+  const response = await fetch('http://localhost:6969/notes', {
     method: 'post',
     headers: {
       'Content-type': 'application/json',
@@ -39,14 +38,14 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
       colour: colour,
     }),
   });
+  const id = await response.json();
+  const { origin, basePath } = getPathnameParams();
 
-  // const { origin, basePath } = getPathnameParams();
-
-  // if (!basePath || basePath === 'favourites' || basePath === 'archived') {
-  //   redirect(`${origin}/notes/${id}`);
-  // }
-  // //if user is already in notes path, but not on favourite/archive page
-  // redirect(`${origin}/${basePath}/${id}`);
+  if (!basePath || basePath === 'favourites' || basePath === 'archived') {
+    redirect(`${origin}/notes/${id}`);
+  }
+  //if user is already in notes path, but not on favourite/archive page
+  redirect(`${origin}/${basePath}/${id}`);
 }
 
 export async function toggleNoteFavourite(id: string, userId: string) {
@@ -113,21 +112,31 @@ export async function editNote(
   values: z.infer<typeof noteDialogSchema>,
   id: string,
 ) {
+  const user = await currentUser();
+  if (!user || !user.accessToken) return;
+
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
   const { basePath } = getPathnameParams();
 
-  let { colour } = fields.data;
-  const { name } = fields.data;
-  colour === 'random' ? (colour = getRandomColour().name) : colour;
+  const { colour, name } = fields.data;
+
   try {
-    await db
-      .update(note)
-      .set({ title: name, colour: colour, lastUpdate: new Date() })
-      .where(eq(note.id, id));
+    await fetch(`http://localhost:6969/notes/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        colour: colour,
+        title: name,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+    });
   } catch (error) {
     console.error(error);
   }
+
   redirect(`/${basePath}/${id}`);
 }
 

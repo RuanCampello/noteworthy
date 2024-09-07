@@ -89,7 +89,6 @@ impl NoteRepository {
 
         let note = notes::ActiveModel {
             title: ActiveValue::set(req.title.unwrap_or(old_note.title.to_string())),
-            content: ActiveValue::set(req.content.unwrap_or(old_note.content.to_string())),
             colour: ActiveValue::set(colour),
             ..old_note.into()
         };
