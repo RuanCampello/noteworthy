@@ -4,13 +4,14 @@ use crate::{
     utils::jwt::{JwtDecoder, TokenExtractor},
 };
 use axum::{
+    extract::Path,
     http::{HeaderMap, StatusCode},
     response::IntoResponse,
     Extension, Json,
 };
 use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
-use tracing::{error};
+use tracing::{error, info};
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -54,17 +55,25 @@ pub async fn create_note(
     (StatusCode::CREATED, Json(id)).into_response()
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct DeleteNoteRequest {
-    pub user_id: String,
-    pub id: Uuid,
-}
+//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNsdnBnOTBtdDAwMDBzMXVzcTh3ZXJtdTUiLCJlbWFpbCI6InJ1YW5jYW1wZWxsbzk5OUBnbWFpbC5jb20iLCJleHAiOjE3MjU2NjY3NDEsIm5hbWUiOiJSdWFuIENhbXBlbGxvIiwiaW1hZ2UiOiJ4ZGRkIn0.UWVBudrcCzLdY0szS0Qlw2prot1MmQgOjg07tdQ_Bno
 
 pub async fn delete_note(
+    headers: HeaderMap,
+    Path(id): Path<Uuid>,
     Extension(repository): Extension<NoteRepository>,
-    Json(payload): Json<DeleteNoteRequest>,
 ) -> impl IntoResponse {
-    match repository.delete_note(payload).await {
+    let token = match headers.extract_bearer_token() {
+        Ok(token) => token,
+        Err(e) => return (StatusCode::BAD_REQUEST, e.to_string()).into_response(),
+    };
+
+    let decoded_token = match token.decode_jwt() {
+        Ok(decoded_token) => decoded_token,
+        Err(e) => return (StatusCode::UNAUTHORIZED, e.to_string()).into_response(),
+    };
+    info!("Decoded Token: {:#?}", decoded_token);
+
+    match repository.delete_note(&decoded_token.claims.id, id).await {
         Ok(_) => (StatusCode::OK).into_response(),
         Err(e) => match e {
             NoteError::NoteNotFound(_) => (StatusCode::NOT_FOUND, e.to_string()).into_response(),

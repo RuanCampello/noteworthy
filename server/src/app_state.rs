@@ -26,13 +26,15 @@ impl EnvVariables {
     }
 }
 
+#[derive(Clone)]
 pub struct AppState {
     pub database: DatabaseConnection,
 }
 
 impl AppState {
     pub async fn new() -> anyhow::Result<Self> {
-        let mut opt = ConnectOptions::new(env.database_url.to_owned());
+        let env = EnvVariables::from_env()?;
+        let mut opt = ConnectOptions::new(env.database_url.to_string());
         opt.max_connections(80)
             .connect_timeout(Duration::from_secs(60))
             .idle_timeout(Duration::from_secs(60))
@@ -41,8 +43,6 @@ impl AppState {
 
         let db = Database::connect(opt).await?;
 
-        Ok(Self {
-            database: db,
-        })
+        Ok(Self { database: db })
     }
 }

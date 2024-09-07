@@ -1,9 +1,15 @@
 use std::error::Error;
 
-use axum::http::HeaderMap;
+use axum::{
+    extract::Path,
+    http::{HeaderMap, StatusCode},
+    response::IntoResponse,
+    Json,
+};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
+use tracing::{error, info};
 
 use crate::{app_state::EnvVariables, errors::TokenError};
 
@@ -23,7 +29,7 @@ pub fn generate_jwt(
     image: Option<String>,
 ) -> Result<String, Box<dyn Error>> {
     let expiration = Utc::now()
-        .checked_add_signed(Duration::hours(24))
+        .checked_add_signed(Duration::hours(12))
         .expect("valid timestamp")
         .timestamp() as usize;
 
@@ -53,14 +59,41 @@ pub trait JwtDecoder {
 impl JwtDecoder for String {
     fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>> {
         let env = EnvVariables::from_env()?;
+
+        let mut validation = Validation::default();
+        validation.validate_exp = false;
+
         let token_data = decode::<Claims>(
             self,
             &DecodingKey::from_base64_secret(&env.jwt_secret)?,
-            &Validation::default(),
+            &validation,
         )?;
 
         Ok(token_data)
     }
+}
+
+pub fn refresh_jwt(claims: Claims, secret: &str) -> Result<String, Box<dyn Error>> {
+    let expiration = Utc::now()
+        .checked_add_signed(Duration::hours(12))
+        .expect("valid timestamp")
+        .timestamp() as usize;
+
+    let new_claims = Claims {
+        id: claims.id,
+        email: claims.email,
+        exp: expiration,
+        name: claims.name,
+        image: claims.image,
+    };
+
+    let token = encode(
+        &Header::default(),
+        &new_claims,
+        &EncodingKey::from_base64_secret(secret)?,
+    )?;
+
+    Ok(token)
 }
 
 pub trait TokenExtractor {
@@ -82,4 +115,29 @@ impl TokenExtractor for HeaderMap {
         let token = auth_str.trim_start_matches("Bearer ");
         Ok(token.to_string())
     }
+}
+
+pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse {
+    info!("On refresh on server");
+    let env = EnvVariables::from_env().expect("Env variables to be set");
+    let decoded_old_token = match old_token.decode_jwt() {
+        Ok(token) => token,
+        Err(_) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                TokenError::InvalidFormat.to_string(),
+            )
+                .into_response()
+        }
+    };
+
+    let refreshed_token = match refresh_jwt(decoded_old_token.claims, &env.jwt_secret) {
+        Ok(token) => token,
+        Err(e) => {
+            error!("Refresh token error {:#?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+
+    (StatusCode::OK, Json(refreshed_token)).into_response()
 }

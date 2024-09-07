@@ -2,6 +2,7 @@ use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
+use crate::repositories::user_repository::UserRepository;
 
 #[derive(Deserialize, Serialize)]
 pub struct LoginRequest {

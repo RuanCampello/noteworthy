@@ -5,7 +5,7 @@ use sea_orm::{
 use std::sync::Arc;
 
 use crate::{
-    controllers::note_controller::{ColourOption, CreateNoteRequest, DeleteNoteRequest},
+    controllers::note_controller::{ColourOption, CreateNoteRequest},
     errors::NoteError,
     models::{
         notes::{self, Entity as Note},
@@ -59,12 +59,12 @@ impl NoteRepository {
         Ok(note.id)
     }
 
-    pub async fn delete_note(&self, req: DeleteNoteRequest) -> Result<(), NoteError> {
-        let note = Note::find_by_id(req.id)
-            .filter(notes::Column::UserId.eq(req.user_id))
+    pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
+        let note = Note::find_by_id(id)
+            .filter(notes::Column::UserId.eq(user_id))
             .one(&*self.database)
             .await?
-            .ok_or(NoteError::NoteNotFound(req.id.to_owned()))?;
+            .ok_or(NoteError::NoteNotFound(id))?;
 
         Note::delete_by_id(note.id).exec(&*self.database).await?;
 

@@ -3,7 +3,8 @@ import authConfig from '@/auth/auth.config';
 import { db } from '@/server/db';
 import { user as userTable } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
-import NextAuth, { type DefaultSession } from 'next-auth';
+import { jwtDecode } from 'jwt-decode';
+import NextAuth, { User, type DefaultSession } from 'next-auth';
 import {} from 'next-auth/jwt';
 
 declare module 'next-auth' {
@@ -55,9 +56,19 @@ export const {
       if (user && account) {
         return { ...token, user: user };
       }
-
-      if (Date.now() < (token as { exp: number }).exp) {
-        return token;
+      // @ts-expect-error undeclared type
+      if (Date.now() / 1000 > token.user.exp) {
+        const response = await fetch(
+          // @ts-expect-error undeclared type
+          `http://localhost:6969/refresh-token/${token.user.accessToken}`,
+          { method: 'get' },
+        );
+        const newToken = await response.json();
+        const claims: User = jwtDecode(newToken);
+        // @ts-expect-error undeclared type
+        claims.accessToken = newToken;
+        token.user = claims;
+        return { ...token };
       }
 
       return token;

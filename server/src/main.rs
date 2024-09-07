@@ -2,7 +2,7 @@ use app_state::AppState;
 use axum::{
     http::{header, Method},
     middleware,
-    routing::post,
+    routing::{delete, get, post},
     Extension, Router,
 };
 use controllers::{
@@ -12,7 +12,7 @@ use controllers::{
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use utils::middleware::private_route;
+use utils::{jwt::refresh_handler, middleware::private_route};
 
 mod app_state;
 mod controllers;
@@ -37,11 +37,13 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods(Method::GET);
 
     let router = Router::new()
-        .route("/notes", post(create_note).delete(delete_note))
+        .route("/notes", post(create_note))
+        .route("/notes/:id", delete(delete_note))
         .layer(Extension(note_repository))
         .route_layer(middleware::from_fn(private_route))
         .route("/login", post(login))
         .layer(Extension(user_repository))
+        .route("/refresh-token/:old_token", get(refresh_handler))
         .with_state(state)
         .layer(cors);
 

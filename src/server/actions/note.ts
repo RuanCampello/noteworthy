@@ -25,24 +25,20 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const { colour, name } = fields.data;
 
   const user = await currentUser();
-  if (!user) return;
+  if (!user || !user.accessToken) return;
 
-  // @ts-ignore
-  const response = await fetch('http://localhost:6969/notes', {
+  await fetch('http://localhost:6969/notes', {
     method: 'post',
-    headers: [
-      { 'content-type': 'application/json' },
-      { 'authorization bearer: ': user },
-    ],
+    headers: {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${user.accessToken}`,
+    },
     body: JSON.stringify({
-      // user_id: 'clwf5smlj0000feuj3qzj3pd',
-      user_id: user.id!,
       title: name,
-      content: 'this must have been hard...',
+      content: '',
       colour: colour,
     }),
   });
-  console.log(response);
 
   // const { origin, basePath } = getPathnameParams();
 
@@ -136,16 +132,16 @@ export async function editNote(
 }
 
 export async function deleteNote(id: string) {
-  const [user, selectedNote] = await Promise.all([
-    currentUser(),
-    getNoteById(id),
-  ]);
+  const user = await currentUser();
+  if (!user || !user.accessToken) return;
 
-  if (!user || !selectedNote?.id || selectedNote.userId !== user.id) {
-    return;
-  }
-
-  await db.delete(note).where(eq(note.id, id));
+  await fetch(`http://localhost:6969/notes/${id}`, {
+    method: 'delete',
+    headers: {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+  });
   redirect('/');
 }
 
