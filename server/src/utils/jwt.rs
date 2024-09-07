@@ -105,6 +105,7 @@ pub fn refresh_jwt(claims: Claims, secret: &str) -> Result<String, Box<dyn Error
 
 pub trait TokenExtractor {
     fn extract_bearer_token(&self) -> Result<String, TokenError>;
+    fn extract_and_decode_token(&self) -> Result<Claims, (StatusCode, String)>;
 }
 
 impl TokenExtractor for HeaderMap {
@@ -121,6 +122,17 @@ impl TokenExtractor for HeaderMap {
 
         let token = auth_str.trim_start_matches("Bearer ");
         Ok(token.to_string())
+    }
+    fn extract_and_decode_token(&self) -> Result<Claims, (StatusCode, String)> {
+        let token = self
+            .extract_bearer_token()
+            .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
+
+        let decoded_token = token
+            .decode_jwt()
+            .map_err(|e| (StatusCode::UNAUTHORIZED, e.to_string()))?;
+
+        Ok(decoded_token.claims)
     }
 }
 

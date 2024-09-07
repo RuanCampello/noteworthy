@@ -1,11 +1,11 @@
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait,
-    QueryFilter,
+    QueryFilter, Set,
 };
 use std::sync::Arc;
 
 use crate::{
-    controllers::note_controller::{ColourOption, CreateNoteRequest},
+    controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
     errors::NoteError,
     models::{
         notes::{self, Entity as Note},
@@ -68,6 +68,33 @@ impl NoteRepository {
 
         Note::delete_by_id(note.id).exec(&*self.database).await?;
 
+        Ok(())
+    }
+
+    pub async fn edit_note(
+        &self,
+        user_id: &str,
+        id: Uuid,
+        req: UpdateNoteRequest,
+    ) -> Result<(), NoteError> {
+        let old_note = Note::find_by_id(id)
+            .filter(notes::Column::UserId.eq(user_id))
+            .one(&*self.database)
+            .await?
+            .ok_or(NoteError::NoteNotFound(id))?;
+
+        let colour = match &req.colour {
+            ColourOption::Colour(c) => Colour::from(c.as_str()),
+        };
+
+        let note = notes::ActiveModel {
+            title: ActiveValue::set(req.title.unwrap_or(old_note.title.to_string())),
+            content: ActiveValue::set(req.content.unwrap_or(old_note.content.to_string())),
+            colour: ActiveValue::set(colour),
+            ..old_note.into()
+        };
+
+        note.update(&*self.database).await?;
         Ok(())
     }
 }

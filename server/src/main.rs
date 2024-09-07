@@ -6,7 +6,7 @@ use axum::{
     Extension, Router,
 };
 use controllers::{
-    note_controller::{create_note, delete_note},
+    note_controller::{create_note, delete_note, update_note},
     user_controller::login,
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
@@ -38,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
 
     let router = Router::new()
         .route("/notes", post(create_note))
-        .route("/notes/:id", delete(delete_note))
+        .route("/notes/:id", delete(delete_note).patch(update_note))
         .layer(Extension(note_repository))
         .route_layer(middleware::from_fn(private_route))
         .route("/login", post(login))

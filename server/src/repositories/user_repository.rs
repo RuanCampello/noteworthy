@@ -1,6 +1,5 @@
 use bcrypt::verify;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
-use serde::Serialize;
 use std::sync::Arc;
 
 use crate::{
@@ -13,15 +12,6 @@ use crate::{
 #[derive(Clone)]
 pub struct UserRepository {
     database: Arc<DatabaseConnection>,
-}
-
-#[derive(Serialize)]
-pub struct Claims {
-    id: String,
-    email: String,
-    exp: usize,
-    name: Option<String>,
-    image: Option<String>,
 }
 
 impl UserRepository {
