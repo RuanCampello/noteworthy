@@ -1,9 +1,9 @@
-// use super::sea_orm_active_enums::Colour;
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, FromQueryResult};
+use serde::{Deserialize, Serialize};
 
 use super::sea_orm_active_enums::Colour;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "notes")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
@@ -20,6 +20,24 @@ pub struct Model {
     pub is_favourite: bool,
     pub is_public: bool,
     pub last_update: DateTime,
+}
+
+#[derive(Debug, FromQueryResult, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NoteWithUserPrefs {
+    pub id: Uuid,
+    pub title: String,
+    pub content: String,
+    pub colour: String,
+    pub user_id: String,
+    pub created_at: DateTime,
+    pub is_archived: bool,
+    pub is_favourite: bool,
+    pub is_public: bool,
+    pub last_update: DateTime,
+    pub name: String,
+    pub full_note: bool,
+    pub note_format: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

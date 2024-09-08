@@ -9,8 +9,7 @@ use axum::{
 };
 use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
-use tracing::{error, info};
-use tracing_subscriber::registry::Extensions;
+use tracing::error;
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -97,4 +96,23 @@ pub async fn update_note(
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response(),
         },
     }
+}
+
+pub async fn get_note(
+    Path(id): Path<Uuid>,
+    headers: HeaderMap,
+    Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+    let decoded_token = match headers.extract_and_decode_token() {
+        Ok(token) => token,
+        Err((status, err)) => return (status, err).into_response(),
+    };
+
+    return match repository.find_note_by_id(&decoded_token.id, id).await {
+        Ok(note) => (StatusCode::OK, Json(note)).into_response(),
+        Err(e) => {
+            error!("Error on find_note {:#?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR).into_response()
+        }
+    };
 }

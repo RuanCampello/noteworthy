@@ -9,6 +9,7 @@ import { cache } from 'react';
 
 export const currentUser = cache(async () => {
   const session = await auth();
+  console.log(session?.user.accessToken);
   return session?.user;
 });
 

@@ -2,6 +2,7 @@ use anyhow::bail;
 use dotenv;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::{borrow::Cow, time::Duration};
+use tracing::log::LevelFilter;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -39,6 +40,7 @@ impl AppState {
             .connect_timeout(Duration::from_secs(60))
             .idle_timeout(Duration::from_secs(60))
             .max_lifetime(Duration::from_secs(200))
+            .sqlx_slow_statements_logging_settings(LevelFilter::Trace, Duration::from_secs(10))
             .sqlx_logging(true);
 
         let db = Database::connect(opt).await?;
