@@ -7,7 +7,7 @@ import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
 import { and, eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -170,7 +170,6 @@ export async function updateNoteContent(
   userId: string,
   content: string,
 ) {
-  const { basePath } = getPathnameParams();
   try {
     await db
       .update(note)
@@ -179,7 +178,7 @@ export async function updateNoteContent(
         lastUpdate: new Date(),
       })
       .where(and(eq(note.id, id), eq(note.userId, userId)));
-    revalidatePath(`/${basePath}`, 'layout');
+    revalidateTag('sidebar-notes');
   } catch (error) {
     console.error(error);
     return;
