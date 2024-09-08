@@ -1,5 +1,6 @@
 import {
   countNoteNumber,
+  currentUser,
   getAllUserNotes,
   getNoteByIdWithPreferences,
 } from '@/queries/note';
@@ -35,12 +36,20 @@ export class OrdinaryNote extends Note {
   }
 
   async get() {
-    const notes = await getAllUserNotes(this.userId, {
-      isArchived: false,
-      isFavourite: false,
+    const user = await currentUser();
+    if (!user || !user.accessToken) return null;
+    const response = await fetch('http://localhost:6969/notes', {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      cache: 'force-cache',
+      next: {
+        tags: ['sidebar-notes'],
+      },
     });
-    if (!notes) return null;
-    return notes;
+    if (!response.ok) return null;
+    return await response.json();
   }
   async count(): Promise<number> {
     const count = await countNoteNumber(this.userId, false, false);

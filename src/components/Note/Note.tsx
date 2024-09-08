@@ -108,7 +108,7 @@ export default function Note({
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm group-data-[format=slim]/format:hidden'>
         <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
-          {date.toLocaleDateString('en-GB')}
+          {new Date(date).toLocaleDateString('en-GB')}
         </span>
         <p className='truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden'>
           {textWithoutHtml}

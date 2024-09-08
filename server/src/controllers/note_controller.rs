@@ -116,3 +116,18 @@ pub async fn get_note(
         }
     };
 }
+
+pub async fn get_all_notes(
+    headers: HeaderMap,
+    Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+    let decoded_token = match headers.extract_and_decode_token() {
+        Ok(token) => token,
+        Err((status, err)) => return (status, err).into_response(),
+    };
+
+    return match repository.find_all_user_notes(&decoded_token.id).await {
+        Ok(note) => (StatusCode::OK, Json(note)).into_response(),
+        Err(_) => (StatusCode::NOT_FOUND).into_response(),
+    };
+}

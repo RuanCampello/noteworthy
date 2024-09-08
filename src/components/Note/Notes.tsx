@@ -22,14 +22,19 @@ export default async function Notes() {
   const filter = getFilter();
 
   if (filter === 'date-new') {
-    notes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    notes.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   } else if (filter === 'date-old') {
-    notes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    notes.sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
   } else if (filter === 'title') {
     notes.sort((a, b) => a.title.localeCompare(b.title));
-  } else {
-    notes.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
   }
+
   return (
     <div className='group/root'>
       <SectionTitle title={t('notes')}>

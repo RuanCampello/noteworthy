@@ -1,15 +1,9 @@
 use std::error::Error;
 
-use axum::{
-    extract::Path,
-    http::{HeaderMap, StatusCode},
-    response::IntoResponse,
-    Json,
-};
+use axum::http::{HeaderMap, StatusCode};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
-use tracing::error;
 
 use crate::{app_state::EnvVariables, errors::TokenError};
 
@@ -134,28 +128,4 @@ impl TokenExtractor for HeaderMap {
 
         Ok(decoded_token.claims)
     }
-}
-
-pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse {
-    let env = EnvVariables::from_env().expect("Env variables to be set");
-    let decoded_old_token = match old_token.decode_jwt_with_exp(false) {
-        Ok(token) => token,
-        Err(_) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                TokenError::InvalidFormat.to_string(),
-            )
-                .into_response()
-        }
-    };
-
-    let refreshed_token = match refresh_jwt(decoded_old_token.claims, &env.jwt_secret) {
-        Ok(token) => token,
-        Err(e) => {
-            error!("Refresh token error {:#?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
-        }
-    };
-
-    (StatusCode::OK, Json(refreshed_token)).into_response()
 }

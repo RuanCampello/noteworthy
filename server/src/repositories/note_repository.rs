@@ -1,6 +1,6 @@
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend,
-    EntityTrait, FromQueryResult, QueryFilter, Statement,
+    EntityTrait, FromQueryResult, QueryFilter, QueryOrder, Statement,
 };
 use std::sync::Arc;
 use tracing::info;
@@ -128,5 +128,17 @@ impl NoteRepository {
 
         info!("result {:#?}", result);
         Ok(result)
+    }
+
+    pub async fn find_all_user_notes(&self, user_id: &str) -> Result<Vec<notes::Model>, NoteError> {
+        let notes = Note::find()
+            .filter(notes::Column::UserId.eq(user_id))
+            .filter(notes::Column::IsArchived.eq(false))
+            .filter(notes::Column::IsFavourite.eq(false))
+            .order_by_desc(notes::Column::LastUpdate)
+            .all(&*self.database)
+            .await?;
+
+        Ok(notes)
     }
 }

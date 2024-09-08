@@ -6,13 +6,13 @@ use axum::{
     Extension, Router,
 };
 use controllers::{
-    note_controller::{create_note, delete_note, get_note, update_note},
-    user_controller::login,
+    note_controller::{create_note, delete_note, get_all_notes, get_note, update_note},
+    user_controller::{login, refresh_handler},
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use utils::{jwt::refresh_handler, middleware::private_route};
+use utils::middleware::private_route;
 
 mod app_state;
 mod controllers;
@@ -37,7 +37,7 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods(Method::GET);
 
     let router = Router::new()
-        .route("/notes", post(create_note))
+        .route("/notes", post(create_note).get(get_all_notes))
         .route(
             "/notes/:id",
             delete(delete_note).patch(update_note).get(get_note),
