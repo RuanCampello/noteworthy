@@ -3,8 +3,8 @@
 import { Filters, type Filter } from '@/lib/zustand/search-filter';
 import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
-import { type SearchResult } from '@/types/search-result';
 import { sql } from 'drizzle-orm';
+import { type SearchResult } from '../../types/search-result';
 
 export async function searchNotes(
   query: string,

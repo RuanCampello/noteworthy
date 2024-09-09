@@ -26,6 +26,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
 
   const user = await currentUser();
   if (!user || !user.accessToken) return;
+
   const response = await fetch('http://localhost:6969/notes', {
     method: 'post',
     headers: {
@@ -48,23 +49,25 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   redirect(`${origin}/${basePath}/${id}`);
 }
 
-export async function toggleNoteFavourite(id: string, userId: string) {
+export async function toggleNoteFavourite(id: string) {
   const { basePath, origin } = getPathnameParams();
+  const user = await currentUser();
+  if (!user || !user?.id) return;
 
   const selectedNote = await getNoteById(id);
-  if (!selectedNote || selectedNote.userId !== userId) return;
+  if (!selectedNote || selectedNote.userId !== user.id) return;
 
   if (!selectedNote.isArchived) {
     if (selectedNote.isFavourite === true) {
       await db
         .update(note)
         .set({ isFavourite: false, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, userId)));
+        .where(and(eq(note.id, id), eq(note.userId, user.id)));
     } else {
       await db
         .update(note)
         .set({ isFavourite: true, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, userId)));
+        .where(and(eq(note.id, id), eq(note.userId, user.id)));
     }
   }
 
@@ -79,23 +82,25 @@ export async function toggleNoteFavourite(id: string, userId: string) {
   }
 }
 
-export async function toggleNoteArchive(id: string, userId: string) {
+export async function toggleNoteArchive(id: string) {
   const { basePath, origin } = getPathnameParams();
+  const user = await currentUser();
+  if (!user || !user?.id) return;
 
   const selectedNote = await getNoteById(id);
-  if (!selectedNote || selectedNote.userId !== userId) return;
+  if (!selectedNote || selectedNote.userId !== user.id) return;
 
   if (!selectedNote.isFavourite) {
     if (selectedNote.isArchived == true) {
       await db
         .update(note)
         .set({ isArchived: false, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, userId)));
+        .where(and(eq(note.id, id), eq(note.userId, user.id)));
     } else {
       await db
         .update(note)
         .set({ isArchived: true, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, userId)));
+        .where(and(eq(note.id, id), eq(note.userId, user.id)));
     }
   }
 
@@ -112,14 +117,12 @@ export async function editNote(
   values: z.infer<typeof noteDialogSchema>,
   id: string,
 ) {
-  const user = await currentUser();
-  if (!user || !user.accessToken) return;
-
   const fields = noteDialogSchema.safeParse(values);
   if (!fields.success) return;
-  const { basePath } = getPathnameParams();
-
   const { colour, name } = fields.data;
+
+  const user = await currentUser();
+  if (!user || !user.accessToken) return;
 
   try {
     await fetch(`http://localhost:6969/notes/${id}`, {
@@ -137,7 +140,7 @@ export async function editNote(
     console.error(error);
   }
 
-  redirect(`/${basePath}/${id}`);
+  // redirect(`/${basePath}/${id}`);
 }
 
 export async function deleteNote(id: string) {

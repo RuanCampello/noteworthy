@@ -1,5 +1,7 @@
+use chrono::NaiveDateTime;
 use sea_orm::{entity::prelude::*, FromQueryResult};
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 use super::sea_orm_active_enums::Colour;
 
@@ -23,19 +25,23 @@ pub struct Model {
     pub last_update: DateTime,
 }
 
-#[derive(Debug, FromQueryResult, Serialize, Deserialize)]
+#[derive(Debug, FromQueryResult, Serialize, Deserialize, TS)]
+#[ts(export, rename = "Note")]
 #[serde(rename_all = "camelCase")]
 pub struct NoteWithUserPrefs {
+    #[ts(type = "string")]
     pub id: Uuid,
     pub title: String,
     pub content: String,
     pub colour: String,
     pub user_id: String,
-    pub created_at: DateTime,
+    #[ts(type = "string")]
+    pub created_at: NaiveDateTime,
     pub is_archived: bool,
     pub is_favourite: bool,
     pub is_public: bool,
-    pub last_update: DateTime,
+    #[ts(type = "string")]
+    pub last_update: NaiveDateTime,
     pub name: String,
     pub full_note: bool,
     pub note_format: String,

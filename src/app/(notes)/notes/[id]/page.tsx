@@ -3,44 +3,34 @@ import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
 import { currentUser } from '@/queries/note';
-import { API } from '@/server/api';
+import { Note } from '@/types/Note';
 import { headers } from 'next/headers';
 
 type Props = { params: { id: string } };
 
 export default async function NotePage({ params }: Props) {
-  const [user, note] = await Promise.all([
-    await currentUser(),
-    await new API().note.get(params.id),
-  ]);
+  const user = await currentUser();
+  const response = await fetch(`http://localhost:6969/notes/${params.id}`, {
+    method: 'get',
+    headers: { Authorization: `Bearer ${user?.accessToken}` },
+  });
+  const note: Note = await response.json();
 
   if (!user || !note) return <NotFound />;
-
-  const noteWithOwner = {
-    ...note,
-    owner: {
-      id: note.user.id,
-      name: note.user.name!,
-    },
-  };
-  const { usersPreferences: preferences } = note.user;
-
-  const isNoteVisible = user.id === note.user.id || note.isPublic;
+  const isNoteVisible = user.id === note.userId || note.isPublic;
   if (!isNoteVisible) return <NotVisibleWarning />;
 
-  const fullNote =
-    preferences?.fullNote !== undefined ? preferences.fullNote : true;
-
+  const fullNote = note?.fullNote !== undefined ? note.fullNote : true;
   const isSubView = !headers().get('pathname')?.includes('/notes/');
 
   return (
     <article data-view={isSubView} className='mx-40 data-[view=true]:mx-28'>
       <NoteEditor
         fullNote={fullNote}
-        owner={note.user.id}
+        owner={note.userId}
         content={note.content}
       >
-        <NoteHeader note={noteWithOwner} />
+        <NoteHeader note={note} />
       </NoteEditor>
     </article>
   );
