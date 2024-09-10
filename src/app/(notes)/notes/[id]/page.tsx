@@ -13,6 +13,8 @@ export default async function NotePage({ params }: Props) {
   const response = await fetch(`http://localhost:6969/notes/${params.id}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user?.accessToken}` },
+    next: { tags: ['note-page'] },
+    cache: 'force-cache',
   });
   const note: Note = await response.json();
 

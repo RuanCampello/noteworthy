@@ -1,9 +1,8 @@
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend,
-    EntityTrait, FromQueryResult, QueryFilter, QueryOrder, Statement,
+    EntityTrait, FromQueryResult, QueryFilter, QueryOrder, Set, Statement,
 };
 use std::sync::Arc;
-use tracing::info;
 
 use crate::{
     controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
@@ -34,21 +33,16 @@ impl NoteRepository {
             ColourOption::Colour(c) => Colour::from(c.as_str()),
         };
 
-        let user = User::find_by_id(user_id)
-            .one(&*self.database)
-            .await
-            .map_err(|_| NoteError::NoteOwnerNotFound(user_id.to_string()))?;
-
-        let user_id = match user {
-            Some(user) => user.id,
-            None => return Err(NoteError::NoteOwnerNotFound(user_id.to_string())),
+        let user = match User::find_by_id(user_id).one(&*self.database).await? {
+            Some(user) => user,
+            None => return Err(NoteError::NoteOwnerNotFound(user_id.to_owned())),
         };
 
         let note = notes::ActiveModel {
             title: ActiveValue::set(req.title.to_owned()),
             content: ActiveValue::set(req.content.to_owned().unwrap_or_else(|| String::new())),
             colour: ActiveValue::set(colour),
-            user_id: ActiveValue::set(user_id),
+            user_id: ActiveValue::set(user.id),
             ..Default::default()
         };
 
@@ -126,7 +120,6 @@ impl NoteRepository {
         .await?
         .unwrap();
 
-        info!("result {:#?}", result);
         Ok(result)
     }
 
@@ -142,5 +135,25 @@ impl NoteRepository {
         Ok(notes)
     }
 
-    pub async fn edit_note_content() {}
+    pub async fn edit_note_content(
+        &self,
+        id: Uuid,
+        user_id: &str,
+        content: String,
+    ) -> Result<(), NoteError> {
+        let note = match Note::find_by_id(id)
+            .filter(notes::Column::UserId.eq(user_id))
+            .one(&*self.database)
+            .await?
+        {
+            Some(note) => note,
+            None => return Err(NoteError::NoteNotFound(id)),
+        };
+
+        let mut note: notes::ActiveModel = note.into();
+        note.content = Set(content);
+        note.update(&*self.database).await?;
+
+        Ok(())
+    }
 }

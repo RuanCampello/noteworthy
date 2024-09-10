@@ -1,18 +1,19 @@
 use app_state::AppState;
 use axum::{
     http::{header, Method},
-    middleware,
-    routing::{delete, get, post},
+    routing::{delete, get, patch, post},
     Extension, Router,
 };
 use controllers::{
-    note_controller::{create_note, delete_note, get_all_notes, get_note, update_note},
+    note_controller::{
+        create_note, delete_note, get_all_notes, get_note, update_note, update_note_content,
+    },
     user_controller::{login, refresh_handler},
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use utils::middleware::private_route;
+use tracing::info;
 
 mod app_state;
 mod controllers;
@@ -36,14 +37,14 @@ async fn main() -> anyhow::Result<()> {
         .allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE])
         .allow_methods(Method::GET);
 
+    let single_note_route = Router::new()
+        .route("/:id", delete(delete_note).patch(update_note).get(get_note))
+        .route("/:id/content", patch(update_note_content));
+
     let router = Router::new()
         .route("/notes", post(create_note).get(get_all_notes))
-        .route(
-            "/notes/:id",
-            delete(delete_note).patch(update_note).get(get_note),
-        )
+        .nest("/notes", single_note_route)
         .layer(Extension(note_repository))
-        .route_layer(middleware::from_fn(private_route))
         .route("/login", post(login))
         .layer(Extension(user_repository))
         .route("/refresh-token/:old_token", get(refresh_handler))

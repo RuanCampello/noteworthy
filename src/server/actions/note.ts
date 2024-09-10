@@ -10,13 +10,14 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 import { z } from 'zod';
 
-function getPathnameParams() {
+const getPathnameParams = cache(() => {
   const origin = headers().get('origin');
   const pathname = headers().get('pathname');
   return { basePath: pathname?.split('/')[1], origin };
-}
+});
 
 export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
@@ -140,8 +141,8 @@ export async function editNote(
   } catch (error) {
     console.error(error);
   }
-
-  // redirect(`/${basePath}/${id}`);
+  revalidateTag('sidebar-notes');
+  revalidateTag('note-page');
 }
 
 export async function deleteNote(id: string) {
@@ -170,19 +171,22 @@ export async function createPlaceholderNote(userId: string) {
   });
 }
 
-export async function updateNoteContent(
-  id: string,
-  userId: string,
-  content: string,
-) {
+export async function updateNoteContent(id: string, content: string) {
   try {
-    await db
-      .update(note)
-      .set({
+    const user = await currentUser();
+    if (!user || !user.accessToken) return;
+
+    const res = await fetch(`http://localhost:6969/notes/${id}/content`, {
+      body: JSON.stringify({
         content: content,
-        lastUpdate: new Date(),
-      })
-      .where(and(eq(note.id, id), eq(note.userId, userId)));
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      method: 'PATCH',
+    });
+    console.debug(await res);
     revalidateTag('sidebar-notes');
   } catch (error) {
     console.error(error);
@@ -241,7 +245,6 @@ export async function createFastNote() {
 
     return id;
   } catch (error) {
-    console.error('Error creating fast note:', error);
     return null;
   }
 }

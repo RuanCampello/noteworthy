@@ -12,7 +12,7 @@ pub enum ColourOption {
     Colour(String),
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct CreateNoteRequest {
     pub title: String,
     pub content: Option<String>,
@@ -57,7 +57,7 @@ pub async fn delete_note(
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct UpdateNoteRequest {
     pub title: Option<String>,
     pub colour: ColourOption,
@@ -70,6 +70,29 @@ pub async fn update_note(
     Json(payload): Json<UpdateNoteRequest>,
 ) -> impl IntoResponse {
     match repository.edit_note(&user.id, id, payload).await {
+        Ok(_) => (StatusCode::NO_CONTENT).into_response(),
+        Err(e) => match e {
+            NoteError::NoteNotFound(_) => (StatusCode::NOT_FOUND, e.to_string()).into_response(),
+            _ => (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response(),
+        },
+    }
+}
+
+#[derive(Deserialize)]
+pub struct UpdateNoteContentRequest {
+    content: String,
+}
+
+pub async fn update_note_content(
+    AuthUser(user): AuthUser,
+    Path(id): Path<Uuid>,
+    Extension(repository): Extension<NoteRepository>,
+    Json(payload): Json<UpdateNoteContentRequest>,
+) -> impl IntoResponse {
+    match repository
+        .edit_note_content(id, &user.id, payload.content)
+        .await
+    {
         Ok(_) => (StatusCode::NO_CONTENT).into_response(),
         Err(e) => match e {
             NoteError::NoteNotFound(_) => (StatusCode::NOT_FOUND, e.to_string()).into_response(),

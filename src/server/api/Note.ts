@@ -4,8 +4,8 @@ import {
   getAllUserNotes,
   getNoteByIdWithPreferences,
 } from '@/queries/note';
-import { type Note as NoteType } from '@/types/database-types';
 import { type FilteredResults, getFilteredNotes } from '@/utils/format-notes';
+import { type Note as NoteType } from '../../types/database-types';
 
 export abstract class Note {
   protected userId: string;

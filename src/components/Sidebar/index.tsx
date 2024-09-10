@@ -6,7 +6,7 @@ import Profile from '@/components/Profile';
 import ToggleSidebarButton from '@/components/Sidebar/ToggleSidebarButton';
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { currentUser } from '@/server/queries/note';
-import type { NoteFormat } from '@/types/database-types';
+import type { NoteFormat } from '../../types/database-types';
 import Root from './Root';
 
 export default async function Sidebar() {
