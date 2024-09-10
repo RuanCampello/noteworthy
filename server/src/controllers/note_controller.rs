@@ -1,12 +1,7 @@
 use crate::{
-    errors::NoteError, repositories::note_repository::NoteRepository, utils::jwt::TokenExtractor,
+    errors::NoteError, repositories::note_repository::NoteRepository, utils::middleware::AuthUser,
 };
-use axum::{
-    extract::Path,
-    http::{HeaderMap, StatusCode},
-    response::IntoResponse,
-    Extension, Json,
-};
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
 use tracing::error;
@@ -25,16 +20,11 @@ pub struct CreateNoteRequest {
 }
 
 pub async fn create_note(
-    headers: HeaderMap,
+    AuthUser(user): AuthUser,
     Extension(repository): Extension<NoteRepository>,
     Json(payload): Json<CreateNoteRequest>,
 ) -> impl IntoResponse {
-    let decoded_token = match headers.extract_and_decode_token() {
-        Ok(token) => token,
-        Err((status, err)) => return (status, err).into_response(),
-    };
-
-    let id = match repository.new_note(&payload, &decoded_token.id).await {
+    let id = match repository.new_note(&payload, &user.id).await {
         Ok(id) => id,
         Err(e) => {
             error!("Something went wrong: {:#?}", e);
@@ -54,16 +44,11 @@ pub async fn create_note(
 }
 
 pub async fn delete_note(
-    headers: HeaderMap,
+    AuthUser(user): AuthUser,
     Path(id): Path<Uuid>,
     Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-    let decoded_token = match headers.extract_and_decode_token() {
-        Ok(token) => token,
-        Err((status, err)) => return (status, err).into_response(),
-    };
-
-    match repository.delete_note(&decoded_token.id, id).await {
+    match repository.delete_note(&user.id, id).await {
         Ok(_) => (StatusCode::OK).into_response(),
         Err(e) => match e {
             NoteError::NoteNotFound(_) => (StatusCode::NOT_FOUND, e.to_string()).into_response(),
@@ -79,17 +64,12 @@ pub struct UpdateNoteRequest {
 }
 
 pub async fn update_note(
-    headers: HeaderMap,
+    AuthUser(user): AuthUser,
     Path(id): Path<Uuid>,
     Extension(repository): Extension<NoteRepository>,
     Json(payload): Json<UpdateNoteRequest>,
 ) -> impl IntoResponse {
-    let decoded_token = match headers.extract_and_decode_token() {
-        Ok(token) => token,
-        Err((status, err)) => return (status, err).into_response(),
-    };
-
-    match repository.edit_note(&decoded_token.id, id, payload).await {
+    match repository.edit_note(&user.id, id, payload).await {
         Ok(_) => (StatusCode::NO_CONTENT).into_response(),
         Err(e) => match e {
             NoteError::NoteNotFound(_) => (StatusCode::NOT_FOUND, e.to_string()).into_response(),
@@ -100,15 +80,10 @@ pub async fn update_note(
 
 pub async fn get_note(
     Path(id): Path<Uuid>,
-    headers: HeaderMap,
+    AuthUser(user): AuthUser,
     Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-    let decoded_token = match headers.extract_and_decode_token() {
-        Ok(token) => token,
-        Err((status, err)) => return (status, err).into_response(),
-    };
-
-    return match repository.find_note_by_id(&decoded_token.id, id).await {
+    return match repository.find_note_by_id(&user.id, id).await {
         Ok(note) => (StatusCode::OK, Json(note)).into_response(),
         Err(e) => {
             error!("Error on find_note {:#?}", e);
@@ -118,15 +93,10 @@ pub async fn get_note(
 }
 
 pub async fn get_all_notes(
-    headers: HeaderMap,
+    AuthUser(user): AuthUser,
     Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-    let decoded_token = match headers.extract_and_decode_token() {
-        Ok(token) => token,
-        Err((status, err)) => return (status, err).into_response(),
-    };
-
-    return match repository.find_all_user_notes(&decoded_token.id).await {
+    return match repository.find_all_user_notes(&user.id).await {
         Ok(note) => (StatusCode::OK, Json(note)).into_response(),
         Err(_) => (StatusCode::NOT_FOUND).into_response(),
     };

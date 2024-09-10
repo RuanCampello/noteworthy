@@ -42,6 +42,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const id = await response.json();
   const { origin, basePath } = getPathnameParams();
 
+  revalidateTag('sidebar-notes');
   if (!basePath || basePath === 'favourites' || basePath === 'archived') {
     redirect(`${origin}/notes/${id}`);
   }
@@ -154,6 +155,7 @@ export async function deleteNote(id: string) {
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
+  revalidateTag('sidebar-notes');
   redirect('/');
 }
 

@@ -141,4 +141,6 @@ impl NoteRepository {
 
         Ok(notes)
     }
+
+    pub async fn edit_note_content() {}
 }
