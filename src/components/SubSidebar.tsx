@@ -1,5 +1,5 @@
-import type { Note as NoteType } from '@/types/database-types';
 import { ReactNode } from 'react';
+import type { Note as NoteType } from '../types/database-types';
 import Note from './Note/Note';
 
 interface SubSidebarProps {

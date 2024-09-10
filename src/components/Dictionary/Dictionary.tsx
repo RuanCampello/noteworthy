@@ -1,14 +1,14 @@
-import { BookA } from 'lucide-react';
 import { getDefinition } from '@/actions/dictionary';
-import { Separator } from '../ui/separator';
-import DictionarySearch from './DictionarySearch';
-import ListenWord from './ListenWord';
-import DerivedWords from './DerivedWords';
-import Example from './Example';
-import NotFound from './NotFound';
-import { Definition, Meaning } from '@/types/definition';
-import CloseButton from './CloseButton';
+import { BookA } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { Definition, Meaning } from '../../types/definition';
+import { Separator } from '../ui/separator';
+import CloseButton from './CloseButton';
+import DerivedWords from './DerivedWords';
+import DictionarySearch from './DictionarySearch';
+import Example from './Example';
+import ListenWord from './ListenWord';
+import NotFound from './NotFound';
 
 interface DictionaryProps {
   word?: string;

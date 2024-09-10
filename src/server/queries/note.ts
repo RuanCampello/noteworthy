@@ -3,9 +3,9 @@ import 'server-only';
 import { auth } from '@/auth/auth';
 import { db } from '@/server/db';
 import { note, user } from '@/server/db/schema';
-import type { Note } from '@/types/database-types';
 import { and, count, eq } from 'drizzle-orm';
 import { cache } from 'react';
+import type { Note } from '../../types/database-types';
 
 export const currentUser = cache(async () => {
   const session = await auth();

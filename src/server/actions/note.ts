@@ -176,7 +176,7 @@ export async function updateNoteContent(id: string, content: string) {
     const user = await currentUser();
     if (!user || !user.accessToken) return;
 
-    const res = await fetch(`http://localhost:6969/notes/${id}/content`, {
+    await fetch(`http://localhost:6969/notes/${id}/content`, {
       body: JSON.stringify({
         content: content,
       }),
@@ -186,7 +186,6 @@ export async function updateNoteContent(id: string, content: string) {
       },
       method: 'PATCH',
     });
-    console.debug(await res);
     revalidateTag('sidebar-notes');
   } catch (error) {
     console.error(error);

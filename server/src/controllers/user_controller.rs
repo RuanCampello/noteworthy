@@ -1,6 +1,6 @@
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
-use tracing::error;
+use tracing::{error, info};
 
 use crate::{
     app_state::EnvVariables,
@@ -21,10 +21,36 @@ pub async fn login(
 ) -> impl IntoResponse {
     return match repository.log_user(&payload).await {
         Err(e) => {
-            error!("Error: {:#?}", e);
             (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
         }
         Ok(token) => (StatusCode::OK, Json(token)).into_response(),
+    };
+}
+
+pub async fn get_user_from_email(
+    Extension(repository): Extension<UserRepository>,
+    Path(email): Path<String>,
+) -> impl IntoResponse {
+    return match repository.find_user_by_email(&email).await {
+        Ok(_) => (StatusCode::OK).into_response(),
+        Err(_) => (StatusCode::NOT_FOUND).into_response(),
+    };
+}
+
+#[derive(Deserialize)]
+pub struct RegisterRequest {
+    pub name: String,
+    pub password: String,
+    pub email: String,
+}
+
+pub async fn register(
+    Extension(repository): Extension<UserRepository>,
+    Json(payload): Json<RegisterRequest>,
+) -> impl IntoResponse {
+    return match repository.create_user(payload).await {
+        Ok(id) => (StatusCode::CREATED, Json(id)).into_response(),
+        Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response(),
     };
 }
 

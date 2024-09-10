@@ -1,4 +1,4 @@
-import type { Colour } from '@/types/database-types';
+import type { Colour } from '../types/database-types';
 
 export const Colours: { [key in Colour]: string } = {
   tiffany: '#80CBC4',

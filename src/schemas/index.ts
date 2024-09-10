@@ -1,6 +1,6 @@
-import type { Colour, NoteFormat } from '@/types/database-types';
 import { type Locale } from '@/utils/constants/locales';
 import { z } from 'zod';
+import type { Colour, NoteFormat } from '../types/database-types';
 
 export const loginFormSchema = z.object({
   email: z.string().email({

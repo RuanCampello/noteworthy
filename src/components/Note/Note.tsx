@@ -1,12 +1,12 @@
 'use client';
 
-import type { Colour } from '@/types/database-types';
 import { Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import type { Colour } from '../../types/database-types';
 
 interface NoteProps {
   uid: string;

@@ -1,7 +1,6 @@
 'use server';
 
 import { signIn } from '@/auth/auth';
-import { getUserByEmail } from '@/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';
 import { AuthError } from 'next-auth';
@@ -17,8 +16,11 @@ export async function login(
   if (!fields.success) return { error: t('inv_field') };
 
   const { email, password } = fields.data;
-  const user = await getUserByEmail(email);
-  if (!user) return { error: t('email_not_found') };
+  const response = await fetch(`http://localhost:6969/users/${email}`, {
+    method: 'get',
+    cache: 'force-cache',
+  });
+  if (!response.ok) return { error: t('email_not_found') };
 
   try {
     await signIn('credentials', {

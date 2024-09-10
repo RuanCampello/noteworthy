@@ -8,7 +8,7 @@ use controllers::{
     note_controller::{
         create_note, delete_note, get_all_notes, get_note, update_note, update_note_content,
     },
-    user_controller::{login, refresh_handler},
+    user_controller::{get_user_from_email, login, refresh_handler, register},
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
@@ -46,6 +46,8 @@ async fn main() -> anyhow::Result<()> {
         .nest("/notes", single_note_route)
         .layer(Extension(note_repository))
         .route("/login", post(login))
+        .route("/register", post(register))
+        .route("/users/:email", get(get_user_from_email))
         .layer(Extension(user_repository))
         .route("/refresh-token/:old_token", get(refresh_handler))
         .with_state(state)

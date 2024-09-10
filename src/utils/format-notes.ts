@@ -1,5 +1,5 @@
-import type { Note } from '@/types/database-types';
 import { headers } from 'next/headers';
+import type { Note } from '../types/database-types';
 import { type Filters, allowedFilters } from './constants/filters';
 import { formatSearchParams } from './format';
 

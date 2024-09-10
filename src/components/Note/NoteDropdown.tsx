@@ -2,7 +2,7 @@
 
 import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
 import DropdownButton from '@/components/DropdownButton';
-import type { Note } from '@/types/database-types';
+import type { Note } from '@/types/Note';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useTransition } from 'react';
+import { Colour } from '../../types/database-types';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
 
@@ -77,7 +78,11 @@ export default function Dropdown({ note, children }: DropdownProps) {
             active={!!isArchived}
           />
         </form>
-        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
+        <EditNoteDialog
+          noteId={id}
+          noteName={title}
+          noteColour={colour as Colour}
+        >
           <DropdownButton text={t('edit')} icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         {children}

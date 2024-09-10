@@ -1,6 +1,6 @@
 'use server';
 
-import { type Definition } from '@/types/definition';
+import { type Definition } from '../../types/definition';
 
 export async function getDefinition(word: string) {
   const response = await fetch(

@@ -1,12 +1,8 @@
 'use server';
 
 import { signIn } from '@/auth/auth';
-import { getUserByEmail } from '@/queries/user';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { registerFormSchema } from '@/schemas';
-import { db } from '@/server/db';
-import { user as userTable } from '@/server/db/schema';
-import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
@@ -19,22 +15,27 @@ export async function register(
   const fields = registerFormSchema.safeParse(values);
 
   if (!fields.success) return { error: t('inv_field') };
-
   const { email, password, username } = fields.data;
-  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const owner = await getUserByEmail(email);
-  if (owner) return { error: t('email_taken') };
+  const response = await fetch(`http://localhost:6969/users/${email}`, {
+    method: 'get',
+    cache: 'force-cache',
+  });
+  if (response.ok) return { error: t('email_taken') };
 
-  const [user] = await db
-    .insert(userTable)
-    .values({
-      name: username,
+  const registerRes = await fetch('http://localhost:6969/register', {
+    method: 'post',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
       email,
-      password: hashedPassword,
-    })
-    .returning();
-  await createPlaceholderNote(user.id);
+      password,
+      name: username,
+    }),
+  });
+
+  const id = await registerRes.json();
+
+  await createPlaceholderNote(id);
   try {
     await signIn('credentials', {
       email,

@@ -4,7 +4,6 @@ import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { userPreferencesSchema } from '@/schemas';
 import { updateUserPreferences } from '@/server/actions/user-preferences';
-import type { NoteFormat, Preferences } from '@/types/database-types';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -25,6 +24,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useTransition, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { NoteFormat, Preferences } from '../../types/database-types';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
 
