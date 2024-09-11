@@ -1,6 +1,10 @@
 use bcrypt::{hash, verify};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use cloudflare_r2_rs::r2::R2Manager;
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect, Set,
+};
 use std::sync::Arc;
+
 use tracing::info;
 
 use crate::{
@@ -13,11 +17,17 @@ use crate::{
 #[derive(Clone)]
 pub struct UserRepository {
     database: Arc<DatabaseConnection>,
+    r2: Arc<R2Manager>,
+}
+
+pub enum ImageResponse {
+    Url(String),
+    Base64Encoded(Vec<u8>),
 }
 
 impl UserRepository {
-    pub fn new(database: Arc<DatabaseConnection>) -> Self {
-        Self { database }
+    pub fn new(database: Arc<DatabaseConnection>, r2: Arc<R2Manager>) -> Self {
+        Self { database, r2 }
     }
     pub async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
         let user = self.find_user_by_email(&req.email).await?;
@@ -60,5 +70,30 @@ impl UserRepository {
         .await?;
 
         Ok(user.id)
+    }
+
+    pub async fn find_user_profile_image(&self, id: String) -> Result<ImageResponse, UserError> {
+        let user_id_and_image = User::find_by_id(id)
+            .select_only()
+            .columns([users::Column::Image, users::Column::Id])
+            .one(&*self.database)
+            .await?;
+
+        let id = match user_id_and_image {
+            Some(user) => {
+                if let Some(image) = user.image {
+                    return Ok(ImageResponse::Url(image));
+                }
+                user.id
+            }
+            None => return Err(UserError::UserNotFound),
+        };
+
+        let image = match self.r2.get(&id).await {
+            Some(image) => image,
+            None => return Err(UserError::ImageNotFound),
+        };
+
+        Ok(ImageResponse::Base64Encoded(image))
     }
 }

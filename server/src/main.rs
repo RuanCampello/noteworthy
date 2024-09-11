@@ -8,7 +8,7 @@ use controllers::{
     note_controller::{
         create_note, delete_note, get_all_notes, get_note, update_note, update_note_content,
     },
-    user_controller::{get_user_from_email, login, refresh_handler, register},
+    user_controller::{get_user_from_email, get_user_image, login, refresh_handler, register},
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
@@ -28,7 +28,7 @@ async fn main() -> anyhow::Result<()> {
     let database = Arc::new(state.database.to_owned());
 
     let note_repository = NoteRepository::new(database.clone());
-    let user_repository = UserRepository::new(database);
+    let user_repository = UserRepository::new(database, Arc::new(state.r2.to_owned()));
 
     tracing_subscriber::fmt::init();
 
@@ -48,6 +48,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/login", post(login))
         .route("/register", post(register))
         .route("/users/:email", get(get_user_from_email))
+        .route("/users/profile/:id", get(get_user_image))
         .layer(Extension(user_repository))
         .route("/refresh-token/:old_token", get(refresh_handler))
         .with_state(state)

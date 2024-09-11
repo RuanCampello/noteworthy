@@ -21,6 +21,7 @@ tower-http = { version = "0.5.2", features = ["cors"] }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 ts-rs = { version = "9.0.1", features = ["chrono", "uuid"] }
+cloudflare-r2-rs = "0.6.5"
 
 [dev-dependencies]
 axum-macros = "0.4.1"

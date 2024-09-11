@@ -29,7 +29,7 @@ export default async function NotePage({ params }: Props) {
     <article data-view={isSubView} className='mx-40 data-[view=true]:mx-28'>
       <NoteEditor
         fullNote={fullNote}
-        owner={note.userId}
+        isEditable={note.userId === user.id}
         content={note.content}
       >
         <NoteHeader note={note} />

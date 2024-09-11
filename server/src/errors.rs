@@ -22,6 +22,8 @@ pub enum UserError {
     DatabaseError(#[from] DbErr),
     #[error("Error during decryption: {0}")]
     DecryptError(#[from] BcryptError),
+    #[error("User image was not found in R2")]
+    ImageNotFound,
 }
 
 #[derive(Error, Debug)]

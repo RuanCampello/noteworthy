@@ -16,27 +16,22 @@ import FontSize from 'tiptap-extension-font-size';
 import EditorMenuBar from './EditorMenuBar';
 
 import { DoubleClickLink } from '@/utils/double-click-link';
-import { useSession } from 'next-auth/react';
 import { ReactNode } from 'react';
 import NoteBubbleMenu from './NoteBubbleMenu';
 
 interface NoteEditorProps {
   content: string;
   children: ReactNode;
-  owner: string | null;
+  isEditable: boolean;
   fullNote: boolean;
 }
 
 export default function NoteEditor({
   content,
   children,
-  owner,
+  isEditable,
   fullNote,
 }: NoteEditorProps) {
-  const { data: session } = useSession();
-  if (!session?.user) return;
-  const isEditable = session.user.id === owner;
-
   const extensions = [
     StarterKit,
     Underline,
