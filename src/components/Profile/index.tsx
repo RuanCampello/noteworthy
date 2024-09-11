@@ -1,8 +1,8 @@
 import { signOut } from '@/auth/auth';
-import { env } from '@/env';
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { currentUser } from '@/server/queries/note';
 
+import { getUserProfileImage } from '@/server/actions/user';
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,
@@ -21,7 +21,7 @@ export default async function Profile() {
   const t = await getTranslations('ProfileDropdown');
   if (!user || !user?.id) return;
 
-  const { image, name, email, id } = user;
+  const { name, email, id } = user;
   const preferences = await getUserPreferences(id);
   if (!name) return null;
 
@@ -30,12 +30,13 @@ export default async function Profile() {
     await signOut();
   }
 
-  const source = image || `${env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${user.id}`;
+  const image_url = await getUserProfileImage();
+  console.log(image_url);
 
   return (
     <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar source={source} fallback={name[0].toUpperCase()} />
+        <Avatar source={image_url} fallback={name[0].toUpperCase()} />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
           <h2 className='text-silver leading-none truncate'>{email}</h2>

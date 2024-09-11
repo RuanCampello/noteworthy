@@ -14,16 +14,6 @@ export async function getUserByEmail(email: string) {
   }
 }
 
-export async function getUserById(id: string) {
-  try {
-    return await db.query.user.findFirst({
-      where: eq(user.id, id),
-    });
-  } catch (error) {
-    return null;
-  }
-}
-
 export async function userHasProviderAccount(
   id: string,
 ): Promise<{ value: boolean; provider?: string }> {

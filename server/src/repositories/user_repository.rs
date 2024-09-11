@@ -68,22 +68,6 @@ impl UserRepository {
     }
 
     pub async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
-        let user_id_and_image = User::find_by_id(id)
-            .select_only()
-            .columns([users::Column::Image, users::Column::Id])
-            .one(&*self.database)
-            .await?;
-
-        let id = match user_id_and_image {
-            Some(user) => {
-                if let Some(image) = user.image {
-                    return Ok(image);
-                }
-                user.id
-            }
-            None => return Err(UserError::UserNotFound),
-        };
-
         let presigned_url = &self
             .r2
             .get_object()
@@ -91,7 +75,7 @@ impl UserRepository {
             .key(&id)
             .presigned(
                 PresigningConfig::builder()
-                    .expires_in(Duration::from_secs(15))
+                    .expires_in(Duration::from_secs(3600))
                     .build()
                     .unwrap(),
             )
