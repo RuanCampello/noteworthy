@@ -29,7 +29,7 @@ export default function SaveNote() {
   async function handleSaveClick() {
     startTransition(async () => {
       if (!openNote || !currentEditor.editor) return;
-      await updateNoteContent(openNote, currentEditor.editor?.getHTML());
+      await updateNoteContent(openNote, currentEditor.editor.getHTML());
       toast({
         title: tt('sv_note_title'),
         description: tt('sv_note_dsc'),

@@ -186,6 +186,7 @@ export async function updateNoteContent(id: string, content: string) {
       },
       method: 'PATCH',
     });
+    revalidateTag('note-page');
     revalidateTag('sidebar-notes');
   } catch (error) {
     console.error(error);

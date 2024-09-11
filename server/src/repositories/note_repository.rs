@@ -1,3 +1,4 @@
+use chrono::{DateTime, Local, NaiveDateTime, Utc};
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend,
     EntityTrait, FromQueryResult, QueryFilter, QueryOrder, Set, Statement,
@@ -152,6 +153,7 @@ impl NoteRepository {
 
         let mut note: notes::ActiveModel = note.into();
         note.content = Set(content);
+        note.last_update = Set(Local::now().naive_local());
         note.update(&*self.database).await?;
 
         Ok(())

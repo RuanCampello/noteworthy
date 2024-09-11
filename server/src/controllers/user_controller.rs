@@ -9,7 +9,7 @@ use crate::{
     utils::jwt::{refresh_jwt, JwtDecoder},
 };
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize)]
 pub struct LoginRequest {
     pub email: String,
     pub password: String,
@@ -20,9 +20,7 @@ pub async fn login(
     Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
     return match repository.log_user(&payload).await {
-        Err(e) => {
-            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
-        }
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
         Ok(token) => (StatusCode::OK, Json(token)).into_response(),
     };
 }
