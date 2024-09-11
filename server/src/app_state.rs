@@ -1,9 +1,12 @@
 use anyhow::bail;
-use cloudflare_r2_rs::r2::R2Manager;
+use aws_config::Region;
+use aws_sdk_s3::{
+    config::{Credentials, SharedCredentialsProvider},
+    Client,
+};
 use dotenv;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::{borrow::Cow, time::Duration};
-use tracing::info;
 use tracing::log::LevelFilter;
 
 #[derive(Clone, Debug)]
@@ -13,7 +16,6 @@ pub struct EnvVariables {
     pub cloudflare_account_id: Cow<'static, str>,
     pub access_key_id: Cow<'static, str>,
     pub secret_access_key: Cow<'static, str>,
-    pub bucket_name: Cow<'static, str>,
 }
 
 impl EnvVariables {
@@ -41,10 +43,6 @@ impl EnvVariables {
                 Ok(secret_access) => secret_access.into(),
                 Err(err) => bail!("CLOUDFLARE_SECRET_KEY must be set: {err}"),
             },
-            bucket_name: match dotenv::var("CLOUDFLARE_BUCKET_NAME") {
-                Ok(bucket) => bucket.into(),
-                Err(err) => bail!("CLOUDFLARE_BUCKET_NAME must be set: {err}"),
-            },
         })
     }
 }
@@ -52,7 +50,7 @@ impl EnvVariables {
 #[derive(Clone)]
 pub struct AppState {
     pub database: DatabaseConnection,
-    pub r2: R2Manager,
+    pub r2: Client,
 }
 
 impl AppState {
@@ -63,13 +61,25 @@ impl AppState {
             "https://{}.r2.cloudflarestorage.com",
             env.cloudflare_account_id
         );
-        let r2 = R2Manager::new(
-            &env.bucket_name,
-            &endpoint,
-            &env.access_key_id,
-            &env.secret_access_key,
-        )
-        .await;
+
+        let credentials = Credentials::new(
+            env.access_key_id.to_string(),
+            env.secret_access_key.to_string(),
+            None,
+            None,
+            "custom",
+        );
+        let shared_cred = SharedCredentialsProvider::new(credentials);
+
+        let s3_config = aws_config::load_from_env()
+            .await
+            .into_builder()
+            .credentials_provider(shared_cred)
+            .endpoint_url(endpoint)
+            .region(Region::new("us-east-1"))
+            .build();
+
+        let r2 = aws_sdk_s3::Client::new(&s3_config);
 
         let mut opt = ConnectOptions::new(env.database_url.to_string());
         opt.max_connections(80)

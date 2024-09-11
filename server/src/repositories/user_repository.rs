@@ -1,9 +1,9 @@
+use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use bcrypt::{hash, verify};
-use cloudflare_r2_rs::r2::R2Manager;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect, Set,
 };
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 use tracing::info;
 
@@ -17,16 +17,11 @@ use crate::{
 #[derive(Clone)]
 pub struct UserRepository {
     database: Arc<DatabaseConnection>,
-    r2: Arc<R2Manager>,
-}
-
-pub enum ImageResponse {
-    Url(String),
-    Base64Encoded(Vec<u8>),
+    r2: Arc<Client>,
 }
 
 impl UserRepository {
-    pub fn new(database: Arc<DatabaseConnection>, r2: Arc<R2Manager>) -> Self {
+    pub fn new(database: Arc<DatabaseConnection>, r2: Arc<Client>) -> Self {
         Self { database, r2 }
     }
     pub async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
@@ -72,7 +67,7 @@ impl UserRepository {
         Ok(user.id)
     }
 
-    pub async fn find_user_profile_image(&self, id: String) -> Result<ImageResponse, UserError> {
+    pub async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
         let user_id_and_image = User::find_by_id(id)
             .select_only()
             .columns([users::Column::Image, users::Column::Id])
@@ -82,18 +77,27 @@ impl UserRepository {
         let id = match user_id_and_image {
             Some(user) => {
                 if let Some(image) = user.image {
-                    return Ok(ImageResponse::Url(image));
+                    return Ok(image);
                 }
                 user.id
             }
             None => return Err(UserError::UserNotFound),
         };
 
-        let image = match self.r2.get(&id).await {
-            Some(image) => image,
-            None => return Err(UserError::ImageNotFound),
-        };
+        let presigned_url = &self
+            .r2
+            .get_object()
+            .bucket("noteworthy-images-bucket")
+            .key(&id)
+            .presigned(
+                PresigningConfig::builder()
+                    .expires_in(Duration::from_secs(15))
+                    .build()
+                    .unwrap(),
+            )
+            .await
+            .map_err(|e| UserError::PresignedUrl(e))?;
 
-        Ok(ImageResponse::Base64Encoded(image))
+        Ok(presigned_url.uri().to_owned())
     }
 }

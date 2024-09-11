@@ -804,18 +804,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cloudflare-r2-rs"
-version = "0.6.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f3f7ab646d68af58fdbe85d66e601a409dba9cddb6b6aa4a71523e8742dce10"
-dependencies = [
- "aws-config",
- "aws-sdk-s3",
- "log",
- "once_cell",
-]
-
-[[package]]
 name = "concurrent-queue"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1814,11 +1802,12 @@ name = "noteworthy-server"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "aws-config",
+ "aws-sdk-s3",
  "axum",
  "axum-macros",
  "bcrypt",
  "chrono",
- "cloudflare-r2-rs",
  "cuid2",
  "dotenv",
  "jsonwebtoken",

@@ -1,17 +1,11 @@
-use axum::{
-    body::Body,
-    extract::Path,
-    http::{header, Response, StatusCode},
-    response::IntoResponse,
-    Extension, Json,
-};
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::Deserialize;
 use tracing::error;
 
 use crate::{
     app_state::EnvVariables,
     errors::TokenError,
-    repositories::user_repository::{ImageResponse, UserRepository},
+    repositories::user_repository::UserRepository,
     utils::jwt::{refresh_jwt, JwtDecoder},
 };
 
@@ -45,20 +39,10 @@ pub async fn get_user_image(
     Extension(repository): Extension<UserRepository>,
     Path(id): Path<String>,
 ) -> impl IntoResponse {
-    match repository.find_user_profile_image(id).await {
+    return match repository.find_user_profile_image(id).await {
         Err(_) => StatusCode::NOT_FOUND.into_response(),
-        Ok(res) => match res {
-            ImageResponse::Url(url) => (StatusCode::OK, url).into_response(),
-            ImageResponse::Base64Encoded(encoded) => {
-                let body = Body::from(encoded);
-                Response::builder()
-                    .status(StatusCode::OK)
-                    .header(header::CONTENT_TYPE, "image/png")
-                    .body(body)
-                    .unwrap()
-            }
-        },
-    }
+        Ok(url) => (StatusCode::OK, url).into_response(),
+    };
 }
 
 #[derive(Deserialize)]

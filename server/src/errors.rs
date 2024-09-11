@@ -1,3 +1,4 @@
+use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use bcrypt::BcryptError;
 use sea_orm::{prelude::Uuid, DbErr};
 use thiserror::Error;
@@ -22,8 +23,8 @@ pub enum UserError {
     DatabaseError(#[from] DbErr),
     #[error("Error during decryption: {0}")]
     DecryptError(#[from] BcryptError),
-    #[error("User image was not found in R2")]
-    ImageNotFound,
+    #[error("Unexpected error on presigned url generation: {0}")]
+    PresignedUrl(#[from] SdkError<GetObjectError>),
 }
 
 #[derive(Error, Debug)]
