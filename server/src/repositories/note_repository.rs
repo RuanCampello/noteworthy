@@ -1,7 +1,8 @@
 use chrono::Local;
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend,
-    EntityTrait, FromQueryResult, QueryFilter, QueryOrder, Set, Statement,
+    prelude::{Expr, Uuid},
+    ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend, EntityTrait,
+    FromQueryResult, QueryFilter, QueryOrder, QuerySelect, Set, Statement,
 };
 use std::sync::Arc;
 
@@ -9,7 +10,7 @@ use crate::{
     controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
     errors::NoteError,
     models::{
-        notes::{self, Entity as Note, NoteWithUserPrefs},
+        notes::{self, Column as NoteColumn, Entity as Note},
         sea_orm_active_enums::Colour,
         users::Entity as User,
     },
@@ -57,7 +58,7 @@ impl NoteRepository {
 
     pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
         let note = Note::find_by_id(id)
-            .filter(notes::Column::UserId.eq(user_id))
+            .filter(NoteColumn::UserId.eq(user_id))
             .one(&*self.database)
             .await?
             .ok_or(NoteError::NoteNotFound(id))?;
@@ -74,7 +75,7 @@ impl NoteRepository {
         req: UpdateNoteRequest,
     ) -> Result<(), NoteError> {
         let old_note = Note::find_by_id(id)
-            .filter(notes::Column::UserId.eq(user_id))
+            .filter(NoteColumn::UserId.eq(user_id))
             .one(&*self.database)
             .await?
             .ok_or(NoteError::NoteNotFound(id))?;
@@ -97,7 +98,7 @@ impl NoteRepository {
         &self,
         user_id: &str,
         id: Uuid,
-    ) -> Result<NoteWithUserPrefs, NoteError> {
+    ) -> Result<notes::NoteWithUserPrefs, NoteError> {
         let query = r#"
           SELECT
               notes.*,
@@ -112,7 +113,7 @@ impl NoteRepository {
           WHERE notes.id = $1 AND notes."userId" = $2;
       "#;
 
-        let result = NoteWithUserPrefs::find_by_statement(Statement::from_sql_and_values(
+        let result = notes::NoteWithUserPrefs::find_by_statement(Statement::from_sql_and_values(
             DbBackend::Postgres,
             query,
             [id.into(), user_id.into()],
@@ -124,15 +125,28 @@ impl NoteRepository {
         Ok(result)
     }
 
-    pub async fn find_all_user_notes(&self, user_id: &str) -> Result<Vec<notes::Model>, NoteError> {
+    pub async fn find_all_user_notes(
+        &self,
+        user_id: &str,
+        is_fav: bool,
+        is_arc: bool,
+    ) -> Result<Vec<notes::PartialNote>, NoteError> {
         let notes = Note::find()
-            .filter(notes::Column::UserId.eq(user_id))
-            .filter(notes::Column::IsArchived.eq(false))
-            .filter(notes::Column::IsFavourite.eq(false))
-            .order_by_desc(notes::Column::LastUpdate)
+            .filter(NoteColumn::UserId.eq(user_id))
+            .filter(NoteColumn::IsFavourite.eq(is_fav))
+            .filter(NoteColumn::IsArchived.eq(is_arc))
+            .select_only()
+            .expr_as(Expr::cust("LEFT(content, 150)"), "content")
+            .columns([
+                NoteColumn::Id,
+                NoteColumn::Title,
+                NoteColumn::Colour,
+                NoteColumn::CreatedAt,
+            ])
+            .order_by_desc(NoteColumn::LastUpdate)
+            .into_model::<notes::PartialNote>()
             .all(&*self.database)
             .await?;
-
         Ok(notes)
     }
 
@@ -143,7 +157,7 @@ impl NoteRepository {
         content: String,
     ) -> Result<(), NoteError> {
         let note = match Note::find_by_id(id)
-            .filter(notes::Column::UserId.eq(user_id))
+            .filter(NoteColumn::UserId.eq(user_id))
             .one(&*self.database)
             .await?
         {

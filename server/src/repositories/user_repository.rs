@@ -1,11 +1,7 @@
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use bcrypt::{hash, verify};
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use std::{sync::Arc, time::Duration};
-
-use tracing::info;
 
 use crate::{
     controllers::user_controller::{LoginRequest, RegisterRequest},

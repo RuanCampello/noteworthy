@@ -47,6 +47,16 @@ pub struct NoteWithUserPrefs {
     pub note_format: String,
 }
 
+#[derive(FromQueryResult, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct PartialNote {
+    pub id: Uuid,
+    pub title: String,
+    pub content: String,
+    pub colour: Colour,
+    pub created_at: NaiveDateTime,
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(

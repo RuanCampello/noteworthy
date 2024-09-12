@@ -1,5 +1,5 @@
 use anyhow::bail;
-use aws_config::Region;
+use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
     config::{Credentials, SharedCredentialsProvider},
     Client,
@@ -71,7 +71,7 @@ impl AppState {
         );
         let shared_cred = SharedCredentialsProvider::new(credentials);
 
-        let s3_config = aws_config::load_from_env()
+        let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28())
             .await
             .into_builder()
             .credentials_provider(shared_cred)

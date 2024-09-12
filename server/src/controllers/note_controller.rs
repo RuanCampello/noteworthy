@@ -108,10 +108,7 @@ pub async fn get_note(
 ) -> impl IntoResponse {
     return match repository.find_note_by_id(&user.id, id).await {
         Ok(note) => (StatusCode::OK, Json(note)).into_response(),
-        Err(e) => {
-            error!("Error on find_note {:#?}", e);
-            (StatusCode::INTERNAL_SERVER_ERROR).into_response()
-        }
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     };
 }
 
@@ -119,8 +116,28 @@ pub async fn get_all_notes(
     AuthUser(user): AuthUser,
     Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-    return match repository.find_all_user_notes(&user.id).await {
-        Ok(note) => (StatusCode::OK, Json(note)).into_response(),
+    return match repository.find_all_user_notes(&user.id, false, false).await {
+        Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    };
+}
+
+pub async fn get_all_favourite_notes(
+    AuthUser(user): AuthUser,
+    Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+    return match repository.find_all_user_notes(&user.id, true, false).await {
+        Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    };
+}
+
+pub async fn get_all_archive_notes(
+    AuthUser(user): AuthUser,
+    Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+    return match repository.find_all_user_notes(&user.id, false, true).await {
+        Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
         Err(_) => (StatusCode::NOT_FOUND).into_response(),
     };
 }

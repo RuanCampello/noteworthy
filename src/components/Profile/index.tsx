@@ -31,7 +31,6 @@ export default async function Profile() {
   }
 
   const image_url = await getUserProfileImage();
-  console.log(image_url);
 
   return (
     <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>

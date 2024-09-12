@@ -19,6 +19,7 @@ export default async function Notes() {
   const result = await new API().notes(user.id).ordinary.filter();
   if (!result) return;
   const { notes, searchParam } = result;
+  console.log(notes);
   const filter = getFilter();
 
   if (filter === 'date-new') {

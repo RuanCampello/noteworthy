@@ -6,14 +6,14 @@ use axum::{
 };
 use controllers::{
     note_controller::{
-        create_note, delete_note, get_all_notes, get_note, update_note, update_note_content,
+        create_note, delete_note, get_all_archive_notes, get_all_favourite_notes, get_all_notes,
+        get_note, update_note, update_note_content,
     },
     user_controller::{get_user_from_email, get_user_image, login, refresh_handler, register},
 };
 use repositories::{note_repository::NoteRepository, user_repository::UserRepository};
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use tracing::info;
 
 mod app_state;
 mod controllers;
@@ -41,9 +41,14 @@ async fn main() -> anyhow::Result<()> {
         .route("/:id", delete(delete_note).patch(update_note).get(get_note))
         .route("/:id/content", patch(update_note_content));
 
+    let notes_route = Router::new()
+        .route("/", post(create_note).get(get_all_notes))
+        .route("/favourites", get(get_all_favourite_notes))
+        .route("/archived", get(get_all_archive_notes));
+
     let router = Router::new()
-        .route("/notes", post(create_note).get(get_all_notes))
         .nest("/notes", single_note_route)
+        .nest("/notes", notes_route)
         .layer(Extension(note_repository))
         .route("/login", post(login))
         .route("/register", post(register))
