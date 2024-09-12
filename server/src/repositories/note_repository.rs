@@ -41,10 +41,12 @@ impl NoteRepository {
         };
 
         let note = notes::ActiveModel {
-            title: ActiveValue::set(req.title.to_owned()),
-            content: ActiveValue::set(req.content.to_owned().unwrap_or_else(|| String::new())),
-            colour: ActiveValue::set(colour),
-            user_id: ActiveValue::set(user.id),
+            title: Set(req.title.to_owned()),
+            content: Set(req.content.to_owned().unwrap_or_else(|| String::new())),
+            colour: Set(colour),
+            user_id: Set(user.id),
+            created_at: Set(Local::now().naive_local()),
+            last_update: Set(Local::now().naive_local()),
             ..Default::default()
         };
 
