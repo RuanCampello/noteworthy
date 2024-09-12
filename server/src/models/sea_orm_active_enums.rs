@@ -74,3 +74,20 @@ impl Serialize for Colour {
         serializer.serialize_str(color_string)
     }
 }
+
+impl Colour {
+    pub fn colour_name(&self) -> &'static str {
+        match self {
+            Colour::Blue => "blue",
+            Colour::Cambridge => "cambridge",
+            Colour::Melon => "melon",
+            Colour::Mikado => "mikado",
+            Colour::Mindaro => "mindaro",
+            Colour::Slate => "slate",
+            Colour::Sunset => "sunset",
+            Colour::Tickle => "tickle",
+            Colour::Tiffany => "tiffany",
+            Colour::Wisteria => "wisteria",
+        }
+    }
+}

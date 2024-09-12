@@ -1,19 +1,19 @@
 'use client';
 
+import type { Colour } from '@/types/Enums';
 import { Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { Colour } from '../../types/database-types';
 
 interface NoteProps {
   uid: string;
   name: string;
   text: HTMLContent;
   colour: Colour;
-  date: Date;
+  date: string;
   href: 'notes' | 'favourites' | 'archived';
 }
 
@@ -79,6 +79,7 @@ export default function Note({
 
   const formattedName = getFormattedName(name);
   const textWithoutHtml = stripHTMLTags(text);
+  console.log(textWithoutHtml);
   return (
     <Link
       href={

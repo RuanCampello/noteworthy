@@ -2,6 +2,7 @@ import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser } from '@/queries/note';
+import { PartialNote } from '@/types/PartialNote';
 import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
@@ -23,7 +24,7 @@ export default async function FavouriteLayout({
     next: { tags: ['note-page'] },
   });
 
-  const archivedNotes = await response.json();
+  const archivedNotes: PartialNote[] = await response.json();
 
   const t = await getTranslations('ArchivePlaceholder');
   const st = await getTranslations('SubsidebarTitles');

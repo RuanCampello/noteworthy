@@ -47,13 +47,17 @@ pub struct NoteWithUserPrefs {
     pub note_format: String,
 }
 
-#[derive(FromQueryResult, Serialize, Debug)]
+#[derive(FromQueryResult, Serialize, Debug, TS)]
+#[ts(export, rename = "PartialNote")]
 #[serde(rename_all = "camelCase")]
 pub struct PartialNote {
+    #[ts(type = "string")]
     pub id: Uuid,
     pub title: String,
     pub content: String,
+    #[ts(type = "string")]
     pub colour: Colour,
+    #[ts(type = "string")]
     pub created_at: NaiveDateTime,
 }
 

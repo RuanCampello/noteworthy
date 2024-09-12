@@ -138,7 +138,7 @@ impl NoteRepository {
             .filter(NoteColumn::IsFavourite.eq(is_fav))
             .filter(NoteColumn::IsArchived.eq(is_arc))
             .select_only()
-            .expr_as(Expr::cust("LEFT(content, 150)"), "content")
+            .expr_as(Expr::cust("LEFT(content, 250)"), "content")
             .columns([
                 NoteColumn::Id,
                 NoteColumn::Title,
