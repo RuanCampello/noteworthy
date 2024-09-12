@@ -1,4 +1,5 @@
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
+use axum::async_trait;
 use bcrypt::{hash, verify};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use std::{sync::Arc, time::Duration};
@@ -16,11 +17,24 @@ pub struct UserRepository {
     r2: Arc<Client>,
 }
 
-impl UserRepository {
-    pub fn new(database: Arc<DatabaseConnection>, r2: Arc<Client>) -> Self {
-        Self { database, r2 }
+#[async_trait]
+pub trait UserRepositoryTrait {
+    fn new(database: &Arc<DatabaseConnection>, r2: &Arc<Client>) -> Self;
+    async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError>;
+    async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError>;
+    async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError>;
+    async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
+}
+
+#[async_trait]
+impl UserRepositoryTrait for UserRepository {
+    fn new(database: &Arc<DatabaseConnection>, r2: &Arc<Client>) -> Self {
+        Self {
+            database: Arc::clone(database),
+            r2: Arc::clone(r2),
+        }
     }
-    pub async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
+    async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
         let user = self.find_user_by_email(&req.email).await?;
 
         let correct_password =
@@ -36,7 +50,7 @@ impl UserRepository {
         Ok(token)
     }
 
-    pub async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError> {
+    async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError> {
         match User::find()
             .filter(users::Column::Email.eq(email))
             .one(&*self.database)
@@ -47,7 +61,7 @@ impl UserRepository {
         }
     }
 
-    pub async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError> {
+    async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError> {
         let hash_password = hash(req.password, 10).unwrap();
 
         let user = users::ActiveModel {
@@ -63,7 +77,7 @@ impl UserRepository {
         Ok(user.id)
     }
 
-    pub async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
+    async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
         let presigned_url = &self
             .r2
             .get_object()

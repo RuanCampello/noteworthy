@@ -22,8 +22,10 @@ pub struct NoteRepository {
 }
 
 impl NoteRepository {
-    pub fn new(database: Arc<DatabaseConnection>) -> Self {
-        Self { database }
+    pub fn new(database: &Arc<DatabaseConnection>) -> Self {
+        Self {
+            database: Arc::clone(database),
+        }
     }
 
     pub async fn new_note(

@@ -5,7 +5,7 @@ use tracing::error;
 use crate::{
     app_state::EnvVariables,
     errors::TokenError,
-    repositories::user_repository::UserRepository,
+    repositories::user_repository::{UserRepository, UserRepositoryTrait},
     utils::jwt::{refresh_jwt, JwtDecoder},
 };
 
