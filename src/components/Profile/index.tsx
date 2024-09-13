@@ -2,7 +2,7 @@ import { signOut } from '@/auth/auth';
 import { getUserPreferences } from '@/server/actions/user-preferences';
 import { currentUser } from '@/server/queries/note';
 
-import { getUserProfileImage } from '@/server/actions/user';
+import { getUserProfileImage } from '@/actions';
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,

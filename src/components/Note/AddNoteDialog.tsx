@@ -1,6 +1,6 @@
 'use client';
 
-import { createNote } from '@/actions/note';
+import { createNote } from '@/actions';
 import { noteDialogSchema } from '@/schemas';
 import { Button } from '@/ui/button';
 import {

@@ -1,6 +1,6 @@
 'use client';
 
-import { updateNoteContent } from '@/actions/note';
+import { updateNoteContent } from '@/actions';
 import { useCurrentEditor } from '@tiptap/react';
 import { Check, Save } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation';
 import { useTransition } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import MenuTooltip from '../Tooltip';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '@/ui/use-toast';
 
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
@@ -45,6 +45,7 @@ export default function SaveNote() {
       });
     });
   }
+
   return (
     <MenuTooltip content={`${t('title')} (Ctrl+S)`} sideOffset={8}>
       <form action={handleSaveClick}>

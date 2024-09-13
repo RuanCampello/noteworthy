@@ -15,12 +15,10 @@ use crate::{
 pub fn user_routes(db: &Arc<DatabaseConnection>, r2: &Arc<Client>) -> Router {
     let repository = UserRepository::new(db, r2);
 
-    let router = Router::new()
+    Router::new()
         .route("/login", post(login))
         .route("/register", post(register))
         .route("/users/:email", get(get_user_from_email))
         .route("/users/profile/:id", get(get_user_image))
-        .layer(Extension(repository));
-
-    return router;
+        .layer(Extension(repository))
 }

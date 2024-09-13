@@ -12,7 +12,7 @@ import {
 } from '@/ui/alert-dialog';
 import { type ReactNode, useTransition } from 'react';
 
-import { deleteNote } from '@/actions/note';
+import { deleteNote } from '@/actions';
 import { Button } from '@/ui/button';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';

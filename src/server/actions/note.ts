@@ -1,55 +1,14 @@
 'use server';
 
 import { currentUser, getNoteById } from '@/queries/note';
-import { noteDialogSchema } from '@/schemas';
 import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
 import { and, eq } from 'drizzle-orm';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { cache } from 'react';
-import { z } from 'zod';
-
-const getPathnameParams = cache(() => {
-  const origin = headers().get('origin');
-  const pathname = headers().get('pathname');
-  return { basePath: pathname?.split('/')[1], origin };
-});
-
-export async function createNote(values: z.infer<typeof noteDialogSchema>) {
-  const fields = noteDialogSchema.safeParse(values);
-
-  if (!fields.success) return;
-  const { colour, name } = fields.data;
-
-  const user = await currentUser();
-  if (!user || !user.accessToken) return;
-
-  const response = await fetch('http://localhost:6969/notes', {
-    method: 'post',
-    headers: {
-      'Content-type': 'application/json',
-      Authorization: `Bearer ${user.accessToken}`,
-    },
-    body: JSON.stringify({
-      title: name,
-      content: '',
-      colour: colour,
-    }),
-  });
-  const id = await response.json();
-  const { origin, basePath } = getPathnameParams();
-
-  revalidateTag('sidebar-notes');
-  if (!basePath || basePath === 'favourites' || basePath === 'archived') {
-    redirect(`${origin}/notes/${id}`);
-  }
-  //if user is already in notes path, but not on favourite/archive page
-  redirect(`${origin}/${basePath}/${id}`);
-}
+import { getPathnameParams } from '@/utils/format-notes';
 
 export async function toggleNoteFavourite(id: string) {
   const { basePath, origin } = getPathnameParams();
@@ -115,51 +74,6 @@ export async function toggleNoteArchive(id: string) {
   }
 }
 
-export async function editNote(
-  values: z.infer<typeof noteDialogSchema>,
-  id: string,
-) {
-  const fields = noteDialogSchema.safeParse(values);
-  if (!fields.success) return;
-  const { colour, name } = fields.data;
-
-  const user = await currentUser();
-  if (!user || !user.accessToken) return;
-
-  try {
-    await fetch(`http://localhost:6969/notes/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        colour: colour,
-        title: name,
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-  }
-  revalidateTag('sidebar-notes');
-  revalidateTag('note-page');
-}
-
-export async function deleteNote(id: string) {
-  const user = await currentUser();
-  if (!user || !user.accessToken) return;
-
-  await fetch(`http://localhost:6969/notes/${id}`, {
-    method: 'delete',
-    headers: {
-      'Content-type': 'application/json',
-      Authorization: `Bearer ${user.accessToken}`,
-    },
-  });
-  revalidateTag('sidebar-notes');
-  redirect('/');
-}
-
 export async function createPlaceholderNote(userId: string) {
   const { name } = getRandomColour();
 
@@ -169,29 +83,6 @@ export async function createPlaceholderNote(userId: string) {
     title: 'Hello World 📝',
     userId,
   });
-}
-
-export async function updateNoteContent(id: string, content: string) {
-  try {
-    const user = await currentUser();
-    if (!user || !user.accessToken) return;
-
-    await fetch(`http://localhost:6969/notes/${id}/content`, {
-      body: JSON.stringify({
-        content: content,
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      method: 'PATCH',
-    });
-    revalidateTag('note-page');
-    revalidateTag('sidebar-notes');
-  } catch (error) {
-    console.error(error);
-    return;
-  }
 }
 
 export async function togglePublishState(id: string, currentState: boolean) {

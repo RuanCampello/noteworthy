@@ -1,7 +1,8 @@
 import { headers } from 'next/headers';
 import type { Note } from '../types/database-types';
-import { type Filters, allowedFilters } from './constants/filters';
+import { allowedFilters, type Filters } from './constants/filters';
 import { formatSearchParams } from './format';
+import { cache } from 'react';
 
 export type FilteredResults = {
   notes: Note[];
@@ -11,6 +12,12 @@ export type FilteredResults = {
 function getSearchParams(): string | null {
   return headers().get('search-params');
 }
+
+export const getPathnameParams = cache(() => {
+  const origin = headers().get('origin');
+  const pathname = headers().get('pathname');
+  return { basePath: pathname?.split('/')[1], origin };
+});
 
 export function getFilter() {
   const searchParams = getSearchParams();
