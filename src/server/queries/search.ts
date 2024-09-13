@@ -23,7 +23,6 @@ export async function searchNotes(
 
   if (filter && filter !== 'blank') {
     const statement = Filters[filter].query;
-    console.log(statement);
     sqlQuery = sql`${sqlQuery} ${sql.raw(statement)}`;
   }
 

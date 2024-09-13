@@ -79,7 +79,7 @@ export default function Note({
 
   const formattedName = getFormattedName(name);
   const textWithoutHtml = stripHTMLTags(text);
-  console.log(textWithoutHtml);
+
   return (
     <Link
       href={
