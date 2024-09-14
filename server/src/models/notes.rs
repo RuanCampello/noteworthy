@@ -1,19 +1,18 @@
-use super::sea_orm_active_enums::Colour;
+use super::enums::Colour;
 use chrono::NaiveDateTime;
-use sea_orm::{entity::prelude::*, FromQueryResult};
-use serde::{Deserialize, Serialize};
-use sqlx::{Decode, FromRow};
+use serde::Serialize;
+use sqlx::FromRow;
 use ts_rs::TS;
 use uuid::Uuid;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, FromRow)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct Note {
   pub id: Uuid,
   pub title: String,
   pub content: String,
   pub colour: Colour,
-  #[serde(rename = "userId")]
+  #[sqlx(rename = "userId")]
   pub user_id: String,
   pub created_at: NaiveDateTime,
   pub is_archived: bool,
@@ -22,7 +21,7 @@ pub struct Note {
   pub last_update: NaiveDateTime,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, TS)]
+#[derive(Debug, Serialize, FromRow, TS)]
 #[ts(export, rename = "Note")]
 #[serde(rename_all = "camelCase")]
 pub struct NoteWithUserPrefs {
@@ -31,7 +30,7 @@ pub struct NoteWithUserPrefs {
   pub title: String,
   pub content: String,
   pub colour: String,
-  #[serde(rename = "userId")]
+  #[sqlx(rename = "userId")]
   pub user_id: String,
   #[ts(type = "string")]
   pub created_at: NaiveDateTime,
@@ -53,8 +52,7 @@ pub struct PartialNote {
   pub id: Uuid,
   pub title: String,
   pub content: String,
-  #[ts(type = "string")]
-  pub colour: Colour,
+  pub colour: String,
   #[ts(type = "string")]
   pub created_at: NaiveDateTime,
 }

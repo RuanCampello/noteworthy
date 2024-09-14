@@ -1,9 +1,7 @@
-use crate::{
-  errors::NoteError, repositories::note_repository::NoteRepository, utils::middleware::AuthUser,
-};
+use crate::{repositories::note_repository::NoteRepository, utils::middleware::AuthUser};
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
-use tracing::{error, info};
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -25,10 +23,7 @@ pub async fn create_note(
 ) -> impl IntoResponse {
   let id = match repository.new_note(&payload, &user.id).await {
     Ok(id) => id,
-    Err(e) => {
-      error!("Something went wrong: {:#?}", e);
-      return e.into_response();
-    }
+    Err(e) => return e.into_response(),
   };
 
   (StatusCode::CREATED, Json(id)).into_response()

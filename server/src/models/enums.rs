@@ -1,7 +1,6 @@
-use sea_orm::entity::prelude::*;
-use serde::{Deserialize, Serialize, Serializer};
-use sqlx::{Encode, Type};
 use crate::utils::colour::get_random_colour;
+use serde::{Deserialize, Serialize, Serializer};
+use sqlx::Type;
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq, Type)]
 pub enum Colour {
@@ -16,12 +15,9 @@ pub enum Colour {
   Tiffany,
   Wisteria,
 }
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "NoteFormat")]
+#[derive(Debug, Clone, PartialEq, Eq, Type, Serialize)]
 pub enum NoteFormat {
-  #[sea_orm(string_value = "full")]
   Full,
-  #[sea_orm(string_value = "slim")]
   Slim,
 }
 

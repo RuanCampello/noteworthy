@@ -2,10 +2,7 @@ use crate::models::notes::NoteWithUserPrefs;
 use crate::{
   controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
-  models::{
-    notes::PartialNote,
-    sea_orm_active_enums::Colour,
-  },
+  models::{enums::Colour, notes::PartialNote},
 };
 use sqlx::PgPool;
 use std::sync::Arc;
@@ -27,10 +24,12 @@ impl NoteRepository {
     let colour = match &req.colour {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
     };
+    
+    // TODO: validate colour instead of this conversion
 
     let query = r#"
-      INSERT INTO notes (title, content, userId, colour)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO notes (title, content, "userId", colour)
+      VALUES ($1, $2, $3, $4::colour)
       RETURNING id;
     "#;
 
@@ -38,7 +37,7 @@ impl NoteRepository {
       .bind(&req.title)
       .bind(&req.content)
       .bind(user_id)
-      .bind(colour)
+      .bind(colour.colour_name())
       .fetch_one(&*self.database)
       .await
       .map_err(|e| NoteError::InsertError(e))?;
@@ -49,7 +48,7 @@ impl NoteRepository {
   pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
     let query = r#"
       DELETE FROM notes
-      WHERE id = $1 AND userId = $2;
+      WHERE id = $1 AND "userId" = $2;
     "#;
 
     sqlx::query(query)
@@ -73,15 +72,15 @@ impl NoteRepository {
 
     let query = r#"
       UPDATE notes
-      SET title = $3, colour = $4
-      WHERE id = $1 AND user_id = $2;
+      SET title = $3, colour = $4::colour
+      WHERE id = $1 AND "userId" = $2;
     "#;
 
     sqlx::query(query)
       .bind(id)
       .bind(user_id)
       .bind(req.title)
-      .bind(colour)
+      .bind(colour.colour_name())
       .execute(&*self.database)
       .await?;
 
@@ -123,9 +122,9 @@ impl NoteRepository {
     is_arc: bool,
   ) -> Result<Vec<PartialNote>, NoteError> {
     let query = r#"
-      SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+      SELECT LEFT(content, 250) AS content, id, title, colour::text AS colour, created_at
       FROM notes
-      WHERE userId = $1
+      WHERE "userId" = $1
         AND is_favourite = $2
         AND is_archived = $3
       ORDER BY last_update DESC;

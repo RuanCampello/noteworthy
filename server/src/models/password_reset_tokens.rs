@@ -1,18 +1,9 @@
-use sea_orm::entity::prelude::*;
+use chrono::NaiveDateTime;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "password_reset_tokens")]
-pub struct Model {
-  #[sea_orm(primary_key, column_type = "Text")]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PasswordResetToken {
   pub id: String,
-  #[sea_orm(column_type = "Text")]
   pub email: String,
-  #[sea_orm(column_type = "Text", unique)]
   pub token: String,
-  pub expires: DateTime,
+  pub expires: NaiveDateTime,
 }
-
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
-
-impl ActiveModelBehavior for ActiveModel {}

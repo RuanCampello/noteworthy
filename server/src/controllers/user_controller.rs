@@ -1,13 +1,12 @@
-use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
-use serde::Deserialize;
-use tracing::{error, info};
-
 use crate::{
   app_state::EnvVariables,
   errors::TokenError,
   repositories::user_repository::{UserRepository, UserRepositoryTrait},
   utils::jwt::{refresh_jwt, JwtDecoder},
 };
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
+use serde::Deserialize;
+use tracing::{error, info};
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -21,7 +20,10 @@ pub async fn login(
 ) -> impl IntoResponse {
   match repository.log_user(&payload).await {
     Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
-    Ok(token) => (StatusCode::OK, Json(token)).into_response(),
+    Ok(token) => {
+      info!("response on login {}", token);
+      (StatusCode::OK, Json(token)).into_response()
+    }
   }
 }
 

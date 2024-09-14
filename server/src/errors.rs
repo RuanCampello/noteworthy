@@ -2,9 +2,9 @@ use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
-use uuid::Uuid;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
+use uuid::Uuid;
 
 #[derive(Error, Debug)]
 pub enum NoteError {

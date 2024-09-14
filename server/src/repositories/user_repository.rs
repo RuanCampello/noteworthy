@@ -1,34 +1,34 @@
-use aws_sdk_s3::{presigning::PresigningConfig, Client};
-use axum::async_trait;
-use bcrypt::{hash, verify};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
-use std::{sync::Arc, time::Duration};
-
+use crate::models::users::User;
 use crate::{
   controllers::user_controller::{LoginRequest, RegisterRequest},
   errors::UserError,
-  models::users::{self, Entity as User},
   utils::jwt::generate_jwt,
 };
+use aws_sdk_s3::{presigning::PresigningConfig, Client};
+use axum::async_trait;
+use bcrypt::{hash, verify};
+use sqlx::PgPool;
+use std::{sync::Arc, time::Duration};
+use tracing::info;
 
 #[derive(Clone)]
 pub struct UserRepository {
-  database: Arc<DatabaseConnection>,
+  database: Arc<PgPool>,
   r2: Arc<Client>,
 }
 
 #[async_trait]
 pub trait UserRepositoryTrait {
-  fn new(database: &Arc<DatabaseConnection>, r2: &Arc<Client>) -> Self;
+  fn new(database: &Arc<PgPool>, r2: &Arc<Client>) -> Self;
   async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError>;
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError>;
-  async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError>;
+  async fn find_user_by_email(&self, email: &str) -> Result<User, UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
 }
 
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
-  fn new(database: &Arc<DatabaseConnection>, r2: &Arc<Client>) -> Self {
+  fn new(database: &Arc<PgPool>, r2: &Arc<Client>) -> Self {
     Self {
       database: Arc::clone(database),
       r2: Arc::clone(r2),
@@ -36,6 +36,7 @@ impl UserRepositoryTrait for UserRepository {
   }
   async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
     let user = self.find_user_by_email(&req.email).await?;
+    info!("user on login {:?}", user);
 
     let correct_password =
       verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
@@ -53,28 +54,37 @@ impl UserRepositoryTrait for UserRepository {
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError> {
     let hash_password = hash(req.password, 10)?;
 
-    let user = users::ActiveModel {
-      id: Set(cuid2::create_id()),
-      name: Set(Some(req.name)),
-      email: Set(Some(req.email)),
-      password: Set(Some(hash_password)),
-      ..Default::default()
-    }
-    .insert(&*self.database)
-    .await?;
+    let query = r#"
+      INSERT INTO users (id, email, name, password)
+      VALUES ($1, $2, $3, $4) RETURNING id;
+    "#;
 
-    Ok(user.id)
+    let id: String = sqlx::query_scalar(query)
+      .bind(cuid2::create_id())
+      .bind(req.email)
+      .bind(req.name)
+      .bind(hash_password)
+      .fetch_one(&*self.database)
+      .await?;
+
+    Ok(id)
   }
 
-  async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError> {
-    match User::find()
-      .filter(users::Column::Email.eq(email))
-      .one(&*self.database)
-      .await?
-    {
-      None => Err(UserError::UserNotFound),
-      Some(user) => Ok(user),
-    }
+  async fn find_user_by_email(&self, email: &str) -> Result<User, UserError> {
+    let query = r#"
+      SELECT * FROM users
+      WHERE email = $1;
+    "#;
+
+    let user = sqlx::query_as::<_, User>(query)
+      .bind(email)
+      .fetch_one(&*self.database)
+      .await
+      .map_err(|_| UserError::UserNotFound);
+
+    info!("user found {:?}", user);
+
+    Ok(user?)
   }
 
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {

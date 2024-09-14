@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::models::sea_orm_active_enums::Colour;
+use crate::models::enums::Colour;
 
 const COLOURS: &[Colour] = &[
   Colour::Blue,
