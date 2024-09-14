@@ -1,13 +1,10 @@
 'use server';
 
-import { currentUser, getNoteById } from '@/queries/note';
+import { currentUser } from '@/queries/note';
 import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
-import { getPathnameParams } from '@/utils/format-notes';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
 
 export async function createPlaceholderNote(userId: string) {
   const { name } = getRandomColour();
@@ -18,31 +15,6 @@ export async function createPlaceholderNote(userId: string) {
     title: 'Hello World 📝',
     userId,
   });
-}
-
-export async function togglePublishState(id: string, currentState: boolean) {
-  try {
-    const [selectedNote, user] = await Promise.all([
-      getNoteById(id),
-      currentUser(),
-    ]);
-    if (!selectedNote || user?.id !== selectedNote.userId) return;
-
-    await db
-      .update(note)
-      .set({
-        isPublic: !currentState,
-      })
-      .where(eq(note.id, id));
-    const { basePath } = getPathnameParams();
-
-    if (basePath) {
-      revalidatePath(`${basePath}/${id}`);
-    }
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
 
 export async function createFastNote() {

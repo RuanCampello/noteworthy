@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/ui/dialog';
 import { Button } from '@/ui/button';
-import { togglePublishState } from '@/server/actions/note';
+import { togglePublishState } from '@/actions';
 import { headers } from 'next/headers';
 import SubmitButton from '@/components/SubmitButton';
 import { Globe } from 'lucide-react';
@@ -54,7 +54,7 @@ export default async function PublishNoteDialog() {
     'use server';
 
     if (isPublic === null) return;
-    await togglePublishState(noteId, isPublic);
+    await togglePublishState(noteId);
   }
 
   return (

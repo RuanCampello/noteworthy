@@ -18,7 +18,7 @@ import { Input } from '@/ui/input';
 import { useToast } from '@/ui/use-toast';
 import { useEffect, useState, useTransition } from 'react';
 import { registerFormSchema } from '@/schemas';
-import { register } from '@/actions/register';
+import { register } from '@/actions';
 
 import GoogleLogo from '@/assets/third-part-login/Google.png';
 import GithubLogo from '@/assets/third-part-login/GitHub.svg';
@@ -49,6 +49,7 @@ export default function RegisterForm() {
       if (error) setError(error);
     });
   }
+
   useEffect(() => {
     if (error) {
       toast({
