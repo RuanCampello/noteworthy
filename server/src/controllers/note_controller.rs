@@ -93,7 +93,7 @@ pub async fn update_note_archived_status(
   Path(id): Path<Uuid>,
   Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-  match repository.toggle_note_favourite(id, &user.id).await {
+  match repository.toggle_note_archived(id, &user.id).await {
     Ok(_) => StatusCode::OK.into_response(),
     Err(e) => e.into_response(),
   }

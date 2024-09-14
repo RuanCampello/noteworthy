@@ -23,7 +23,11 @@ impl IntoResponse for NoteError {
       NoteError::InsertError(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
 
-    let body = self.to_string();
+    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      String::from("An internal server error occurred")
+    } else {
+      self.to_string()
+    };
 
     (status, body).into_response()
   }

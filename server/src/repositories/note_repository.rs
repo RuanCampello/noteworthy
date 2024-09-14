@@ -4,6 +4,7 @@ use crate::{
   errors::NoteError,
   models::{enums::Colour, notes::PartialNote},
 };
+use chrono::Local;
 use sqlx::PgPool;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -24,12 +25,13 @@ impl NoteRepository {
     let colour = match &req.colour {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
     };
-    
+
     // TODO: validate colour instead of this conversion
 
+    let localtime = Local::now().naive_local();
     let query = r#"
-      INSERT INTO notes (title, content, "userId", colour)
-      VALUES ($1, $2, $3, $4::colour)
+      INSERT INTO notes (title, content, "userId", colour, created_at, last_update)
+      VALUES ($1, $2, $3, $4::colour, $5, $5)
       RETURNING id;
     "#;
 
@@ -38,6 +40,7 @@ impl NoteRepository {
       .bind(&req.content)
       .bind(user_id)
       .bind(colour.colour_name())
+      .bind(localtime)
       .fetch_one(&*self.database)
       .await
       .map_err(|e| NoteError::InsertError(e))?;
@@ -72,15 +75,17 @@ impl NoteRepository {
 
     let query = r#"
       UPDATE notes
-      SET title = $3, colour = $4::colour
+      SET title = $3, colour = $4::colour, last_update = $5
       WHERE id = $1 AND "userId" = $2;
     "#;
+    let localtime = Local::now().naive_local();
 
     sqlx::query(query)
       .bind(id)
       .bind(user_id)
       .bind(req.title)
       .bind(colour.colour_name())
+      .bind(localtime)
       .execute(&*self.database)
       .await?;
 
@@ -148,14 +153,16 @@ impl NoteRepository {
   ) -> Result<(), NoteError> {
     let query = r#"
       UPDATE notes
-      SET content = $3
-      WHERE id = $1 AND userId = $2;
+      SET content = $3, last_update = $4
+      WHERE id = $1 AND "userId" = $2;
     "#;
+    let localtime = Local::now().naive_local();
 
     sqlx::query(query)
       .bind(id)
       .bind(user_id)
       .bind(content)
+      .bind(localtime)
       .execute(&*self.database)
       .await?;
 
