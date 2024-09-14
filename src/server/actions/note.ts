@@ -5,74 +5,9 @@ import { db } from '@/server/db';
 import { note } from '@/server/db/schema';
 import { getRandomColour } from '@/utils/colours';
 import { helloWorld } from '@/utils/constants/hello-world';
-import { and, eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { getPathnameParams } from '@/utils/format-notes';
-
-export async function toggleNoteFavourite(id: string) {
-  const { basePath, origin } = getPathnameParams();
-  const user = await currentUser();
-  if (!user || !user?.id) return;
-
-  const selectedNote = await getNoteById(id);
-  if (!selectedNote || selectedNote.userId !== user.id) return;
-
-  if (!selectedNote.isArchived) {
-    if (selectedNote.isFavourite === true) {
-      await db
-        .update(note)
-        .set({ isFavourite: false, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, user.id)));
-    } else {
-      await db
-        .update(note)
-        .set({ isFavourite: true, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, user.id)));
-    }
-  }
-
-  if (basePath === 'favourites') {
-    const redirectUrl = new URL(`${origin}/notes/${id}`);
-    redirect(redirectUrl.toString());
-  } else if (basePath === 'notes') {
-    const redirectUrl = new URL(`${origin}/favourites/${id}`);
-    redirect(redirectUrl.toString());
-  } else {
-    revalidatePath('/');
-  }
-}
-
-export async function toggleNoteArchive(id: string) {
-  const { basePath, origin } = getPathnameParams();
-  const user = await currentUser();
-  if (!user || !user?.id) return;
-
-  const selectedNote = await getNoteById(id);
-  if (!selectedNote || selectedNote.userId !== user.id) return;
-
-  if (!selectedNote.isFavourite) {
-    if (selectedNote.isArchived == true) {
-      await db
-        .update(note)
-        .set({ isArchived: false, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, user.id)));
-    } else {
-      await db
-        .update(note)
-        .set({ isArchived: true, lastUpdate: new Date() })
-        .where(and(eq(note.id, id), eq(note.userId, user.id)));
-    }
-  }
-
-  if (basePath === 'archived') {
-    const redirectUrl = new URL(`${origin}/notes/${id}`);
-    redirect(redirectUrl.toString());
-  } else if (basePath === 'notes') {
-    const redirectUrl = new URL(`${origin}/archived/${id}`);
-    redirect(redirectUrl.toString());
-  }
-}
+import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 export async function createPlaceholderNote(userId: string) {
   const { name } = getRandomColour();

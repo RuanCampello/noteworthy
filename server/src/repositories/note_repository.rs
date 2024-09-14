@@ -1,8 +1,8 @@
 use chrono::Local;
 use sea_orm::{
   prelude::{Expr, Uuid},
-  ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend, EntityTrait,
-  FromQueryResult, QueryFilter, QueryOrder, QuerySelect, Set, Statement,
+  ActiveModelTrait, ActiveValue, ColumnTrait, ConnectionTrait, DatabaseBackend, DatabaseConnection,
+  DbBackend, EntityTrait, FromQueryResult, QueryFilter, QueryOrder, QuerySelect, Set, Statement,
 };
 use std::sync::Arc;
 
@@ -28,11 +28,7 @@ impl NoteRepository {
     }
   }
 
-  pub async fn new_note(
-    &self,
-    req: &CreateNoteRequest,
-    user_id: &str,
-  ) -> Result<Uuid, NoteError> {
+  pub async fn new_note(&self, req: &CreateNoteRequest, user_id: &str) -> Result<Uuid, NoteError> {
     let colour = match &req.colour {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
     };
@@ -53,20 +49,15 @@ impl NoteRepository {
     };
 
     let note = note
-        .insert(&*self.database)
-        .await
-        .map_err(|e| NoteError::InsertError(e))?;
+      .insert(&*self.database)
+      .await
+      .map_err(|e| NoteError::InsertError(e))?;
 
     Ok(note.id)
   }
 
   pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
-    let note = Note::find_by_id(id)
-        .filter(NoteColumn::UserId.eq(user_id))
-        .one(&*self.database)
-        .await?
-        .ok_or(NoteError::NoteNotFound(id))?;
-
+    let note = get_user_note_by_id(&self.database, id, user_id).await?;
     Note::delete_by_id(note.id).exec(&*self.database).await?;
 
     Ok(())
@@ -78,11 +69,7 @@ impl NoteRepository {
     id: Uuid,
     req: UpdateNoteRequest,
   ) -> Result<(), NoteError> {
-    let old_note = Note::find_by_id(id)
-        .filter(NoteColumn::UserId.eq(user_id))
-        .one(&*self.database)
-        .await?
-        .ok_or(NoteError::NoteNotFound(id))?;
+    let old_note = get_user_note_by_id(&self.database, id, user_id).await?;
 
     let colour = match &req.colour {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
@@ -122,9 +109,9 @@ impl NoteRepository {
       query,
       [id.into(), user_id.into()],
     ))
-        .one(self.database.as_ref())
-        .await?
-        .unwrap();
+    .one(self.database.as_ref())
+    .await?
+    .unwrap();
 
     Ok(result)
   }
@@ -136,21 +123,21 @@ impl NoteRepository {
     is_arc: bool,
   ) -> Result<Vec<notes::PartialNote>, NoteError> {
     let notes = Note::find()
-        .filter(NoteColumn::UserId.eq(user_id))
-        .filter(NoteColumn::IsFavourite.eq(is_fav))
-        .filter(NoteColumn::IsArchived.eq(is_arc))
-        .select_only()
-        .expr_as(Expr::cust("LEFT(content, 250)"), "content")
-        .columns([
-          NoteColumn::Id,
-          NoteColumn::Title,
-          NoteColumn::Colour,
-          NoteColumn::CreatedAt,
-        ])
-        .order_by_desc(NoteColumn::LastUpdate)
-        .into_model::<notes::PartialNote>()
-        .all(&*self.database)
-        .await?;
+      .filter(NoteColumn::UserId.eq(user_id))
+      .filter(NoteColumn::IsFavourite.eq(is_fav))
+      .filter(NoteColumn::IsArchived.eq(is_arc))
+      .select_only()
+      .expr_as(Expr::cust("LEFT(content, 250)"), "content")
+      .columns([
+        NoteColumn::Id,
+        NoteColumn::Title,
+        NoteColumn::Colour,
+        NoteColumn::CreatedAt,
+      ])
+      .order_by_desc(NoteColumn::LastUpdate)
+      .into_model::<notes::PartialNote>()
+      .all(&*self.database)
+      .await?;
     Ok(notes)
   }
 
@@ -160,14 +147,7 @@ impl NoteRepository {
     user_id: &str,
     content: String,
   ) -> Result<(), NoteError> {
-    let note = match Note::find_by_id(id)
-        .filter(NoteColumn::UserId.eq(user_id))
-        .one(&*self.database)
-        .await?
-    {
-      Some(note) => note,
-      None => return Err(NoteError::NoteNotFound(id)),
-    };
+    let note = get_user_note_by_id(&self.database, id, user_id).await?;
 
     let mut note: notes::ActiveModel = note.into();
     note.content = Set(content);
@@ -178,22 +158,76 @@ impl NoteRepository {
   }
 
   pub async fn toggle_note_favourite(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
-    let note = match Note::find_by_id(id)
-        .filter(NoteColumn::UserId.eq(user_id))
-        .one(&*self.database)
-        .await? {
-      Some(note) => note,
-      None => return Err(NoteError::NoteNotFound(id)),
-    };
+    let query = r#"
+        UPDATE notes
+        SET is_favourite = NOT is_favourite
+        WHERE id = $1
+        AND "userId" = $2;
+    "#;
 
-    let mut note: notes::ActiveModel = note.into();
-    if note.is_favourite.unwrap() == true {
-      note.is_favourite = Set(false);
-    } else {
-      note.is_favourite = Set(true);
-    }
+    self
+      .database
+      .execute(Statement::from_sql_and_values(
+        DatabaseBackend::Postgres,
+        query,
+        [id.into(), user_id.into()],
+      ))
+      .await?;
 
-    note.update(&*self.database).await.map_err(|e| NoteError::InsertError(e))?;
     Ok(())
+  }
+  pub async fn toggle_note_archived(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
+    let query = r#"
+        UPDATE notes
+        SET is_archived = NOT is_archived
+        WHERE id = $1
+        AND "userId" = $2;
+    "#;
+
+    self
+      .database
+      .execute(Statement::from_sql_and_values(
+        DatabaseBackend::Postgres,
+        query,
+        [id.into(), user_id.into()],
+      ))
+      .await?;
+
+    Ok(())
+  }
+
+  pub async fn toggle_note_publicity(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
+    let query = r#"
+        UPDATE notes
+        SET is_public = NOT is_public
+        WHERE id = $1
+        AND "userId" = $2;
+    "#;
+
+    let res = self
+      .database
+      .execute(Statement::from_sql_and_values(
+        DatabaseBackend::Postgres,
+        query,
+        [id.into(), user_id.into()],
+      ))
+      .await?;
+
+    Ok(())
+  }
+}
+
+pub async fn get_user_note_by_id(
+  database_connection: &Arc<DatabaseConnection>,
+  id: Uuid,
+  user_id: &str,
+) -> Result<notes::Model, NoteError> {
+  match Note::find_by_id(id)
+    .filter(NoteColumn::UserId.eq(user_id))
+    .one(&**database_connection)
+    .await?
+  {
+    Some(note) => Ok(note),
+    None => Err(NoteError::NoteNotFound(id)),
   }
 }

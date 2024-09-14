@@ -1,6 +1,6 @@
 'use client';
 
-import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
+import { toggleNoteFavourite, toggleNoteArchived } from '@/actions';
 import DropdownButton from '@/components/DropdownButton';
 import type { Note } from '@/types/Note';
 import {
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useTransition } from 'react';
-import { Colour } from '../../types/database-types';
+import type { Colour } from '@/types/Enums';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
 
@@ -41,7 +41,7 @@ export default function Dropdown({ note, children }: DropdownProps) {
 
   function handleToggleArchive() {
     startArchiveTransition(async () => {
-      await toggleNoteArchive(note.id);
+      await toggleNoteArchived(note.id);
     });
   }
 
@@ -62,7 +62,7 @@ export default function Dropdown({ note, children }: DropdownProps) {
           <DropdownButton
             loading={favouriteLoading}
             disabled={isArchived || favouriteLoading}
-            active={!!isFavourite}
+            active={isFavourite}
             color='favourite'
             text={isFavourite ? t('unfav') : t('fav')}
             icon={isFavourite ? <StarOff /> : <Star />}
@@ -75,7 +75,7 @@ export default function Dropdown({ note, children }: DropdownProps) {
             color='archive'
             text={isArchived ? t('unarc') : t('arc')}
             disabled={isFavourite || archiveLoading}
-            active={!!isArchived}
+            active={isArchived}
           />
         </form>
         <EditNoteDialog

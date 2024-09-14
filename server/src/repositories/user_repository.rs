@@ -5,10 +5,10 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, Qu
 use std::{sync::Arc, time::Duration};
 
 use crate::{
-    controllers::user_controller::{LoginRequest, RegisterRequest},
-    errors::UserError,
-    models::users::{self, Entity as User},
-    utils::jwt::generate_jwt,
+  controllers::user_controller::{LoginRequest, RegisterRequest},
+  errors::UserError,
+  models::users::{self, Entity as User},
+  utils::jwt::generate_jwt,
 };
 
 #[derive(Clone)]
@@ -38,14 +38,14 @@ impl UserRepositoryTrait for UserRepository {
     let user = self.find_user_by_email(&req.email).await?;
 
     let correct_password =
-        verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
+      verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
 
     if !correct_password {
       return Err(UserError::InvalidCredentials);
     }
 
     let token = generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
-        .expect("Error generation JWT token");
+      .expect("Error generation JWT token");
 
     Ok(token)
   }
@@ -60,17 +60,17 @@ impl UserRepositoryTrait for UserRepository {
       password: Set(Some(hash_password)),
       ..Default::default()
     }
-        .insert(&*self.database)
-        .await?;
+    .insert(&*self.database)
+    .await?;
 
     Ok(user.id)
   }
 
   async fn find_user_by_email(&self, email: &str) -> Result<users::Model, UserError> {
     match User::find()
-        .filter(users::Column::Email.eq(email))
-        .one(&*self.database)
-        .await?
+      .filter(users::Column::Email.eq(email))
+      .one(&*self.database)
+      .await?
     {
       None => Err(UserError::UserNotFound),
       Some(user) => Ok(user),
@@ -79,18 +79,18 @@ impl UserRepositoryTrait for UserRepository {
 
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
     let presigned_url = &self
-        .r2
-        .get_object()
-        .bucket("noteworthy-images-bucket")
-        .key(&id)
-        .presigned(
-          PresigningConfig::builder()
-              .expires_in(Duration::from_secs(3600))
-              .build()
-              .unwrap(),
-        )
-        .await
-        .map_err(|e| UserError::PresignedUrl(e))?;
+      .r2
+      .get_object()
+      .bucket("noteworthy-images-bucket")
+      .key(&id)
+      .presigned(
+        PresigningConfig::builder()
+          .expires_in(Duration::from_secs(3600))
+          .build()
+          .unwrap(),
+      )
+      .await
+      .map_err(|e| UserError::PresignedUrl(e))?;
     Ok(presigned_url.uri().to_owned())
   }
 }

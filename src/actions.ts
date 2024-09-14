@@ -116,6 +116,62 @@ export async function updateNoteContent(id: string, content: string) {
   }
 }
 
+// Make a fetch with a PATCH method to the selected note/favourite endpoint
+// and redirect the user based on note isFavourite (boolean) attribute.
+// Also, revalidates the note with its new status and the sidebar.
+export async function toggleNoteFavourite(id: string) {
+  const { basePath, origin } = getPathnameParams();
+  const user = await currentUser();
+  if (!user || !user?.accessToken) return;
+
+  await fetch(`http://localhost:6969/notes/${id}/favourite`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+  });
+
+  //   revalidateTag('sidebar-notes');
+  //   revalidateTag('note-page');
+  //
+  //   if (basePath === 'favourites') {
+  //     const redirectUrl = new URL(`${origin}/notes/${id}`);
+  //     redirect(redirectUrl.toString());
+  //   } else if (basePath === 'notes') {
+  //     const redirectUrl = new URL(`${origin}/favourites/${id}`);
+  //     redirect(redirectUrl.toString());
+  //   } else {
+  //     revalidatePath('/');
+  //   }
+}
+
+// Make a fetch with a PATCH method to the selected note/archive endpoint
+// and redirect the user based on note isArchived (boolean) attribute.
+// Also, revalidates the note with its new status and the sidebar.
+export async function toggleNoteArchived(id: string) {
+  const { basePath, origin } = getPathnameParams();
+  const user = await currentUser();
+  if (!user || !user?.accessToken) return;
+
+  await fetch(`http://localhost:6969/notes/${id}/archived`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+  });
+
+  revalidateTag('sidebar-notes');
+  revalidateTag('note-page');
+
+  if (basePath === 'archived') {
+    const redirectUrl = new URL(`${origin}/notes/${id}`);
+    redirect(redirectUrl.toString());
+  } else if (basePath === 'notes') {
+    const redirectUrl = new URL(`${origin}/archived/${id}`);
+    redirect(redirectUrl.toString());
+  }
+}
+
 // Checks if the current user has an image, if not
 // fetch the current user /profile endpoint with a GET method
 // and search for a profile image in CF.

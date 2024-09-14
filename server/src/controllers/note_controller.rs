@@ -4,7 +4,7 @@ use crate::{
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
-use tracing::error;
+use tracing::{error, info};
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -76,8 +76,8 @@ pub async fn update_note_content(
   Json(payload): Json<UpdateNoteContentRequest>,
 ) -> impl IntoResponse {
   match repository
-      .edit_note_content(id, &user.id, payload.content)
-      .await
+    .edit_note_content(id, &user.id, payload.content)
+    .await
   {
     Ok(_) => StatusCode::NO_CONTENT.into_response(),
     Err(e) => e.into_response(),
@@ -89,10 +89,27 @@ pub async fn update_note_favourite_status(
   Path(id): Path<Uuid>,
   Extension(repository): Extension<NoteRepository>,
 ) -> impl IntoResponse {
-  match repository
-      .toggle_note_favourite(id, &user.id)
-      .await
-  {
+  match repository.toggle_note_favourite(id, &user.id).await {
+    Ok(_) => StatusCode::OK.into_response(),
+    Err(e) => e.into_response(),
+  }
+}
+pub async fn update_note_archived_status(
+  AuthUser(user): AuthUser,
+  Path(id): Path<Uuid>,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.toggle_note_favourite(id, &user.id).await {
+    Ok(_) => StatusCode::OK.into_response(),
+    Err(e) => e.into_response(),
+  }
+}
+pub async fn update_note_public_status(
+  AuthUser(user): AuthUser,
+  Path(id): Path<Uuid>,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.toggle_note_publicity(id, &user.id).await {
     Ok(_) => StatusCode::OK.into_response(),
     Err(e) => e.into_response(),
   }

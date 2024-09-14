@@ -1,8 +1,8 @@
 use anyhow::bail;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
-    config::{Credentials, SharedCredentialsProvider},
-    Client,
+  config::{Credentials, SharedCredentialsProvider},
+  Client,
 };
 use dotenv;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
@@ -72,22 +72,23 @@ impl AppState {
     let shared_cred = SharedCredentialsProvider::new(credentials);
 
     let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28())
-        .await
-        .into_builder()
-        .credentials_provider(shared_cred)
-        .endpoint_url(endpoint)
-        .region(Region::new("us-east-1"))
-        .build();
+      .await
+      .into_builder()
+      .credentials_provider(shared_cred)
+      .endpoint_url(endpoint)
+      .region(Region::new("us-east-1"))
+      .build();
 
     let r2 = aws_sdk_s3::Client::new(&s3_config);
 
     let mut opt = ConnectOptions::new(env.database_url.to_string());
-    opt.max_connections(80)
-        .connect_timeout(Duration::from_secs(60))
-        .idle_timeout(Duration::from_secs(60))
-        .max_lifetime(Duration::from_secs(200))
-        .sqlx_slow_statements_logging_settings(LevelFilter::Trace, Duration::from_secs(10))
-        .sqlx_logging(true);
+    opt
+      .max_connections(80)
+      .connect_timeout(Duration::from_secs(60))
+      .idle_timeout(Duration::from_secs(60))
+      .max_lifetime(Duration::from_secs(200))
+      .sqlx_slow_statements_logging_settings(LevelFilter::Trace, Duration::from_secs(10))
+      .sqlx_logging(true);
 
     let db = Database::connect(opt).await?;
 

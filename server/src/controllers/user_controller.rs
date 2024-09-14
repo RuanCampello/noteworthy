@@ -71,7 +71,7 @@ pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse
         StatusCode::BAD_REQUEST,
         TokenError::InvalidFormat.to_string(),
       )
-          .into_response()
+        .into_response()
     }
   };
 
