@@ -5,22 +5,27 @@ use bcrypt::BcryptError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
 use uuid::Uuid;
+use validator::ValidationErrors;
 
 #[derive(Error, Debug)]
 pub enum NoteError {
-  #[error("User with id {0} was not found")]
-  NoteOwnerNotFound(String),
-  #[error("Note with given id {0} was not found")]
+  #[error("{0} is an invalid colour.")]
+  InvalidColour(String),
+  #[error("Note with given id {0} was not found.")]
   NoteNotFound(Uuid),
-  #[error("Error creating note: {0}")]
-  InsertError(#[from] SqlxError),
+  #[error("Error during request validation.")]
+  Validation(#[from] ValidationErrors),
+  #[error("Error creating note: {0}.")]
+  Sqlx(#[from] SqlxError),
 }
 
 impl IntoResponse for NoteError {
   fn into_response(self) -> Response {
     let status = match self {
-      NoteError::NoteOwnerNotFound(_) | NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
-      NoteError::InsertError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+      NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
+      NoteError::Validation(_) => StatusCode::BAD_REQUEST,
+      NoteError::InvalidColour(_) => StatusCode::UNPROCESSABLE_ENTITY,
+      NoteError::Sqlx(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
@@ -34,16 +39,39 @@ impl IntoResponse for NoteError {
 }
 #[derive(Error, Debug)]
 pub enum UserError {
-  #[error("This account was not found in the database")]
+  #[error("This account was not found in the database.")]
   UserNotFound,
-  #[error("You entered the wrong credentials")]
+  #[error("You entered the wrong credentials.")]
   InvalidCredentials,
-  #[error("Error on database: {0}")]
+  #[error("Error on database: {0}.")]
   DatabaseError(#[from] SqlxError),
-  #[error("Error during decryption: {0}")]
+  #[error("Error during decryption: {0}.")]
   DecryptError(#[from] BcryptError),
-  #[error("Unexpected error on presigned url generation: {0}")]
+  #[error("Unexpected error on presigned url generation: {0}.")]
   PresignedUrl(#[from] SdkError<GetObjectError>),
+  #[error("Error during request validation.")]
+  Validation(#[from] ValidationErrors),
+}
+
+impl IntoResponse for UserError {
+  fn into_response(self) -> Response {
+    let status = match self {
+      UserError::UserNotFound => StatusCode::NOT_FOUND,
+      UserError::Validation(_) => StatusCode::UNPROCESSABLE_ENTITY,
+      UserError::InvalidCredentials => StatusCode::BAD_REQUEST,
+      UserError::DecryptError(_) | UserError::DatabaseError(_) | UserError::PresignedUrl(_) => {
+        StatusCode::INTERNAL_SERVER_ERROR
+      }
+    };
+
+    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      String::from("An internal server error occurred")
+    } else {
+      self.to_string()
+    };
+
+    (status, body).into_response()
+  }
 }
 
 #[derive(Error, Debug)]

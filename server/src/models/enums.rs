@@ -1,3 +1,4 @@
+use crate::errors::NoteError;
 use crate::utils::colour::get_random_colour;
 use serde::{Deserialize, Serialize, Serializer};
 use sqlx::Type;
@@ -21,9 +22,9 @@ pub enum NoteFormat {
   Slim,
 }
 
-impl From<&str> for Colour {
-  fn from(s: &str) -> Self {
-    match s.to_lowercase().as_str() {
+impl Colour {
+  pub fn from_str(s: &str) -> Result<Self, NoteError> {
+    let colour = match s.to_lowercase().as_str() {
       "blue" => Colour::Blue,
       "cambridge" => Colour::Cambridge,
       "melon" => Colour::Melon,
@@ -34,8 +35,10 @@ impl From<&str> for Colour {
       "tickle" => Colour::Tickle,
       "tiffany" => Colour::Tiffany,
       "wisteria" => Colour::Wisteria,
-      _ => get_random_colour(),
-    }
+      "random" => get_random_colour(),
+      _ => return Err(NoteError::InvalidColour(s.to_owned())),
+    };
+    Ok(colour)
   }
 }
 

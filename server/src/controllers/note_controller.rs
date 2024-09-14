@@ -1,19 +1,15 @@
 use crate::{repositories::note_repository::NoteRepository, utils::middleware::AuthUser};
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use uuid::Uuid;
+use validator::Validate;
 
-#[derive(Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ColourOption {
-  Colour(String),
-}
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct CreateNoteRequest {
+  #[validate(length(min = 4))]
   pub title: String,
   pub content: Option<String>,
-  pub colour: ColourOption,
+  pub colour: String,
 }
 
 pub async fn create_note(
@@ -40,10 +36,11 @@ pub async fn delete_note(
   }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct UpdateNoteRequest {
+  #[validate(length(min = 4))]
   pub title: Option<String>,
-  pub colour: ColourOption,
+  pub colour: String,
 }
 
 pub async fn update_note(

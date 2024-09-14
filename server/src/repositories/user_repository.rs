@@ -10,6 +10,7 @@ use bcrypt::{hash, verify};
 use sqlx::PgPool;
 use std::{sync::Arc, time::Duration};
 use tracing::info;
+use validator::Validate;
 
 #[derive(Clone)]
 pub struct UserRepository {
@@ -35,8 +36,8 @@ impl UserRepositoryTrait for UserRepository {
     }
   }
   async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
+    req.validate()?;
     let user = self.find_user_by_email(&req.email).await?;
-    info!("user on login {:?}", user);
 
     let correct_password =
       verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
@@ -52,6 +53,7 @@ impl UserRepositoryTrait for UserRepository {
   }
 
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError> {
+    req.validate()?;
     let hash_password = hash(req.password, 10)?;
 
     let query = r#"

@@ -1,6 +1,6 @@
 use crate::models::notes::NoteWithUserPrefs;
 use crate::{
-  controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
+  controllers::note_controller::{CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
   models::{enums::Colour, notes::PartialNote},
 };
@@ -8,6 +8,7 @@ use chrono::Local;
 use sqlx::PgPool;
 use std::sync::Arc;
 use uuid::Uuid;
+use validator::Validate;
 
 #[derive(Clone)]
 pub struct NoteRepository {
@@ -22,11 +23,8 @@ impl NoteRepository {
   }
 
   pub async fn new_note(&self, req: &CreateNoteRequest, user_id: &str) -> Result<Uuid, NoteError> {
-    let colour = match &req.colour {
-      ColourOption::Colour(c) => Colour::from(c.as_str()),
-    };
-
-    // TODO: validate colour instead of this conversion
+    let colour = Colour::from_str(&req.colour)?;
+    req.validate()?;
 
     let localtime = Local::now().naive_local();
     let query = r#"
@@ -42,8 +40,7 @@ impl NoteRepository {
       .bind(colour.colour_name())
       .bind(localtime)
       .fetch_one(&*self.database)
-      .await
-      .map_err(|e| NoteError::InsertError(e))?;
+      .await?;
 
     Ok(id)
   }
@@ -69,9 +66,8 @@ impl NoteRepository {
     id: Uuid,
     req: UpdateNoteRequest,
   ) -> Result<(), NoteError> {
-    let colour = match &req.colour {
-      ColourOption::Colour(c) => Colour::from(c.as_str()),
-    };
+    let colour = Colour::from_str(&req.colour)?;
+    req.validate()?;
 
     let query = r#"
       UPDATE notes

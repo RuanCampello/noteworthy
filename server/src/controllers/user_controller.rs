@@ -7,10 +7,13 @@ use crate::{
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::Deserialize;
 use tracing::{error, info};
+use validator::Validate;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct LoginRequest {
+  #[validate(email)]
   pub email: String,
+  #[validate(length(min = 6))]
   pub password: String,
 }
 
@@ -19,7 +22,7 @@ pub async fn login(
   Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
   match repository.log_user(&payload).await {
-    Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    Err(e) => e.into_response(),
     Ok(token) => {
       info!("response on login {}", token);
       (StatusCode::OK, Json(token)).into_response()
@@ -47,10 +50,13 @@ pub async fn get_user_image(
   }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct RegisterRequest {
+  #[validate(length(min = 6))]
   pub name: String,
+  #[validate(length(min = 6))]
   pub password: String,
+  #[validate(email)]
   pub email: String,
 }
 
@@ -60,7 +66,7 @@ pub async fn register(
 ) -> impl IntoResponse {
   match repository.create_user(payload).await {
     Ok(id) => (StatusCode::CREATED, Json(id)).into_response(),
-    Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response(),
+    Err(e) => e.into_response(),
   }
 }
 

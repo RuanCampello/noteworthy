@@ -1,5 +1,4 @@
-pub mod prelude;
-pub mod account;
+pub mod accounts;
 pub mod folders;
 pub mod notes;
 pub mod password_reset_tokens;
