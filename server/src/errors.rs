@@ -2,7 +2,8 @@ use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
-use sea_orm::{prelude::Uuid, DbErr};
+use uuid::Uuid;
+use sqlx::Error as SqlxError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -12,7 +13,7 @@ pub enum NoteError {
   #[error("Note with given id {0} was not found")]
   NoteNotFound(Uuid),
   #[error("Error creating note: {0}")]
-  InsertError(#[from] DbErr),
+  InsertError(#[from] SqlxError),
 }
 
 impl IntoResponse for NoteError {
@@ -34,7 +35,7 @@ pub enum UserError {
   #[error("You entered the wrong credentials")]
   InvalidCredentials,
   #[error("Error on database: {0}")]
-  DatabaseError(#[from] DbErr),
+  DatabaseError(#[from] SqlxError),
   #[error("Error during decryption: {0}")]
   DecryptError(#[from] BcryptError),
   #[error("Unexpected error on presigned url generation: {0}")]

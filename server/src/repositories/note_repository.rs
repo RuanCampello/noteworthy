@@ -1,28 +1,23 @@
-use chrono::Local;
-use sea_orm::{
-  prelude::{Expr, Uuid},
-  ActiveModelTrait, ActiveValue, ColumnTrait, ConnectionTrait, DatabaseBackend, DatabaseConnection,
-  DbBackend, EntityTrait, FromQueryResult, QueryFilter, QueryOrder, QuerySelect, Set, Statement,
-};
-use std::sync::Arc;
-
+use crate::models::notes::NoteWithUserPrefs;
 use crate::{
   controllers::note_controller::{ColourOption, CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
   models::{
-    notes::{self, Column as NoteColumn, Entity as Note},
+    notes::PartialNote,
     sea_orm_active_enums::Colour,
-    users::Entity as User,
   },
 };
+use sqlx::PgPool;
+use std::sync::Arc;
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct NoteRepository {
-  database: Arc<DatabaseConnection>,
+  database: Arc<PgPool>,
 }
 
 impl NoteRepository {
-  pub fn new(database: &Arc<DatabaseConnection>) -> Self {
+  pub fn new(database: &Arc<PgPool>) -> Self {
     Self {
       database: Arc::clone(database),
     }
@@ -33,32 +28,35 @@ impl NoteRepository {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
     };
 
-    let user = match User::find_by_id(user_id).one(&*self.database).await? {
-      Some(user) => user,
-      None => return Err(NoteError::NoteOwnerNotFound(user_id.to_owned())),
-    };
+    let query = r#"
+      INSERT INTO notes (title, content, userId, colour)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id;
+    "#;
 
-    let note = notes::ActiveModel {
-      title: Set(req.title.to_owned()),
-      content: Set(req.content.to_owned().unwrap_or_else(|| String::new())),
-      colour: Set(colour),
-      user_id: Set(user.id),
-      created_at: Set(Local::now().naive_local()),
-      last_update: Set(Local::now().naive_local()),
-      ..Default::default()
-    };
-
-    let note = note
-      .insert(&*self.database)
+    let id: Uuid = sqlx::query_scalar(query)
+      .bind(&req.title)
+      .bind(&req.content)
+      .bind(user_id)
+      .bind(colour)
+      .fetch_one(&*self.database)
       .await
       .map_err(|e| NoteError::InsertError(e))?;
 
-    Ok(note.id)
+    Ok(id)
   }
 
   pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
-    let note = get_user_note_by_id(&self.database, id, user_id).await?;
-    Note::delete_by_id(note.id).exec(&*self.database).await?;
+    let query = r#"
+      DELETE FROM notes
+      WHERE id = $1 AND userId = $2;
+    "#;
+
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .execute(&*self.database)
+      .await?;
 
     Ok(())
   }
@@ -69,19 +67,24 @@ impl NoteRepository {
     id: Uuid,
     req: UpdateNoteRequest,
   ) -> Result<(), NoteError> {
-    let old_note = get_user_note_by_id(&self.database, id, user_id).await?;
-
     let colour = match &req.colour {
       ColourOption::Colour(c) => Colour::from(c.as_str()),
     };
 
-    let note = notes::ActiveModel {
-      title: ActiveValue::set(req.title.unwrap_or(old_note.title.to_string())),
-      colour: ActiveValue::set(colour),
-      ..old_note.into()
-    };
+    let query = r#"
+      UPDATE notes
+      SET title = $3, colour = $4
+      WHERE id = $1 AND user_id = $2;
+    "#;
 
-    note.update(&*self.database).await?;
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .bind(req.title)
+      .bind(colour)
+      .execute(&*self.database)
+      .await?;
+
     Ok(())
   }
 
@@ -89,31 +92,28 @@ impl NoteRepository {
     &self,
     user_id: &str,
     id: Uuid,
-  ) -> Result<notes::NoteWithUserPrefs, NoteError> {
+  ) -> Result<NoteWithUserPrefs, NoteError> {
     let query = r#"
-          SELECT
-              notes.*,
-              notes.colour::text AS colour,
-              notes."userId" AS user_id,
-              users.name,
-              users_preferences.full_note,
-              users_preferences.note_format::text AS note_format
-          FROM notes
-          JOIN users ON notes."userId" = users.id
-          JOIN users_preferences ON users_preferences."userId" = users.id
-          WHERE notes.id = $1 AND notes."userId" = $2;
-      "#;
+      SELECT
+        notes.*,
+        notes.colour::text AS colour,
+        notes."userId" AS user_id,
+        users.name,
+        users_preferences.full_note,
+        users_preferences.note_format::text AS note_format
+      FROM notes
+      JOIN users ON notes."userId" = users.id
+      JOIN users_preferences ON users_preferences."userId" = users.id
+      WHERE notes.id = $1 AND notes."userId" = $2;
+    "#;
 
-    let result = notes::NoteWithUserPrefs::find_by_statement(Statement::from_sql_and_values(
-      DbBackend::Postgres,
-      query,
-      [id.into(), user_id.into()],
-    ))
-    .one(self.database.as_ref())
-    .await?
-    .unwrap();
+    let notes = sqlx::query_as::<_, NoteWithUserPrefs>(query)
+      .bind(id)
+      .bind(user_id)
+      .fetch_one(&*self.database)
+      .await?;
 
-    Ok(result)
+    Ok(notes)
   }
 
   pub async fn find_all_user_notes(
@@ -121,23 +121,23 @@ impl NoteRepository {
     user_id: &str,
     is_fav: bool,
     is_arc: bool,
-  ) -> Result<Vec<notes::PartialNote>, NoteError> {
-    let notes = Note::find()
-      .filter(NoteColumn::UserId.eq(user_id))
-      .filter(NoteColumn::IsFavourite.eq(is_fav))
-      .filter(NoteColumn::IsArchived.eq(is_arc))
-      .select_only()
-      .expr_as(Expr::cust("LEFT(content, 250)"), "content")
-      .columns([
-        NoteColumn::Id,
-        NoteColumn::Title,
-        NoteColumn::Colour,
-        NoteColumn::CreatedAt,
-      ])
-      .order_by_desc(NoteColumn::LastUpdate)
-      .into_model::<notes::PartialNote>()
-      .all(&*self.database)
+  ) -> Result<Vec<PartialNote>, NoteError> {
+    let query = r#"
+      SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+      FROM notes
+      WHERE userId = $1
+        AND is_favourite = $2
+        AND is_archived = $3
+      ORDER BY last_update DESC;
+    "#;
+
+    let notes = sqlx::query_as::<_, PartialNote>(query)
+      .bind(user_id)
+      .bind(is_fav)
+      .bind(is_arc)
+      .fetch_all(&*self.database)
       .await?;
+
     Ok(notes)
   }
 
@@ -147,31 +147,33 @@ impl NoteRepository {
     user_id: &str,
     content: String,
   ) -> Result<(), NoteError> {
-    let note = get_user_note_by_id(&self.database, id, user_id).await?;
+    let query = r#"
+      UPDATE notes
+      SET content = $3
+      WHERE id = $1 AND userId = $2;
+    "#;
 
-    let mut note: notes::ActiveModel = note.into();
-    note.content = Set(content);
-    note.last_update = Set(Local::now().naive_local());
-    note.update(&*self.database).await?;
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .bind(content)
+      .execute(&*self.database)
+      .await?;
 
     Ok(())
   }
 
   pub async fn toggle_note_favourite(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
     let query = r#"
-        UPDATE notes
-        SET is_favourite = NOT is_favourite
-        WHERE id = $1
-        AND "userId" = $2;
+      UPDATE notes
+      SET is_favourite = NOT is_favourite
+      WHERE id = $1 AND "userId" = $2;
     "#;
 
-    self
-      .database
-      .execute(Statement::from_sql_and_values(
-        DatabaseBackend::Postgres,
-        query,
-        [id.into(), user_id.into()],
-      ))
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .execute(&*self.database)
       .await?;
 
     Ok(())
@@ -180,17 +182,13 @@ impl NoteRepository {
     let query = r#"
         UPDATE notes
         SET is_archived = NOT is_archived
-        WHERE id = $1
-        AND "userId" = $2;
+        WHERE id = $1 AND "userId" = $2;
     "#;
 
-    self
-      .database
-      .execute(Statement::from_sql_and_values(
-        DatabaseBackend::Postgres,
-        query,
-        [id.into(), user_id.into()],
-      ))
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .execute(&*self.database)
       .await?;
 
     Ok(())
@@ -200,34 +198,15 @@ impl NoteRepository {
     let query = r#"
         UPDATE notes
         SET is_public = NOT is_public
-        WHERE id = $1
-        AND "userId" = $2;
+        WHERE id = $1 AND "userId" = $2;
     "#;
 
-    let res = self
-      .database
-      .execute(Statement::from_sql_and_values(
-        DatabaseBackend::Postgres,
-        query,
-        [id.into(), user_id.into()],
-      ))
+    sqlx::query(query)
+      .bind(id)
+      .bind(user_id)
+      .execute(&*self.database)
       .await?;
 
     Ok(())
-  }
-}
-
-pub async fn get_user_note_by_id(
-  database_connection: &Arc<DatabaseConnection>,
-  id: Uuid,
-  user_id: &str,
-) -> Result<notes::Model, NoteError> {
-  match Note::find_by_id(id)
-    .filter(NoteColumn::UserId.eq(user_id))
-    .one(&**database_connection)
-    .await?
-  {
-    Some(note) => Ok(note),
-    None => Err(NoteError::NoteNotFound(id)),
   }
 }

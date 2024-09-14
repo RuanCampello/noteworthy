@@ -2,7 +2,6 @@ use crate::{
   errors::NoteError, repositories::note_repository::NoteRepository, utils::middleware::AuthUser,
 };
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
-use sea_orm::prelude::Uuid;
 use serde::{Deserialize, Serialize};
 use tracing::{error, info};
 

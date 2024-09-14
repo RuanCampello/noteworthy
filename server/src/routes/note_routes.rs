@@ -4,7 +4,6 @@ use axum::{
   routing::{delete, get, patch, post},
   Extension, Router,
 };
-use sea_orm::DatabaseConnection;
 
 use crate::controllers::note_controller::{
   update_note_archived_status, update_note_favourite_status, update_note_public_status,
@@ -16,8 +15,9 @@ use crate::{
   },
   repositories::note_repository::NoteRepository,
 };
+use sqlx::postgres::PgPool;
 
-pub fn note_routes(db: &Arc<DatabaseConnection>) -> Router {
+pub fn note_routes(db: &Arc<PgPool>) -> Router {
   let note_repository = NoteRepository::new(db);
 
   let single_note_route = Router::new()

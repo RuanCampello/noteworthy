@@ -5,9 +5,8 @@ use aws_sdk_s3::{
   Client,
 };
 use dotenv;
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::{borrow::Cow, time::Duration};
-use tracing::log::LevelFilter;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -49,7 +48,7 @@ impl EnvVariables {
 
 #[derive(Clone)]
 pub struct AppState {
-  pub database: DatabaseConnection,
+  pub database: PgPool,
   pub r2: Client,
 }
 
@@ -81,17 +80,12 @@ impl AppState {
 
     let r2 = aws_sdk_s3::Client::new(&s3_config);
 
-    let mut opt = ConnectOptions::new(env.database_url.to_string());
-    opt
+    let pool = PgPoolOptions::new()
       .max_connections(80)
-      .connect_timeout(Duration::from_secs(60))
-      .idle_timeout(Duration::from_secs(60))
       .max_lifetime(Duration::from_secs(200))
-      .sqlx_slow_statements_logging_settings(LevelFilter::Trace, Duration::from_secs(10))
-      .sqlx_logging(true);
+      .connect(&env.database_url)
+      .await?;
 
-    let db = Database::connect(opt).await?;
-
-    Ok(Self { database: db, r2 })
+    Ok(Self { database: pool, r2 })
   }
 }
