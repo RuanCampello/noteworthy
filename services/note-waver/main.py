@@ -15,8 +15,8 @@ models = ["google/gemma-2-2b-it", "meta-llama/Meta-Llama-3-8B-Instruct",
           "mistralai/Mistral-7B-Instruct-v0.3"]
 
 prompt = (
-    "Generate a note with HTML tags. Write a complete passage in "
-    "the style of English literature classics, using formal language, "
+    "Write a complete passage in the style of English literature classics, "
+    "using formal language,"
     "descriptive imagery, and emotional depth. The passage MUST be fixed at "
     "350 characters length. Ensure the passage has a clear beginning, middle, "
     "and end, and does not cut off abruptly or leave sentences unfinished."
@@ -32,7 +32,7 @@ def get_random_model():
     return choice(models)
 
 
-QUEUE_SIZE = 10
+QUEUE_SIZE = 3
 
 app = FastAPI()
 
@@ -90,7 +90,7 @@ def refine_response(response: str):
         "You have been given a passage of text that includes extra content, "
         "instructions, or comments."
         "Your task is to extract only the passage itself, removing all "
-        "additional text, placeholders, or comments. Do not remove any HTML tag."
+        "additional text, placeholders, or comments."
         "Output only the cleaned passage, with no additional text or notes."
         f"Text to clean:\n\n\"{response}")
 
