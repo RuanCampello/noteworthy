@@ -8,10 +8,9 @@ import requests
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 
-from utils import format_result, split_on_double_newline, remove_html_comments
+from utils import format_result, extract_title_and_content
 
 models = ["google/gemma-2-2b-it", "meta-llama/Meta-Llama-3-8B-Instruct",
-          "mistralai/Mistral-Nemo-Instruct-2407",
           "mistralai/Mistral-7B-Instruct-v0.3"]
 
 prompt = (
@@ -32,7 +31,7 @@ def get_random_model():
     return choice(models)
 
 
-QUEUE_SIZE = 3
+MAX_QUEUE_SIZE = 15
 
 app = FastAPI()
 
@@ -51,7 +50,7 @@ def generate():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-result_queue = queue.Queue(maxsize=QUEUE_SIZE)
+result_queue = queue.Queue(maxsize=MAX_QUEUE_SIZE)
 
 
 def generate_from_prompt():
@@ -90,8 +89,8 @@ def refine_response(response: str):
         "You have been given a passage of text that includes extra content, "
         "instructions, or comments."
         "Your task is to extract only the passage itself, removing all "
-        "additional text, placeholders, or comments."
-        "Output only the cleaned passage, with no additional text or notes."
+        "additional text, placeholders, or comments. Also, generate a title "
+        "to the given text. Structure the output exactly with 'title' and 'content'."
         f"Text to clean:\n\n\"{response}")
 
     input_text = {
@@ -109,10 +108,9 @@ def refine_response(response: str):
     if response.status_code == 200:
         result = response.json()
         if isinstance(result, list):
-            formatted_result = format_result(result, refine_prompt)
-            text_without_extras = split_on_double_newline(formatted_result)
-            cleaned_text = remove_html_comments(text_without_extras)
-            return cleaned_text
+            title, content = extract_title_and_content(
+                format_result(result, prompt))
+            return {"title": title, "content": content}
         else:
             raise ValueError("Invalid response from API")
     else:
@@ -123,8 +121,8 @@ def refine_response(response: str):
 def fill_queue():
     while True:
         queue_size = result_queue.qsize()
-        if queue_size < QUEUE_SIZE:
-            for _ in range(QUEUE_SIZE - queue_size):
+        if queue_size < MAX_QUEUE_SIZE:
+            for _ in range(MAX_QUEUE_SIZE - queue_size):
                 try:
                     generated_text = generate_from_prompt()
                     result = refine_response(generated_text)

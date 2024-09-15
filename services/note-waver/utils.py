@@ -1,6 +1,3 @@
-from re import sub, DOTALL
-
-
 def format_result(result, prompt):
     generated_text = result[0].get("generated_text", "")
     if generated_text.startswith(prompt):
@@ -8,11 +5,9 @@ def format_result(result, prompt):
     return generated_text
 
 
-def split_on_double_newline(text):
-    parts = text.split('\n\n')
-    return parts[-1] if parts else ''
+def extract_title_and_content(text):
+    title_part = text.split("Title: ")[1].split("\n")[0]
 
-
-def remove_html_comments(text):
-    cleaned_text = sub(r'<!--.*?-->', '', text, flags=DOTALL)
-    return cleaned_text
+    content_part = text.split("Content: ")[1]
+    print("title", title_part, "content", content_part)
+    return title_part, content_part
