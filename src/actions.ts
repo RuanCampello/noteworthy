@@ -196,9 +196,7 @@ export async function togglePublishState(id: string) {
   }
 }
 
-// Makes two requests. The first is a `GET` to `users/:email endpoint`.
-// This verifies if the chosen email is available.
-// The second do a `POST` to register endpoint and tries to insert the given data
+// Makes a `POST` request to register endpoint and tries to insert the given data
 // into the database. If it's successful, will make a placeholder note to the user
 // and login.
 export async function register(
@@ -210,13 +208,7 @@ export async function register(
   if (!fields.success) return { error: t('inv_field') };
   const { email, password, username } = fields.data;
 
-  const response = await fetch(`http://localhost:6969/users/${email}`, {
-    method: 'get',
-    cache: 'force-cache',
-  });
-  if (response.ok) return { error: t('email_taken') };
-
-  const registerRes = await fetch('http://localhost:6969/register', {
+  const response = await fetch('http://localhost:6969/register', {
     method: 'post',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -226,7 +218,9 @@ export async function register(
     }),
   });
 
-  const id = await registerRes.json();
+  if (response.status === 409) return { error: t('email_taken') };
+
+  const id = await response.json();
 
   await createPlaceholderNote(id);
   try {

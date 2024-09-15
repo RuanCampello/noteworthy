@@ -1,4 +1,5 @@
-use crate::models::notes::NoteWithUserPrefs;
+use crate::models::notes::{GeneratedNoteResponse, NoteWithUserPrefs};
+use crate::utils::colour::get_random_colour;
 use crate::{
   controllers::note_controller::{CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
@@ -41,6 +42,26 @@ impl NoteRepository {
       .bind(localtime)
       .fetch_one(&*self.database)
       .await?;
+
+    Ok(id)
+  }
+
+  pub async fn generate_note(&self, user_id: &str) -> Result<Uuid, NoteError> {
+    let client = reqwest::Client::new();
+    let response = client
+      .get("tense-beulah-ruancampello-4be3a646.koyeb.app/generate")
+      .send()
+      .await?;
+
+    let generated_note = response.json::<GeneratedNoteResponse>().await?;
+    let colour = get_random_colour().colour_name();
+    let req = CreateNoteRequest {
+      colour: colour.to_owned(),
+      content: Some(generated_note.content),
+      title: generated_note.title,
+    };
+
+    let id = self.new_note(&req, user_id).await?;
 
     Ok(id)
   }

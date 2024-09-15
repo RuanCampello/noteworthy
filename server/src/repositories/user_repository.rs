@@ -9,7 +9,6 @@ use axum::async_trait;
 use bcrypt::{hash, verify};
 use sqlx::PgPool;
 use std::{sync::Arc, time::Duration};
-use tracing::info;
 use validator::Validate;
 
 #[derive(Clone)]
@@ -23,7 +22,6 @@ pub trait UserRepositoryTrait {
   fn new(database: &Arc<PgPool>, r2: &Arc<Client>) -> Self;
   async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError>;
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError>;
-  async fn find_user_by_email(&self, email: &str) -> Result<User, UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
 }
 
@@ -37,7 +35,10 @@ impl UserRepositoryTrait for UserRepository {
   }
   async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
     req.validate()?;
-    let user = self.find_user_by_email(&req.email).await?;
+    let user = match find_user_by_email(&req.email, &self.database).await? {
+      Some(user) => user,
+      None => return Err(UserError::UserNotFound),
+    };
 
     let correct_password =
       verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
@@ -54,6 +55,12 @@ impl UserRepositoryTrait for UserRepository {
 
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError> {
     req.validate()?;
+
+    let user = find_user_by_email(&req.email, &self.database).await?;
+    if user.is_some() {
+      return Err(UserError::UserAlreadyExist);
+    }
+
     let hash_password = hash(req.password, 10)?;
 
     let query = r#"
@@ -72,23 +79,6 @@ impl UserRepositoryTrait for UserRepository {
     Ok(id)
   }
 
-  async fn find_user_by_email(&self, email: &str) -> Result<User, UserError> {
-    let query = r#"
-      SELECT * FROM users
-      WHERE email = $1;
-    "#;
-
-    let user = sqlx::query_as::<_, User>(query)
-      .bind(email)
-      .fetch_one(&*self.database)
-      .await
-      .map_err(|_| UserError::UserNotFound);
-
-    info!("user found {:?}", user);
-
-    Ok(user?)
-  }
-
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
     let presigned_url = &self
       .r2
@@ -105,4 +95,18 @@ impl UserRepositoryTrait for UserRepository {
       .map_err(|e| UserError::PresignedUrl(e))?;
     Ok(presigned_url.uri().to_owned())
   }
+}
+
+async fn find_user_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, UserError> {
+  let query = r#"
+      SELECT * FROM users
+      WHERE email = $1;
+    "#;
+
+  let user = sqlx::query_as::<_, User>(query)
+    .bind(email)
+    .fetch_optional(pool)
+    .await?;
+
+  Ok(user)
 }

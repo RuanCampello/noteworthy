@@ -29,6 +29,7 @@ pub fn note_routes(db: &Arc<PgPool>) -> Router {
 
   let notes_route = Router::new()
     .route("/", post(create_note).get(get_all_notes))
+    // .route("/generate", post())
     .route("/favourites", get(get_all_favourite_notes))
     .route("/archived", get(get_all_archive_notes));
 

@@ -30,16 +30,6 @@ pub async fn login(
   }
 }
 
-pub async fn get_user_from_email(
-  Extension(repository): Extension<UserRepository>,
-  Path(email): Path<String>,
-) -> impl IntoResponse {
-  match repository.find_user_by_email(&email).await {
-    Ok(_) => StatusCode::OK.into_response(),
-    Err(_) => StatusCode::NOT_FOUND.into_response(),
-  }
-}
-
 pub async fn get_user_image(
   Extension(repository): Extension<UserRepository>,
   Path(id): Path<String>,

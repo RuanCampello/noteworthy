@@ -17,6 +17,8 @@ pub enum NoteError {
   Validation(#[from] ValidationErrors),
   #[error("Error creating note: {0}.")]
   Sqlx(#[from] SqlxError),
+  #[error("Generate note request error: {0}.")]
+  Generate(#[from] reqwest::Error),
 }
 
 impl IntoResponse for NoteError {
@@ -25,7 +27,7 @@ impl IntoResponse for NoteError {
       NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
       NoteError::Validation(_) => StatusCode::BAD_REQUEST,
       NoteError::InvalidColour(_) => StatusCode::UNPROCESSABLE_ENTITY,
-      NoteError::Sqlx(_) => StatusCode::INTERNAL_SERVER_ERROR,
+      NoteError::Sqlx(_) | NoteError::Generate(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
@@ -41,13 +43,15 @@ impl IntoResponse for NoteError {
 pub enum UserError {
   #[error("This account was not found in the database.")]
   UserNotFound,
+  #[error("User with this e-mail already exists.")]
+  UserAlreadyExist,
   #[error("You entered the wrong credentials.")]
   InvalidCredentials,
   #[error("Error on database: {0}.")]
   DatabaseError(#[from] SqlxError),
   #[error("Error during decryption: {0}.")]
   DecryptError(#[from] BcryptError),
-  #[error("Unexpected error on presigned url generation: {0}.")]
+  #[error("Unexpected error on pre-signed url generation: {0}.")]
   PresignedUrl(#[from] SdkError<GetObjectError>),
   #[error("Error during request validation.")]
   Validation(#[from] ValidationErrors),
@@ -59,6 +63,7 @@ impl IntoResponse for UserError {
       UserError::UserNotFound => StatusCode::NOT_FOUND,
       UserError::Validation(_) => StatusCode::UNPROCESSABLE_ENTITY,
       UserError::InvalidCredentials => StatusCode::BAD_REQUEST,
+      UserError::UserAlreadyExist => StatusCode::CONFLICT,
       UserError::DecryptError(_) | UserError::DatabaseError(_) | UserError::PresignedUrl(_) => {
         StatusCode::INTERNAL_SERVER_ERROR
       }

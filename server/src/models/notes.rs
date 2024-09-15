@@ -1,6 +1,6 @@
 use super::enums::Colour;
 use chrono::NaiveDateTime;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use ts_rs::TS;
 use uuid::Uuid;
@@ -42,6 +42,12 @@ pub struct NoteWithUserPrefs {
   pub name: String,
   pub full_note: bool,
   pub note_format: String,
+}
+
+#[derive(Deserialize)]
+pub struct GeneratedNoteResponse {
+  pub title: String,
+  pub content: String,
 }
 
 #[derive(Debug, Serialize, FromRow, TS)]

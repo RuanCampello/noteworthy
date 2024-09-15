@@ -25,6 +25,18 @@ pub async fn create_note(
   (StatusCode::CREATED, Json(id)).into_response()
 }
 
+pub async fn create_generated_note(
+  AuthUser(user): AuthUser,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  let id = match repository.generate_note(&user.id).await {
+    Ok(id) => id,
+    Err(e) => return e.into_response(),
+  };
+
+  (StatusCode::CREATED, Json(id)).into_response()
+}
+
 pub async fn delete_note(
   AuthUser(user): AuthUser,
   Path(id): Path<Uuid>,
