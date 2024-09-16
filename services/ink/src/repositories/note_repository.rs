@@ -47,11 +47,7 @@ impl NoteRepository {
   }
 
   pub async fn generate_note(&self, user_id: &str) -> Result<Uuid, NoteError> {
-    let client = reqwest::Client::new();
-    let response = client
-      .get("tense-beulah-ruancampello-4be3a646.koyeb.app/generate")
-      .send()
-      .await?;
+    let response = reqwest::get("https://tense-beulah-ruancampello-4be3a646.koyeb.app/generate").await?;
 
     let generated_note = response.json::<GeneratedNoteResponse>().await?;
     let colour = get_random_colour().colour_name();

@@ -10,8 +10,8 @@ use crate::controllers::note_controller::{
 };
 use crate::{
   controllers::note_controller::{
-    create_note, delete_note, get_all_archive_notes, get_all_favourite_notes, get_all_notes,
-    get_note, update_note, update_note_content,
+    create_generated_note, create_note, delete_note, get_all_archive_notes,
+    get_all_favourite_notes, get_all_notes, get_note, update_note, update_note_content,
   },
   repositories::note_repository::NoteRepository,
 };
@@ -29,7 +29,7 @@ pub fn note_routes(db: &Arc<PgPool>) -> Router {
 
   let notes_route = Router::new()
     .route("/", post(create_note).get(get_all_notes))
-    // .route("/generate", post())
+    .route("/generate", post(create_generated_note))
     .route("/favourites", get(get_all_favourite_notes))
     .route("/archived", get(get_all_archive_notes));
 

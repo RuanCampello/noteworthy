@@ -4,7 +4,7 @@ import NotFound from '@/assets/svg/oooscillate.svg';
 import { useFilter } from '@/lib/zustand/search-filter';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
-import { createFastNote } from '@/server/actions/note';
+import { generateNote } from '@/actions';
 import { searchNotes } from '@/server/queries/search';
 import {
   CommandDialog,
@@ -58,8 +58,7 @@ export default function Search() {
     queryKey: ['search', query, filter],
     queryFn: async () => {
       if (!session?.user?.id) return;
-      const results = await searchNotes(query, session.user.id, filter);
-      return results;
+      return await searchNotes(query, session.user.id, filter);
     },
     enabled: !!query && query.length > 2,
   });
@@ -116,7 +115,7 @@ export default function Search() {
             disabled={loading}
             onSelect={() => {
               startTransition(async () => {
-                const id = await createFastNote();
+                const id = await generateNote();
                 router.push(`/notes/${id}`);
                 setOpen(false);
               });

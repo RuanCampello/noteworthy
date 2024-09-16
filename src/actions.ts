@@ -243,6 +243,28 @@ export async function register(
   }
 }
 
+// Make a request to notes/generate endpoint
+// that will try to generate a note content and title to the current user
+// with NoteHover. Will also redirect the user to the created note and revalidate the sidebar notes.
+export async function generateNote() {
+  const user = await currentUser();
+  if (!user || !user?.accessToken) return;
+
+  try {
+    const response = await fetch('http://localhost:6969/notes/generate', {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+    });
+    revalidateTag('sidebar-notes');
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
 // Checks if the current user has an image, if not
 // fetch the current user at `users/profile/:id` endpoint with a `GET` method
 // and search for a profile image in CF.
