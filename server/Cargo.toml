@@ -26,6 +26,8 @@ sqlx = { version = "0.8.2", features = ["chrono", "macros", "postgres", "runtime
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 log = "0.4.22"
 reqwest = { version = "0.12.7", features = ["json"] }
+shuttle-runtime = "0.47.0"
+shuttle-axum = "0.47.0"
 
 [dev-dependencies]
 axum-macros = "0.4.1"

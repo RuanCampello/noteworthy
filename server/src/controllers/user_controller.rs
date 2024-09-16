@@ -1,8 +1,7 @@
+use crate::utils::jwt::JwtManager;
 use crate::{
-  app_state::EnvVariables,
   errors::TokenError,
   repositories::user_repository::{UserRepository, UserRepositoryTrait},
-  utils::jwt::{refresh_jwt, JwtDecoder},
 };
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::Deserialize;
@@ -19,9 +18,10 @@ pub struct LoginRequest {
 
 pub async fn login(
   Extension(repository): Extension<UserRepository>,
+  Extension(jwt_manager): Extension<JwtManager>,
   Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
-  match repository.log_user(&payload).await {
+  match repository.log_user(&payload, &jwt_manager).await {
     Err(e) => e.into_response(),
     Ok(token) => {
       info!("response on login {}", token);
@@ -59,10 +59,11 @@ pub async fn register(
     Err(e) => e.into_response(),
   }
 }
-
-pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse {
-  let env = EnvVariables::from_env().expect("Env variables to be set");
-  let decoded_old_token = match old_token.decode_jwt_with_exp(false) {
+pub async fn refresh_handler(
+  Path(old_token): Path<String>,
+  Extension(jwt_manager): Extension<JwtManager>,
+) -> impl IntoResponse {
+  let decoded_old_token = match jwt_manager.decode_jwt(&old_token, false) {
     Ok(token) => token,
     Err(_) => {
       return (
@@ -73,7 +74,7 @@ pub async fn refresh_handler(Path(old_token): Path<String>) -> impl IntoResponse
     }
   };
 
-  let refreshed_token = match refresh_jwt(decoded_old_token.claims, &env.jwt_secret) {
+  let refreshed_token = match jwt_manager.refresh_jwt(decoded_old_token.claims) {
     Ok(token) => token,
     Err(e) => {
       error!("Refresh token error {:#?}", e);

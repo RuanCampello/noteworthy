@@ -1,11 +1,13 @@
-use app_state::AppState;
+use crate::app_state::{AppState, EnvVariables};
+use crate::utils::jwt::JwtManager;
 use axum::{
   http::{header, Method},
   routing::get,
-  Router,
+  Extension, Router,
 };
 use controllers::user_controller::refresh_handler;
 use routes::{note_routes::note_routes, user_routes::user_routes};
+use shuttle_runtime::SecretStore;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -17,13 +19,13 @@ mod repositories;
 mod routes;
 mod utils;
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-  let state = AppState::new().await?;
+#[shuttle_runtime::main]
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
+  let env = EnvVariables::from_env(secrets);
+  let state = AppState::new(&env).await?;
+  let jwt_manager = JwtManager::new(env.jwt_secret);
   let database = Arc::new(state.database.to_owned());
   let r2 = Arc::new(state.r2.to_owned());
-
-  tracing_subscriber::fmt::init();
 
   let cors = CorsLayer::new()
     .allow_origin(Any)
@@ -34,10 +36,8 @@ async fn main() -> anyhow::Result<()> {
     .merge(note_routes(&database))
     .merge(user_routes(&database, &r2))
     .route("/refresh-token/:old_token", get(refresh_handler))
+    .layer(Extension(jwt_manager))
     .layer(cors);
 
-  let tcp_listener = tokio::net::TcpListener::bind("0.0.0.0:6969").await?;
-
-  axum::serve(tcp_listener, router).await?;
-  Ok(())
+  Ok(router.into())
 }

@@ -1,8 +1,8 @@
 use crate::models::users::User;
+use crate::utils::jwt::JwtManager;
 use crate::{
   controllers::user_controller::{LoginRequest, RegisterRequest},
   errors::UserError,
-  utils::jwt::generate_jwt,
 };
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use axum::async_trait;
@@ -20,7 +20,7 @@ pub struct UserRepository {
 #[async_trait]
 pub trait UserRepositoryTrait {
   fn new(database: &Arc<PgPool>, r2: &Arc<Client>) -> Self;
-  async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError>;
+  async fn log_user(&self, req: &LoginRequest, jwt_manager: &JwtManager) -> Result<String, UserError>;
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
 }
@@ -33,7 +33,7 @@ impl UserRepositoryTrait for UserRepository {
       r2: Arc::clone(r2),
     }
   }
-  async fn log_user(&self, req: &LoginRequest) -> Result<String, UserError> {
+  async fn log_user(&self, req: &LoginRequest, jwt_manager: &JwtManager) -> Result<String, UserError> {
     req.validate()?;
     let user = match find_user_by_email(&req.email, &self.database).await? {
       Some(user) => user,
@@ -47,7 +47,8 @@ impl UserRepositoryTrait for UserRepository {
       return Err(UserError::InvalidCredentials);
     }
 
-    let token = generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
+    let token = jwt_manager
+      .generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
       .expect("Error generation JWT token");
 
     Ok(token)

@@ -5,7 +5,7 @@ use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
-use crate::{app_state::EnvVariables, errors::TokenError};
+use crate::errors::TokenError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -16,90 +16,92 @@ pub struct Claims {
   pub image: Option<String>,
 }
 
-pub fn generate_jwt(
-  user_id: String,
-  email: String,
-  name: Option<String>,
-  image: Option<String>,
-) -> Result<String, Box<dyn Error>> {
-  let expiration = Utc::now()
-    .checked_add_signed(Duration::hours(12))
-    .expect("valid timestamp")
-    .timestamp() as usize;
-
-  let claims = Claims {
-    id: user_id,
-    email,
-    exp: expiration,
-    name,
-    image,
-  };
-
-  let env = EnvVariables::from_env()?;
-
-  let token = encode(
-    &Header::default(),
-    &claims,
-    &EncodingKey::from_base64_secret(&env.jwt_secret)?,
-  )?;
-
-  Ok(token)
+#[derive(Clone)]
+pub struct JwtManager {
+  secret: String,
 }
 
-pub trait JwtDecoder {
-  fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>>;
-  fn decode_jwt_with_exp(&self, validate_exp: bool) -> Result<TokenData<Claims>, Box<dyn Error>>;
-}
-
-impl JwtDecoder for String {
-  fn decode_jwt(&self) -> Result<TokenData<Claims>, Box<dyn Error>> {
-    self.decode_jwt_with_exp(true)
+impl JwtManager {
+  pub fn new(secret: String) -> Self {
+    Self { secret }
   }
-  fn decode_jwt_with_exp(
-    &self,
-    should_validate_exp: bool,
-  ) -> Result<TokenData<Claims>, Box<dyn Error>> {
-    let env = EnvVariables::from_env()?;
 
+  pub fn generate_jwt(
+    &self,
+    user_id: String,
+    email: String,
+    name: Option<String>,
+    image: Option<String>,
+  ) -> Result<String, Box<dyn Error>> {
+    let expiration = Utc::now()
+      .checked_add_signed(Duration::hours(12))
+      .expect("valid timestamp")
+      .timestamp() as usize;
+
+    let claims = Claims {
+      id: user_id,
+      email,
+      exp: expiration,
+      name,
+      image,
+    };
+
+    let token = encode(
+      &Header::default(),
+      &claims,
+      &EncodingKey::from_base64_secret(&self.secret)?,
+    )?;
+
+    Ok(token)
+  }
+
+  pub fn decode_jwt(
+    &self,
+    token: &str,
+    validate_exp: bool,
+  ) -> Result<TokenData<Claims>, Box<dyn Error>> {
     let mut validation = Validation::default();
-    validation.validate_exp = should_validate_exp;
+    validation.validate_exp = validate_exp;
 
     let token_data = decode::<Claims>(
-      self,
-      &DecodingKey::from_base64_secret(&env.jwt_secret)?,
+      token,
+      &DecodingKey::from_base64_secret(&self.secret)?,
       &validation,
     )?;
 
     Ok(token_data)
   }
-}
 
-pub fn refresh_jwt(claims: Claims, secret: &str) -> Result<String, Box<dyn Error>> {
-  let expiration = Utc::now()
-    .checked_add_signed(Duration::hours(12))
-    .expect("valid timestamp")
-    .timestamp() as usize;
+  pub fn refresh_jwt(&self, claims: Claims) -> Result<String, Box<dyn Error>> {
+    let expiration = Utc::now()
+      .checked_add_signed(Duration::hours(12))
+      .expect("valid timestamp")
+      .timestamp() as usize;
 
-  let new_claims = Claims {
-    id: claims.id,
-    email: claims.email,
-    exp: expiration,
-    name: claims.name,
-    image: claims.image,
-  };
+    let new_claims = Claims {
+      id: claims.id,
+      email: claims.email,
+      exp: expiration,
+      name: claims.name,
+      image: claims.image,
+    };
 
-  let token = encode(
-    &Header::default(),
-    &new_claims,
-    &EncodingKey::from_base64_secret(secret)?,
-  )?;
+    let token = encode(
+      &Header::default(),
+      &new_claims,
+      &EncodingKey::from_base64_secret(&self.secret)?,
+    )?;
 
-  Ok(token)
+    Ok(token)
+  }
 }
 
 pub trait TokenExtractor {
   fn extract_bearer_token(&self) -> Result<String, TokenError>;
-  fn extract_and_decode_token(&self) -> Result<Claims, (StatusCode, String)>;
+  fn extract_and_decode_token(
+    &self,
+    jwt_manager: &JwtManager,
+  ) -> Result<Claims, (StatusCode, String)>;
 }
 
 impl TokenExtractor for HeaderMap {
@@ -117,13 +119,16 @@ impl TokenExtractor for HeaderMap {
     let token = auth_str.trim_start_matches("Bearer ");
     Ok(token.to_string())
   }
-  fn extract_and_decode_token(&self) -> Result<Claims, (StatusCode, String)> {
+  fn extract_and_decode_token(
+    &self,
+    jwt_manager: &JwtManager,
+  ) -> Result<Claims, (StatusCode, String)> {
     let token = self
       .extract_bearer_token()
       .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
 
-    let decoded_token = token
-      .decode_jwt()
+    let decoded_token = jwt_manager
+      .decode_jwt(&token, true)
       .map_err(|e| (StatusCode::UNAUTHORIZED, e.to_string()))?;
 
     Ok(decoded_token.claims)

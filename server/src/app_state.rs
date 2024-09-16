@@ -1,48 +1,46 @@
-use anyhow::bail;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
   Client,
 };
-use dotenv;
+use shuttle_runtime::SecretStore;
 use sqlx::postgres::{PgPool, PgPoolOptions};
-use std::{borrow::Cow, time::Duration};
+use std::time::Duration;
+use tracing::info;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
-  pub database_url: Cow<'static, str>,
-  pub jwt_secret: Cow<'static, str>,
-  pub cloudflare_account_id: Cow<'static, str>,
-  pub access_key_id: Cow<'static, str>,
-  pub secret_access_key: Cow<'static, str>,
+  pub database_url: String,
+  pub jwt_secret: String,
+  pub cloudflare_account_id: String,
+  pub access_key_id: String,
+  pub secret_access_key: String,
 }
 
 impl EnvVariables {
-  pub fn from_env() -> anyhow::Result<Self> {
-    dotenv::from_path("../.env").ok();
+  pub fn from_env(secrets: SecretStore) -> Self {
+    info!("DATABASE_URL {:?}", secrets.get("DATABASE_URL"));
+    let database_url = secrets
+      .get("DATABASE_URL")
+      .expect("DATABASE_URL must be set");
+    let jwt_secret = secrets.get("AUTH_SECRET").expect("AUTH_SECRET must be set");
+    let cloudflare_account_id = secrets
+      .get("CLOUDFLARE_ACCOUNT_ID")
+      .expect("CLOUDFLARE_ACCOUNT_ID must be set");
+    let access_key_id = secrets
+      .get("CLOUDFLARE_ACCESS_KEY")
+      .expect("CLOUDFLARE_ACCESS_KEY must be set");
+    let secret_access_key = secrets
+      .get("CLOUDFLARE_SECRET_KEY")
+      .expect("CLOUDFLARE_SECRET_KEY must be set");
 
-    Ok(Self {
-      database_url: match dotenv::var("DATABASE_URL") {
-        Ok(url) => url.into(),
-        Err(err) => bail!("DATABASE_URL must be set: {err}"),
-      },
-      jwt_secret: match dotenv::var("AUTH_SECRET") {
-        Ok(secret) => secret.into(),
-        Err(err) => bail!("AUTH_SECRET must be set: {err}"),
-      },
-      cloudflare_account_id: match dotenv::var("CLOUDFLARE_ACCOUNT_ID") {
-        Ok(account_id) => account_id.into(),
-        Err(err) => bail!("CLOUDFLARE_ACCOUNT_ID must be set: {err}"),
-      },
-      access_key_id: match dotenv::var("CLOUDFLARE_ACCESS_KEY") {
-        Ok(access_key) => access_key.into(),
-        Err(err) => bail!("CLOUDFLARE_ACCESS_KEY must be set: {err}"),
-      },
-      secret_access_key: match dotenv::var("CLOUDFLARE_SECRET_KEY") {
-        Ok(secret_access) => secret_access.into(),
-        Err(err) => bail!("CLOUDFLARE_SECRET_KEY must be set: {err}"),
-      },
-    })
+    Self {
+      database_url,
+      jwt_secret,
+      cloudflare_account_id,
+      access_key_id,
+      secret_access_key,
+    }
   }
 }
 
@@ -53,9 +51,7 @@ pub struct AppState {
 }
 
 impl AppState {
-  pub async fn new() -> anyhow::Result<Self> {
-    let env = EnvVariables::from_env()?;
-
+  pub async fn new(env: &EnvVariables) -> anyhow::Result<Self> {
     let endpoint = format!(
       "https://{}.r2.cloudflarestorage.com",
       env.cloudflare_account_id
