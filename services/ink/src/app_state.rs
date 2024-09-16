@@ -1,4 +1,3 @@
-use std::error;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
@@ -6,8 +5,8 @@ use aws_sdk_s3::{
 };
 use shuttle_runtime::SecretStore;
 use sqlx::postgres::{PgPool, PgPoolOptions};
+use std::error;
 use std::time::Duration;
-use tracing::info;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -20,7 +19,6 @@ pub struct EnvVariables {
 
 impl EnvVariables {
   pub fn from_env(secrets: SecretStore) -> Self {
-    info!("DATABASE_URL {:?}", secrets.get("DATABASE_URL"));
     let database_url = secrets
       .get("DATABASE_URL")
       .expect("DATABASE_URL must be set");
@@ -75,7 +73,7 @@ impl AppState {
       .region(Region::new("us-east-1"))
       .build();
 
-    let r2 = aws_sdk_s3::Client::new(&s3_config);
+    let r2 = Client::new(&s3_config);
 
     let pool = PgPoolOptions::new()
       .max_connections(80)

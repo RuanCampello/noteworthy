@@ -255,10 +255,10 @@ export async function getUserProfileImage(): Promise<string | null> {
       `http://localhost:6969/users/profile/${user.id}`,
       {
         method: 'get',
-        cache: 'force-cache',
-        next: { tags: ['profile-image'] },
+        next: { tags: ['profile-image'], revalidate: 3600 },
       },
     );
+
     return await response.text();
   }
   return user.image;
