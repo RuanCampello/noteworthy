@@ -22,7 +22,7 @@ mod utils;
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
   let env = EnvVariables::from_env(secrets);
-  let state = AppState::new(&env).await?;
+  let state = AppState::new(&env).await.expect("app state");
   let jwt_manager = JwtManager::new(env.jwt_secret);
   let database = Arc::new(state.database.to_owned());
   let r2 = Arc::new(state.r2.to_owned());

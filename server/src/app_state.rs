@@ -1,3 +1,4 @@
+use std::error;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
@@ -51,7 +52,7 @@ pub struct AppState {
 }
 
 impl AppState {
-  pub async fn new(env: &EnvVariables) -> anyhow::Result<Self> {
+  pub async fn new(env: &EnvVariables) -> Result<Self, Box<dyn error::Error>> {
     let endpoint = format!(
       "https://{}.r2.cloudflarestorage.com",
       env.cloudflare_account_id
