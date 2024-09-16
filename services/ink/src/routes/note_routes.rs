@@ -6,7 +6,8 @@ use axum::{
 };
 
 use crate::controllers::note_controller::{
-  update_note_archived_status, update_note_favourite_status, update_note_public_status,
+  search_notes, update_note_archived_status, update_note_favourite_status,
+  update_note_public_status,
 };
 use crate::{
   controllers::note_controller::{
@@ -31,7 +32,8 @@ pub fn note_routes(db: &Arc<PgPool>) -> Router {
     .route("/", post(create_note).get(get_all_notes))
     .route("/generate", post(create_generated_note))
     .route("/favourites", get(get_all_favourite_notes))
-    .route("/archived", get(get_all_archive_notes));
+    .route("/archived", get(get_all_archive_notes))
+    .route("/search", get(search_notes));
 
   Router::new()
     .nest("/notes", notes_route.merge(single_note_route))

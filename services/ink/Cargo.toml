@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum = "0.7.5"
+axum = { version = "0.7.5" }
 bcrypt = "0.15.1"
 chrono = { version = "0.4.38", features = ["serde"] }
 cuid2 = "0.1.3"

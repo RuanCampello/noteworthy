@@ -22,6 +22,12 @@ pub enum NoteFormat {
   Slim,
 }
 
+#[derive(Deserialize)]
+pub enum SearchFilter {
+  Favourites,
+  Archived,
+}
+
 impl Colour {
   pub fn from_str(s: &str) -> Result<Self, NoteError> {
     let colour = match s.to_lowercase().as_str() {

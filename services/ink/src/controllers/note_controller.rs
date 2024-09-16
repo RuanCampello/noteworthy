@@ -1,6 +1,9 @@
+use crate::models::enums::SearchFilter;
 use crate::{repositories::note_repository::NoteRepository, utils::middleware::AuthUser};
+use axum::extract::Query;
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::Deserialize;
+use tracing::error;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -156,5 +159,25 @@ pub async fn get_all_archive_notes(
   match repository.find_all_user_notes(&user.id, false, true).await {
     Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
     Err(e) => e.into_response(),
+  }
+}
+
+#[derive(Deserialize)]
+pub struct SearchParams {
+  pub q: String,
+  pub filter: Option<SearchFilter>,
+}
+
+pub async fn search_notes(
+  AuthUser(user): AuthUser,
+  Query(params): Query<SearchParams>,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.search_notes(&user.id, params).await {
+    Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
+    Err(e) => {
+      error!("error searching notes {:?}", e);
+      e.into_response()
+    }
   }
 }

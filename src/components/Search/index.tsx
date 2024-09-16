@@ -4,8 +4,7 @@ import NotFound from '@/assets/svg/oooscillate.svg';
 import { useFilter } from '@/lib/zustand/search-filter';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
-import { generateNote } from '@/actions';
-import { searchNotes } from '@/server/queries/search';
+import { generateNote, searchNotes } from '@/actions';
 import {
   CommandDialog,
   CommandEmpty,
@@ -25,7 +24,6 @@ import {
   Settings,
   Undo2,
 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -35,8 +33,6 @@ import { CommandFooter } from './Footer';
 import { NoteItemWrapper } from './Item';
 
 export default function Search() {
-  const { data: session } = useSession();
-
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
   const [loading, startTransition] = useTransition();
@@ -57,8 +53,7 @@ export default function Search() {
   const { data: results, isLoading } = useQuery({
     queryKey: ['search', query, filter],
     queryFn: async () => {
-      if (!session?.user?.id) return;
-      return await searchNotes(query, session.user.id, filter);
+      return await searchNotes(query, filter);
     },
     enabled: !!query && query.length > 2,
   });
@@ -86,8 +81,9 @@ export default function Search() {
         {results && Array.isArray(results) && (
           <CommandGroup heading={t('search_res')}>
             {results.map((r) => {
-              const hightlight = r.highlighted_content;
-              const uniqueValue = r.id + r.title + r.content;
+              // TODO: solve slow down caused by cmdk
+              const highlight = r.highlightedContent;
+              const uniqueValue = r.id + r.content;
 
               return (
                 <CommandItem
@@ -101,7 +97,7 @@ export default function Search() {
                 >
                   <NoteItemWrapper
                     id={r.id}
-                    content={hightlight || r.content}
+                    content={highlight || r.content}
                     title={r.title}
                     icon={<NotebookText />}
                   />

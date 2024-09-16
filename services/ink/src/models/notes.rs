@@ -50,6 +50,17 @@ pub struct GeneratedNoteResponse {
   pub content: String,
 }
 
+#[derive(Deserialize, Serialize, FromRow, TS)]
+#[ts(export)]
+#[serde(rename_all = "camelCase")]
+pub struct SearchResult {
+  #[ts(type = "string")]
+  id: Uuid,
+  title: String,
+  content: String,
+  highlighted_content: String,
+}
+
 #[derive(Debug, Serialize, FromRow, TS)]
 #[ts(export, rename = "PartialNote")]
 #[serde(rename_all = "camelCase")]

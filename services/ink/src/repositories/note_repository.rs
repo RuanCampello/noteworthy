@@ -1,9 +1,13 @@
-use crate::models::notes::{GeneratedNoteResponse, NoteWithUserPrefs};
+use crate::controllers::note_controller::SearchParams;
+use crate::models::notes::{GeneratedNoteResponse, NoteWithUserPrefs, SearchResult};
 use crate::utils::colour::get_random_colour;
 use crate::{
   controllers::note_controller::{CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
-  models::{enums::Colour, notes::PartialNote},
+  models::{
+    enums::{Colour, SearchFilter},
+    notes::PartialNote,
+  },
 };
 use chrono::Local;
 use sqlx::PgPool;
@@ -47,7 +51,8 @@ impl NoteRepository {
   }
 
   pub async fn generate_note(&self, user_id: &str) -> Result<Uuid, NoteError> {
-    let response = reqwest::get("https://tense-beulah-ruancampello-4be3a646.koyeb.app/generate").await?;
+    let response =
+      reqwest::get("https://tense-beulah-ruancampello-4be3a646.koyeb.app/generate").await?;
 
     let generated_note = response.json::<GeneratedNoteResponse>().await?;
     let colour = get_random_colour().colour_name();
@@ -199,9 +204,9 @@ impl NoteRepository {
   }
   pub async fn toggle_note_archived(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
     let query = r#"
-        UPDATE notes
-        SET is_archived = NOT is_archived
-        WHERE id = $1 AND "userId" = $2;
+      UPDATE notes
+      SET is_archived = NOT is_archived
+      WHERE id = $1 AND "userId" = $2;
     "#;
 
     sqlx::query(query)
@@ -215,9 +220,9 @@ impl NoteRepository {
 
   pub async fn toggle_note_publicity(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
     let query = r#"
-        UPDATE notes
-        SET is_public = NOT is_public
-        WHERE id = $1 AND "userId" = $2;
+      UPDATE notes
+      SET is_public = NOT is_public
+      WHERE id = $1 AND "userId" = $2;
     "#;
 
     sqlx::query(query)
@@ -227,5 +232,32 @@ impl NoteRepository {
       .await?;
 
     Ok(())
+  }
+
+  pub async fn search_notes(
+    &self,
+    user_id: &str,
+    params: SearchParams,
+  ) -> Result<Vec<SearchResult>, NoteError> {
+    let mut query = r#"
+      SELECT id, title, content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
+      'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
+      FROM notes
+      WHERE "userId" = $1 AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+    "#.to_string();
+
+    match params.filter {
+      Some(SearchFilter::Favourites) => query.push_str(" AND is_favourite = true"),
+      Some(SearchFilter::Archived) => query.push_str(" AND is_archived = true"),
+      _ => {}
+    };
+
+    let notes_found = sqlx::query_as::<_, SearchResult>(query.as_str())
+      .bind(user_id)
+      .bind(params.q)
+      .fetch_all(&*self.database)
+      .await?;
+
+    Ok(notes_found)
   }
 }

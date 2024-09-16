@@ -2,9 +2,11 @@
 
 import { createPlaceholderNote } from '@/actions/note';
 import { signIn } from '@/auth/auth';
+import { Filter } from '@/lib/zustand/search-filter';
 import { currentUser } from '@/queries/note';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { noteDialogSchema, registerFormSchema } from '@/schemas';
+import { SearchResult } from '@/types/SearchResult';
 import { getPathnameParams } from '@/utils/format-notes';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
@@ -263,6 +265,26 @@ export async function generateNote() {
   } catch (error) {
     return null;
   }
+}
+
+// Call the notes/search endpoint with q as query and an optional filter.
+export async function searchNotes(query: string, filter: Filter | null) {
+  query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
+  const user = await currentUser();
+  if (!user || !user?.accessToken) return null;
+  const hasFilter = filter !== 'None' ? `&filter=${filter}` : '';
+
+  const response = await fetch(
+    `http://localhost:6969/notes/search?q=${query}${hasFilter}`,
+    {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+    },
+  );
+  if (!response.ok) return null;
+  return (await response.json()) as SearchResult[];
 }
 
 // Checks if the current user has an image, if not
