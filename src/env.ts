@@ -15,6 +15,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_HOSTNAME: z.string().url(),
   DATABASE_URL: z.string().url(),
   AUTH_SECRET: z.string(),
+  INK_HOSTNAME: z.string().url(),
 });
 
 const envPath = process.env;

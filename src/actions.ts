@@ -2,6 +2,7 @@
 
 import { createPlaceholderNote } from '@/actions/note';
 import { signIn } from '@/auth/auth';
+import { env } from '@/env';
 import { Filter } from '@/lib/zustand/search-filter';
 import { currentUser } from '@/queries/note';
 import { DEFAULT_REDIRECT } from '@/routes';
@@ -14,6 +15,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { z } from 'zod';
+
 // createNote calls the `notes` endpoint with a `POST` method, validate the form params
 // and revalidate the sidebar with the new created note.
 export async function createNote(values: z.infer<typeof noteDialogSchema>) {
@@ -25,7 +27,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const user = await currentUser();
   if (!user || !user.accessToken) return;
 
-  const response = await fetch('http://localhost:6969/notes', {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes`, {
     method: 'post',
     headers: {
       'Content-type': 'application/json',
@@ -63,7 +65,7 @@ export async function editNote(
   if (!user || !user.accessToken) return;
 
   try {
-    await fetch(`http://localhost:6969/notes/${id}`, {
+    await fetch(`${env.INK_HOSTNAME}/notes/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({
         colour: colour,
@@ -87,7 +89,7 @@ export async function deleteNote(id: string) {
   const user = await currentUser();
   if (!user || !user.accessToken) return;
 
-  await fetch(`http://localhost:6969/notes/${id}`, {
+  await fetch(`${env.INK_HOSTNAME}/notes/${id}`, {
     method: 'delete',
     headers: {
       'Content-type': 'application/json',
@@ -105,7 +107,7 @@ export async function updateNoteContent(id: string, content: string) {
     const user = await currentUser();
     if (!user || !user.accessToken) return;
 
-    await fetch(`http://localhost:6969/notes/${id}/content`, {
+    await fetch(`${env.INK_HOSTNAME}/notes/${id}/content`, {
       body: JSON.stringify({
         content: content,
       }),
@@ -131,7 +133,7 @@ export async function toggleNoteFavourite(id: string) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  await fetch(`http://localhost:6969/notes/${id}/favourite`, {
+  await fetch(`${env.INK_HOSTNAME}/notes/${id}/favourite`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
@@ -160,7 +162,7 @@ export async function toggleNoteArchived(id: string) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  await fetch(`http://localhost:6969/notes/${id}/archived`, {
+  await fetch(`${env.INK_HOSTNAME}/notes/${id}/archived`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
@@ -187,7 +189,7 @@ export async function togglePublishState(id: string) {
     const user = await currentUser();
     if (!user || !user.accessToken) return;
 
-    await fetch(`http://localhost:6969/notes/${id}/public`, {
+    await fetch(`${env.INK_HOSTNAME}/notes/${id}/public`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${user.accessToken}` },
     });
@@ -210,7 +212,7 @@ export async function register(
   if (!fields.success) return { error: t('inv_field') };
   const { email, password, username } = fields.data;
 
-  const response = await fetch('http://localhost:6969/register', {
+  const response = await fetch(`${env.INK_HOSTNAME}/register`, {
     method: 'post',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -253,7 +255,7 @@ export async function generateNote() {
   if (!user || !user?.accessToken) return;
 
   try {
-    const response = await fetch('http://localhost:6969/notes/generate', {
+    const response = await fetch(`${env.INK_HOSTNAME}/notes/generate`, {
       method: 'post',
       headers: {
         'content-type': 'application/json',
@@ -276,7 +278,7 @@ export const searchNotes = cache(
     const hasFilter = filter !== 'None' ? `&filter=${filter}` : '';
 
     const response = await fetch(
-      `http://localhost:6969/notes/search?q=${query}${hasFilter}`,
+      `${env.INK_HOSTNAME}/notes/search?q=${query}${hasFilter}`,
       {
         method: 'get',
         cache: 'force-cache',
@@ -299,7 +301,7 @@ export async function getUserProfileImage(): Promise<string | null> {
 
   if (!user.image) {
     const response = await fetch(
-      `http://localhost:6969/users/profile/${user.id}`,
+      `${env.INK_HOSTNAME}/users/profile/${user.id}`,
       {
         method: 'get',
         next: { tags: ['profile-image'], revalidate: 3600 },
