@@ -5,7 +5,6 @@ import {
   getAllUserNotes,
   getNoteByIdWithPreferences,
 } from '@/queries/note';
-import { type FilteredResults, getFilteredNotes } from '@/utils/format-notes';
 import { type Note as NoteType } from '../../types/database-types';
 
 export abstract class Note {
@@ -16,11 +15,6 @@ export abstract class Note {
 
   abstract get(): Promise<NoteType[] | null>;
   abstract count(): Promise<number>;
-  async filter(): Promise<FilteredResults | null> {
-    const notes = await this.get();
-    if (!notes) return null;
-    return getFilteredNotes(notes);
-  }
 }
 
 export class SingleNote {

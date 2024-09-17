@@ -1,10 +1,11 @@
+import { getNotes } from '@/actions';
 import Counter from '@/components/Counter';
 import Note from '@/components/Note/Note';
 import SearchNote from '@/components/Note/SearchNote';
 import SectionTitle from '@/components/SectionTitle';
 import SortDropdown from '@/components/SortDropdown';
-import { API } from '@/server/api';
 import { currentUser } from '@/server/queries/note';
+import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
@@ -13,13 +14,17 @@ import { type ReactNode } from 'react';
 export default async function Notes() {
   const user = await currentUser();
   if (!user || !user.id) return;
-  const t = await getTranslations('Sidebar');
   const isFirefox = headers().get('user-agent')?.includes('Firefox');
+  const searchParams = headers().get('search-params');
+  const search = searchParams?.match(/name=([^&]*)/);
+  const searchString = search && formatSearchParams(search[1]);
 
-  const result = await new API().notes(user.id).ordinary.filter();
-  if (!result) return;
-  const { notes, searchParam } = result;
-  const filter = getFilter();
+  const [notes, filter, t] = await Promise.all([
+    getNotes(),
+    getFilter(),
+    getTranslations('Sidebar'),
+  ]);
+  if (!notes) return;
 
   if (filter === 'date-new') {
     notes.sort(
@@ -48,11 +53,11 @@ export default async function Notes() {
         data-firefox={isFirefox}
         className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-w-1 scrollbar scrollbar-thumb-rounded-full scrollbar-thumb-silver xl:max-h-[396px] lg:max-h-[300px] max-h-[230px] px-5 pe-4 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden data-[firefox=true]:scrollbar-thin data-[firefox=true]:scrollbar-track-black'
       >
-        {notes.length === 0 && searchParam ? (
+        {notes.length === 0 && searchString ? (
           <PlaceholderWrapper>
             <h1>
               No note with such name as{' '}
-              <span className='italic font-medium'>{searchParam}</span>
+              <span className='italic font-medium'>{searchString}</span>
             </h1>
           </PlaceholderWrapper>
         ) : notes.length > 0 ? (

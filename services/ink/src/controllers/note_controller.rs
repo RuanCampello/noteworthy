@@ -1,5 +1,6 @@
 use crate::models::enums::SearchFilter;
 use crate::{repositories::note_repository::NoteRepository, utils::middleware::AuthUser};
+use aws_sdk_s3::config::IntoShared;
 use axum::extract::Query;
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::Deserialize;
@@ -177,6 +178,45 @@ pub async fn search_notes(
     Ok(notes) => (StatusCode::OK, Json(notes)).into_response(),
     Err(e) => {
       error!("error searching notes {:?}", e);
+      e.into_response()
+    }
+  }
+}
+
+pub async fn count_notes(
+  AuthUser(user): AuthUser,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.count_user_notes(&user.id, false, false).await {
+    Ok(count) => (StatusCode::OK, Json(count)).into_response(),
+    Err(e) => {
+      error!("error on count {:?}", e);
+      e.into_response()
+    }
+  }
+}
+
+pub async fn count_favourite_notes(
+  AuthUser(user): AuthUser,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.count_user_notes(&user.id, true, false).await {
+    Ok(count) => (StatusCode::OK, Json(count)).into_response(),
+    Err(e) => {
+      error!("error on count {:?}", e);
+      e.into_response()
+    }
+  }
+}
+
+pub async fn count_archived_notes(
+  AuthUser(user): AuthUser,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.count_user_notes(&user.id, false, true).await {
+    Ok(count) => (StatusCode::OK, Json(count)).into_response(),
+    Err(e) => {
+      error!("error on count {:?}", e);
       e.into_response()
     }
   }

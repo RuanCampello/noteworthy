@@ -1,6 +1,6 @@
 # Ink
 
-Ink is the **blazingly** and secure API behind Noteworthy, written in Rust (btw) for performance and reliability. It handles user note management, using JWT tokens for authentication and SQLx for interacting with a PostgreSQL database.
+Ink is the **blazingly** fast and secure API behind Noteworthy, written in Rust (btw) for performance and reliability. It handles user note management, using JWT tokens for authentication and SQLx for interacting with a PostgreSQL database.
 
 Built with the Axum framework, Ink can efficiently handle multiple requests while keeping the codebase simple and maintainable. Authentication is managed through JWT tokens, which must be included in the `Authorization` header of each request:
 

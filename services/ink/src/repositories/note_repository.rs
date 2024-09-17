@@ -260,4 +260,27 @@ impl NoteRepository {
 
     Ok(notes_found)
   }
+
+  pub async fn count_user_notes(
+    &self,
+    user_id: &str,
+    is_fav: bool,
+    is_arc: bool,
+  ) -> Result<i64, NoteError> {
+    let query = r#"
+      SELECT COUNT (title) FROM notes
+      WHERE "userId" = $1
+        AND is_favourite = $2
+        AND is_archived = $3
+    "#;
+
+    let number_of_notes = sqlx::query_scalar::<_, i64>(query)
+      .bind(user_id)
+      .bind(is_fav)
+      .bind(is_arc)
+      .fetch_one(&*self.database)
+      .await?;
+
+    Ok(number_of_notes)
+  }
 }
