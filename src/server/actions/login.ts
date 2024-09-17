@@ -1,7 +1,6 @@
 'use server';
 
 import { signIn } from '@/auth/auth';
-import { env } from '@/env';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';
 import { AuthError } from 'next-auth';
@@ -15,14 +14,7 @@ export async function login(
   const t = await getTranslations('ServerErrors');
 
   if (!fields.success) return { error: t('inv_field') };
-
   const { email, password } = fields.data;
-  const response = await fetch(`${env.INK_HOSTNAME}/users/${email}`, {
-    method: 'get',
-    cache: 'force-cache',
-  });
-  if (!response.ok) return { error: t('email_not_found') };
-
   try {
     await signIn('credentials', {
       email,
@@ -35,6 +27,8 @@ export async function login(
       switch (error.type) {
         case 'CredentialsSignin':
           return { error: t('inv_credentials') };
+        case 'AccessDenied':
+          return { error: t('email_not_found') };
         default:
           return { error: t('default_error') };
       }

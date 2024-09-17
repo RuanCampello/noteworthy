@@ -1,8 +1,8 @@
 import { env } from '@/env';
 import { loginFormSchema } from '@/schemas';
+import { AccessDenied } from '@auth/core/errors';
 import { jwtDecode } from 'jwt-decode';
-import type { NextAuthConfig } from 'next-auth';
-import { User } from 'next-auth';
+import { NextAuthConfig, User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
@@ -28,9 +28,9 @@ export default {
     ...providers,
     Credentials({
       async authorize(credentials) {
+        'use server';
         const fields = loginFormSchema.safeParse(credentials);
         if (!fields.success) return null;
-
         const response = await fetch(`${env.INK_HOSTNAME}/login`, {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
@@ -39,6 +39,9 @@ export default {
             password: fields.data.password,
           }),
         });
+        if (response.status === 404) {
+          throw new AccessDenied('');
+        }
         const token = await response.json();
         const claims: User = jwtDecode(token);
 

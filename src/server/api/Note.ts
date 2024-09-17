@@ -1,3 +1,4 @@
+import { env } from '@/env';
 import {
   countNoteNumber,
   currentUser,
@@ -36,9 +37,10 @@ export class OrdinaryNote extends Note {
   }
 
   async get() {
+    'use server';
     const user = await currentUser();
     if (!user || !user.accessToken) return null;
-    const response = await fetch('http://localhost:6969/notes', {
+    const response = await fetch(`${env.INK_HOSTNAME}/notes`, {
       method: 'get',
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
