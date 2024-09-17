@@ -1,11 +1,11 @@
 import { createPlaceholderNote } from '@/actions/note';
 import authConfig from '@/auth/auth.config';
+import { env } from '@/env';
 import { db } from '@/server/db';
 import { user as userTable } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { jwtDecode } from 'jwt-decode';
-import NextAuth, { User, type DefaultSession } from 'next-auth';
-import {} from 'next-auth/jwt';
+import NextAuth, { type DefaultSession, User } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
@@ -60,7 +60,7 @@ export const {
       if (Date.now() / 1000 > token.user.exp) {
         const response = await fetch(
           // @ts-expect-error undeclared type
-          `http://localhost:6969/refresh-token/${token.user.accessToken}`,
+          `${env.INK_HOSTNAME}/refresh-token/${token.user.accessToken}`,
           { method: 'get' },
         );
         const newToken = await response.json();

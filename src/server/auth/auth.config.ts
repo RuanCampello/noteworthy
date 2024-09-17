@@ -1,12 +1,11 @@
+import { env } from '@/env';
+import { loginFormSchema } from '@/schemas';
 import { jwtDecode } from 'jwt-decode';
 import type { NextAuthConfig } from 'next-auth';
+import { User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
-
-import { env } from '@/env';
-import { loginFormSchema } from '@/schemas';
-import { User } from 'next-auth';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -32,7 +31,7 @@ export default {
         const fields = loginFormSchema.safeParse(credentials);
         if (!fields.success) return null;
 
-        const response = await fetch('http://localhost:6969/login', {
+        const response = await fetch(`${env.INK_HOSTNAME}/login`, {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
           body: JSON.stringify({

@@ -2,6 +2,7 @@ import NotFound from '@/app/not-found';
 import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
+import { env } from '@/env';
 import { currentUser } from '@/queries/note';
 import { Note } from '@/types/Note';
 import { headers } from 'next/headers';
@@ -10,7 +11,7 @@ type Props = { params: { id: string } };
 
 export default async function NotePage({ params }: Props) {
   const user = await currentUser();
-  const response = await fetch(`http://localhost:6969/notes/${params.id}`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/${params.id}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user?.accessToken}` },
     next: { tags: ['note-page'] },

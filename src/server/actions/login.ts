@@ -1,6 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth/auth';
+import { env } from '@/env';
 import { DEFAULT_REDIRECT } from '@/routes';
 import { loginFormSchema } from '@/schemas';
 import { AuthError } from 'next-auth';
@@ -16,7 +17,7 @@ export async function login(
   if (!fields.success) return { error: t('inv_field') };
 
   const { email, password } = fields.data;
-  const response = await fetch(`http://localhost:6969/users/${email}`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/users/${email}`, {
     method: 'get',
     cache: 'force-cache',
   });

@@ -6,6 +6,7 @@ import { PartialNote } from '@/types/PartialNote';
 import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
+import { env } from '@/env';
 
 export default async function FavouriteLayout({
   children,
@@ -15,7 +16,7 @@ export default async function FavouriteLayout({
   const user = await currentUser();
   if (!user?.id || !user.accessToken) return;
 
-  const response = await fetch('http://localhost:6969/notes/archived', {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/archived`, {
     method: 'get',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,

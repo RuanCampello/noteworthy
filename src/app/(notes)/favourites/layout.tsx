@@ -1,6 +1,7 @@
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
+import { env } from '@/env';
 import { currentUser } from '@/queries/note';
 import { Sparkles, StarOff } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -14,7 +15,7 @@ export default async function FavouriteLayout({
   const user = await currentUser();
   if (!user?.id) return;
 
-  const response = await fetch('http://localhost:6969/notes/favourites', {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/favourites`, {
     method: 'get',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
