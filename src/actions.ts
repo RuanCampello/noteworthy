@@ -12,8 +12,8 @@ import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 import { z } from 'zod';
-
 // createNote calls the `notes` endpoint with a `POST` method, validate the form params
 // and revalidate the sidebar with the new created note.
 export async function createNote(values: z.infer<typeof noteDialogSchema>) {
@@ -268,24 +268,27 @@ export async function generateNote() {
 }
 
 // Call the notes/search endpoint with q as query and an optional filter.
-export async function searchNotes(query: string, filter: Filter | null) {
-  query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
-  const user = await currentUser();
-  if (!user || !user?.accessToken) return null;
-  const hasFilter = filter !== 'None' ? `&filter=${filter}` : '';
+export const searchNotes = cache(
+  async (query: string, filter: Filter | null) => {
+    query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
+    const user = await currentUser();
+    if (!user || !user?.accessToken) return null;
+    const hasFilter = filter !== 'None' ? `&filter=${filter}` : '';
 
-  const response = await fetch(
-    `http://localhost:6969/notes/search?q=${query}${hasFilter}`,
-    {
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+    const response = await fetch(
+      `http://localhost:6969/notes/search?q=${query}${hasFilter}`,
+      {
+        method: 'get',
+        cache: 'force-cache',
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
       },
-    },
-  );
-  if (!response.ok) return null;
-  return (await response.json()) as SearchResult[];
-}
+    );
+    if (!response.ok) return null;
+    return (await response.json()) as SearchResult[];
+  },
+);
 
 // Checks if the current user has an image, if not
 // fetch the current user at `users/profile/:id` endpoint with a `GET` method

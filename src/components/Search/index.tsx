@@ -27,7 +27,7 @@ import {
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useDeferredValue } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CommandFooter } from './Footer';
 import { NoteItemWrapper } from './Item';
@@ -35,6 +35,7 @@ import { NoteItemWrapper } from './Item';
 export default function Search() {
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
+  const deferredQuery = useDeferredValue(query);
   const [loading, startTransition] = useTransition();
   const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
   const { setOpen: setSettingsOpen } = useSettingsStore();
@@ -51,12 +52,17 @@ export default function Search() {
   });
 
   const { data: results, isLoading } = useQuery({
-    queryKey: ['search', query, filter],
+    queryKey: ['search-command', deferredQuery],
     queryFn: async () => {
-      return await searchNotes(query, filter);
+      return await searchNotes(deferredQuery, filter);
     },
-    enabled: !!query && query.length > 2,
+    enabled: !!deferredQuery && deferredQuery.length > 2,
   });
+
+  const deferredResults = useDeferredValue(results);
+
+  const shouldRender =
+    deferredResults && Array.isArray(deferredResults) && !isLoading;
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
@@ -73,14 +79,14 @@ export default function Search() {
       />
       <CommandList>
         {isLoading && <LoadingFallback />}
-        {!isLoading && (
+        {!shouldRender && (
           <CommandEmpty>
-            <NotFoundFallback query={query} />
+            <NotFoundFallback query={deferredQuery} />
           </CommandEmpty>
         )}
-        {results && Array.isArray(results) && (
+        {shouldRender && (
           <CommandGroup heading={t('search_res')}>
-            {results.map((r) => {
+            {deferredResults.map((r) => {
               // TODO: solve slow down caused by cmdk
               const highlight = r.highlightedContent;
               const uniqueValue = r.id + r.content;

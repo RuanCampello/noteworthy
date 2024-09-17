@@ -57,7 +57,7 @@ function RenderInputIcon({ loading }: RenderInputIconProps) {
   if (loading) {
     return <Loader className={cn(baseIcon, 'animate-spin')} />;
   } else {
-    if (filter === 'arc') {
+    if (filter === 'Archived') {
       return (
         <Package
           className={cn(
@@ -66,7 +66,7 @@ function RenderInputIcon({ loading }: RenderInputIconProps) {
           )}
         />
       );
-    } else if (filter === 'fav') {
+    } else if (filter === 'Favourites') {
       return (
         <Sparkle
           className={cn(
@@ -201,6 +201,7 @@ function CommandShortcut({
     />
   );
 }
+
 CommandShortcut.displayName = 'CommandShortcut';
 
 export {
