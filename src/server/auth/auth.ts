@@ -43,7 +43,10 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
-      console.debug(`token ${token} session ${session}`);
+      console.log('token');
+      console.debug(token);
+      console.log('session');
+      console.debug(session);
       // @ts-expect-error undeclared type
       if (session.user && token.user.id) {
         // @ts-expect-error undeclared type
