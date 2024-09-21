@@ -9,7 +9,7 @@ import type { Note } from '../../types/database-types';
 
 export const currentUser = cache(async () => {
   const session = await auth();
-  console.log(session?.user.accessToken);
+  console.log('access token', session?.user.accessToken);
   return session?.user;
 });
 

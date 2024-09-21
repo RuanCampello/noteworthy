@@ -9,18 +9,16 @@ import Google from 'next-auth/providers/google';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-const providers = isProd
-  ? [
-      GitHub({
-        clientId: env.GITHUB_CLIENT_ID,
-        clientSecret: env.GITHUB_CLIENT_SECRET,
-      }),
-      Google({
-        clientId: env.GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
-      }),
-    ]
-  : [];
+const providers = [
+  GitHub({
+    clientId: env.GITHUB_CLIENT_ID,
+    clientSecret: env.GITHUB_CLIENT_SECRET,
+  }),
+  Google({
+    clientId: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
+  }),
+];
 
 export default {
   secret: env.AUTH_SECRET,

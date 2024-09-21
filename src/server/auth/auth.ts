@@ -15,6 +15,8 @@ declare module 'next-auth' {
   }
 }
 
+const providers = ['github', 'google'];
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -43,10 +45,6 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
-      console.log('token');
-      console.debug(token);
-      console.log('session');
-      console.debug(session);
       // @ts-expect-error undeclared type
       if (session.user && token.user.id) {
         // @ts-expect-error undeclared type
@@ -57,8 +55,23 @@ export const {
       return session;
     },
     async jwt({ token, user, account }) {
-      console.debug(`token ${token} user ${user} acc ${account}`);
       if (user && account) {
+        if (providers.includes(account.provider)) {
+          const response = await fetch(`${env.INK_HOSTNAME}/authorize`, {
+            method: 'post',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              id: account.providerAccountId,
+              provider: account.provider,
+            }),
+          });
+          const accessToken = await response.text();
+          const claims: User = jwtDecode(accessToken);
+          // @ts-expect-error undeclared type
+          claims.accessToken = accessToken;
+          token.user = claims;
+          return { ...token };
+        }
         return { ...token, user: user };
       }
       // @ts-expect-error undeclared type

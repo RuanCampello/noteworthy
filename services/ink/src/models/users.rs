@@ -11,3 +11,11 @@ pub struct User {
   pub password: Option<String>,
   pub image: Option<String>,
 }
+
+#[derive(FromRow)]
+pub struct SimpleUser {
+  pub id: String,
+  pub name: String,
+  pub image: Option<String>,
+  pub email: String,
+}

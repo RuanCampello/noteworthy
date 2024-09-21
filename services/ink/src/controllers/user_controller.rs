@@ -84,3 +84,23 @@ pub async fn refresh_handler(
 
   (StatusCode::OK, Json(refreshed_token)).into_response()
 }
+
+#[derive(Deserialize, Validate)]
+pub struct AuthRequest {
+  pub id: String,
+  pub provider: String,
+}
+
+pub async fn authorize(
+  Extension(repository): Extension<UserRepository>,
+  Extension(jwt_manager): Extension<JwtManager>,
+  Json(payload): Json<AuthRequest>,
+) -> impl IntoResponse {
+  match repository.authorize_user(&payload, &jwt_manager).await {
+    Ok(token) => (StatusCode::OK, token).into_response(),
+    Err(e) => {
+      error!("authorize_user error {:#?}", e);
+      e.into_response()
+    }
+  }
+}

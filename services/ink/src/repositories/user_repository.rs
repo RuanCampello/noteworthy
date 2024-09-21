@@ -1,7 +1,7 @@
-use crate::models::users::User;
+use crate::models::users::{SimpleUser, User};
 use crate::utils::jwt::JwtManager;
 use crate::{
-  controllers::user_controller::{LoginRequest, RegisterRequest},
+  controllers::user_controller::{AuthRequest, LoginRequest, RegisterRequest},
   errors::UserError,
 };
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
@@ -20,8 +20,17 @@ pub struct UserRepository {
 #[async_trait]
 pub trait UserRepositoryTrait {
   fn new(database: &Arc<PgPool>, r2: &Arc<Client>) -> Self;
-  async fn log_user(&self, req: &LoginRequest, jwt_manager: &JwtManager) -> Result<String, UserError>;
+  async fn log_user(
+    &self,
+    req: &LoginRequest,
+    jwt_manager: &JwtManager,
+  ) -> Result<String, UserError>;
   async fn create_user(&self, req: RegisterRequest) -> Result<String, UserError>;
+  async fn authorize_user(
+    &self,
+    req: &AuthRequest,
+    jwt_manager: &JwtManager,
+  ) -> Result<String, UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
 }
 
@@ -33,7 +42,11 @@ impl UserRepositoryTrait for UserRepository {
       r2: Arc::clone(r2),
     }
   }
-  async fn log_user(&self, req: &LoginRequest, jwt_manager: &JwtManager) -> Result<String, UserError> {
+  async fn log_user(
+    &self,
+    req: &LoginRequest,
+    jwt_manager: &JwtManager,
+  ) -> Result<String, UserError> {
     req.validate()?;
     let user = match find_user_by_email(&req.email, &self.database).await? {
       Some(user) => user,
@@ -78,6 +91,32 @@ impl UserRepositoryTrait for UserRepository {
       .await?;
 
     Ok(id)
+  }
+
+  async fn authorize_user(
+    &self,
+    req: &AuthRequest,
+    jwt_manager: &JwtManager,
+  ) -> Result<String, UserError> {
+    req.validate()?;
+
+    let query = r#"
+      SELECT id, email, name, image FROM users
+      LEFT JOIN account on account."userId" = users.id
+      WHERE account."providerAccountId" = $1 AND account.provider = $2
+    "#;
+
+    let user = sqlx::query_as::<_, SimpleUser>(query)
+      .bind(&req.id)
+      .bind(&req.provider)
+      .fetch_one(&*self.database)
+      .await?;
+
+    let token = jwt_manager
+      .generate_jwt(user.id, user.email, Some(user.name), user.image)
+      .expect("Generated JWT");
+
+    Ok(token)
   }
 
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
