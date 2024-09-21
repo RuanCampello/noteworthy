@@ -129,7 +129,10 @@ pub async fn get_note(
 ) -> impl IntoResponse {
   match repository.find_note_by_id(&user.id, id).await {
     Ok(note) => (StatusCode::OK, Json(note)).into_response(),
-    Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+    Err(e) => {
+      error!("get_note error {:#?}", e);
+      StatusCode::INTERNAL_SERVER_ERROR.into_response()
+    }
   }
 }
 
