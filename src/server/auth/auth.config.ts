@@ -29,6 +29,7 @@ export default {
     Credentials({
       async authorize(credentials) {
         'use server';
+
         const fields = loginFormSchema.safeParse(credentials);
         if (!fields.success) return null;
         const response = await fetch(`${env.INK_HOSTNAME}/login`, {

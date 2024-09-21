@@ -43,6 +43,7 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
+      console.debug(`token ${token} session ${session}`);
       // @ts-expect-error undeclared type
       if (session.user && token.user.id) {
         // @ts-expect-error undeclared type
@@ -53,6 +54,7 @@ export const {
       return session;
     },
     async jwt({ token, user, account }) {
+      console.debug(`token ${token} user ${user} acc ${account}`);
       if (user && account) {
         return { ...token, user: user };
       }
