@@ -4,6 +4,7 @@ use crate::{
   controllers::user_controller::{AuthRequest, LoginRequest, RegisterRequest},
   errors::UserError,
 };
+use aws_sdk_s3::primitives::ByteStream;
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use axum::async_trait;
 use bcrypt::{hash, verify};
@@ -16,6 +17,8 @@ pub struct UserRepository {
   database: Arc<PgPool>,
   r2: Arc<Client>,
 }
+
+const BUCKET_NAME: &str = "noteworthy-images-bucket";
 
 #[async_trait]
 pub trait UserRepositoryTrait {
@@ -31,6 +34,8 @@ pub trait UserRepositoryTrait {
     req: &AuthRequest,
     jwt_manager: &JwtManager,
   ) -> Result<String, UserError>;
+  async fn upload_user_profile_image(&self, user_id: &str, image: Vec<u8>)
+    -> Result<(), UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
 }
 
@@ -119,11 +124,31 @@ impl UserRepositoryTrait for UserRepository {
     Ok(token)
   }
 
+  async fn upload_user_profile_image(
+    &self,
+    user_id: &str,
+    image: Vec<u8>,
+  ) -> Result<(), UserError> {
+    let stream = ByteStream::from(image);
+
+    let _ = self
+      .r2
+      .put_object()
+      .bucket(BUCKET_NAME)
+      .key(user_id)
+      .body(stream)
+      .content_type("image/jpeg")
+      .send()
+      .await?;
+
+    Ok(())
+  }
+
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError> {
     let presigned_url = &self
       .r2
       .get_object()
-      .bucket("noteworthy-images-bucket")
+      .bucket(BUCKET_NAME)
       .key(&id)
       .presigned(
         PresigningConfig::builder()

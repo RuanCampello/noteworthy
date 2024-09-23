@@ -1,7 +1,9 @@
 use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
+use aws_sdk_s3::operation::put_object::PutObjectError;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
+use image::ImageError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
 use uuid::Uuid;
@@ -53,6 +55,8 @@ pub enum UserError {
   DecryptError(#[from] BcryptError),
   #[error("Unexpected error on pre-signed url generation: {0}.")]
   PresignedUrl(#[from] SdkError<GetObjectError>),
+  #[error("Error during image uploading: {0}")]
+  ImageUploadError(#[from] SdkError<PutObjectError>),
   #[error("Error during request validation.")]
   Validation(#[from] ValidationErrors),
 }
@@ -64,7 +68,7 @@ impl IntoResponse for UserError {
       UserError::Validation(_) => StatusCode::UNPROCESSABLE_ENTITY,
       UserError::InvalidCredentials => StatusCode::BAD_REQUEST,
       UserError::UserAlreadyExist => StatusCode::CONFLICT,
-      UserError::DecryptError(_) | UserError::DatabaseError(_) | UserError::PresignedUrl(_) => {
+      UserError::DecryptError(_) | UserError::DatabaseError(_) | UserError::PresignedUrl(_) | UserError::ImageUploadError(_) => {
         StatusCode::INTERNAL_SERVER_ERROR
       }
     };

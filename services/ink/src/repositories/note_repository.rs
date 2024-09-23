@@ -12,7 +12,6 @@ use crate::{
 use chrono::Local;
 use sqlx::PgPool;
 use std::sync::Arc;
-use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -129,8 +128,6 @@ impl NoteRepository {
       LEFT JOIN users_preferences ON users_preferences."userId" = users.id
       WHERE notes.id = $1 AND notes."userId" = $2;
     "#;
-
-    info!("user_id {} id {}", user_id, id);
 
     let notes = sqlx::query_as::<_, NoteWithUserPrefs>(query)
       .bind(id)

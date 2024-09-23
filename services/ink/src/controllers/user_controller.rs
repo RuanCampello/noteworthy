@@ -1,9 +1,16 @@
+use crate::utils::image::resize_and_reduce_image;
 use crate::utils::jwt::JwtManager;
+use crate::utils::middleware::AuthUser;
 use crate::{
   errors::TokenError,
   repositories::user_repository::{UserRepository, UserRepositoryTrait},
 };
-use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
+use axum::{
+  extract::{Multipart, Path},
+  http::StatusCode,
+  response::IntoResponse,
+  Extension, Json,
+};
 use serde::Deserialize;
 use tracing::{error, info};
 use validator::Validate;
@@ -103,4 +110,32 @@ pub async fn authorize(
       e.into_response()
     }
   }
+}
+
+pub async fn upload_profile_image(
+  AuthUser(user): AuthUser,
+  Extension(repository): Extension<UserRepository>,
+  mut multipart: Multipart,
+) -> impl IntoResponse {
+  while let Some(mut field) = multipart.next_field().await.expect("multipart error") {
+    let mut file_bytes = Vec::new();
+
+    while let Some(chunk) = field.chunk().await.expect("chunk") {
+      file_bytes.extend_from_slice(&chunk);
+    }
+
+    let compressed_image = resize_and_reduce_image(file_bytes).unwrap();
+    return match repository
+      .upload_user_profile_image(&user.id, compressed_image)
+      .await
+    {
+      Ok(_) => StatusCode::CREATED.into_response(),
+      Err(e) => {
+        error!("upload_profile_image error {:#?}", e);
+        e.into_response()
+      }
+    };
+  }
+
+  StatusCode::INTERNAL_SERVER_ERROR.into_response()
 }
