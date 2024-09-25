@@ -112,6 +112,39 @@ pub async fn authorize(
   }
 }
 
+pub async fn link_account(
+  Path(id): Path<String>,
+  Extension(repository): Extension<UserRepository>,
+) -> impl IntoResponse {
+  match repository.link_user_account(&id).await {
+    Ok(_) => StatusCode::OK.into_response(),
+    Err(e) => {
+      error!("link_user_account error {:#?}", e);
+      e.into_response()
+    }
+  }
+}
+
+#[derive(Deserialize, Validate)]
+pub struct ResetPasswordRequest {
+  #[validate(length(min = 6))]
+  pub password: String,
+}
+
+pub async fn new_password(
+  Extension(repository): Extension<UserRepository>,
+  Path(token): Path<String>,
+  Json(payload): Json<ResetPasswordRequest>,
+) -> impl IntoResponse {
+  match repository.reset_user_password(&token, payload).await {
+    Ok(_) => StatusCode::OK.into_response(),
+    Err(e) => {
+      error!("reset_user_password error {:#?}", e);
+      e.into_response()
+    }
+  }
+}
+
 pub async fn upload_profile_image(
   AuthUser(user): AuthUser,
   Extension(repository): Extension<UserRepository>,
@@ -124,7 +157,11 @@ pub async fn upload_profile_image(
       file_bytes.extend_from_slice(&chunk);
     }
 
-    let compressed_image = resize_and_reduce_image(file_bytes).unwrap();
+    let compressed_image = match resize_and_reduce_image(file_bytes) {
+      Ok(compressed_image) => compressed_image,
+      Err(e) => return e.into_response(),
+    };
+
     return match repository
       .upload_user_profile_image(&user.id, compressed_image)
       .await

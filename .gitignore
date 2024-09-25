@@ -16,6 +16,7 @@
 # production
 /build
 /services/ink/target
+/services/note-waver/__pycache__
 
 # misc
 .DS_Store

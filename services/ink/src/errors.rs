@@ -1,9 +1,8 @@
-use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use aws_sdk_s3::operation::put_object::PutObjectError;
+use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
-use image::ImageError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
 use uuid::Uuid;
@@ -59,18 +58,24 @@ pub enum UserError {
   ImageUploadError(#[from] SdkError<PutObjectError>),
   #[error("Error during request validation.")]
   Validation(#[from] ValidationErrors),
+  #[error("Reset password token not found.")]
+  TokenNotFound,
+  #[error("Token has already expired.")]
+  TokenExpired,
 }
 
 impl IntoResponse for UserError {
   fn into_response(self) -> Response {
     let status = match self {
-      UserError::UserNotFound => StatusCode::NOT_FOUND,
+      UserError::UserNotFound | UserError::TokenNotFound => StatusCode::NOT_FOUND,
       UserError::Validation(_) => StatusCode::UNPROCESSABLE_ENTITY,
       UserError::InvalidCredentials => StatusCode::BAD_REQUEST,
       UserError::UserAlreadyExist => StatusCode::CONFLICT,
-      UserError::DecryptError(_) | UserError::DatabaseError(_) | UserError::PresignedUrl(_) | UserError::ImageUploadError(_) => {
-        StatusCode::INTERNAL_SERVER_ERROR
-      }
+      UserError::TokenExpired => StatusCode::FORBIDDEN,
+      UserError::DecryptError(_)
+      | UserError::DatabaseError(_)
+      | UserError::PresignedUrl(_)
+      | UserError::ImageUploadError(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {

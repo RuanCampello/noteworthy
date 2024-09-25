@@ -7,9 +7,10 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use crate::controllers::user_controller::upload_profile_image;
 use crate::{
-  controllers::user_controller::{authorize, get_user_image, login, register},
+  controllers::user_controller::{
+    authorize, get_user_image, link_account, login, register, upload_profile_image,
+  },
   repositories::user_repository::{UserRepository, UserRepositoryTrait},
 };
 
@@ -20,6 +21,7 @@ pub fn user_routes(db: &Arc<PgPool>, r2: &Arc<Client>) -> Router {
     .route("/login", post(login))
     .route("/register", post(register))
     .route("/authorize", post(authorize))
+    .route("/link-account", post(link_account))
     .route("/users/profile", post(upload_profile_image))
     .route("/users/profile/:id", get(get_user_image))
     .layer(Extension(repository))

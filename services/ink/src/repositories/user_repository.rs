@@ -1,3 +1,5 @@
+use crate::controllers::user_controller::ResetPasswordRequest;
+use crate::models::password_reset_tokens::PasswordResetToken;
 use crate::models::users::{SimpleUser, User};
 use crate::utils::jwt::JwtManager;
 use crate::{
@@ -8,6 +10,7 @@ use aws_sdk_s3::primitives::ByteStream;
 use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use axum::async_trait;
 use bcrypt::{hash, verify};
+use chrono::Local;
 use sqlx::PgPool;
 use std::{sync::Arc, time::Duration};
 use validator::Validate;
@@ -34,6 +37,12 @@ pub trait UserRepositoryTrait {
     req: &AuthRequest,
     jwt_manager: &JwtManager,
   ) -> Result<String, UserError>;
+  async fn link_user_account(&self, id: &str) -> Result<(), UserError>;
+  async fn reset_user_password(
+    &self,
+    token: &str,
+    req: ResetPasswordRequest,
+  ) -> Result<(), UserError>;
   async fn upload_user_profile_image(&self, user_id: &str, image: Vec<u8>)
     -> Result<(), UserError>;
   async fn find_user_profile_image(&self, id: String) -> Result<String, UserError>;
@@ -122,6 +131,76 @@ impl UserRepositoryTrait for UserRepository {
       .expect("Generated JWT");
 
     Ok(token)
+  }
+
+  async fn link_user_account(&self, id: &str) -> Result<(), UserError> {
+    let query = r#"
+      UPDATE users
+      SET "emailVerified" = $2
+      WHERE id = $1
+    "#;
+
+    let localtime = Local::now().naive_local();
+
+    sqlx::query(query)
+      .bind(id)
+      .bind(localtime)
+      .execute(&*self.database)
+      .await?;
+
+    Ok(())
+  }
+
+  async fn reset_user_password(
+    &self,
+    token: &str,
+    req: ResetPasswordRequest,
+  ) -> Result<(), UserError> {
+    req.validate()?;
+
+    let query = r#"
+      SELECT * FROM password_reset_tokens
+      WHERE token = $1
+    "#;
+
+    let password_reset_token = match sqlx::query_as::<_, PasswordResetToken>(query)
+      .bind(token)
+      .fetch_optional(&*self.database)
+      .await?
+    {
+      Some(reset_token) => reset_token,
+      None => return Err(UserError::TokenNotFound),
+    };
+
+    if password_reset_token.expires < Local::now().naive_local() {
+      return Err(UserError::TokenExpired);
+    }
+
+    let hash_password = hash(req.password, 10)?;
+
+    let get_user_query = "SELECT * FROM users WHERE email = $1";
+    let update_password_query = "UPDATE users SET password = $2 WHERE id = $1";
+    let delete_token_query = "DELETE FROM password_reset_tokens WHERE id = $1";
+
+    let mut transaction = self.database.begin().await?;
+
+    let user = sqlx::query_as::<_, User>(get_user_query)
+      .bind(password_reset_token.email)
+      .fetch_one(&mut *transaction)
+      .await?;
+    sqlx::query(update_password_query)
+      .bind(user.id)
+      .bind(hash_password)
+      .execute(&mut *transaction)
+      .await?;
+    sqlx::query(delete_token_query)
+      .bind(password_reset_token.id)
+      .execute(&mut *transaction)
+      .await?;
+
+    transaction.commit().await?;
+
+    Ok(())
   }
 
   async fn upload_user_profile_image(

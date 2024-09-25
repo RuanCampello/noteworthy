@@ -1,9 +1,6 @@
 import { createPlaceholderNote } from '@/actions/note';
 import authConfig from '@/auth/auth.config';
 import { env } from '@/env';
-import { db } from '@/server/db';
-import { user as userTable } from '@/server/db/schema';
-import { eq } from 'drizzle-orm';
 import { jwtDecode } from 'jwt-decode';
 import NextAuth, { type DefaultSession, User } from 'next-auth';
 
@@ -14,8 +11,6 @@ declare module 'next-auth' {
     } & DefaultSession['user'];
   }
 }
-
-const providers = ['github', 'google'];
 
 export const {
   handlers: { GET, POST },
@@ -30,12 +25,9 @@ export const {
   events: {
     async linkAccount({ user }) {
       if (!user.id) return;
-      await db
-        .update(userTable)
-        .set({
-          emailVerified: new Date(),
-        })
-        .where(eq(userTable.id, user.id));
+      await fetch(`${env.INK_HOSTNAME}/link-account/${user.id}`, {
+        method: 'get',
+      });
     },
     async createUser({ user }) {
       if (user.id) {
@@ -55,25 +47,29 @@ export const {
       return session;
     },
     async jwt({ token, user, account }) {
-      if (user && account) {
-        if (providers.includes(account.provider)) {
-          const response = await fetch(`${env.INK_HOSTNAME}/authorize`, {
-            method: 'post',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({
-              id: account.providerAccountId,
-              provider: account.provider,
-            }),
-          });
-          const accessToken = await response.text();
-          const claims: User = jwtDecode(accessToken);
-          // @ts-expect-error undeclared type
-          claims.accessToken = accessToken;
-          token.user = claims;
-          return { ...token };
+      // @ts-expect-error undeclared type
+      if (user && account && !token.user.accessToken) {
+        if (account.provider === 'credentials') {
+          return { ...token, user: user };
         }
+
+        const response = await fetch(`${env.INK_HOSTNAME}/authorize`, {
+          method: 'post',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            id: account.providerAccountId,
+            provider: account.provider,
+          }),
+        });
+        const accessToken = await response.text();
+        const claims: User = jwtDecode(accessToken);
+        // @ts-expect-error undeclared type
+        claims.accessToken = accessToken;
+        token.user = claims;
+        
         return { ...token, user: user };
       }
+
       // @ts-expect-error undeclared type
       if (Date.now() / 1000 > token.user.exp) {
         const response = await fetch(

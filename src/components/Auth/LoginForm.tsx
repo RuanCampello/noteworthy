@@ -14,7 +14,7 @@ import {
 } from '@/ui/form';
 import { CustomForm } from '../Form';
 import { Input } from '@/ui/input';
-import { login } from '@/actions/login';
+import { login } from '@/actions';
 import { useEffect, useState, useTransition } from 'react';
 import { loginFormSchema } from '@/schemas';
 import GoogleLogo from '@/assets/third-part-login/Google.png';

@@ -6,7 +6,11 @@ import { env } from '@/env';
 import { Filter } from '@/lib/zustand/search-filter';
 import { currentUser } from '@/queries/note';
 import { DEFAULT_REDIRECT } from '@/routes';
-import { noteDialogSchema, registerFormSchema } from '@/schemas';
+import {
+  loginFormSchema,
+  noteDialogSchema,
+  registerFormSchema,
+} from '@/schemas';
 import { Note } from '@/types/Note';
 import { SearchResult } from '@/types/SearchResult';
 import { getPathnameParams } from '@/utils/format-notes';
@@ -332,4 +336,35 @@ export async function getUserProfileImage(): Promise<string | null> {
     return await response.text();
   }
   return user.image;
+}
+
+// Validates the user input and tries to log in the user.
+export async function login(
+  values: z.infer<typeof loginFormSchema>,
+): Promise<{ error: string | null }> {
+  const fields = loginFormSchema.safeParse(values);
+  const t = await getTranslations('ServerErrors');
+
+  if (!fields.success) return { error: t('inv_field') };
+  const { email, password } = fields.data;
+  try {
+    await signIn('credentials', {
+      email,
+      password,
+      redirectTo: DEFAULT_REDIRECT,
+    });
+    return { error: null };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return { error: t('inv_credentials') };
+        case 'AccessDenied':
+          return { error: t('email_not_found') };
+        default:
+          return { error: t('default_error') };
+      }
+    }
+    throw error;
+  }
 }

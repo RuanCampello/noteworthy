@@ -56,13 +56,10 @@ export default function Search() {
     queryFn: async () => {
       return await searchNotes(deferredQuery, filter);
     },
-    enabled: !!deferredQuery && deferredQuery.length > 2,
+    enabled: !!deferredQuery && deferredQuery?.length > 2,
   });
 
-  const deferredResults = useDeferredValue(results);
-
-  const shouldRender =
-    deferredResults && Array.isArray(deferredResults) && !isLoading;
+  const shouldRender = results && Array.isArray(results) && !isLoading;
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
@@ -86,7 +83,7 @@ export default function Search() {
         )}
         {shouldRender && (
           <CommandGroup heading={t('search_res')}>
-            {deferredResults.map((r) => {
+            {results.map((r) => {
               // TODO: solve slow down caused by cmdk
               const highlight = r.highlightedContent;
               const uniqueValue = r.id + r.content;
@@ -94,7 +91,7 @@ export default function Search() {
               return (
                 <CommandItem
                   className='group'
-                  key={r.id}
+                  key={uniqueValue}
                   value={uniqueValue}
                   onSelect={() => {
                     router.push(`/notes/${r.id}`);

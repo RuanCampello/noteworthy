@@ -244,6 +244,7 @@ impl NoteRepository {
       'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
       FROM notes
       WHERE "userId" = $1 AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+      LIMIT 5
     "#.to_string();
 
     match params.filter {
