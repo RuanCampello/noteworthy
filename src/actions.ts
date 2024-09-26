@@ -1,10 +1,9 @@
 'use server';
 
 import { createPlaceholderNote } from '@/actions/note';
-import { signIn } from '@/auth/auth';
+import { auth, signIn } from '@/auth/auth';
 import { env } from '@/env';
 import { Filter } from '@/lib/zustand/search-filter';
-import { currentUser } from '@/queries/note';
 import { DEFAULT_REDIRECT } from '@/routes';
 import {
   loginFormSchema,
@@ -20,6 +19,12 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { z } from 'zod';
+
+// Look for the current logged-in user in the session.
+export const currentUser = cache(async () => {
+  const session = await auth();
+  return session?.user;
+});
 
 // createNote calls the `notes` endpoint with a `POST` method, validate the form params
 // and revalidate the sidebar with the new created note.

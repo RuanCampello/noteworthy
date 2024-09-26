@@ -3,7 +3,7 @@ import NotVisibleWarning from '@/components/NotVisibleWarning';
 import NoteEditor from '@/components/Note/NoteEditor';
 import NoteHeader from '@/components/Note/NoteHeader';
 import { env } from '@/env';
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import { Note } from '@/types/Note';
 import { headers } from 'next/headers';
 

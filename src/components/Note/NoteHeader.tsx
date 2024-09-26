@@ -1,4 +1,4 @@
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import type { Note } from '@/types/Note';
 import { toLocaleDateLong } from '@/utils/date';
 import {

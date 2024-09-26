@@ -4,7 +4,7 @@ import Note from '@/components/Note/Note';
 import SearchNote from '@/components/Note/SearchNote';
 import SectionTitle from '@/components/SectionTitle';
 import SortDropdown from '@/components/SortDropdown';
-import { currentUser } from '@/server/queries/note';
+import { currentUser } from '@/actions';
 import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';

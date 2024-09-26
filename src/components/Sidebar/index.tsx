@@ -5,7 +5,7 @@ import Notes from '@/components/Note/Notes';
 import Profile from '@/components/Profile';
 import ToggleSidebarButton from '@/components/Sidebar/ToggleSidebarButton';
 import { getUserPreferences } from '@/server/actions/user-preferences';
-import { currentUser } from '@/server/queries/note';
+import { currentUser } from '@/actions';
 import type { NoteFormat } from '../../types/database-types';
 import Root from './Root';
 

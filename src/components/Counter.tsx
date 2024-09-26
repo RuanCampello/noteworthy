@@ -1,4 +1,4 @@
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import { env } from '@/env';
 import AnimatedCounter from './AnimatedCounter';
 

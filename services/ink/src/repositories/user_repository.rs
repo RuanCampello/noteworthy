@@ -13,7 +13,7 @@ use bcrypt::{hash, verify};
 use chrono::Local;
 use sqlx::PgPool;
 use std::{sync::Arc, time::Duration};
-use validator::Validate;
+use validator::{Validate, ValidateEmail, ValidationErrors};
 
 #[derive(Clone)]
 pub struct UserRepository {
@@ -38,6 +38,7 @@ pub trait UserRepositoryTrait {
     jwt_manager: &JwtManager,
   ) -> Result<String, UserError>;
   async fn link_user_account(&self, id: &str) -> Result<(), UserError>;
+  async fn new_reset_token(&self, email: String) -> Result<PasswordResetToken, UserError>;
   async fn reset_user_password(
     &self,
     token: &str,
@@ -66,7 +67,6 @@ impl UserRepositoryTrait for UserRepository {
       Some(user) => user,
       None => return Err(UserError::UserNotFound),
     };
-
     let correct_password =
       verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
 
@@ -149,6 +149,45 @@ impl UserRepositoryTrait for UserRepository {
       .await?;
 
     Ok(())
+  }
+
+  async fn new_reset_token(&self, email: String) -> Result<PasswordResetToken, UserError> {
+    if !email.validate_email() {
+      let validate_err = ValidationErrors::new();
+      return Err(UserError::Validation(validate_err));
+    }
+
+    let query = "SELECT * FROM password_reset_tokens WHERE email = $1";
+    let password_token = sqlx::query_as::<_, PasswordResetToken>(query)
+      .bind(&email)
+      .fetch_optional(&*self.database)
+      .await?;
+
+    if let Some(mut token) = password_token {
+      if token.expires > Local::now().naive_local() {
+        token.is_new = false;
+        return Ok(token);
+      }
+    }
+
+    let new_token = uuid::Uuid::new_v4();
+    let expires_in = Local::now().naive_local() + chrono::Duration::hours(1);
+
+    let insert_query = r#"
+      INSERT INTO password_reset_tokens (email, token, expires)
+      VALUES ($1, $2, $3) RETURNING *
+    "#;
+
+    let mut new_reset_token = sqlx::query_as::<_, PasswordResetToken>(insert_query)
+      .bind(email)
+      .bind(new_token)
+      .bind(expires_in)
+      .fetch_one(&*self.database)
+      .await?;
+    
+    new_reset_token.is_new = true;
+
+    Ok(new_reset_token)
   }
 
   async fn reset_user_password(

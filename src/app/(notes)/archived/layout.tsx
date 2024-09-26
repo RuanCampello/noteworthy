@@ -1,7 +1,7 @@
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import { PartialNote } from '@/types/PartialNote';
 import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';

@@ -1,6 +1,6 @@
 'use server';
 
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import { userPreferencesSchema } from '@/schemas';
 import { db } from '@/server/db';
 import { userPreferences } from '@/server/db/schema';

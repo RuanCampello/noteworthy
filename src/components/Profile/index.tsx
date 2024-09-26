@@ -1,6 +1,6 @@
 import { signOut } from '@/auth/auth';
 import { getUserPreferences } from '@/server/actions/user-preferences';
-import { currentUser } from '@/server/queries/note';
+import { currentUser } from '@/actions';
 
 import { getUserProfileImage } from '@/actions';
 import {

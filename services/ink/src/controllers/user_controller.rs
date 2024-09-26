@@ -125,6 +125,22 @@ pub async fn link_account(
   }
 }
 
+pub async fn new_password_token(
+  Extension(repository): Extension<UserRepository>,
+  Path(email): Path<String>,
+) -> impl IntoResponse {
+  match repository.new_reset_token(email).await {
+    Ok(token) => match token.is_new {
+      true => (StatusCode::CREATED, Json(token)).into_response(),
+      false => (StatusCode::OK, Json(token)).into_response(),
+    },
+    Err(e) => {
+      error!("new_password_token error {:#?}", e);
+      e.into_response()
+    }
+  }
+}
+
 #[derive(Deserialize, Validate)]
 pub struct ResetPasswordRequest {
   #[validate(length(min = 6))]

@@ -2,7 +2,7 @@ import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { env } from '@/env';
-import { currentUser } from '@/queries/note';
+import { currentUser } from '@/actions';
 import { Sparkles, StarOff } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
