@@ -122,6 +122,17 @@ pub async fn update_note_public_status(
   }
 }
 
+pub async fn get_note_public_state(
+  AuthUser(user): AuthUser,
+  Path(id): Path<Uuid>,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.find_note_public_state(id, &user.id).await {
+    Ok(is_pub) => (StatusCode::OK, is_pub.to_string()).into_response(),
+    Err(e) => e.into_response(),
+  }
+}
+
 pub async fn get_note(
   Path(id): Path<Uuid>,
   AuthUser(user): AuthUser,

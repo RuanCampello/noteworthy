@@ -188,7 +188,7 @@ export async function toggleNoteArchived(id: string) {
 
 // Make a fetch with a `PATCH` method to the selected `notes/:id/public` endpoint
 // and redirect the user based on note `isPublic` (boolean) attribute.
-// Also, revalidates the current note with new data.
+// Also, revalidates only the publish dialog with new data.
 export async function togglePublishState(id: string) {
   try {
     const user = await currentUser();
@@ -198,11 +198,29 @@ export async function togglePublishState(id: string) {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${user.accessToken}` },
     });
-    revalidateTag('note-page');
+    revalidateTag('note-public-state');
   } catch (error) {
     console.error(error);
     return null;
   }
+}
+
+// Makes a `GET` request to `notes/:id/public` to seek the current state of `is_public`.
+export async function getNoteIsPublic(id: string) {
+  const user = await currentUser();
+  if (!user || !user.accessToken) return;
+
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/${id}/public`, {
+    method: 'get',
+    headers: { Authorization: `Bearer ${user.accessToken}` },
+    next: { tags: ['note-public-state'] },
+    cache: 'force-cache',
+  });
+
+  if (!response.ok) return false;
+
+  const is_public: boolean = await response.json();
+  return is_public;
 }
 
 // Makes a `POST` request to register endpoint and tries to insert the given data

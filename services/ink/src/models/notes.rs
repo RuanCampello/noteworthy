@@ -12,7 +12,6 @@ pub struct Note {
   pub title: String,
   pub content: String,
   pub colour: Colour,
-  #[sqlx(rename = "userId")]
   pub user_id: String,
   pub created_at: NaiveDateTime,
   pub is_archived: bool,
@@ -30,7 +29,6 @@ pub struct NoteWithUserPrefs {
   pub title: String,
   pub content: String,
   pub colour: String,
-  #[sqlx(rename = "userId")]
   pub user_id: String,
   #[ts(type = "string")]
   pub created_at: NaiveDateTime,

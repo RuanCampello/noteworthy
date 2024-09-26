@@ -33,7 +33,7 @@ impl NoteRepository {
 
     let localtime = Local::now().naive_local();
     let query = r#"
-      INSERT INTO notes (title, content, "userId", colour, created_at, last_update)
+      INSERT INTO notes (title, content, user_id, colour, created_at, last_update)
       VALUES ($1, $2, $3, $4::colour, $5, $5)
       RETURNING id;
     "#;
@@ -70,7 +70,7 @@ impl NoteRepository {
   pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
     let query = r#"
       DELETE FROM notes
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
 
     sqlx::query(query)
@@ -94,7 +94,7 @@ impl NoteRepository {
     let query = r#"
       UPDATE notes
       SET title = $3, colour = $4::colour, last_update = $5
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
     let localtime = Local::now().naive_local();
 
@@ -119,14 +119,14 @@ impl NoteRepository {
       SELECT
         notes.*,
         notes.colour::text AS colour,
-        notes."userId" AS user_id,
+        notes.user_id AS user_id,
         users.name,
         COALESCE(users_preferences.full_note, true) AS full_note,
         COALESCE(users_preferences.note_format::text, 'full') AS note_format
       FROM notes
-      JOIN users ON notes."userId" = users.id
-      LEFT JOIN users_preferences ON users_preferences."userId" = users.id
-      WHERE notes.id = $1 AND notes."userId" = $2;
+      JOIN users ON notes.user_id = users.id
+      LEFT JOIN users_preferences ON users_preferences.user_id = users.id
+      WHERE notes.id = $1 AND notes.user_id = $2;
     "#;
 
     let notes = sqlx::query_as::<_, NoteWithUserPrefs>(query)
@@ -147,7 +147,7 @@ impl NoteRepository {
     let query = r#"
       SELECT LEFT(content, 250) AS content, id, title, colour::text AS colour, created_at
       FROM notes
-      WHERE "userId" = $1
+      WHERE user_id = $1
         AND is_favourite = $2
         AND is_archived = $3
       ORDER BY last_update DESC;
@@ -172,7 +172,7 @@ impl NoteRepository {
     let query = r#"
       UPDATE notes
       SET content = $3, last_update = $4
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
     let localtime = Local::now().naive_local();
 
@@ -191,7 +191,7 @@ impl NoteRepository {
     let query = r#"
       UPDATE notes
       SET is_favourite = NOT is_favourite
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
 
     sqlx::query(query)
@@ -202,11 +202,12 @@ impl NoteRepository {
 
     Ok(())
   }
+
   pub async fn toggle_note_archived(&self, id: Uuid, user_id: &str) -> Result<(), NoteError> {
     let query = r#"
       UPDATE notes
       SET is_archived = NOT is_archived
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
 
     sqlx::query(query)
@@ -222,7 +223,7 @@ impl NoteRepository {
     let query = r#"
       UPDATE notes
       SET is_public = NOT is_public
-      WHERE id = $1 AND "userId" = $2;
+      WHERE id = $1 AND user_id = $2;
     "#;
 
     sqlx::query(query)
@@ -234,6 +235,18 @@ impl NoteRepository {
     Ok(())
   }
 
+  pub async fn find_note_public_state(&self, id: Uuid, user_id: &str) -> Result<bool, NoteError> {
+    let query = "SELECT is_public FROM notes WHERE id = $1 AND user_id = $2";
+
+    let is_public = sqlx::query_scalar::<_, bool>(query)
+      .bind(id)
+      .bind(user_id)
+      .fetch_one(&*self.database)
+      .await?;
+
+    Ok(is_public)
+  }
+
   pub async fn search_notes(
     &self,
     user_id: &str,
@@ -243,7 +256,7 @@ impl NoteRepository {
       SELECT id, title, content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
       'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
       FROM notes
-      WHERE "userId" = $1 AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+      WHERE user_id = $1 AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
       LIMIT 5
     "#.to_string();
 
@@ -270,7 +283,7 @@ impl NoteRepository {
   ) -> Result<i64, NoteError> {
     let query = r#"
       SELECT COUNT (title) FROM notes
-      WHERE "userId" = $1
+      WHERE user_id = $1
         AND is_favourite = $2
         AND is_archived = $3
     "#;

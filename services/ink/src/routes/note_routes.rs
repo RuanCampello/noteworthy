@@ -5,14 +5,12 @@ use axum::{
   Extension, Router,
 };
 
-use crate::controllers::note_controller::{
-  count_archived_notes, count_favourite_notes, count_notes, search_notes,
-  update_note_archived_status, update_note_favourite_status, update_note_public_status,
-};
 use crate::{
   controllers::note_controller::{
-    create_generated_note, create_note, delete_note, get_all_archive_notes,
-    get_all_favourite_notes, get_all_notes, get_note, update_note, update_note_content,
+    count_archived_notes, count_favourite_notes, count_notes, create_generated_note, create_note,
+    delete_note, get_all_archive_notes, get_all_favourite_notes, get_all_notes, get_note,
+    get_note_public_state, search_notes, update_note, update_note_archived_status,
+    update_note_content, update_note_favourite_status, update_note_public_status,
   },
   repositories::note_repository::NoteRepository,
 };
@@ -25,7 +23,10 @@ pub fn note_routes(db: &Arc<PgPool>) -> Router {
     .route("/:id", delete(delete_note).patch(update_note).get(get_note))
     .route("/:id/favourite", patch(update_note_favourite_status))
     .route("/:id/archive", patch(update_note_archived_status))
-    .route("/:id/public", patch(update_note_public_status))
+    .route(
+      "/:id/public",
+      patch(update_note_public_status).get(get_note_public_state),
+    )
     .route("/:id/content", patch(update_note_content));
 
   let notes_route = Router::new()

@@ -116,8 +116,8 @@ impl UserRepositoryTrait for UserRepository {
 
     let query = r#"
       SELECT id, email, name, image FROM users
-      LEFT JOIN account on account."userId" = users.id
-      WHERE account."providerAccountId" = $1 AND account.provider = $2
+      LEFT JOIN accounts on accounts.user_id = users.id
+      WHERE accounts.provider_account_id = $1 AND accounts.provider = $2
     "#;
 
     let user = sqlx::query_as::<_, SimpleUser>(query)
@@ -136,7 +136,7 @@ impl UserRepositoryTrait for UserRepository {
   async fn link_user_account(&self, id: &str) -> Result<(), UserError> {
     let query = r#"
       UPDATE users
-      SET "emailVerified" = $2
+      SET email_verified = $2
       WHERE id = $1
     "#;
 

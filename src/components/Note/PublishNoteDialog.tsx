@@ -15,7 +15,7 @@ import SubmitButton from '@/components/SubmitButton';
 import { Globe } from 'lucide-react';
 import ShareLinkButton from '@/components/ShareLinkButton';
 import DropdownButton from '@/components/DropdownButton';
-import { getNoteIsPublic } from '@/server/queries/note';
+import { getNoteIsPublic } from '@/actions';
 import { getTranslations } from 'next-intl/server';
 
 interface DialogContentProps {
@@ -53,6 +53,7 @@ export default async function PublishNoteDialog() {
   async function handleTogglePublishState() {
     'use server';
 
+    console.log('is public: ', isPublic);
     if (isPublic === null) return;
     await togglePublishState(noteId);
   }

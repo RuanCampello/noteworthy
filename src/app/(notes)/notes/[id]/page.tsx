@@ -14,8 +14,7 @@ export default async function NotePage({ params }: Props) {
   const response = await fetch(`${env.INK_HOSTNAME}/notes/${params.id}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user?.accessToken}` },
-    next: { tags: ['note-page'] },
-    cache: 'force-cache',
+    next: { tags: ['note-page'], revalidate: false },
   });
   const note: Note = await response.json();
 
