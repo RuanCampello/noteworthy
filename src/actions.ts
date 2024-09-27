@@ -3,14 +3,18 @@
 import { createPlaceholderNote } from '@/actions/note';
 import { auth, signIn } from '@/auth/auth';
 import { env } from '@/env';
+import { sendPasswordResetEmail } from '@/lib/mail';
 import { Filter } from '@/lib/zustand/search-filter';
 import { DEFAULT_REDIRECT } from '@/routes';
 import {
   loginFormSchema,
+  newPasswordSchema,
   noteDialogSchema,
   registerFormSchema,
+  resetPasswordSchema,
 } from '@/schemas';
 import { Note } from '@/types/Note';
+import type { PasswordResetToken } from '@/types/PasswordResetToken';
 import { SearchResult } from '@/types/SearchResult';
 import { getPathnameParams } from '@/utils/format-notes';
 import { AuthError } from 'next-auth';
@@ -390,4 +394,77 @@ export async function login(
     }
     throw error;
   }
+}
+
+// Does a `POST` request to `users/reset-password/:token` endpoint, which starts
+// a transaction trying to reset the user password.
+export async function newPassword(
+  values: z.infer<typeof newPasswordSchema>,
+  token?: string | null,
+) {
+  const t = await getTranslations('ServerErrors');
+  if (!token) return { error: t('no_token') };
+
+  const fields = newPasswordSchema.safeParse(values);
+  if (!fields.success) return { error: t('inv_password') };
+
+  const { password } = fields.data;
+
+  const response = await fetch(
+    `${env.INK_HOSTNAME}/users/reset-password/${token}`,
+    {
+      method: 'post',
+      body: JSON.stringify({ password }),
+    },
+  );
+
+  switch (response.status) {
+    case 200:
+      return { success: t('password_update') };
+    case 403:
+      return { error: t('token_exp') };
+    case 404:
+      return { error: t('inv_token') };
+    case 422:
+      return { error: t('inv_password') };
+  }
+}
+
+// Makes a `POST` request to `users/new-password-token/:email`. Returns a new reset token
+// or an old but valid one with `isNew` to differentiate.
+export async function generatePasswordResetToken(email: string): Promise<{
+  token: PasswordResetToken;
+  isNew: Boolean;
+}> {
+  const response = await fetch(
+    `${env.INK_HOSTNAME}/users/new-password-token/${email}`,
+    {
+      method: 'post',
+    },
+  );
+
+  const token: PasswordResetToken = await response.json();
+  if (response.status === 200) return { token, isNew: true };
+  return { token, isNew: false };
+}
+
+export async function resetPassword(
+  values: z.infer<typeof resetPasswordSchema>,
+) {
+  const fields = resetPasswordSchema.safeParse(values);
+  const t = await getTranslations('ServerErrors');
+  if (!fields.success) return { error: t('inv_email') };
+
+  const { email } = fields.data;
+  // TODO: try/catch the error instead of returning as a string
+
+  const { token, isNew } = await generatePasswordResetToken(email);
+  if (!isNew) {
+    return {
+      message: `${t('already_has_a_token')} ${token.expires}, ${t('check_out')}`,
+    };
+  }
+
+  await sendPasswordResetEmail(token.email, token.token);
+  return { success: t('email_sent') };
 }

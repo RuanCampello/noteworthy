@@ -21,8 +21,8 @@ pub fn user_routes(db: &Arc<PgPool>, r2: &Arc<Client>) -> Router {
   let user_related_routes = Router::new()
     .route("/profile", post(upload_profile_image))
     .route("/profile/:id", get(get_user_image))
-    .route("/reset-password", post(new_password))
-    .route("/reset-password/:email", post(new_password_token));
+    .route("/reset-password/:token", post(new_password))
+    .route("/new-password-token/:email", post(new_password_token));
 
   Router::new()
     .route("/login", post(login))
