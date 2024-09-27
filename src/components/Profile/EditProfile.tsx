@@ -1,8 +1,7 @@
 'use client';
 
-import { getUploadUrl } from '@/actions/image';
+import { getUserProfileImage, uploadUserImage } from '@/actions';
 import { CustomForm } from '@/components/Form';
-import { useImageAge } from '@/lib/zustand/image';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { Button } from '@/ui/button';
@@ -16,12 +15,11 @@ import {
 } from '@/ui/form';
 import { Input } from '@/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Compressor from 'compressorjs';
+import { useQuery } from '@tanstack/react-query';
 import { Loader2, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useState, useTransition, type ChangeEvent } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -41,10 +39,15 @@ export default function EditProfile() {
   const { data: session, update } = useSession();
   const { setOpen: setSettings } = useSettingsStore();
   const { setOpen: setSettingsDialog } = useSettingsDialogStore();
-  const { age, updateAge } = useImageAge();
-  const router = useRouter();
   const t = useTranslations('Profile');
   const user = session?.user;
+
+  const { data: image_url } = useQuery({
+    queryKey: ['user-profile-image'],
+    queryFn: async () => {
+      return await getUserProfileImage();
+    },
+  });
 
   const editProfileForm = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -57,35 +60,24 @@ export default function EditProfile() {
     control: editProfileForm.control,
     name: 'name',
   });
-
+  
   if (!user) return;
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
       if (!user?.id || isOAuthImage) return;
-
+      // TODO: remove this update logic from client
       if (name !== user.name) {
         await update({ name: currentName });
       }
       if (image && image[0]) {
-        new Compressor(image[0], {
-          maxHeight: 112,
-          maxWidth: 112,
-          quality: 0.8,
-          async success(result: File) {
-            if (!user.id) return;
+        const formData = new FormData();
+        const file: File = image[0];
+        formData.append('image', file);
 
-            const uploadUrl = await getUploadUrl(user.id, result.type);
-            await fetch(uploadUrl, {
-              method: 'PUT',
-              body: result,
-            });
-            setSettings(false);
-            setSettingsDialog(false);
-            updateAge();
-            router.refresh();
-          },
-        });
+        await uploadUserImage(formData);
+        setSettings(false);
+        setSettingsDialog(false);
       }
       setSelectedImage(undefined);
     });
@@ -138,11 +130,7 @@ export default function EditProfile() {
                   className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-md text-4xl font-semibold text-center items-center w-28 h-28 shrink-0 object-cover flex justify-center'
                   width={128}
                   height={128}
-                  src={
-                    selectedImage ||
-                    image ||
-                    `${process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_URL}/${id}?${age.toISOString()}`
-                  }
+                  src={selectedImage || image || image_url || ''}
                   alt={(name && name[0].toUpperCase()) || ''}
                 />
               </FormLabel>

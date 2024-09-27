@@ -255,7 +255,7 @@ impl UserRepositoryTrait for UserRepository {
       .bucket(BUCKET_NAME)
       .key(user_id)
       .body(stream)
-      .content_type("image/jpeg")
+      .content_type("image/png")
       .send()
       .await?;
 

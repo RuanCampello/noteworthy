@@ -175,7 +175,10 @@ pub async fn upload_profile_image(
 
     let compressed_image = match resize_and_reduce_image(file_bytes) {
       Ok(compressed_image) => compressed_image,
-      Err(e) => return e.into_response(),
+      Err(e) => {
+        error!("error converting user profile image {:?}", e);
+        return e.into_response();
+      }
     };
 
     return match repository

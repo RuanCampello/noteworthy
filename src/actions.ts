@@ -27,6 +27,7 @@ import { z } from 'zod';
 // Look for the current logged-in user in the session.
 export const currentUser = cache(async () => {
   const session = await auth();
+  console.log(session?.user.accessToken);
   return session?.user;
 });
 
@@ -344,10 +345,35 @@ export async function getNotes() {
   return notes;
 }
 
+// Receives an formData with an image and makes a `POST` request to `users/profile`
+// that then compacts and uploads the image to cloudflare using the
+// userId as a key. Also, revalidates the profile image in success case.
+export async function uploadUserImage(data: FormData) {
+  const user = await currentUser();
+  if (!user || !user?.accessToken) return null;
+  console.log('here client');
+
+  try {
+    const response = await fetch(`${env.INK_HOSTNAME}/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      method: 'post',
+      body: data,
+    });
+
+    console.debug(await response.text());
+
+    if (response.ok) revalidateTag('profile-image');
+  } catch (error) {
+    console.error('error uploading user profile image', error);
+  }
+}
+
 // Checks if the current user has an image, if not
 // fetch the current user at `users/profile/:id` endpoint with a `GET` method
 // and search for a profile image in CF.
-export async function getUserProfileImage(): Promise<string | null> {
+export const getUserProfileImage = cache(async () => {
   const user = await currentUser();
   if (!user || !user.accessToken) return null;
 
@@ -363,7 +389,7 @@ export async function getUserProfileImage(): Promise<string | null> {
     return await response.text();
   }
   return user.image;
-}
+});
 
 // Validates the user input and tries to log in the user.
 export async function login(
