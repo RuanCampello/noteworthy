@@ -12,6 +12,8 @@ use validator::ValidationErrors;
 pub enum NoteError {
   #[error("{0} is an invalid colour.")]
   InvalidColour(String),
+  #[error("Colour is missing.")]
+  MissingColour,
   #[error("Note with given id {0} was not found.")]
   NoteNotFound(Uuid),
   #[error("Error during request validation.")]
@@ -26,7 +28,7 @@ impl IntoResponse for NoteError {
   fn into_response(self) -> Response {
     let status = match self {
       NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
-      NoteError::Validation(_) => StatusCode::BAD_REQUEST,
+      NoteError::Validation(_) | NoteError::MissingColour => StatusCode::BAD_REQUEST,
       NoteError::InvalidColour(_) => StatusCode::UNPROCESSABLE_ENTITY,
       NoteError::Sqlx(_) | NoteError::Generate(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };

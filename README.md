@@ -173,9 +173,9 @@ You can switch the language of the application using the language selector avail
 
 ### To add a new language, follow these steps:
 
-Create a new folder in the public/locales directory with the language name in English (e.g. spanish, dutch).
+Create a new folder in the public/locales directory with the language name in English (e.g. spanish, Dutch).
 Add translation JSON files (translations.json) in the new folder with the necessary translations.
-Update the locales.ts file at `src/utils/constants/locales.ts` to include the new language in the locales array.
+Update the locales.ts file at `src/lib/next-inlt/locales.ts` to include the new language in the locales array.
 
 ## Contributing
 
@@ -183,4 +183,4 @@ Contributions are welcome! If you have any suggestions, bug reports, or feature 
 
 ## License
 
-This project is licensed under the [MIT License](/LICENSE.md).
+This project is licensed under the [MIT License](/LICENSE).

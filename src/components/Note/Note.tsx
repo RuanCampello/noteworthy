@@ -40,6 +40,7 @@ export default function Note({
       if (mqPortrait.matches) setOrientation('portrait');
       else setOrientation('landscape');
     }
+
     handleResize();
     window.addEventListener('resize', handleResize);
 
@@ -83,7 +84,7 @@ export default function Note({
   return (
     <Link
       href={
-        //if the user is inside a favourite note and click on a non favourite note
+        //if the user is inside a favourite note and click on a non-favourite note
         // remove the favourite from redirect link and transform into a note link
         (href === 'favourites' && pathname.includes('favourites/')) ||
         (href === 'archived' && pathname.includes('archived/'))

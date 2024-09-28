@@ -13,7 +13,7 @@ pub struct CreateNoteRequest {
   #[validate(length(min = 4))]
   pub title: String,
   pub content: Option<String>,
-  pub colour: String,
+  pub colour: Option<String>,
 }
 
 pub async fn create_note(
@@ -39,6 +39,16 @@ pub async fn create_generated_note(
   };
 
   (StatusCode::CREATED, Json(id)).into_response()
+}
+
+pub async fn create_placeholder_note(
+  Path(user_id): Path<String>,
+  Extension(repository): Extension<NoteRepository>,
+) -> impl IntoResponse {
+  match repository.new_placeholder_note(&user_id).await {
+    Ok(_) => StatusCode::CREATED.into_response(),
+    Err(e) => e.into_response(),
+  }
 }
 
 pub async fn delete_note(

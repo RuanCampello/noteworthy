@@ -1,4 +1,4 @@
-import { type Locale } from '@/utils/constants/locales';
+import { type Locale } from '@/lib/next-intl';
 import { z } from 'zod';
 import type { Colour, NoteFormat } from '../types/database-types';
 

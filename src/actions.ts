@@ -1,6 +1,5 @@
 'use server';
 
-import { createPlaceholderNote } from '@/actions/note';
 import { auth, signIn } from '@/auth/auth';
 import { env } from '@/env';
 import { sendPasswordResetEmail } from '@/lib/mail';
@@ -63,6 +62,14 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   }
   //if user is already in notes path, but not on favourite/archive page
   redirect(`${origin}/${basePath}/${id}`);
+}
+
+// Makes a `POST` request to `/notes/placeholder/:userId` endpoint to create a placeholder note for the user.
+export async function createPlaceholderNote(userId: string) {
+  await fetch(`${env.INK_HOSTNAME}/notes/placeholder/${userId}`, {
+    method: 'post',
+    headers: { 'content-type': 'application/json' },
+  });
 }
 
 // editNote validates the data sent
@@ -258,7 +265,6 @@ export async function register(
   if (response.status === 409) return { error: t('email_taken') };
 
   const id = await response.json();
-
   await createPlaceholderNote(id);
   try {
     await signIn('credentials', {

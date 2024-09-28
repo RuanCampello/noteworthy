@@ -1,11 +1,11 @@
 use crate::controllers::note_controller::SearchParams;
 use crate::models::notes::{GeneratedNoteResponse, NoteWithUserPrefs, SearchResult};
-use crate::utils::colour::get_random_colour;
+use crate::utils::hello_world_note::HELLO_WORLD;
 use crate::{
   controllers::note_controller::{CreateNoteRequest, UpdateNoteRequest},
   errors::NoteError,
   models::{
-    enums::{Colour, SearchFilter},
+    enums::{Colour, RandomColour, SearchFilter},
     notes::PartialNote,
   },
 };
@@ -28,7 +28,12 @@ impl NoteRepository {
   }
 
   pub async fn new_note(&self, req: &CreateNoteRequest, user_id: &str) -> Result<Uuid, NoteError> {
-    let colour = Colour::from_str(&req.colour)?;
+    let colour = req
+      .colour
+      .as_ref()
+      .ok_or(NoteError::MissingColour)?
+      .parse::<Colour>()?;
+
     req.validate()?;
 
     let localtime = Local::now().naive_local();
@@ -42,7 +47,7 @@ impl NoteRepository {
       .bind(&req.title)
       .bind(&req.content)
       .bind(user_id)
-      .bind(colour.colour_name())
+      .bind(colour.to_string())
       .bind(localtime)
       .fetch_one(&*self.database)
       .await?;
@@ -55,9 +60,9 @@ impl NoteRepository {
       reqwest::get("https://tense-beulah-ruancampello-4be3a646.koyeb.app/generate").await?;
 
     let generated_note = response.json::<GeneratedNoteResponse>().await?;
-    let colour = get_random_colour().colour_name();
+    let colour = Colour::random().to_string();
     let req = CreateNoteRequest {
-      colour: colour.to_owned(),
+      colour: Some(colour),
       content: Some(generated_note.content),
       title: generated_note.title,
     };
@@ -65,6 +70,19 @@ impl NoteRepository {
     let id = self.new_note(&req, user_id).await?;
 
     Ok(id)
+  }
+
+  pub async fn new_placeholder_note(&self, user_id: &str) -> Result<(), NoteError> {
+    let colour = Colour::random().to_string();
+    let req = CreateNoteRequest {
+      colour: Some(colour),
+      content: Some(HELLO_WORLD.to_string()),
+      title: String::from("Hello World 📝"),
+    };
+
+    let _ = self.new_note(&req, user_id).await?;
+
+    Ok(())
   }
 
   pub async fn delete_note(&self, user_id: &str, id: Uuid) -> Result<(), NoteError> {
@@ -88,7 +106,7 @@ impl NoteRepository {
     id: Uuid,
     req: UpdateNoteRequest,
   ) -> Result<(), NoteError> {
-    let colour = Colour::from_str(&req.colour)?;
+    let colour = &req.colour.parse::<Colour>()?;
     req.validate()?;
 
     let query = r#"
@@ -102,7 +120,7 @@ impl NoteRepository {
       .bind(id)
       .bind(user_id)
       .bind(req.title)
-      .bind(colour.colour_name())
+      .bind(colour.to_string())
       .bind(localtime)
       .execute(&*self.database)
       .await?;

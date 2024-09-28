@@ -1,4 +1,4 @@
-import { createPlaceholderNote } from '@/actions/note';
+import { createPlaceholderNote } from '@/actions';
 import authConfig from '@/auth/auth.config';
 import { env } from '@/env';
 import { jwtDecode } from 'jwt-decode';

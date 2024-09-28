@@ -184,7 +184,7 @@ impl UserRepositoryTrait for UserRepository {
       .bind(expires_in)
       .fetch_one(&*self.database)
       .await?;
-    
+
     new_reset_token.is_new = true;
 
     Ok(new_reset_token)

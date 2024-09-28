@@ -1,11 +1,12 @@
 use crate::app_state::{AppState, EnvVariables};
 use crate::utils::jwt::JwtManager;
+use axum::routing::post;
 use axum::{
   http::{header, Method},
   routing::get,
   Extension, Router,
 };
-use controllers::user_controller::refresh_handler;
+use controllers::{user_controller::refresh_handler, note_controller::create_placeholder_note};
 use routes::{note_routes::note_routes, user_routes::user_routes};
 use shuttle_runtime::SecretStore;
 use std::sync::Arc;
@@ -36,6 +37,10 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
     .merge(note_routes(&database))
     .merge(user_routes(&database, &r2))
     .route("/refresh-token/:old_token", get(refresh_handler))
+    .route(
+      "/notes/placeholder/:user_id",
+      post(create_placeholder_note),
+    )
     .layer(Extension(jwt_manager))
     .layer(cors);
 

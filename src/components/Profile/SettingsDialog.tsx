@@ -17,7 +17,7 @@ import { Separator } from '@/ui/separator';
 import { Switch } from '@/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from '@/ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from '@/ui/toggle-group';
-import { Locale } from '@/utils/constants/locales';
+import type { Locale } from '@/lib/next-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bolt } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';

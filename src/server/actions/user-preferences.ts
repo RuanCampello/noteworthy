@@ -1,13 +1,13 @@
 'use server';
 
 import { currentUser } from '@/actions';
+import { setUserLocale } from '@/lib/next-intl';
 import { userPreferencesSchema } from '@/schemas';
 import { db } from '@/server/db';
 import { userPreferences } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { cache } from 'react';
 import { z } from 'zod';
-import { setUserLocale } from './locate';
 
 export const getUserPreferences = cache(async (userId: string) => {
   const preferences = await db.query.userPreferences.findFirst({
