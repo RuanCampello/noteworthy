@@ -29,7 +29,10 @@ pub async fn login(
   Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
   match repository.log_user(&payload, &jwt_manager).await {
-    Err(e) => e.into_response(),
+    Err(e) => {
+      error!("login error {:#?}", e);
+      e.into_response()
+    },
     Ok(token) => {
       info!("response on login {}", token);
       (StatusCode::OK, Json(token)).into_response()

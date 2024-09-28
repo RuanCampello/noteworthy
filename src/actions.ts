@@ -440,6 +440,7 @@ export async function newPassword(
     `${env.INK_HOSTNAME}/users/reset-password/${token}`,
     {
       method: 'post',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ password }),
     },
   );

@@ -47,8 +47,7 @@ export const {
       return session;
     },
     async jwt({ token, user, account }) {
-      // @ts-expect-error undeclared type
-      if (user && account && !token.user.accessToken) {
+      if (user && account) {
         if (account.provider === 'credentials') {
           return { ...token, user: user };
         }
@@ -66,7 +65,7 @@ export const {
         // @ts-expect-error undeclared type
         claims.accessToken = accessToken;
         token.user = claims;
-        
+
         return { ...token, user: user };
       }
 

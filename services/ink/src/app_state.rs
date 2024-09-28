@@ -76,7 +76,7 @@ impl AppState {
     let r2 = Client::new(&s3_config);
 
     let pool = PgPoolOptions::new()
-      .max_connections(80)
+      .max_connections(20)
       .max_lifetime(Duration::from_secs(120))
       .idle_timeout(Duration::from_secs(120))
       .acquire_timeout(Duration::from_secs(15))
