@@ -414,6 +414,7 @@ export async function login(
     });
     return { error: null };
   } catch (error) {
+    console.error(error);
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':

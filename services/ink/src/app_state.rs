@@ -1,3 +1,4 @@
+use crate::utils::jwt::JwtManager;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
@@ -47,6 +48,7 @@ impl EnvVariables {
 pub struct AppState {
   pub database: PgPool,
   pub r2: Client,
+  pub jwt_manager: JwtManager,
 }
 
 impl AppState {
@@ -83,6 +85,12 @@ impl AppState {
       .connect(&env.database_url)
       .await?;
 
-    Ok(Self { database: pool, r2 })
+    let jwt_manager = JwtManager::new(&env.jwt_secret);
+
+    Ok(Self {
+      database: pool,
+      r2,
+      jwt_manager,
+    })
   }
 }

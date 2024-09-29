@@ -1,9 +1,79 @@
 use crate::errors::NoteError;
+use chrono::NaiveDateTime;
 use rand::Rng;
 use serde::{Deserialize, Serialize, Serializer};
-use sqlx::Type;
+use sqlx::{FromRow, Type};
 use std::fmt::Display;
 use std::str::FromStr;
+use ts_rs::TS;
+use uuid::Uuid;
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, FromRow)]
+#[serde(rename_all = "camelCase")]
+pub struct Note {
+  pub id: Uuid,
+  pub title: String,
+  pub content: String,
+  pub colour: Colour,
+  pub user_id: String,
+  pub created_at: NaiveDateTime,
+  pub is_archived: bool,
+  pub is_favourite: bool,
+  pub is_public: bool,
+  pub last_update: NaiveDateTime,
+}
+
+#[derive(Debug, Serialize, FromRow, TS)]
+#[ts(export, rename = "Note")]
+#[serde(rename_all = "camelCase")]
+pub struct NoteWithUserPrefs {
+  #[ts(type = "string")]
+  pub id: Uuid,
+  pub title: String,
+  pub content: String,
+  pub colour: String,
+  pub user_id: String,
+  #[ts(type = "string")]
+  pub created_at: NaiveDateTime,
+  pub is_archived: bool,
+  pub is_favourite: bool,
+  pub is_public: bool,
+  #[ts(type = "string")]
+  pub last_update: NaiveDateTime,
+  pub name: String,
+  pub full_note: bool,
+  pub note_format: String,
+}
+
+#[derive(Deserialize)]
+pub struct GeneratedNoteResponse {
+  pub title: String,
+  pub content: String,
+}
+
+#[derive(Deserialize, Serialize, FromRow, TS)]
+#[ts(export)]
+#[serde(rename_all = "camelCase")]
+pub struct SearchResult {
+  #[ts(type = "string")]
+  id: Uuid,
+  title: String,
+  content: String,
+  highlighted_content: String,
+}
+
+#[derive(Debug, Serialize, FromRow, TS)]
+#[ts(export, rename = "PartialNote")]
+#[serde(rename_all = "camelCase")]
+pub struct PartialNote {
+  #[ts(type = "string")]
+  pub id: Uuid,
+  pub title: String,
+  pub content: String,
+  pub colour: String,
+  #[ts(type = "string")]
+  pub created_at: NaiveDateTime,
+}
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq, Type)]
 pub enum Colour {

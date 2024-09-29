@@ -22,8 +22,10 @@ pub struct JwtManager {
 }
 
 impl JwtManager {
-  pub fn new(secret: String) -> Self {
-    Self { secret }
+  pub fn new(secret: &str) -> Self {
+    Self {
+      secret: secret.to_string(),
+    }
   }
 
   pub fn generate_jwt(

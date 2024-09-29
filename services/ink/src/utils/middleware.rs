@@ -3,7 +3,7 @@ use axum::{
   extract::{Extension, FromRequestParts},
   http::{request::Parts, StatusCode},
 };
-
+use crate::app_state::AppState;
 use super::jwt::{JwtManager, TokenExtractor};
 
 #[derive(Debug)]
@@ -21,7 +21,7 @@ where
   type Rejection = (StatusCode, String);
 
   async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-    let jwt_manager: Extension<JwtManager> = Extension::from_request_parts(parts, _state)
+    let app_state: Extension<AppState> = Extension::from_request_parts(parts, _state)
       .await
       .map_err(|e| {
         (
@@ -32,7 +32,7 @@ where
 
     let headers = &parts.headers;
 
-    let decoded_token = match headers.extract_and_decode_token(&jwt_manager) {
+    let decoded_token = match headers.extract_and_decode_token(&app_state.jwt_manager) {
       Ok(token) => token,
       Err((status, err)) => return Err((status, err)),
     };

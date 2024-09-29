@@ -1,3 +1,4 @@
+use crate::utils::image::MyImageError;
 use aws_sdk_s3::operation::put_object::PutObjectError;
 use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
@@ -64,26 +65,34 @@ pub enum UserError {
   TokenNotFound,
   #[error("Token has already expired.")]
   TokenExpired,
+  #[error("Multipart form data is required.")]
+  MultipartRequired,
+  #[error("Error during image processing: {0}.")]
+  MyImageError(#[from] MyImageError),
 }
 
 impl IntoResponse for UserError {
   fn into_response(self) -> Response {
-    let status = match self {
-      UserError::UserNotFound | UserError::TokenNotFound => StatusCode::NOT_FOUND,
-      UserError::Validation(_) => StatusCode::UNPROCESSABLE_ENTITY,
-      UserError::InvalidCredentials => StatusCode::BAD_REQUEST,
-      UserError::UserAlreadyExist => StatusCode::CONFLICT,
-      UserError::TokenExpired => StatusCode::FORBIDDEN,
+    let (status, body) = match self {
+      UserError::MyImageError(err) => {
+        return err.into_response();
+      }
+      UserError::UserNotFound | UserError::TokenNotFound => {
+        (StatusCode::NOT_FOUND, self.to_string())
+      }
+      UserError::Validation(_) => (StatusCode::UNPROCESSABLE_ENTITY, self.to_string()),
+      UserError::InvalidCredentials | UserError::MultipartRequired => {
+        (StatusCode::BAD_REQUEST, self.to_string())
+      }
+      UserError::UserAlreadyExist => (StatusCode::CONFLICT, self.to_string()),
+      UserError::TokenExpired => (StatusCode::FORBIDDEN, self.to_string()),
       UserError::DecryptError(_)
       | UserError::DatabaseError(_)
       | UserError::PresignedUrl(_)
-      | UserError::ImageUploadError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-    };
-
-    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
-      String::from("An internal server error occurred")
-    } else {
-      self.to_string()
+      | UserError::ImageUploadError(_) => (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        String::from("An internal server error occurred"),
+      ),
     };
 
     (status, body).into_response()
