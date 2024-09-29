@@ -1,4 +1,4 @@
-import { getNotes } from '@/actions';
+import { getRespectiveNotes } from '@/actions';
 import Counter from '@/components/Counter';
 import Note from '@/components/Note/Note';
 import SearchNote from '@/components/Note/SearchNote';
@@ -20,7 +20,7 @@ export default async function Notes() {
   const searchString = search && formatSearchParams(search[1]);
 
   const [notes, filter, t] = await Promise.all([
-    getNotes(),
+    getRespectiveNotes(true),
     getFilter(),
     getTranslations('Sidebar'),
   ]);

@@ -15,15 +15,16 @@ export default async function Counter({
   if (!user || !user?.accessToken) return;
 
   const subdir = isFavourite
-    ? 'favourites/count'
+    ? '?is_fav=true&is_arc=false'
     : isArchived
-      ? 'archived/count'
-      : 'count';
+      ? '?is_fav=false&is_arc=true'
+      : '?is_fav=false&is_arc=false';
 
-  const response = await fetch(`${env.INK_HOSTNAME}/notes/${subdir}`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/count${subdir}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user.accessToken}` },
   });
+
   const notesNumber = await response.json();
 
   return (

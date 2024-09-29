@@ -2,11 +2,10 @@ import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
 import { currentUser } from '@/actions';
-import { PartialNote } from '@/types/PartialNote';
 import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
-import { env } from '@/env';
+import { getRespectiveNotes } from '@/actions';
 
 export default async function FavouriteLayout({
   children,
@@ -16,16 +15,7 @@ export default async function FavouriteLayout({
   const user = await currentUser();
   if (!user?.id || !user.accessToken) return;
 
-  const response = await fetch(`${env.INK_HOSTNAME}/notes/archived`, {
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${user.accessToken}`,
-    },
-    cache: 'force-cache',
-    next: { tags: ['note-page'] },
-  });
-
-  const archivedNotes: PartialNote[] = await response.json();
+  const archivedNotes = await getRespectiveNotes();
 
   const t = await getTranslations('ArchivePlaceholder');
   const st = await getTranslations('SubsidebarTitles');

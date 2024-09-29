@@ -15,14 +15,17 @@ export default async function FavouriteLayout({
   const user = await currentUser();
   if (!user?.id) return;
 
-  const response = await fetch(`${env.INK_HOSTNAME}/notes/favourites`, {
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${user.accessToken}`,
+  const response = await fetch(
+    `${env.INK_HOSTNAME}/notes?is_fav=true&is_arc=false`,
+    {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      cache: 'force-cache',
+      next: { tags: ['note-page'] },
     },
-    cache: 'force-cache',
-    next: { tags: ['note-page'] },
-  });
+  );
 
   const favouriteNotes = await response.json();
 

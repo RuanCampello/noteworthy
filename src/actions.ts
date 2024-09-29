@@ -12,13 +12,14 @@ import {
   registerFormSchema,
   resetPasswordSchema,
 } from '@/schemas';
-import { Note } from '@/types/Note';
+import type { PartialNote } from '@/types/PartialNote';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
 import { SearchResult } from '@/types/SearchResult';
 import { getPathnameParams } from '@/utils/format-notes';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { z } from 'zod';
@@ -331,23 +332,31 @@ export const searchNotes = cache(
   },
 );
 
-// Makes a `get` request to `/notes` endpoint and tries to get the current user notes.
-export async function getNotes() {
+// Makes a `get` request to `/notes` endpoint and tries to get the current user notes depending on the page.
+// If `main` params if set to true, always returns all notes.
+export async function getRespectiveNotes(main = false) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
+  const pathname = headers().get('pathname');
 
-  const response = await fetch(`${env.INK_HOSTNAME}/notes`, {
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${user.accessToken}`,
+  const fav = !main && pathname?.includes('/favourites');
+  const arc = !main && pathname?.includes('/archived');
+
+  const response = await fetch(
+    `${env.INK_HOSTNAME}/notes?is_fav=${fav}&is_arc=${arc}`,
+    {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      cache: 'force-cache',
+      next: {
+        tags: ['sidebar-notes'],
+      },
     },
-    cache: 'force-cache',
-    next: {
-      tags: ['sidebar-notes'],
-    },
-  });
+  );
   if (!response.ok) return null;
-  const notes: Note[] = await response.json();
+  const notes: PartialNote[] = await response.json();
   return notes;
 }
 
