@@ -401,7 +401,7 @@ export const getUserProfileImage = cache(async () => {
       },
     );
 
-    return await response.text();
+    return await response.json();
   }
   return user.image;
 });
