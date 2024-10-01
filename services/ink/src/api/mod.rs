@@ -5,7 +5,7 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 
-pub mod notes;
+mod notes;
 mod users;
 
 pub async fn serve(env: EnvVariables) -> shuttle_axum::ShuttleAxum {

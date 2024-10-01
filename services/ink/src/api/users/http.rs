@@ -1,6 +1,6 @@
-use super::model::{SimpleUser, User};
 use crate::errors::UserError;
 use crate::models::password_reset_tokens::PasswordResetToken;
+use crate::models::users::{SimpleUser, User};
 use crate::utils::middleware::AuthUser;
 use crate::AppState;
 

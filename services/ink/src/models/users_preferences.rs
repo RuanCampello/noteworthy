@@ -1,4 +1,4 @@
-use crate::api::notes::model::NoteFormat;
+use crate::models::notes::NoteFormat;
 use serde::Serialize;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
