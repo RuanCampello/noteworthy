@@ -2,7 +2,6 @@
 
 import { auth, signIn } from '@/auth/auth';
 import { env } from '@/env';
-import { sendPasswordResetEmail } from '@/lib/mail';
 import { Filter } from '@/lib/zustand/search-filter';
 import { DEFAULT_REDIRECT } from '@/routes';
 import {
@@ -492,7 +491,7 @@ export async function newPassword(
 }
 
 // Makes a `POST` request to `users/new-password-token/:email`. Returns a new reset token
-// or an old but valid one with `isNew` to differentiate.
+// or an old but valid one with `isNew` to differentiate. Also, sends the reset password e-mail to the user.
 export async function generatePasswordResetToken(email: string): Promise<{
   token: PasswordResetToken;
   isNew: Boolean;
@@ -505,6 +504,7 @@ export async function generatePasswordResetToken(email: string): Promise<{
   );
 
   const token: PasswordResetToken = await response.json();
+
   if (response.status === 200) return { token, isNew: true };
   return { token, isNew: false };
 }
@@ -526,6 +526,5 @@ export async function resetPassword(
     };
   }
 
-  await sendPasswordResetEmail(token.email, token.token);
   return { success: t('email_sent') };
 }
