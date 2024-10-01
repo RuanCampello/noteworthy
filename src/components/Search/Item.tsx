@@ -1,16 +1,22 @@
 import { stripHTMLTags } from '@/utils/format';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { cloneElement } from 'react';
+import { cloneElement, type HTMLAttributes } from 'react';
 
-interface ItemWrapper {
+interface ItemWrapper extends HTMLAttributes<HTMLAnchorElement> {
+  icon: JSX.Element;
   id: string;
   content: string;
   title: string;
-  icon: JSX.Element;
 }
 
-export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
+export function NoteItemWrapper({
+  icon,
+  id,
+  content,
+  title,
+  ...props
+}: ItemWrapper) {
   content = stripHTMLTags(content);
   const searchRegex = /<search\b[^>]*>(.*?)<\/search>/gi;
   const matchArray = Array.from(content.matchAll(searchRegex));
@@ -19,20 +25,22 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
   return (
     <Link
       href={id}
-      key={id}
-      className='w-full flex items-center gap-2 focus:outline-none'
+      className='w-full flex items-center gap-2 focus:outline-none overflow-hidden shrink-0 p-2 group aria-selected:bg-midnight rounded-md'
+      {...props}
     >
-      <div className={`group-aria-selected:bg-slate bg-night rounded-sm p-1`}>
+      <div
+        className={`group-aria-selected:bg-slate w-fit bg-night rounded-sm p-1`}
+      >
         {cloneElement(icon, {
-          className: 'shrink-0 w-3 h-3',
+          className: 'shrink-0 w-5 h-5',
           strokeWidth: 1.75,
         })}
       </div>
-      <div className='leading-none truncate'>
-        <h4 className='group-aria-selected:text-slate font-medium truncate'>
+      <div className='truncate'>
+        <h4 className='group-aria-selected:text-slate text-sm leading-tight font-medium truncate'>
           {title}
         </h4>
-        <p className='text-xs text-muted-foreground truncate'>
+        <p className='text-xs text-muted-foreground truncate leading-none'>
           {matchArray && matchArray[0] ? (
             <RenderContent content={contentArray} match={matchArray} />
           ) : (
@@ -40,7 +48,7 @@ export function NoteItemWrapper({ icon, id, content, title }: ItemWrapper) {
           )}
         </p>
       </div>
-      <ChevronRight className='w-3 h-3 shrink-0 ms-auto' />
+      <ChevronRight className='w-4 h-4 shrink-0 ms-auto' />
     </Link>
   );
 }

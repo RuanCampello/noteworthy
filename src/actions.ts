@@ -315,10 +315,28 @@ export const searchNotes = cache(
     query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
     const user = await currentUser();
     if (!user || !user?.accessToken) return null;
-    const hasFilter = filter !== 'None' ? `&filter=${filter}` : '';
+
+    let search_filter: string;
+
+    switch (filter) {
+      case 'Archived': {
+        search_filter = '&is_arc=true&is_fav=false';
+        break;
+      }
+      case 'Favourites': {
+        search_filter = '&is_arc=false&is_fav=true';
+        break;
+      }
+      default: {
+        search_filter = '&is_arc=false&is_fav=false';
+        break;
+      }
+    }
+
+    console.log(`${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`);
 
     const response = await fetch(
-      `${env.INK_HOSTNAME}/notes/search?q=${query}${hasFilter}`,
+      `${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`,
       {
         method: 'get',
         cache: 'force-cache',

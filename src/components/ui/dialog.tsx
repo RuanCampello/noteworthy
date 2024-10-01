@@ -1,5 +1,6 @@
 'use client';
 
+import { Command as CommandPrimitive } from 'cmdk';
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
@@ -51,7 +52,6 @@ const DialogContent = React.forwardRef<
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 function DialogHeader({
   className,
@@ -67,6 +67,7 @@ function DialogHeader({
     />
   );
 }
+
 DialogHeader.displayName = 'DialogHeader';
 
 function DialogFooter({
@@ -83,6 +84,7 @@ function DialogFooter({
     />
   );
 }
+
 DialogFooter.displayName = 'DialogFooter';
 
 const DialogTitle = React.forwardRef<
