@@ -65,6 +65,8 @@ pub enum UserError {
   TokenNotFound,
   #[error("Token has already expired.")]
   TokenExpired,
+  #[error("This token is invalid.")]
+  TokenInvalid,
   #[error("Multipart form data is required.")]
   MultipartRequired,
   #[error("Error during image processing: {0}.")]
@@ -81,7 +83,7 @@ impl IntoResponse for UserError {
         (StatusCode::NOT_FOUND, self.to_string())
       }
       UserError::Validation(_) => (StatusCode::UNPROCESSABLE_ENTITY, self.to_string()),
-      UserError::InvalidCredentials | UserError::MultipartRequired => {
+      UserError::InvalidCredentials | UserError::MultipartRequired | UserError::TokenInvalid => {
         (StatusCode::BAD_REQUEST, self.to_string())
       }
       UserError::UserAlreadyExist => (StatusCode::CONFLICT, self.to_string()),

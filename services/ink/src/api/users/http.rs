@@ -32,6 +32,7 @@ pub fn router() -> Router {
     .route("/register", post(create_user))
     .route("/authorize", post(authorize_user))
     .route("/link-account", post(link_user_account))
+    .route("/refresh-token/:token", get(refresh_user_token))
     .nest("/users", user_related_routes)
 }
 
@@ -108,6 +109,23 @@ async fn create_user(
     .await?;
 
   Ok(id)
+}
+
+async fn refresh_user_token(
+  Extension(state): Extension<AppState>,
+  Path(token): Path<String>,
+) -> Result<Json<String>, UserError> {
+  let decoded_token = match state.jwt_manager.decode_jwt(&token, false) {
+    Ok(token) => token,
+    Err(e) => {
+      tracing::error!("Error decoding JWT token: {:?}", e);
+      return Err(e);
+    }
+  };
+
+  let refreshed_token = state.jwt_manager.refresh_jwt(decoded_token.claims)?;
+
+  Ok(Json(refreshed_token))
 }
 
 #[derive(Deserialize, Validate)]
@@ -309,6 +327,7 @@ async fn find_user_profile_image(
     )
     .await
     .map_err(|e| UserError::PresignedUrl(e))?;
+
   Ok(Json(pre_signed_url.uri().to_string()))
 }
 

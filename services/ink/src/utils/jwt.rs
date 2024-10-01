@@ -5,7 +5,7 @@ use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
-use crate::errors::TokenError;
+use crate::errors::{TokenError, UserError};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -61,20 +61,20 @@ impl JwtManager {
     &self,
     token: &str,
     validate_exp: bool,
-  ) -> Result<TokenData<Claims>, Box<dyn Error>> {
+  ) -> Result<TokenData<Claims>, UserError> {
     let mut validation = Validation::default();
     validation.validate_exp = validate_exp;
 
     let token_data = decode::<Claims>(
       token,
-      &DecodingKey::from_base64_secret(&self.secret)?,
+      &DecodingKey::from_base64_secret(&self.secret).unwrap(),
       &validation,
-    )?;
+    ).map_err(|_| UserError::TokenInvalid)?;
 
     Ok(token_data)
   }
 
-  pub fn refresh_jwt(&self, claims: Claims) -> Result<String, Box<dyn Error>> {
+  pub fn refresh_jwt(&self, claims: Claims) -> Result<String, UserError> {
     let expiration = Utc::now()
       .checked_add_signed(Duration::hours(12))
       .expect("valid timestamp")
@@ -91,8 +91,8 @@ impl JwtManager {
     let token = encode(
       &Header::default(),
       &new_claims,
-      &EncodingKey::from_base64_secret(&self.secret)?,
-    )?;
+      &EncodingKey::from_base64_secret(&self.secret).unwrap(),
+    ).map_err(|_| UserError::TokenInvalid)?;
 
     Ok(token)
   }
