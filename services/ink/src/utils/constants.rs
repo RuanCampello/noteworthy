@@ -18,3 +18,5 @@ pub const HELLO_WORLD: &str = r#"
 <p>Why did the strike text decide to retire? <del>Because it felt like its job was already done it crossed out all the tasks on its list!</del></p>
 <p>Why did the underline text become a fashion icon? <u>Because it always knew how to draw attention to the most important details, making every statement stand out in style!</u></p>
 "#;
+
+pub const RESET_EMAIL: &str = r#"<p>Click <a href="{reset_link}">here</a> to reset your password.</p>"#;

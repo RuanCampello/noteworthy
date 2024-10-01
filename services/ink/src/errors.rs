@@ -4,6 +4,7 @@ use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
+use resend_rs::Error as ResendError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
 use uuid::Uuid;
@@ -71,6 +72,8 @@ pub enum UserError {
   MultipartRequired,
   #[error("Error during image processing: {0}.")]
   MyImageError(#[from] MyImageError),
+  #[error("Failed to send user reset password email: {0}")]
+  SendEmail(#[from] ResendError),
 }
 
 impl IntoResponse for UserError {
@@ -91,7 +94,8 @@ impl IntoResponse for UserError {
       UserError::DecryptError(_)
       | UserError::DatabaseError(_)
       | UserError::PresignedUrl(_)
-      | UserError::ImageUploadError(_) => (
+      | UserError::ImageUploadError(_)
+      | UserError::SendEmail(_) => (
         StatusCode::INTERNAL_SERVER_ERROR,
         String::from("An internal server error occurred"),
       ),

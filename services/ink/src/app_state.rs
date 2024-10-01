@@ -16,6 +16,9 @@ pub struct EnvVariables {
   pub cloudflare_account_id: String,
   pub access_key_id: String,
   pub secret_access_key: String,
+  pub resend_api_key: String,
+  pub resend_domain: String,
+  pub hostname: String,
 }
 
 impl EnvVariables {
@@ -33,6 +36,13 @@ impl EnvVariables {
     let secret_access_key = secrets
       .get("CLOUDFLARE_SECRET_KEY")
       .expect("CLOUDFLARE_SECRET_KEY must be set");
+    let resend_api_key = secrets
+      .get("RESEND_API_KEY")
+      .expect("RESEND_API_KEY must be set");
+    let resend_domain = secrets
+      .get("RESEND_DOMAIN")
+      .expect("RESEND_DOMAIN must be set");
+    let hostname = secrets.get("HOSTNAME").expect("HOSTNAME must be set");
 
     Self {
       database_url,
@@ -40,6 +50,9 @@ impl EnvVariables {
       cloudflare_account_id,
       access_key_id,
       secret_access_key,
+      resend_api_key,
+      resend_domain,
+      hostname,
     }
   }
 }

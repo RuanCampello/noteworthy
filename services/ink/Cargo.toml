@@ -25,6 +25,7 @@ reqwest = { version = "0.12.7", features = ["json"] }
 shuttle-runtime = "0.47.0"
 shuttle-axum = "0.47.0"
 image = "0.25.2"
+resend-rs = "0.9.1"
 
 [dev-dependencies]
 axum-macros = "0.4.1"

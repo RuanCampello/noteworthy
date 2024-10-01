@@ -4,7 +4,7 @@ use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchFilter,
   SearchResult,
 };
-use crate::utils::hello_world_note::HELLO_WORLD;
+use crate::utils::constants::HELLO_WORLD;
 use crate::utils::middleware::AuthUser;
 use axum::routing::{delete, get, patch, post};
 use axum::{

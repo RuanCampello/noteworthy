@@ -1,10 +1,11 @@
+use crate::app_state::AppState;
 use crate::errors::UserError;
 use crate::models::password_reset_tokens::PasswordResetToken;
 use crate::models::users::{SimpleUser, User};
 use crate::utils::middleware::AuthUser;
-use crate::AppState;
 
 use crate::utils::image::{resize_and_reduce_image, upload_image_to_r2};
+use crate::utils::mailer::Mailer;
 use aws_sdk_s3::presigning::PresigningConfig;
 use axum::extract::Multipart;
 use axum::{
@@ -190,6 +191,7 @@ struct ResetPasswordRequest {
 async fn new_reset_token(
   Path(email): Path<String>,
   Extension(state): Extension<AppState>,
+  Extension(mailer): Extension<Mailer>,
 ) -> Result<Json<PasswordResetToken>, UserError> {
   if !email.validate_email() {
     let validate_err = ValidationErrors::new();
@@ -225,6 +227,8 @@ async fn new_reset_token(
     .await?;
 
   new_reset_token.is_new = true;
+  
+  mailer.send_user_confirmation_email(&new_reset_token.token, &new_reset_token.email).await?;
 
   Ok(Json(new_reset_token))
 }
