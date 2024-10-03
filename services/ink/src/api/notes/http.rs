@@ -25,7 +25,7 @@ pub fn router() -> Router {
     .route("/:id/archive", patch(toggle_note_archived))
     .route(
       "/:id/public",
-      patch(edit_note_content).get(find_note_public_state),
+      patch(toggle_note_publicity).get(find_note_public_state),
     )
     .route("/:id/content", patch(edit_note_content));
 
