@@ -1,8 +1,7 @@
 use crate::app_state::AppState;
 use crate::errors::NoteError;
 use crate::models::notes::{
-  Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchFilter,
-  SearchResult,
+  Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
 use crate::utils::constants::HELLO_WORLD;
 use crate::utils::middleware::AuthUser;
@@ -336,7 +335,8 @@ pub async fn find_note_public_state(
 #[derive(Deserialize)]
 struct SearchParams {
   pub q: String,
-  pub filter: Option<SearchFilter>,
+  pub is_fav: bool,
+  pub is_arc: bool,
 }
 
 async fn search_notes(
@@ -345,17 +345,17 @@ async fn search_notes(
   AuthUser(user): AuthUser,
 ) -> Result<Json<Vec<SearchResult>>, NoteError> {
   let mut query = r#"
-      SELECT id, title, content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
+      SELECT id, title, LEFT(content, 300) AS content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
       'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
       FROM notes
-      WHERE user_id = $1 AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
-      LIMIT 5
+      WHERE user_id = $1
+      AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
     "#.to_string();
 
-  match params.filter {
-    Some(SearchFilter::Favourites) => query.push_str(" AND is_favourite = true"),
-    Some(SearchFilter::Archived) => query.push_str(" AND is_archived = true"),
-    _ => {}
+  if params.is_fav {
+    query.push_str(" AND is_favourite = true")
+  } else if params.is_arc {
+    query.push_str(" AND is_archived = true")
   };
 
   let notes_found = sqlx::query_as::<_, SearchResult>(query.as_str())

@@ -1,16 +1,13 @@
 'use client';
 
 import { useFilter } from '@/lib/zustand/search-filter';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { useSearch } from '@/lib/zustand/search';
 import { searchNotes } from '@/actions';
 import { Dialog } from '@/ui/dialog';
 import { Command } from '@/ui/command';
 import { ArrowDown, ArrowUp, Undo2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition, useEffect } from 'react';
+import { useTransition, useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CommandFooter } from './Footer';
 
@@ -19,7 +16,6 @@ export default function Search() {
   const [loading, startTransition] = useTransition();
   const { filter } = useFilter();
   const { setSearchResults, setLoading, query, setQuery } = useSearch();
-  const router = useRouter();
 
   const tf = useTranslations('SearchFooter');
 

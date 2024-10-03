@@ -94,12 +94,6 @@ pub enum NoteFormat {
   Slim,
 }
 
-#[derive(Deserialize)]
-pub enum SearchFilter {
-  Favourites,
-  Archived,
-}
-
 impl FromStr for Colour {
   type Err = NoteError;
   fn from_str(s: &str) -> Result<Self, Self::Err> {
