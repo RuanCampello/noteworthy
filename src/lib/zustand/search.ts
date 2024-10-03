@@ -11,10 +11,17 @@ interface SearchState {
   decreaseIndex: () => void;
   resetIndex: () => void;
   selectItem: (index: number) => void;
+  query: string;
+  setQuery: (query: string) => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
 export const useSearch = create<SearchState>((set, get) => ({
   loading: false,
+  open: false,
+  query: '',
+  setQuery: (query: string) => set({ query }),
   searchResults: [],
   activeIndex: -1,
   setLoading: (loading: boolean) => set({ loading }),
@@ -37,4 +44,5 @@ export const useSearch = create<SearchState>((set, get) => ({
   },
   resetIndex: () => set({ activeIndex: -1 }),
   selectItem: (index: number) => set({ activeIndex: index }),
+  setOpen: (open: boolean) => set({ open }),
 }));

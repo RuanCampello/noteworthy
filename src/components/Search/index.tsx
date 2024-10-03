@@ -13,16 +13,12 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition, useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CommandFooter } from './Footer';
-import { SearchResult } from '@/types/SearchResult';
 
 export default function Search() {
-  const [open, setOpen] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>('');
+  const { open, setOpen } = useSearch();
   const [loading, startTransition] = useTransition();
-  const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
-  const { setOpen: setSettingsOpen } = useSettingsStore();
   const { filter } = useFilter();
-  const { setSearchResults, setLoading } = useSearch();
+  const { setSearchResults, setLoading, query, setQuery } = useSearch();
   const router = useRouter();
 
   const tf = useTranslations('SearchFooter');
