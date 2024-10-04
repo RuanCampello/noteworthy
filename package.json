@@ -66,6 +66,7 @@
     "react-hotkeys-hook": "^4.5.0",
     "react-resizable-panels": "^2.0.9",
     "server-only": "^0.0.1",
+    "sharp": "^0.33.5",
     "tiptap-extension-font-size": "^1.2.0",
     "zod": "^3.22.4",
     "zustand": "^4.5.4"

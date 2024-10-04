@@ -24,14 +24,14 @@ pub struct Note {
 }
 
 #[derive(Debug, Serialize, FromRow, TS)]
-#[ts(export, rename = "Note")]
+#[ts(export, rename = "Note", export_to = "Note.ts")]
 #[serde(rename_all = "camelCase")]
 pub struct NoteWithUserPrefs {
   #[ts(type = "string")]
   pub id: Uuid,
   pub title: String,
   pub content: String,
-  pub colour: String,
+  pub colour: Colour,
   pub user_id: String,
   #[ts(type = "string")]
   pub created_at: NaiveDateTime,
@@ -42,7 +42,7 @@ pub struct NoteWithUserPrefs {
   pub last_update: NaiveDateTime,
   pub name: String,
   pub full_note: bool,
-  pub note_format: String,
+  pub note_format: NoteFormat,
 }
 
 #[derive(Deserialize)]
@@ -63,19 +63,21 @@ pub struct SearchResult {
 }
 
 #[derive(Debug, Serialize, FromRow, TS)]
-#[ts(export, rename = "PartialNote")]
+#[ts(export, rename = "PartialNote", export_to = "Note.ts")]
 #[serde(rename_all = "camelCase")]
 pub struct PartialNote {
   #[ts(type = "string")]
   pub id: Uuid,
   pub title: String,
   pub content: String,
-  pub colour: String,
+  pub colour: Colour,
   #[ts(type = "string")]
   pub created_at: NaiveDateTime,
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Type, TS)]
+#[sqlx(rename_all = "lowercase", type_name = "colour")]
+#[ts(export, export_to = "Enums.ts", rename_all = "lowercase")]
 pub enum Colour {
   Blue,
   Cambridge,
@@ -88,7 +90,10 @@ pub enum Colour {
   Tiffany,
   Wisteria,
 }
-#[derive(Debug, Clone, PartialEq, Eq, Type, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Type, Serialize, Deserialize, TS)]
+#[sqlx(rename_all = "lowercase", type_name = "note_format")]
+#[serde(rename_all = "lowercase")]
+#[ts(export, export_to = "Enums.ts")]
 pub enum NoteFormat {
   Full,
   Slim,

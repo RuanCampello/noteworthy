@@ -1,15 +1,17 @@
 use crate::app_state::AppState;
 use crate::errors::UserError;
+use crate::models::notes::NoteFormat;
 use crate::models::password_reset_tokens::PasswordResetToken;
 use crate::models::users::{SimpleUser, User};
-use crate::utils::middleware::AuthUser;
-
+use crate::models::users_preferences::UserPreferences;
 use crate::utils::image::{resize_and_reduce_image, upload_image_to_r2};
 use crate::utils::mailer::Mailer;
+use crate::utils::middleware::AuthUser;
+
 use aws_sdk_s3::presigning::PresigningConfig;
-use axum::extract::Multipart;
+use axum::routing::put;
 use axum::{
-  extract::{Json, Path},
+  extract::{Json, Multipart, Path},
   routing::{get, post},
   Extension, Router,
 };
@@ -26,7 +28,8 @@ pub fn router() -> Router {
     .route("/profile", post(upload_user_profile_image))
     .route("/profile/:id", get(find_user_profile_image))
     .route("/reset-password/:token", post(reset_user_password))
-    .route("/new-password-token/:email", post(new_reset_token));
+    .route("/new-password-token/:email", post(new_reset_token))
+    .route("/preferences", put(upsert_user_preferences).get(get_user_preferences));
 
   Router::new()
     .route("/login", post(log_user))
@@ -227,8 +230,10 @@ async fn new_reset_token(
     .await?;
 
   new_reset_token.is_new = true;
-  
-  mailer.send_user_confirmation_email(&new_reset_token.token, &new_reset_token.email).await?;
+
+  mailer
+    .send_user_confirmation_email(&new_reset_token.token, &new_reset_token.email)
+    .await?;
 
   Ok(Json(new_reset_token))
 }
@@ -240,10 +245,7 @@ async fn reset_user_password(
 ) -> Result<(), UserError> {
   req.validate()?;
 
-  let query = r#"
-        SELECT * FROM password_reset_tokens
-        WHERE token = $1
-    "#;
+  let query = "SELECT * FROM password_reset_tokens WHERE token = $1";
 
   let password_reset_token = match sqlx::query_as::<_, PasswordResetToken>(query)
     .bind(token)
@@ -285,6 +287,51 @@ async fn reset_user_password(
   transaction.commit().await?;
 
   Ok(())
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UpsertPreferencesReq {
+  pub note_format: NoteFormat,
+  pub full_note: bool,
+}
+
+async fn upsert_user_preferences(
+  Extension(state): Extension<AppState>,
+  AuthUser(user): AuthUser,
+  Json(req): Json<UpsertPreferencesReq>,
+) -> Result<(), UserError> {
+  let query = r#"
+        INSERT INTO users_preferences (user_id, note_format, full_note)
+        VALUES ($1, $2, $3) ON CONFLICT (user_id)
+        DO UPDATE SET note_format = EXCLUDED.note_format, full_note = EXCLUDED.full_note
+    "#;
+
+  sqlx::query(query)
+    .bind(user.id)
+    .bind(req.note_format)
+    .bind(req.full_note)
+    .execute(&state.database)
+    .await?;
+
+  Ok(())
+}
+
+async fn get_user_preferences(
+  Extension(state): Extension<AppState>,
+  AuthUser(user): AuthUser,
+) -> Result<Json<UserPreferences>, UserError> {
+  let query = "SELECT note_format, full_note FROM users_preferences WHERE user_id = $1";
+
+  let preferences = sqlx::query_as::<_, UserPreferences>(query)
+      .bind(user.id)
+      .fetch_optional(&state.database)
+      .await?.unwrap_or_else(|| UserPreferences {
+    full_note: true,
+    note_format: NoteFormat::Full
+  });
+
+  Ok(Json(preferences))
 }
 
 async fn upload_user_profile_image(
@@ -336,10 +383,7 @@ async fn find_user_profile_image(
 }
 
 async fn find_user_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, UserError> {
-  let query = r#"
-      SELECT * FROM users
-      WHERE email = $1;
-    "#;
+  let query = "SELECT * FROM users WHERE email = $1";
 
   let user = sqlx::query_as::<_, User>(query)
     .bind(email)

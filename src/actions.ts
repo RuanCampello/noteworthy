@@ -10,10 +10,12 @@ import {
   noteDialogSchema,
   registerFormSchema,
   resetPasswordSchema,
+  userPreferencesSchema,
 } from '@/schemas';
-import type { PartialNote } from '@/types/PartialNote';
+import type { PartialNote } from '@/types/Note';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
 import { SearchResult } from '@/types/SearchResult';
+import type { UserPreferences } from '@/types/UserPreferences';
 import { getPathnameParams } from '@/utils/format-notes';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
@@ -527,4 +529,51 @@ export async function resetPassword(
   }
 
   return { success: t('email_sent') };
+}
+
+// Makes a `GET` request to `users/preferences` looking for the current user preferences.
+// Returns the preferences if found and a partial object of the current user.
+export async function getUserWithPreferences() {
+  const user = await currentUser();
+  if (!user || !user.accessToken) return { user: null, preferences: null };
+
+  const response = await fetch(`${env.INK_HOSTNAME}/users/preferences`, {
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+    next: { tags: ['user-preferences'] },
+    cache: 'force-cache',
+  });
+
+  let preferences: UserPreferences | null = null;
+
+  if (response.ok) {
+    preferences = (await response.json()) as UserPreferences;
+  }
+
+  return { user: { email: user.email, name: user.name }, preferences };
+}
+
+// Makes a `PUT` request to `users/preferences`. If the user has already a preferences table
+// it will update it. If not, it's going to create a new preferences table for the respective user.
+export async function updateUserPreferences(
+  values: z.infer<typeof userPreferencesSchema>,
+) {
+  const user = await currentUser();
+  if (!user || !user.accessToken) return null;
+
+  const fields = userPreferencesSchema.safeParse(values);
+  if (!fields.success) return { error: 'Invalid fields' };
+
+  await fetch(`${env.INK_HOSTNAME}/users/preferences`, {
+    method: 'put',
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+    body: JSON.stringify(fields.data),
+  });
+
+  revalidateTag('user-preferences');
 }

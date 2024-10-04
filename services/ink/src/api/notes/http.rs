@@ -177,11 +177,11 @@ async fn find_note_by_id(
   let query = r#"
       SELECT
         notes.*,
-        notes.colour::text AS colour,
+        notes.colour,
         notes.user_id AS user_id,
         users.name,
         COALESCE(users_preferences.full_note, true) AS full_note,
-        COALESCE(users_preferences.note_format::text, 'full') AS note_format
+        COALESCE(users_preferences.note_format, 'full') AS note_format
       FROM notes
       JOIN users ON notes.user_id = users.id
       LEFT JOIN users_preferences ON users_preferences.user_id = users.id
@@ -209,7 +209,7 @@ async fn find_all_user_notes(
   Query(params): Query<NoteParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
   let query = r#"
-      SELECT LEFT(content, 250) AS content, id, title, colour::text AS colour, created_at
+      SELECT LEFT(content, 250) AS content, id, title, colour, created_at
       FROM notes
       WHERE user_id = $1
         AND is_favourite = $2

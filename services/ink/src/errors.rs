@@ -7,6 +7,7 @@ use bcrypt::BcryptError;
 use resend_rs::Error as ResendError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
+use tracing::error;
 use uuid::Uuid;
 use validator::ValidationErrors;
 
@@ -36,6 +37,7 @@ impl IntoResponse for NoteError {
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      error!("{:#?}", self);
       String::from("An internal server error occurred")
     } else {
       self.to_string()
@@ -95,10 +97,13 @@ impl IntoResponse for UserError {
       | UserError::DatabaseError(_)
       | UserError::PresignedUrl(_)
       | UserError::ImageUploadError(_)
-      | UserError::SendEmail(_) => (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        String::from("An internal server error occurred"),
-      ),
+      | UserError::SendEmail(_) => {
+        error!("{:#?}", self);
+        (
+          StatusCode::INTERNAL_SERVER_ERROR,
+          String::from("An internal server error occurred"),
+        )
+      }
     };
 
     (status, body).into_response()

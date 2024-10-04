@@ -1,4 +1,4 @@
-import { PartialNote } from '@/types/PartialNote';
+import { PartialNote } from '@/types/Note';
 import { ReactNode } from 'react';
 import Note from './Note/Note';
 

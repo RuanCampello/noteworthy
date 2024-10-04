@@ -20,9 +20,13 @@ export default async function Counter({
       ? '?is_fav=false&is_arc=true'
       : '?is_fav=false&is_arc=false';
 
+  const tag = isFavourite ? 'favourite' : isArchived ? 'archived' : 'all';
+
   const response = await fetch(`${env.INK_HOSTNAME}/notes/count${subdir}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user.accessToken}` },
+    next: { tags: [`${tag}-notes-counter`] },
+    cache: 'force-cache',
   });
 
   const notesNumber = await response.json();

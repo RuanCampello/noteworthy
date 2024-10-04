@@ -1,7 +1,5 @@
 import { signOut } from '@/auth/auth';
-import { getUserPreferences } from '@/server/actions/user-preferences';
-import { currentUser } from '@/actions';
-
+import { getUserWithPreferences } from '@/actions';
 import { getUserProfileImage } from '@/actions';
 import {
   DropdownMenuContent,
@@ -17,13 +15,10 @@ import Menu from './Menu';
 import SettingsDialog from './SettingsDialog';
 
 export default async function Profile() {
-  const user = await currentUser();
   const t = await getTranslations('ProfileDropdown');
-  if (!user || !user?.id) return;
 
-  const { name, email, id } = user;
-  const preferences = await getUserPreferences(id);
-  if (!name) return null;
+  const { user, preferences } = await getUserWithPreferences();
+  if (!user || !user?.name) return null;
 
   async function handleLogout() {
     'use server';
@@ -35,10 +30,12 @@ export default async function Profile() {
   return (
     <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar source={image_url} fallback={name[0].toUpperCase()} />
+        <Avatar source={image_url} fallback={user.name[0].toUpperCase()} />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
-          <h2 className='text-lg leading-none font-semibold trucate'>{name}</h2>
-          <h2 className='text-silver leading-none truncate'>{email}</h2>
+          <h2 className='text-lg leading-none font-semibold trucate'>
+            {user.name}
+          </h2>
+          <h2 className='text-silver leading-none truncate'>{user.email}</h2>
         </div>
         <Menu>
           <DropdownMenuTrigger asChild>

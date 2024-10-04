@@ -60,7 +60,7 @@ export default function EditProfile() {
     control: editProfileForm.control,
     name: 'name',
   });
-  
+
   if (!user) return;
 
   async function handleEditProfile({ name, image }: FormSchema) {

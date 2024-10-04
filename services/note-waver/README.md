@@ -23,8 +23,8 @@ results.
 
 - **Description**: Returns a pre-generated literary text.
 - **Responses**:
-    - **200 OK**: Returns a JSON object with a title and text.
-    - **503 Service Unavailable**: Queue is empty; try again later.
+  - **200 OK**: Returns a JSON object with a title and text.
+  - **503 Service Unavailable**: Queue is empty; try again later.
 
 ## How it Works
 

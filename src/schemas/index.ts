@@ -1,6 +1,6 @@
 import { type Locale } from '@/lib/next-intl';
+import type { Colour, NoteFormat } from '@/types/Enums';
 import { z } from 'zod';
-import type { Colour, NoteFormat } from '../types/database-types';
 
 export const loginFormSchema = z.object({
   email: z.string().email({

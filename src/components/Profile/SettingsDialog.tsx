@@ -3,7 +3,7 @@
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { userPreferencesSchema } from '@/schemas';
-import { updateUserPreferences } from '@/server/actions/user-preferences';
+import { updateUserPreferences } from '@/actions';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -24,14 +24,15 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useTransition, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { NoteFormat, Preferences } from '../../types/database-types';
+import type { NoteFormat } from '@/types/Enums';
+import type { UserPreferences } from '@/types/UserPreferences';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
 
-type UserPreferences = z.infer<typeof userPreferencesSchema>;
+type UserPreferencesSchema = z.infer<typeof userPreferencesSchema>;
 
 interface SettingsProps {
-  preferences: Preferences | null;
+  preferences: UserPreferences | null;
 }
 
 export const dynamic = 'force-dynamic';
@@ -44,7 +45,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
   const t = useTranslations('Settings');
   const locale = useLocale();
 
-  const userPreferences = useForm<UserPreferences>({
+  const userPreferences = useForm<UserPreferencesSchema>({
     resolver: zodResolver(userPreferencesSchema),
     defaultValues: {
       fullNote:
@@ -54,7 +55,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
     },
   });
 
-  function handleSaveUserPreferences(values: UserPreferences) {
+  function handleSaveUserPreferences(values: UserPreferencesSchema) {
     startTransition(async () => {
       await updateUserPreferences(values);
       setOpen(false);
