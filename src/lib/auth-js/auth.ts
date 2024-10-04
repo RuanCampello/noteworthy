@@ -1,6 +1,6 @@
 import { createPlaceholderNote } from '@/actions';
-import authConfig from '@/auth/auth.config';
 import { env } from '@/env';
+import authConfig from '@/lib/auth-js/auth.config';
 import { jwtDecode } from 'jwt-decode';
 import NextAuth, { type DefaultSession, User } from 'next-auth';
 

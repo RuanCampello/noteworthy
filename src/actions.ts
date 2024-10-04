@@ -1,7 +1,7 @@
 'use server';
 
-import { auth, signIn } from '@/auth/auth';
 import { env } from '@/env';
+import { auth, signIn } from '@/lib/auth-js/auth';
 import { Filter } from '@/lib/zustand/search-filter';
 import { DEFAULT_REDIRECT } from '@/routes';
 import {
@@ -497,7 +497,7 @@ export async function newPassword(
 // or an old but valid one with `isNew` to differentiate. Also, sends the reset password e-mail to the user.
 export async function generatePasswordResetToken(email: string): Promise<{
   token: PasswordResetToken;
-  isNew: Boolean;
+  isNew: boolean;
 }> {
   const response = await fetch(
     `${env.INK_HOSTNAME}/users/new-password-token/${email}`,

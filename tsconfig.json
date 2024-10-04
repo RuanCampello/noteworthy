@@ -23,8 +23,6 @@
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
       "@/assets/*": ["./public/assets/*"],
-      "@/server/*": ["./src/server/*"],
-      "@/auth/*": ["./src/server/auth/*"],
       "@/ui/*": ["./src/components/ui/*"],
       "@/types/*": ["./shared/types/*"]
     }

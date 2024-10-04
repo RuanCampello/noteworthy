@@ -1,4 +1,4 @@
-import { signOut } from '@/auth/auth';
+import { signOut } from '@/lib/auth-js/auth';
 import { getUserWithPreferences } from '@/actions';
 import { getUserProfileImage } from '@/actions';
 import {
