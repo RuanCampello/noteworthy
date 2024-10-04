@@ -1,8 +1,8 @@
-import { getDefinition } from '@/actions/dictionary';
+import { getDefinition } from '@/actions';
 import { BookA } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Definition, Meaning } from '../../types/definition';
-import { Separator } from '../ui/separator';
+import { Definition, Meaning } from '@/types/Definition';
+import { Separator } from '@/ui/separator';
 import CloseButton from './CloseButton';
 import DerivedWords from './DerivedWords';
 import DictionarySearch from './DictionarySearch';
@@ -60,7 +60,7 @@ function MeaningSection({ meanings, word }: MeaningSectionProps) {
           </p>
           <DerivedWords items={def.synonyms} title='Synonyms' />
           <DerivedWords items={def.antonyms} title='Antonyms' />
-          <Example text={def.example} word={word} />
+          <Example text={def.example!} word={word} />
         </div>
       ))}
     </section>

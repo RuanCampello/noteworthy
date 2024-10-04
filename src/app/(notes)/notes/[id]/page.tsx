@@ -23,10 +23,17 @@ export default async function NotePage({ params }: Props) {
   if (!isNoteVisible) return <NotVisibleWarning />;
 
   const fullNote = note?.fullNote !== undefined ? note.fullNote : true;
-  const isSubView = !headers().get('pathname')?.includes('/notes/');
+
+  const headerList = headers();
+  const isSubView = !headerList.get('pathname')?.includes('/notes/');
+  const isDictOpen = headerList.get('search-params')?.includes('dfn-open=true');
 
   return (
-    <article data-view={isSubView} className='mx-40 data-[view=true]:mx-28'>
+    <article
+      data-view={isSubView}
+      data-dict={isDictOpen}
+      className='mx-40 data-[view=true]:mx-28 data-[dict=true]:mx-12'
+    >
       <NoteEditor
         fullNote={fullNote}
         isEditable={note.userId === user.id}

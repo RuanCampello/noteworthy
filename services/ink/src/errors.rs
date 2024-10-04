@@ -4,6 +4,7 @@ use aws_sdk_s3::{error::SdkError, operation::get_object::GetObjectError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bcrypt::BcryptError;
+use reqwest::Error as ReqwestError;
 use resend_rs::Error as ResendError;
 use sqlx::Error as SqlxError;
 use thiserror::Error;
@@ -104,6 +105,33 @@ impl IntoResponse for UserError {
           String::from("An internal server error occurred"),
         )
       }
+    };
+
+    (status, body).into_response()
+  }
+}
+
+#[derive(Error, Debug)]
+pub enum DictionaryError {
+  #[error("No definitions found for word: {word} in language: {language}")]
+  NotFound { word: String, language: String },
+  #[error("HTTP error: {0}")]
+  Http(#[from] ReqwestError),
+}
+
+impl IntoResponse for DictionaryError {
+  fn into_response(self) -> Response {
+    let status = match self {
+      DictionaryError::NotFound { .. } => StatusCode::NOT_FOUND,
+      DictionaryError::Http(_) => StatusCode::BAD_GATEWAY,
+    };
+
+    error!("{:#?}", self);
+    
+    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      String::from("An internal server error occurred")
+    } else {
+      self.to_string()
     };
 
     (status, body).into_response()

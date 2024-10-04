@@ -12,6 +12,7 @@ import {
   resetPasswordSchema,
   userPreferencesSchema,
 } from '@/schemas';
+import type { Definition } from '@/types/Definition';
 import type { PartialNote } from '@/types/Note';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
 import { SearchResult } from '@/types/SearchResult';
@@ -576,4 +577,22 @@ export async function updateUserPreferences(
   });
 
   revalidateTag('user-preferences');
+}
+
+// Fetch the API with a `GET` request to `dictionary/:word` seeking for word's definition.
+export async function getDefinition(word: string) {
+  const response = await fetch(
+    `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+    {
+      method: 'GET',
+      next: { tags: ['update-definition'] },
+    },
+  );
+  try {
+    const data = await response.json();
+    const definition: Definition = data[0];
+    return definition;
+  } catch (error) {
+    console.error(error);
+  }
 }

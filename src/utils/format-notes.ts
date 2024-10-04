@@ -1,6 +1,6 @@
+import type { Note } from '@/types/Note';
 import { headers } from 'next/headers';
 import { cache } from 'react';
-import type { Note } from '../types/database-types';
 import { allowedFilters, type Filters } from './constants/filters';
 
 export type FilteredResults = {

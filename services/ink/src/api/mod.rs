@@ -6,6 +6,7 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 
+mod dictionary;
 mod notes;
 mod users;
 
@@ -24,6 +25,7 @@ pub async fn serve(env: EnvVariables) -> shuttle_axum::ShuttleAxum {
   let router = Router::new()
     .merge(users::http::router())
     .merge(notes::http::router())
+    .merge(dictionary::router())
     .layer(Extension(app_state))
     .layer(Extension(mailer))
     .layer(cors);
