@@ -90,7 +90,7 @@ export default function EditProfile() {
     }
   }
 
-  const { name, image, id } = user;
+  const { name, image } = user;
 
   const isOAuthImage =
     image?.includes('https://avatars.githubusercontent.com') ||

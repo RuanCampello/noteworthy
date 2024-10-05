@@ -178,7 +178,7 @@ export async function toggleNoteFavourite(id: string) {
   }
 }
 
-// Make a fetch with a `PATCH` method to the selected `notes/:id/archived` endpoint
+// Make a fetch with a `PATCH` method to the selected `notes/:id/archive` endpoint
 // and redirect the user based on note `isArchived` (boolean) attribute.
 // Also, revalidates the note with its new status and the sidebar.
 export async function toggleNoteArchived(id: string) {
@@ -186,13 +186,12 @@ export async function toggleNoteArchived(id: string) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  await fetch(`${env.INK_HOSTNAME}/notes/${id}/archived`, {
+  await fetch(`${env.INK_HOSTNAME}/notes/${id}/archive`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
-
   revalidateTag('sidebar-notes');
   revalidateTag('note-page');
 
