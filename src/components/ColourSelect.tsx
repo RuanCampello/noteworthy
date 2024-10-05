@@ -1,4 +1,3 @@
-import type { Colour } from '@/types/database-types';
 import {
   Select,
   SelectContent,
@@ -8,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/select';
+import type { Colour } from '@/types/Enums';
 import HoverableSelectItem from './HoverableSelectItem';
 
 interface ColourSelectProps {

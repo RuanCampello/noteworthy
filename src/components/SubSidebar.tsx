@@ -1,9 +1,9 @@
-import type { Note as NoteType } from '@/types/database-types';
+import { PartialNote } from '@/types/Note';
 import { ReactNode } from 'react';
 import Note from './Note/Note';
 
 interface SubSidebarProps {
-  notes: NoteType[];
+  notes: PartialNote[];
   children?: ReactNode;
   title: string;
   href: 'favourites' | 'archived';

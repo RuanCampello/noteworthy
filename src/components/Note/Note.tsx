@@ -1,6 +1,6 @@
 'use client';
 
-import type { Colour } from '@/types/database-types';
+import type { Colour } from '@/types/Enums';
 import { Colours, darkenColour } from '@/utils/colours';
 import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
@@ -13,7 +13,7 @@ interface NoteProps {
   name: string;
   text: HTMLContent;
   colour: Colour;
-  date: Date;
+  date: string;
   href: 'notes' | 'favourites' | 'archived';
 }
 
@@ -40,6 +40,7 @@ export default function Note({
       if (mqPortrait.matches) setOrientation('portrait');
       else setOrientation('landscape');
     }
+
     handleResize();
     window.addEventListener('resize', handleResize);
 
@@ -79,10 +80,11 @@ export default function Note({
 
   const formattedName = getFormattedName(name);
   const textWithoutHtml = stripHTMLTags(text);
+
   return (
     <Link
       href={
-        //if the user is inside a favourite note and click on a non favourite note
+        //if the user is inside a favourite note and click on a non-favourite note
         // remove the favourite from redirect link and transform into a note link
         (href === 'favourites' && pathname.includes('favourites/')) ||
         (href === 'archived' && pathname.includes('archived/'))
@@ -108,7 +110,7 @@ export default function Note({
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm group-data-[format=slim]/format:hidden'>
         <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
-          {date.toLocaleDateString('en-GB')}
+          {new Date(date).toLocaleDateString('en-GB')}
         </span>
         <p className='truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden'>
           {textWithoutHtml}

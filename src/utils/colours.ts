@@ -1,4 +1,4 @@
-import type { Colour } from '@/types/database-types';
+import type { Colour } from '@/types/Enums';
 
 export const Colours: { [key in Colour]: string } = {
   tiffany: '#80CBC4',
@@ -30,16 +30,4 @@ export function darkenColour(colour: string, percent: number) {
       .toString(16)
       .slice(1)
   );
-}
-
-interface ColourInfo {
-  name: Colour;
-  hex: string;
-}
-
-export function getRandomColour(): ColourInfo {
-  const keys = Object.keys(Colours);
-  const randomIndex = Math.floor(Math.random() * keys.length);
-  const randomColourKey = keys[randomIndex] as Colour;
-  return { name: randomColourKey, hex: Colours[randomColourKey] };
 }

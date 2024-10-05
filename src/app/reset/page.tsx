@@ -1,6 +1,6 @@
 'use client';
 
-import { resetPassword } from '@/actions/reset-password';
+import { resetPassword } from '@/actions';
 import { CustomForm } from '@/components/Form';
 import {
   Form,

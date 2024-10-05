@@ -1,8 +1,7 @@
 'use client';
 
-import { createNote } from '@/actions/note';
+import { createNote } from '@/actions';
 import { noteDialogSchema } from '@/schemas';
-import type { Colour } from '@/types/database-types';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -30,6 +29,7 @@ import { type ReactNode, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { z } from 'zod';
+import type { Colour } from '@/types/Enums';
 import ColourSelect from '../ColourSelect';
 
 interface AddNoteDialogProps {

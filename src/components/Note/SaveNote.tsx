@@ -1,24 +1,21 @@
 'use client';
 
-import { updateNoteContent } from '@/actions/note';
+import { updateNoteContent } from '@/actions';
 import { useCurrentEditor } from '@tiptap/react';
 import { Check, Save } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useTransition } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import MenuTooltip from '../Tooltip';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '@/ui/use-toast';
 
 export default function SaveNote() {
   const currentEditor = useCurrentEditor();
   const { toast } = useToast();
   const [loading, startTransition] = useTransition();
-  const session = useSession();
   const t = useTranslations('SaveButton');
   const tt = useTranslations('Toast');
-  const userId = session.data?.user?.id;
 
   const openNote = useParams<{ id: string }>().id;
   useHotkeys('ctrl+s', () => handleSaveClick(), {
@@ -31,12 +28,8 @@ export default function SaveNote() {
 
   async function handleSaveClick() {
     startTransition(async () => {
-      if (!userId || !openNote || !currentEditor.editor) return;
-      await updateNoteContent(
-        openNote,
-        userId,
-        currentEditor.editor?.getHTML(),
-      );
+      if (!openNote || !currentEditor.editor) return;
+      await updateNoteContent(openNote, currentEditor.editor.getHTML());
       toast({
         title: tt('sv_note_title'),
         description: tt('sv_note_dsc'),
@@ -52,6 +45,7 @@ export default function SaveNote() {
       });
     });
   }
+
   return (
     <MenuTooltip content={`${t('title')} (Ctrl+S)`} sideOffset={8}>
       <form action={handleSaveClick}>

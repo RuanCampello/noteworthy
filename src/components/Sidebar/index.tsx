@@ -4,19 +4,13 @@ import AddNoteButton from '@/components/Note/AddNoteButton';
 import Notes from '@/components/Note/Notes';
 import Profile from '@/components/Profile';
 import ToggleSidebarButton from '@/components/Sidebar/ToggleSidebarButton';
-import { getUserPreferences } from '@/server/actions/user-preferences';
-import { currentUser } from '@/server/queries/note';
-import type { NoteFormat } from '@/types/database-types';
+import { getUserWithPreferences } from '@/actions';
 import Root from './Root';
 
 export default async function Sidebar() {
-  const user = await currentUser();
+  const { user, preferences } = await getUserWithPreferences();
+  if (!user) return;
 
-  if (!user || !user.id) return;
-
-  let format: NoteFormat = 'full';
-  const preferences = await getUserPreferences(user.id);
-  if (preferences) format = preferences.noteFormat;
   return (
     <Root>
       <header className='flex items-center group-data-[state=open]/root:justify-between group-data-[state=open]/root:pe-5 justify-center w-full'>
@@ -25,7 +19,7 @@ export default async function Sidebar() {
       </header>
       <section
         className='justify-center flex flex-col gap-7 w-full group/format'
-        data-format={format}
+        data-format={preferences?.noteFormat ?? 'full'}
       >
         <AddNoteButton />
         <Notes />

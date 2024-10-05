@@ -28,7 +28,7 @@ export default function FormThirdPartLogin({
     <button
       onClick={handleLogin}
       type='button'
-      disabled={disableWhen || process.env.NODE_ENV !== 'production'}
+      disabled={disableWhen}
       className='bg-midnight hover:bg-night/80 disabled:bg-night/60 disabled:text-neutral-400 disabled:grayscale transition-colors duration-300 font-medium border-night border text-neutral-100 py-2.5 w-full rounded-lg flex items-center justify-center gap-2.5 mt-2.5'
     >
       <Image width={24} height={24} src={image} alt={`${name}'s logo`} />

@@ -1,8 +1,8 @@
 'use client';
 
-import { toggleNoteArchive, toggleNoteFavourite } from '@/actions/note';
+import { toggleNoteFavourite, toggleNoteArchived } from '@/actions';
 import DropdownButton from '@/components/DropdownButton';
-import type { Note } from '@/types/database-types';
+import type { Note } from '@/types/Note';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +17,9 @@ import {
   StarOff,
   Trash,
 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
 import { type ReactNode, useTransition } from 'react';
+import type { Colour } from '@/types/Enums';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import EditNoteDialog from './EditNoteDialog';
 
@@ -30,25 +29,19 @@ interface DropdownProps {
 }
 
 export default function Dropdown({ note, children }: DropdownProps) {
-  const { data: session } = useSession();
   const [favouriteLoading, startFavouriteTransition] = useTransition();
   const [archiveLoading, startArchiveTransition] = useTransition();
-  const userId = session?.user?.id;
-  const params = useParams<{ id: string }>();
-  const noteId = params.id;
   const t = useTranslations('NoteDropdown');
 
   function handleToggleFavourite() {
-    if (!userId || !noteId) return;
     startFavouriteTransition(async () => {
-      await toggleNoteFavourite(noteId, userId);
+      await toggleNoteFavourite(note.id);
     });
   }
 
   function handleToggleArchive() {
-    if (!userId || !noteId) return;
     startArchiveTransition(async () => {
-      await toggleNoteArchive(noteId, userId);
+      await toggleNoteArchived(note.id);
     });
   }
 
@@ -69,7 +62,7 @@ export default function Dropdown({ note, children }: DropdownProps) {
           <DropdownButton
             loading={favouriteLoading}
             disabled={isArchived || favouriteLoading}
-            active={!!isFavourite}
+            active={isFavourite}
             color='favourite'
             text={isFavourite ? t('unfav') : t('fav')}
             icon={isFavourite ? <StarOff /> : <Star />}
@@ -82,14 +75,18 @@ export default function Dropdown({ note, children }: DropdownProps) {
             color='archive'
             text={isArchived ? t('unarc') : t('arc')}
             disabled={isFavourite || archiveLoading}
-            active={!!isArchived}
+            active={isArchived}
           />
         </form>
-        <EditNoteDialog noteId={id} noteName={title} noteColour={colour}>
+        <EditNoteDialog
+          noteId={id}
+          noteName={title}
+          noteColour={colour as Colour}
+        >
           <DropdownButton text={t('edit')} icon={<Pencil />} color='edit' />
         </EditNoteDialog>
         {children}
-        <DeleteNoteDialog noteName={title} noteId={id}>
+        <DeleteNoteDialog>
           <DropdownButton text={t('del')} color='delete' icon={<Trash />} />
         </DeleteNoteDialog>
       </DropdownMenuContent>

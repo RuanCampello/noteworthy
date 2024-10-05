@@ -1,4 +1,4 @@
-import authConfig from '@/auth/auth.config';
+import authConfig from '@/lib/auth-js/auth.config';
 import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
 import {

@@ -1,5 +1,5 @@
-import { currentUser } from '@/queries/note';
-import { API } from '@/server/api';
+import { currentUser } from '@/actions';
+import { env } from '@/env';
 import AnimatedCounter from './AnimatedCounter';
 
 interface CounterProps {
@@ -12,17 +12,24 @@ export default async function Counter({
   isArchived,
 }: CounterProps) {
   const user = await currentUser();
-  if (!user || !user.id) return;
-  const api = new API();
+  if (!user || !user?.accessToken) return;
 
-  let notesNumber;
-  if (isFavourite) {
-    notesNumber = await api.notes(user.id).favourite.count();
-  } else if (isArchived) {
-    notesNumber = await api.notes(user.id).archived.count();
-  } else {
-    notesNumber = await api.notes(user.id).ordinary.count();
-  }
+  const subdir = isFavourite
+    ? '?is_fav=true&is_arc=false'
+    : isArchived
+      ? '?is_fav=false&is_arc=true'
+      : '?is_fav=false&is_arc=false';
+
+  const tag = isFavourite ? 'favourite' : isArchived ? 'archived' : 'all';
+
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/count${subdir}`, {
+    method: 'get',
+    headers: { Authorization: `Bearer ${user.accessToken}` },
+    next: { tags: [`${tag}-notes-counter`] },
+    cache: 'force-cache',
+  });
+
+  const notesNumber = await response.json();
 
   return (
     <div

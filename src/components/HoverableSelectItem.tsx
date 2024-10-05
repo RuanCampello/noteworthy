@@ -1,8 +1,8 @@
 'use client';
 
-import type { Colour } from '@/types/database-types';
 import { Colours } from '@/utils/colours';
 import { useState } from 'react';
+import type { Colour } from '@/types/Enums';
 import { SelectItem } from './ui/select';
 
 interface HoverableSelectItemProps {

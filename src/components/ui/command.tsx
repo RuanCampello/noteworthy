@@ -1,217 +1,301 @@
-'use client';
-
-import { type DialogProps } from '@radix-ui/react-dialog';
-import { Command as CommandPrimitive } from 'cmdk';
-import { Loader, LucideProps, Package, Search, Sparkle } from 'lucide-react';
-import * as React from 'react';
-
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { generateNote } from '@/actions';
+import NotFound from '@/assets/svg/oooscillate.svg';
+import { NoteItemWrapper } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
+import { type Action, useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { DialogOverlay, DialogPortal } from '@/ui/dialog';
+import type { InputProps } from '@/ui/input';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
+import {
+  Loader,
+  NotebookText,
+  NotepadTextDashed,
+  Package,
+  Search,
+  Sparkle,
+  FilePlus2,
+  Settings,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
+import { Input } from '@/ui/input';
 
-const Command = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive
-    ref={ref}
-    className={cn(
-      'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
-      className,
-    )}
-    {...props}
-  />
-));
-Command.displayName = CommandPrimitive.displayName;
+function RenderInputIcon() {
+  const baseIcon =
+    'mr-2 h-4 w-4 shrink-0 opacity-50 group-data-[loading=true]/dialog:hidden hidden';
 
-interface CommandDialogProps extends DialogProps {}
-
-function CommandDialog({ children, ...props }: CommandDialogProps) {
   return (
-    <Dialog {...props}>
-      <DialogContent
-        onPointerDownOutside={(e) => e.preventDefault()}
-        className='overflow-hidden p-0 shadow-lg dark bg-transparent rounded-lg'
-      >
-        <Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 bg-black/40 backdrop-blur dark'>
-          {children}
-        </Command>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Loader
+        className={cn(
+          baseIcon,
+          'animate-spin group-data-[loading=true]/dialog:inline',
+        )}
+      />
+      <Package
+        className={cn(
+          baseIcon,
+          'text-cambridge animate-in duration-200 fade-in-40 opacity-70 zoom-in-[.3] group-data-[filter=Archived]/dialog:inline',
+        )}
+      />
+      <Sparkle
+        className={cn(
+          baseIcon,
+          'text-sunset text-opacity-70 transition-colors fade-in-50 opacity-100 animate-in spin-in-45 duration-200 group-data-[filter=Favourites]/dialog:inline',
+        )}
+      />
+      <Search
+        className={cn(
+          baseIcon,
+          'group-[[data-filter=None]:not([data-loading=true])]/dialog:inline',
+        )}
+      />
+    </>
   );
 }
 
-interface CommandInputProps
-  extends React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> {
-  loading: boolean;
-}
+const CommandInput = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, ...props }, ref) => {
+    const t = useTranslations('Search');
+    const { placeholder } = useFilter();
 
-interface RenderInputIconProps {
-  loading: boolean;
-}
-
-function RenderInputIcon({ loading }: RenderInputIconProps) {
-  const { filter } = useFilter();
-  const baseIcon = 'mr-2 h-4 w-4 shrink-0  opacity-50';
-
-  if (loading) {
-    return <Loader className={cn(baseIcon, 'animate-spin')} />;
-  } else {
-    if (filter === 'arc') {
-      return (
-        <Package
+    return (
+      <div className='flex items-center border-b px-3 z-10 bg-transparent'>
+        <RenderInputIcon />
+        <Input
+          ref={ref}
+          placeholder={t(placeholder)}
           className={cn(
-            baseIcon,
-            'text-cambridge animate-in duration-200 fade-in-40 opacity-70 zoom-in-[.3]',
+            'flex h-11 w-full rounded-md bg-transparent py-3 px-0 text-sm outline-none focus-visible:ring-0 border-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 selection:bg-slate selection:text-white',
+            className,
           )}
+          {...props}
         />
-      );
-    } else if (filter === 'fav') {
-      return (
-        <Sparkle
-          className={cn(
-            baseIcon,
-            'text-sunset text-opacity-70 transition-colors fade-in-50 opacity-100 animate-in spin-in-45 duration-200',
-          )}
-        />
-      );
-    } else {
-      return <Search className={baseIcon} />;
+      </div>
+    );
+  },
+);
+CommandInput.displayName = 'CommandInput';
+
+const CommandDialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => {
+  const { filter, toggleFilter } = useFilter();
+  const {
+    decreaseIndex,
+    increaseIndex,
+    loading,
+    searchResults,
+    actions,
+    activeIndex,
+    setOpen,
+  } = useSearch();
+
+  const router = useRouter();
+
+  function handleKeyPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Tab') toggleFilter();
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      increaseIndex();
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      decreaseIndex();
+    }
+    if (event.key === 'Enter') {
+      const selectedItem = searchResults[activeIndex];
+      const selectedAction = actions[activeIndex - searchResults.length];
+
+      if (selectedItem) {
+        setOpen(false);
+        router.replace(`/notes/${selectedItem.id}`);
+      } else if (selectedAction) {
+        selectedAction.onSelect();
+      }
     }
   }
-}
 
-const CommandInput = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Input>,
-  CommandInputProps
->(({ className, loading, ...props }, ref) => (
-  <div
-    className='flex items-center border-b px-3 z-10 bg-inherit'
-    cmdk-input-wrapper=''
-  >
-    <RenderInputIcon loading={loading} />
-    <CommandPrimitive.Input
-      ref={ref}
-      className={cn(
-        'flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 selection:bg-slate selection:text-white',
-        className,
-      )}
-      {...props}
-    />
-  </div>
-));
-
-CommandInput.displayName = CommandPrimitive.Input.displayName;
-
-const CommandList = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.List
-    ref={ref}
-    className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
-    {...props}
-  />
-));
-
-CommandList.displayName = CommandPrimitive.List.displayName;
-
-const CommandEmpty = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Empty>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
-  <CommandPrimitive.Empty
-    ref={ref}
-    className='py-6 text-center text-sm'
-    {...props}
-  />
-));
-
-CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
-
-const CommandGroup = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Group>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Group
-    ref={ref}
-    className={cn(
-      'overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
-      className,
-    )}
-    {...props}
-  />
-));
-
-CommandGroup.displayName = CommandPrimitive.Group.displayName;
-
-const CommandSeparator = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Separator
-    ref={ref}
-    className={cn('-mx-1 h-px bg-border', className)}
-    {...props}
-  />
-));
-CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
-
-const CommandItem = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <CommandPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex cursor-pointer select-none text-white items-center px-2 py-1 text-sm outline-none aria-selected:bg-accent aria-selected:text-neutral-50 group rounded-sm gap-2 data-[disabled='true']:grayscale data-[disabled='true']:text-muted-foreground",
-      className,
-    )}
-    {...props}
-  >
-    {children}
-  </CommandPrimitive.Item>
-));
-
-CommandItem.displayName = CommandPrimitive.Item.displayName;
-
-interface CommandIconProps {
-  icon: React.ComponentType<LucideProps>;
-}
-
-function CommandIcon({ icon: Icon }: CommandIconProps) {
   return (
-    <div className='p-1 bg-night group-aria-selected:bg-slate rounded-sm'>
-      <Icon size={12} strokeWidth={1.75} />
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        data-loading={loading}
+        data-filter={filter}
+        onKeyDown={handleKeyPressed}
+        ref={ref}
+        className={cn(
+          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg bg-black/40 backdrop-blur dark focus:outline-none overflow-hidden group/dialog',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  );
+});
+CommandDialogContent.displayName = DialogPrimitive.Content.displayName;
+
+type CommandListProps = React.HTMLAttributes<HTMLDivElement>;
+
+const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
+  ({ className, ...props }, ref) => {
+    const { searchResults, activeIndex, selectItem, loading, query } =
+      useSearch();
+    const t = useTranslations('Search');
+
+    let content;
+
+    const shouldRender =
+      Array.isArray(searchResults) && searchResults.length > 0;
+    const notFound = query.length > 2 && !shouldRender;
+
+    if (loading) {
+      content = LoadingFallback();
+    } else if (notFound) {
+      content = <NotFoundFallback query={query} />;
+    } else if (shouldRender) {
+      content = searchResults.map((item, i) => (
+        <NoteItemWrapper
+          key={item.id}
+          aria-selected={i === activeIndex}
+          content={item.highlightedContent || item.content}
+          title={item.title}
+          href={item.id}
+          tabIndex={0}
+          icon={<NotebookText />}
+          onMouseEnter={() => selectItem(i)}
+        />
+      ));
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'max-h-[300px] overflow-y-auto overflow-x-hidden flex flex-col m-1 mb-0',
+          className,
+        )}
+        {...props}
+      >
+        {!notFound && <CommandSeparator heading={t('search_res')} />}
+        {content}
+      </div>
+    );
+  },
+);
+
+CommandList.displayName = 'CommandList';
+
+function CommandActions() {
+  const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
+  const { setOpen: setSettingsOpen } = useSettingsStore();
+  const { setOpen, selectItem, setActions, searchResults, activeIndex } =
+    useSearch();
+  const router = useRouter();
+  const t = useTranslations('Search');
+
+  const actions: Action[] = [
+    {
+      displayName: t('new_note'),
+      onSelect: async () => {
+        const id = await generateNote();
+        router.replace(`/notes/${id}`);
+      },
+      icon: FilePlus2,
+    },
+    {
+      displayName: t('open_settings'),
+      onSelect: () => {
+        setSettingsOpen(true);
+        setSettingsDialogOpen(true);
+        setOpen(false);
+      },
+      icon: Settings,
+    },
+  ];
+
+  React.useEffect(() => {
+    setActions(actions);
+  }, []);
+
+  return (
+    <div className='flex flex-col m-1'>
+      <CommandSeparator heading={t('quick_act')} />
+      {actions.map((action, i) => {
+        const actualI = i + searchResults.length;
+
+        return (
+          <NoteItemWrapper
+            aria-selected={actualI === activeIndex}
+            key={actualI}
+            onMouseEnter={() => selectItem(actualI)}
+            icon={<action.icon />}
+            onSelect={action.onSelect}
+            title={action.displayName}
+          />
+        );
+      })}
     </div>
   );
 }
 
-function CommandShortcut({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
+CommandActions.displayName = 'CommandActions';
+
+function CommandSeparator({ heading }: { heading: string }) {
   return (
-    <span
-      className={cn(
-        'ml-auto text-xs tracking-widest text-muted-foreground',
-        className,
-      )}
-      {...props}
-    />
+    <div className='px-3 py-1 text-xs select-none text-muted-foreground'>
+      {heading}
+    </div>
   );
 }
-CommandShortcut.displayName = 'CommandShortcut';
 
-export {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandIcon,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
+function LoadingFallback() {
+  return (
+    <div className='bg-transparent h-12 px-2 rounded-sm flex items-center gap-2'>
+      <div className='w-7 h-7 bg-midnight animate-pulse rounded-sm shrink-0' />
+      <div className='flex gap-2 w-full items-center'>
+        <div className='flex flex-col h-fit w-full gap-1'>
+          <div className='w-full bg-midnight h-4 rounded-sm animate-pulse' />
+          <div className='w-full bg-midnight h-2 rounded-sm animate-pulse' />
+        </div>
+        <div className='w-5 shrink-0 h-5 bg-midnight rounded-sm animate-pulse' />
+      </div>
+    </div>
+  );
+}
+
+function NotFoundFallback({ query }: { query: string }) {
+  const t = useTranslations('Search');
+  return (
+    <div className='w-full flex justify-center py-2'>
+      <div className='items-center flex flex-col'>
+        <NotepadTextDashed className='w-6 h-6' />
+        <h2 className='font-semibold text-base my-1.5'> {t('not_found_t')} </h2>
+        <div className='text-neutral-300 text-center text-sm'>
+          <p> {`"${query}" ${t('not_found')}`} </p>
+          <p>{t('try_again')}</p>
+        </div>
+      </div>
+      <Image
+        src={NotFound}
+        className='absolute -z-10 -translate-y-14 brightness-50'
+        alt={t('not_found_t')}
+      />
+    </div>
+  );
+}
+
+export const Command = {
+  Input: CommandInput,
+  Content: CommandDialogContent,
+  List: CommandList,
+  Actions: CommandActions,
 };

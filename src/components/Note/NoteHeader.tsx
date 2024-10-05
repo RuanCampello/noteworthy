@@ -1,5 +1,5 @@
-import { currentUser } from '@/queries/note';
-import type { Note } from '@/types/database-types';
+import { currentUser } from '@/actions';
+import type { Note } from '@/types/Note';
 import { toLocaleDateLong } from '@/utils/date';
 import {
   CalendarClock,
@@ -18,18 +18,12 @@ import NoteHeaderItem from './NoteHeaderItem';
 import PublishNoteDialog from './PublishNoteDialog';
 import SaveNote from './SaveNote';
 
-interface NoteWithOwner extends Note {
-  owner: {
-    id: string;
-    name: string;
-  };
+interface NoteHeaderProps {
+  note: Note;
 }
 
-interface NoteHeaderProps {
-  note: NoteWithOwner;
-}
 export default async function NoteHeader({ note }: NoteHeaderProps) {
-  const { lastUpdate, owner, title, createdAt } = note;
+  const { lastUpdate, name: username, title, createdAt } = note;
   const longLastUpdate = toLocaleDateLong(lastUpdate);
   const longDate = toLocaleDateLong(createdAt);
   const user = await currentUser();
@@ -40,7 +34,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
   const isDictionaryOpen = new URLSearchParams(params!).has('dfn-open');
 
   if (!user) return;
-  const isEditor = user.id === owner.id;
+  const isEditor = user.id === note.userId;
 
   return (
     <header className='sticky xl:px-0 px-6 xl:pt-16 pt-8'>
@@ -75,7 +69,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
           >
             <CalendarClock size={20} strokeWidth={2} />
           </NoteHeaderItem>
-          <NoteHeaderItem name={t('owner')} value={owner.name!}>
+          <NoteHeaderItem name={t('owner')} value={username}>
             <SquareUserRound size={20} strokeWidth={2} />
           </NoteHeaderItem>
           <WordCounter />

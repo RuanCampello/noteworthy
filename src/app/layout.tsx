@@ -1,4 +1,3 @@
-import QueryProvider from '@/components/QueryProvider';
 import Search from '@/components/Search';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
@@ -45,12 +44,10 @@ export default async function RootLayout({
         className={`${sourceSans.variable} ${garamound.variable} font-sans bg-black text-neutral-100 text-base overflow-hidden`}
       >
         <SessionProvider>
-          <QueryProvider>
-            <NextIntlClientProvider messages={messages}>
-              {children}
-              <Search />
-            </NextIntlClientProvider>
-          </QueryProvider>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+            <Search />
+          </NextIntlClientProvider>
         </SessionProvider>
         <Toaster />
       </body>

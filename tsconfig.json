@@ -23,11 +23,8 @@
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
       "@/assets/*": ["./public/assets/*"],
-      "@/server/*": ["./src/server/*"],
-      "@/queries/*": ["./src/server/queries/*"],
-      "@/actions/*": ["./src/server/actions/*"],
-      "@/auth/*": ["./src/server/auth/*"],
-      "@/ui/*": ["./src/components/ui/*"]
+      "@/ui/*": ["./src/components/ui/*"],
+      "@/types/*": ["./shared/types/*"]
     }
   },
   "include": [

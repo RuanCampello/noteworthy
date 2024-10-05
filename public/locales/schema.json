@@ -69,12 +69,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "button",
-        "cancel",
-        "description",
-        "title"
-      ],
+      "required": ["button", "cancel", "description", "title"],
       "type": "object"
     },
     "Dictionary": {
@@ -95,13 +90,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "close_dic",
-        "lic",
-        "src",
-        "srcs",
-        "title"
-      ],
+      "required": ["close_dic", "lic", "src", "srcs", "title"],
       "type": "object"
     },
     "Edit": {
@@ -172,13 +161,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "font_f",
-        "font_s",
-        "h",
-        "p",
-        "style"
-      ],
+      "required": ["font_f", "font_s", "h", "p", "style"],
       "type": "object"
     },
     "Header": {
@@ -196,12 +179,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "created",
-        "modified",
-        "owner",
-        "words"
-      ],
+      "required": ["created", "modified", "owner", "words"],
       "type": "object"
     },
     "HomePlaceholder": {
@@ -213,10 +191,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "description",
-        "title"
-      ],
+      "required": ["description", "title"],
       "type": "object"
     },
     "Keyboard": {
@@ -237,13 +212,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "description",
-        "editor",
-        "global",
-        "note",
-        "title"
-      ],
+      "required": ["description", "editor", "global", "note", "title"],
       "type": "object"
     },
     "Login": {
@@ -297,11 +266,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "button",
-        "new_password",
-        "return_to"
-      ],
+      "required": ["button", "new_password", "return_to"],
       "type": "object"
     },
     "NoteDropdown": {
@@ -325,14 +290,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "arc",
-        "del",
-        "edit",
-        "fav",
-        "unarc",
-        "unfav"
-      ],
+      "required": ["arc", "del", "edit", "fav", "unarc", "unfav"],
       "type": "object"
     },
     "NoteHeader": {
@@ -344,10 +302,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "editor",
-        "viewer"
-      ],
+      "required": ["editor", "viewer"],
       "type": "object"
     },
     "Profile": {
@@ -359,10 +314,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "button",
-        "field_name"
-      ],
+      "required": ["button", "field_name"],
       "type": "object"
     },
     "ProfileDropdown": {
@@ -374,10 +326,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "log_out",
-        "settings"
-      ],
+      "required": ["log_out", "settings"],
       "type": "object"
     },
     "Publish": {
@@ -452,9 +401,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "title"
-      ],
+      "required": ["title"],
       "type": "object"
     },
     "Search": {
@@ -519,12 +466,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "chg-filter",
-        "close",
-        "nav",
-        "open"
-      ],
+      "required": ["chg-filter", "close", "nav", "open"],
       "type": "object"
     },
     "ServerErrors": {
@@ -765,13 +707,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "date_new",
-        "date_old",
-        "last_mod",
-        "sort_by",
-        "title"
-      ],
+      "required": ["date_new", "date_old", "last_mod", "sort_by", "title"],
       "type": "object"
     },
     "SubsidebarTitles": {
@@ -783,10 +719,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "arc",
-        "fav"
-      ],
+      "required": ["arc", "fav"],
       "type": "object"
     },
     "Toast": {
@@ -798,10 +731,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "sv_note_dsc",
-        "sv_note_title"
-      ],
+      "required": ["sv_note_dsc", "sv_note_title"],
       "type": "object"
     }
   },

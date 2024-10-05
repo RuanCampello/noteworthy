@@ -57,7 +57,7 @@
     "profile": "Profile",
     "note_style": "Note style",
     "note_style_dsc": "How are notes displayed in sidebar.",
-    "full_note": "Full witdh note",
+    "full_note": "Full width note",
     "full_note_dsc": "Makes note occupy window full width.",
     "lang": "Language",
     "button": "Save changes",
@@ -129,7 +129,7 @@
     "button": "Save changes"
   },
   "Delete": {
-    "title": "Are absolutly sure?",
+    "title": "Are you absolutely sure?",
     "description": "This action cannot be undone. This will permanently delete your note and remove all data from our servers.",
     "cancel": "Cancel",
     "button": "Delete note"

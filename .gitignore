@@ -15,10 +15,14 @@
 
 # production
 /build
+/services/ink/target
+/services/note-waver/__pycache__
 
 # misc
 .DS_Store
 *.pem
+/**/**.idea
+tmux.sh
 
 # debug
 npm-debug.log*
@@ -26,6 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+**Secrets.toml
 .env*.local
 .env
 

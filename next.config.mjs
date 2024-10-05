@@ -2,6 +2,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin();
 
+const cf_hostname = `${process.env.CLOUDFLARE_BUCKET_NAME}.${process.env.CLOUDFLARE_ACCOUNT_ID}`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['lucide-react'],
@@ -19,9 +21,7 @@ const nextConfig = {
         protocol: 'https',
       },
       {
-        hostname:
-          process.env.NEXT_PUBLIC_CLOUDFLARE_DEV_HOST ||
-          'cloudflare-supposed-url.dev',
+        hostname: `${cf_hostname}.r2.cloudflarestorage.com`,
         protocol: 'https',
         pathname: '**',
       },
