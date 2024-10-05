@@ -53,7 +53,6 @@ export default async function PublishNoteDialog() {
   async function handleTogglePublishState() {
     'use server';
 
-    console.log('is public: ', isPublic);
     if (isPublic === null) return;
     await togglePublishState(noteId);
   }

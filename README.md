@@ -104,6 +104,7 @@ Authentication in Noteworthy is managed through a combination of **NextAuth** fo
 ### Client-side Authentication (NextAuth)
 
 [NextAuth](https://authjs.dev/) powers the client-side authentication, offering support for multiple authentication providers, including:
+
 - **Credentials (Email and Password)**: Users can sign up and log in using their email and password. The "forgot password" feature allows users to reset their password securely.
 - **GitHub OAuth**: Users can authenticate using their GitHub account.
 - **Google OAuth**: Users can authenticate using their Google account.

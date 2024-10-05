@@ -214,7 +214,6 @@ function CommandActions() {
     {
       displayName: t('open_settings'),
       onSelect: () => {
-        console.log('selected');
         setSettingsOpen(true);
         setSettingsDialogOpen(true);
         setOpen(false);

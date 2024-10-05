@@ -29,7 +29,6 @@ import { z } from 'zod';
 // Look for the current logged-in user in the session.
 export const currentUser = cache(async () => {
   const session = await auth();
-  console.log(session?.user.accessToken);
   return session?.user;
 });
 
@@ -335,8 +334,6 @@ export const searchNotes = cache(
       }
     }
 
-    console.log(`${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`);
-
     const response = await fetch(
       `${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`,
       {
@@ -386,7 +383,6 @@ export async function getRespectiveNotes(main = false) {
 export async function uploadUserImage(data: FormData) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
-  console.log('here client');
 
   try {
     const response = await fetch(`${env.INK_HOSTNAME}/users/profile`, {

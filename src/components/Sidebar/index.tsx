@@ -11,8 +11,6 @@ export default async function Sidebar() {
   const { user, preferences } = await getUserWithPreferences();
   if (!user) return;
 
-  console.debug('preferences', preferences);
-
   return (
     <Root>
       <header className='flex items-center group-data-[state=open]/root:justify-between group-data-[state=open]/root:pe-5 justify-center w-full'>
