@@ -4,7 +4,7 @@
   </a>
   <h1 align="center">Noteworthy</h1>
   <p align="center">
-    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. </br>It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
+    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. </br> It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
   </p>
   <div align="center">
     <a href="https://nextjs.org/" target="_blank">
@@ -45,8 +45,12 @@
 
 - **Frontend Framework**: Next.js
 - **Styling**: Tailwind CSS
-- **Language**: TypeScript
-- **Authentication**: NextAuth
+- **Language**: TypeScript (Frontend) and Rust (Backend)
+- **Backend**: Ink (Rust-based, using Axum)
+- **Database**: PostgreSQL (self-hosted) with SQLx for database interactions
+- **Authentication**: NextAuth (client-side) and Ink (server-side JWT-based authentication)
+
+This now reflects the current state of your stack. Let me know if this works for you, and I'll include it in the PR!
 
 ## Design Inspiration
 
@@ -54,13 +58,13 @@ A significant portion of Noteworthy's UI design is inspired by the Figma communi
 
 ## Backend Architecture
 
-Noteworthy's backend is built with Next.js server actions, Neon, and Drizle:
+The backend for Noteworthy has been rewritten in Rust and is now served via a service called [Ink](/services/ink/README.md), using the Axum framework.
 
-- **Next.js Server Actions**: Server-side logic is handled using Next.js server actions, providing efficient and scalable backend functionality.
-- **Neon**: A serverless PostgreSQL database, Neon offers a powerful and flexible data storage solution for Noteworthy's backend operations.
-- **Drizzle**: Drizzle serves as the ORM (Object-Relational Mapping) layer, providing fast and efficient database interactions while ensuring data integrity and security.
+- **Axum**: A web framework for building fast, reliable, and scalable APIs in Rust. It powers all API interactions in Noteworthy.
+- **SQLx**: A safe, asynchronous SQL toolkit and ORM layer used to interact with the self-hosted PostgreSQL database.
+- **Authentication**: JWT-based authentication is now handled in Rust using jsonwebtoken for token management and bcrypt for secure password hashing.
 
-Forms across Noteworthy, including those for authentication and other user interactions, are validated using Zod, providing robust validation and ensuring data integrity.
+Forms across Noteworthy, including those for authentication and other user interactions, are validated using Zod on client-side, providing robust validation and ensuring data integrity.
 
 Additionally, users' profile images are stored on Cloudflare R2, offering a secure and scalable solution for image storage.
 
@@ -72,11 +76,12 @@ Additionally, users' profile images are stored on Cloudflare R2, offering a secu
 
 ### 2. Server Components
 
-- Utilise server components to render and hydrate components on the server, optimising performance and reducing client-side bundle size.
+- Utilise server components to render and hydrate components on the server, optimising performance, caching and reducing client-side bundle size.
 
 ### 3. Note Management
 
 - **Create Note**: Create a new note using pre-created colours and providing a name.
+- **Generate Notes**: Users can generate notes directly from the quick actions in the search modal, leveraging the power of [NoteWaver](/services/note-waver/README.md), a Python-based microservice that uses various LLMs to generate note content based on user instructions.
 - **Favourite/Unfavourite Note**: Easily mark notes as favourites or remove them from favourites.
 - **Archive/Unarchive Note**: Archive notes to keep your workspace clutter-free, and unarchive them when needed.
 - **Search Notes**: Quickly find specific notes using the search functionality.
@@ -94,14 +99,26 @@ Additionally, users' profile images are stored on Cloudflare R2, offering a secu
 
 ## Authentication
 
-Authentication in Noteworthy is powered by [NextAuth](https://authjs.dev/), supporting multiple authentication providers including:
+Authentication in Noteworthy is managed through a combination of **NextAuth** for the client-side and **Ink** for the server-side.
 
+### Client-side Authentication (NextAuth)
+
+[NextAuth](https://authjs.dev/) powers the client-side authentication, offering support for multiple authentication providers, including:
 - **Credentials (Email and Password)**: Users can sign up and log in using their email and password. The "forgot password" feature allows users to reset their password securely.
 - **GitHub OAuth**: Users can authenticate using their GitHub account.
 - **Google OAuth**: Users can authenticate using their Google account.
 
-> [!IMPORTANT]
-> The authentication system is immutable, ensuring that users cannot log in with the same email using different authentication methods.
+> [!IMPORTANT]  
+> The authentication system is immutable, ensuring that users cannot log in with the same email using different authentication methods. For example, if a user signs up with Google OAuth, they cannot use email and password with the same email.
+
+### Server-side Authentication (Ink)
+
+**Ink** handles all the authentication logic on the server side. This includes:
+
+- **JWT-based Authentication**: Users are authenticated via **JWT**, which are issued upon successful login and used for subsequent requests to access protected resources.
+- **Token Verification**: The backend verifies and manages JWTs for user sessions, controlling access to resources like notes or user information.
+
+In summary, while **NextAuth** handles user session management and provider integrations on the client-side, **Ink** secures and verifies all authentication flows on the server-side using Rust's robust security capabilities.
 
 ## Note editor functionality
 
