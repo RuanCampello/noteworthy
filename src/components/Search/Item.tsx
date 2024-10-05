@@ -5,16 +5,16 @@ import { type AnchorHTMLAttributes, cloneElement, forwardRef } from 'react';
 
 interface ItemWrapper extends AnchorHTMLAttributes<HTMLAnchorElement> {
   icon: JSX.Element;
-  content: string;
+  content?: string;
   title: string;
 }
 
 export const NoteItemWrapper = forwardRef<HTMLAnchorElement, ItemWrapper>(
   ({ icon, content, title, ...props }, ref) => {
-    content = stripHTMLTags(content);
+    content = content && stripHTMLTags(content);
     const searchRegex = /<search\b[^>]*>(.*?)<\/search>/gi;
-    const matchArray = Array.from(content.matchAll(searchRegex));
-    const contentArray = content.split(searchRegex);
+    const matchArray = content && Array.from(content.matchAll(searchRegex));
+    const contentArray = content && content.split(searchRegex);
 
     return (
       <a
@@ -36,7 +36,7 @@ export const NoteItemWrapper = forwardRef<HTMLAnchorElement, ItemWrapper>(
             {title}
           </h4>
           <p className='text-xs text-muted-foreground truncate leading-none'>
-            {matchArray && matchArray[0] ? (
+            {matchArray && contentArray && matchArray[0] ? (
               <RenderContent content={contentArray} match={matchArray} />
             ) : (
               content

@@ -1,9 +1,12 @@
 import type { SearchResult } from '@/types/SearchResult';
+import { LucideProps } from 'lucide-react';
+import { ComponentType } from 'react';
 import { create } from 'zustand';
 
-type Action = {
+export type Action = {
   displayName: string;
   onSelect: () => void;
+  icon: ComponentType<LucideProps>;
 };
 
 interface SearchState {

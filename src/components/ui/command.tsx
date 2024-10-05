@@ -2,7 +2,7 @@ import { generateNote } from '@/actions';
 import NotFound from '@/assets/svg/oooscillate.svg';
 import { NoteItemWrapper } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
-import { useSearch } from '@/lib/zustand/search';
+import { type Action, useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
@@ -16,6 +16,8 @@ import {
   Package,
   Search,
   Sparkle,
+  FilePlus2,
+  Settings,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -109,7 +111,7 @@ const CommandDialogContent = React.forwardRef<
     }
     if (event.key === 'Enter') {
       const selectedItem = searchResults[activeIndex];
-      const selectedAction = actions[activeIndex];
+      const selectedAction = actions[activeIndex - searchResults.length];
 
       if (selectedItem) {
         setOpen(false);
@@ -147,6 +149,7 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
   ({ className, ...props }, ref) => {
     const { searchResults, activeIndex, selectItem, loading, query } =
       useSearch();
+    const t = useTranslations('Search');
 
     let content;
 
@@ -177,11 +180,12 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
       <div
         ref={ref}
         className={cn(
-          'max-h-[300px] overflow-y-auto overflow-x-hidden flex flex-col m-1',
+          'max-h-[300px] overflow-y-auto overflow-x-hidden flex flex-col m-1 mb-0',
           className,
         )}
         {...props}
       >
+        {!notFound && <CommandSeparator heading={t('search_res')} />}
         {content}
       </div>
     );
@@ -190,51 +194,32 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
 
 CommandList.displayName = 'CommandList';
 
-type Action = {
-  displayName: string;
-  onSelect: () => void;
-};
-
-type CommandActionProps = React.HTMLAttributes<HTMLDivElement> & Action;
-
-const CommandAction = React.forwardRef<HTMLDivElement, CommandActionProps>(
-  ({ className, displayName, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn('m-1 aria-selected:bg-red-400', className)}
-        {...props}
-      >
-        {displayName}
-      </div>
-    );
-  },
-);
-
-CommandAction.displayName = 'CommandAction';
-
 function CommandActions() {
   const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
   const { setOpen: setSettingsOpen } = useSettingsStore();
   const { setOpen, selectItem, setActions, searchResults, activeIndex } =
     useSearch();
   const router = useRouter();
+  const t = useTranslations('Search');
 
   const actions: Action[] = [
     {
-      displayName: 'Generate Note',
+      displayName: t('new_note'),
       onSelect: async () => {
         const id = await generateNote();
         router.replace(`/notes/${id}`);
       },
+      icon: FilePlus2,
     },
     {
-      displayName: 'Open settings',
+      displayName: t('open_settings'),
       onSelect: () => {
+        console.log('selected');
         setSettingsOpen(true);
         setSettingsDialogOpen(true);
         setOpen(false);
       },
+      icon: Settings,
     },
   ];
 
@@ -243,19 +228,32 @@ function CommandActions() {
   }, []);
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col m-1'>
+      <CommandSeparator heading={t('quick_act')} />
       {actions.map((action, i) => {
         const actualI = i + searchResults.length;
 
         return (
-          <CommandAction
+          <NoteItemWrapper
             aria-selected={actualI === activeIndex}
             key={actualI}
             onMouseEnter={() => selectItem(actualI)}
-            {...action}
+            icon={<action.icon />}
+            onSelect={action.onSelect}
+            title={action.displayName}
           />
         );
       })}
+    </div>
+  );
+}
+
+CommandActions.displayName = 'CommandActions';
+
+function CommandSeparator({ heading }: { heading: string }) {
+  return (
+    <div className='px-3 py-1 text-xs select-none text-muted-foreground'>
+      {heading}
     </div>
   );
 }
