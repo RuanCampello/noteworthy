@@ -1,8 +1,11 @@
+import { generateNote } from '@/actions';
 import NotFound from '@/assets/svg/oooscillate.svg';
 import { NoteItemWrapper } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
 import { useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { DialogOverlay, DialogPortal } from '@/ui/dialog';
 import type { InputProps } from '@/ui/input';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
@@ -87,6 +90,7 @@ const CommandDialogContent = React.forwardRef<
     increaseIndex,
     loading,
     searchResults,
+    actions,
     activeIndex,
     setOpen,
   } = useSearch();
@@ -105,9 +109,13 @@ const CommandDialogContent = React.forwardRef<
     }
     if (event.key === 'Enter') {
       const selectedItem = searchResults[activeIndex];
+      const selectedAction = actions[activeIndex];
+
       if (selectedItem) {
         setOpen(false);
         router.replace(`/notes/${selectedItem.id}`);
+      } else if (selectedAction) {
+        selectedAction.onSelect();
       }
     }
   }
@@ -180,6 +188,78 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
   },
 );
 
+CommandList.displayName = 'CommandList';
+
+type Action = {
+  displayName: string;
+  onSelect: () => void;
+};
+
+type CommandActionProps = React.HTMLAttributes<HTMLDivElement> & Action;
+
+const CommandAction = React.forwardRef<HTMLDivElement, CommandActionProps>(
+  ({ className, displayName, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('m-1 aria-selected:bg-red-400', className)}
+        {...props}
+      >
+        {displayName}
+      </div>
+    );
+  },
+);
+
+CommandAction.displayName = 'CommandAction';
+
+function CommandActions() {
+  const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
+  const { setOpen: setSettingsOpen } = useSettingsStore();
+  const { setOpen, selectItem, setActions, searchResults, activeIndex } =
+    useSearch();
+  const router = useRouter();
+
+  const actions: Action[] = [
+    {
+      displayName: 'Generate Note',
+      onSelect: async () => {
+        const id = await generateNote();
+        router.replace(`/notes/${id}`);
+      },
+    },
+    {
+      displayName: 'Open settings',
+      onSelect: () => {
+        setSettingsOpen(true);
+        setSettingsDialogOpen(true);
+        setOpen(false);
+      },
+    },
+  ];
+
+  React.useEffect(() => {
+    setActions(actions);
+  }, []);
+
+  return (
+    <div className='flex flex-col'>
+      {actions.map((action, i) => {
+        const actualI = i + searchResults.length;
+
+        return (
+          <CommandAction
+            aria-selected={actualI === activeIndex}
+            key={actualI}
+            onMouseEnter={() => selectItem(actualI)}
+            {...action}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 function LoadingFallback() {
   return (
     <div className='bg-transparent h-12 px-2 rounded-sm flex items-center gap-2'>
@@ -220,4 +300,5 @@ export const Command = {
   Input: CommandInput,
   Content: CommandDialogContent,
   List: CommandList,
+  Actions: CommandActions,
 };

@@ -1,6 +1,11 @@
 import type { SearchResult } from '@/types/SearchResult';
 import { create } from 'zustand';
 
+type Action = {
+  displayName: string;
+  onSelect: () => void;
+};
+
 interface SearchState {
   loading: boolean;
   searchResults: SearchResult[];
@@ -15,6 +20,8 @@ interface SearchState {
   setQuery: (query: string) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  actions: Action[];
+  setActions: (actions: Action[]) => void;
 }
 
 export const useSearch = create<SearchState>((set, get) => ({
@@ -23,6 +30,7 @@ export const useSearch = create<SearchState>((set, get) => ({
   query: '',
   setQuery: (query: string) => set({ query }),
   searchResults: [],
+  actions: [],
   activeIndex: -1,
   setLoading: (loading: boolean) => set({ loading }),
   setSearchResults: (results: SearchResult[]) =>
@@ -30,9 +38,10 @@ export const useSearch = create<SearchState>((set, get) => ({
       searchResults: results,
       activeIndex: -1,
     }),
+  setActions: (actions: Action[]) => set({ actions }),
   increaseIndex: () => {
-    const { activeIndex, searchResults } = get();
-    if (activeIndex < searchResults.length - 1) {
+    const { activeIndex, searchResults, actions } = get();
+    if (activeIndex < searchResults.length - 1 + actions.length) {
       set({ activeIndex: activeIndex + 1 });
     }
   },

@@ -7,15 +7,21 @@ import { Dialog } from '@/ui/dialog';
 import { Command } from '@/ui/command';
 import { ArrowDown, ArrowUp, Undo2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useSettingsStore } from '@/lib/zustand/settings';
+import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { useTransition, useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { generateNote } from '@/actions';
 import { CommandFooter } from './Footer';
+import { useRouter } from 'next/navigation';
 
 export default function Search() {
   const { open, setOpen } = useSearch();
+
   const [loading, startTransition] = useTransition();
   const { filter } = useFilter();
-  const { setSearchResults, setLoading, query, setQuery } = useSearch();
+  const { query, setSearchResults, setLoading, setQuery } = useSearch();
+  const router = useRouter();
 
   const tf = useTranslations('SearchFooter');
 
@@ -43,6 +49,7 @@ export default function Search() {
       <Command.Content>
         <Command.Input onChange={(e) => setQuery(e.target.value)} />
         <Command.List />
+        <Command.Actions />
         <CommandFooter.Root>
           <CommandFooter.Group>
             <CommandFooter.Icon icon={ArrowUp} />
