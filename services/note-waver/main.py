@@ -1,4 +1,3 @@
-import queue
 import threading
 from os import getenv
 from random import uniform, randint, choice
@@ -7,6 +6,7 @@ from time import sleep
 import requests
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from valkey import Valkey
 
 from utils import format_result, extract_title_and_content
 
@@ -24,6 +24,7 @@ prompt = (
 
 load_dotenv()
 API_KEY = getenv("HUGGING_FACE_KEY")
+REDIS_URL = getenv("REDIS_URL")
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 
@@ -32,25 +33,27 @@ def get_random_model():
 
 
 MAX_QUEUE_SIZE = 15
+QUEUE_KEY = "generated_text_queue"
 
+redis_client = Valkey.from_url(REDIS_URL)
 app = FastAPI()
 
 
 @app.get("/generate")
 def generate():
     try:
-        if result_queue.empty():
+        if redis_client.llen(QUEUE_KEY) == 0:
             raise HTTPException(status_code=503,
                                 detail="Queue is empty, try again later.")
-        result = result_queue.get()
+        result = redis_client.lpop(QUEUE_KEY)
+        if result is None:
+            raise HTTPException(status_code=503, detail="Queue is empty.")
+
         return result
 
     except Exception as e:
         print(f"Error {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-result_queue = queue.Queue(maxsize=MAX_QUEUE_SIZE)
 
 
 def generate_from_prompt():
@@ -120,14 +123,14 @@ def refine_response(response: str):
 
 def fill_queue():
     while True:
-        queue_size = result_queue.qsize()
+        queue_size = redis_client.llen(QUEUE_KEY)
         if queue_size < MAX_QUEUE_SIZE:
             for _ in range(MAX_QUEUE_SIZE - queue_size):
                 try:
                     generated_text = generate_from_prompt()
                     result = refine_response(generated_text)
                     if result is not None:
-                        result_queue.put(result)
+                        redis_client.rpush(QUEUE_KEY, str(result))
                         print(f"{result} stored in queue!")
                 except Exception as e:
                     print(f"Error: {e}")
