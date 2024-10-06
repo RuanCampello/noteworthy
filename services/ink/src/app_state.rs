@@ -4,6 +4,7 @@ use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
   Client,
 };
+use deadpool_redis::{Config, Pool, Runtime};
 use shuttle_runtime::SecretStore;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;
@@ -18,6 +19,7 @@ pub struct EnvVariables {
   pub secret_access_key: String,
   pub resend_api_key: String,
   pub resend_domain: String,
+  pub redis_url: String,
   pub hostname: String,
 }
 
@@ -42,6 +44,7 @@ impl EnvVariables {
     let resend_domain = secrets
       .get("RESEND_DOMAIN")
       .expect("RESEND_DOMAIN must be set");
+    let redis_url = secrets.get("REDIS_URL").expect("REDIS_URL must be set");
     let hostname = secrets.get("HOSTNAME").expect("HOSTNAME must be set");
 
     Self {
@@ -52,6 +55,7 @@ impl EnvVariables {
       secret_access_key,
       resend_api_key,
       resend_domain,
+      redis_url,
       hostname,
     }
   }
@@ -62,6 +66,7 @@ pub struct AppState {
   pub database: PgPool,
   pub r2: Client,
   pub jwt_manager: JwtManager,
+  pub redis: Pool,
 }
 
 impl AppState {
@@ -100,10 +105,15 @@ impl AppState {
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);
 
+    let redis_pool = Config::from_url(&env.redis_url)
+      .create_pool(Some(Runtime::Tokio1))
+      .expect("Failed to create Redis connection pool");
+
     Ok(Self {
       database: pool,
       r2,
       jwt_manager,
+      redis: redis_pool,
     })
   }
 }
