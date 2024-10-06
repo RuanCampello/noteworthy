@@ -1,3 +1,4 @@
+pub mod cache;
 pub mod constants;
 pub mod image;
 pub mod jwt;

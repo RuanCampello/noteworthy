@@ -6,9 +6,11 @@ use aws_sdk_s3::{
 };
 use deadpool_redis::{Config, Pool, Runtime};
 use shuttle_runtime::SecretStore;
+use shuttle_runtime::__internals::tracing_subscriber;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;
 use std::time::Duration;
+use tracing::instrument::WithSubscriber;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -83,17 +85,23 @@ impl AppState {
       None,
       "custom",
     );
+
     let shared_cred = SharedCredentialsProvider::new(credentials);
+    let region = Region::new("us-east-1");
 
     let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28())
       .await
       .into_builder()
       .credentials_provider(shared_cred)
       .endpoint_url(endpoint)
-      .region(Region::new("us-east-1"))
+      .region(region)
       .build();
 
     let r2 = Client::new(&s3_config);
+
+    let pool_subscriber = tracing_subscriber::fmt()
+      .with_max_level(tracing::Level::INFO)
+      .finish();
 
     let pool = PgPoolOptions::new()
       .max_connections(20)
@@ -101,6 +109,7 @@ impl AppState {
       .idle_timeout(Duration::from_secs(120))
       .acquire_timeout(Duration::from_secs(15))
       .connect(&env.database_url)
+      .with_subscriber(pool_subscriber)
       .await?;
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);

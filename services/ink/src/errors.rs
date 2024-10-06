@@ -24,6 +24,10 @@ pub enum NoteError {
   Validation(#[from] ValidationErrors),
   #[error("Error creating note: {0}.")]
   Sqlx(#[from] SqlxError),
+  #[error("Parsing error: {0}")]
+  Parse(#[from] serde_json::Error),
+  #[error("Error during cache execution: {0}")]
+  Cache(#[from] redis::RedisError),
   #[error("Generate note request error: {0}.")]
   Generate(#[from] reqwest::Error),
 }
@@ -34,7 +38,9 @@ impl IntoResponse for NoteError {
       NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
       NoteError::Validation(_) | NoteError::MissingColour => StatusCode::BAD_REQUEST,
       NoteError::InvalidColour(_) => StatusCode::UNPROCESSABLE_ENTITY,
-      NoteError::Sqlx(_) | NoteError::Generate(_) => StatusCode::INTERNAL_SERVER_ERROR,
+      NoteError::Sqlx(_) | NoteError::Generate(_) | NoteError::Cache(_) | NoteError::Parse(_) => {
+        StatusCode::INTERNAL_SERVER_ERROR
+      }
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
@@ -127,7 +133,7 @@ impl IntoResponse for DictionaryError {
     };
 
     error!("{:#?}", self);
-    
+
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
       String::from("An internal server error occurred")
     } else {

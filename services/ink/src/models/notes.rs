@@ -23,7 +23,7 @@ pub struct Note {
   pub last_update: NaiveDateTime,
 }
 
-#[derive(Debug, Serialize, FromRow, TS)]
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, TS)]
 #[ts(export, rename = "Note", export_to = "Note.ts")]
 #[serde(rename_all = "camelCase")]
 pub struct NoteWithUserPrefs {
@@ -77,6 +77,7 @@ pub struct PartialNote {
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq, Type, TS)]
 #[sqlx(rename_all = "lowercase", type_name = "colour")]
+#[serde(rename_all = "lowercase")]
 #[ts(export, export_to = "Enums.ts", rename_all = "lowercase")]
 pub enum Colour {
   Blue,

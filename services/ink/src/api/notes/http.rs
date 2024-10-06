@@ -3,6 +3,7 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
+use crate::utils::cache::Cache;
 use crate::utils::constants::HELLO_WORLD;
 use crate::utils::middleware::AuthUser;
 use axum::routing::{delete, get, patch, post};
@@ -12,6 +13,7 @@ use axum::{
 };
 use chrono::Local;
 use serde::Deserialize;
+use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -169,30 +171,51 @@ async fn edit_note(
   Ok(())
 }
 
+const FIND_NOTE_BY_ID_QUERY: &str = r#"
+  SELECT
+    notes.*,
+    notes.colour,
+    notes.user_id AS user_id,
+    users.name,
+    COALESCE(users_preferences.full_note, true) AS full_note,
+    COALESCE(users_preferences.note_format, 'full') AS note_format
+  FROM notes
+  JOIN users ON notes.user_id = users.id
+  LEFT JOIN users_preferences ON users_preferences.user_id = users.id
+  WHERE notes.id = $1 AND notes.user_id = $2;
+"#;
+
 async fn find_note_by_id(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   Path(id): Path<Uuid>,
 ) -> Result<Json<NoteWithUserPrefs>, NoteError> {
-  let query = r#"
-      SELECT
-        notes.*,
-        notes.colour,
-        notes.user_id AS user_id,
-        users.name,
-        COALESCE(users_preferences.full_note, true) AS full_note,
-        COALESCE(users_preferences.note_format, 'full') AS note_format
-      FROM notes
-      JOIN users ON notes.user_id = users.id
-      LEFT JOIN users_preferences ON users_preferences.user_id = users.id
-      WHERE notes.id = $1 AND notes.user_id = $2;
-    "#;
+  let cache_key = format!("note:{}:user:{}", id, user.id);
+  let cached_note = state.redis.get_value(&cache_key).await?;
 
-  let note = sqlx::query_as::<_, NoteWithUserPrefs>(query)
+  if let Some(note) = cached_note {
+    info!("used cached value");
+    let note: NoteWithUserPrefs = serde_json::from_str(&note)?;
+    return Ok(Json(note));
+  }
+
+  let note = sqlx::query_as::<_, NoteWithUserPrefs>(FIND_NOTE_BY_ID_QUERY)
     .bind(id)
     .bind(user.id)
     .fetch_one(&state.database)
     .await?;
+
+  let note_json = serde_json::to_string(&note).expect("Failed to serialize note");
+  info!("fetched note from db");
+
+  tokio::spawn(async move {
+    info!("caching note");
+    state
+      .redis
+      .set(&cache_key, &note_json, 60 * 60)
+      .await
+      .expect("Failed to cache note");
+  });
 
   Ok(Json(note))
 }
