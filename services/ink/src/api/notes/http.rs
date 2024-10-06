@@ -3,9 +3,7 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::cache::Cache;
-use crate::utils::constants::HELLO_WORLD;
-use crate::utils::middleware::AuthUser;
+use crate::utils::{cache::Cache, constants::HELLO_WORLD, middleware::AuthUser};
 use axum::routing::{delete, get, patch, post};
 use axum::{
   extract::{Json, Path, Query},
@@ -191,11 +189,10 @@ async fn find_note_by_id(
   Path(id): Path<Uuid>,
 ) -> Result<Json<NoteWithUserPrefs>, NoteError> {
   let cache_key = format!("note:{}:user:{}", id, user.id);
-  let cached_note = state.redis.get_value(&cache_key).await?;
+  let cached_note: Option<NoteWithUserPrefs> = state.cache.get(&cache_key).await?;
 
   if let Some(note) = cached_note {
     info!("used cached value");
-    let note: NoteWithUserPrefs = serde_json::from_str(&note)?;
     return Ok(Json(note));
   }
 
@@ -205,13 +202,13 @@ async fn find_note_by_id(
     .fetch_one(&state.database)
     .await?;
 
-  let note_json = serde_json::to_string(&note).expect("Failed to serialize note");
   info!("fetched note from db");
+  let note_json = serde_json::to_string(&note).expect("Failed to serialize note");
 
   tokio::spawn(async move {
     info!("caching note");
     state
-      .redis
+      .cache
       .set(&cache_key, &note_json, 60 * 60)
       .await
       .expect("Failed to cache note");

@@ -1,10 +1,11 @@
+use crate::utils::cache::CacheManager;
 use crate::utils::jwt::JwtManager;
 use aws_config::{BehaviorVersion, Region};
 use aws_sdk_s3::{
   config::{Credentials, SharedCredentialsProvider},
   Client,
 };
-use deadpool_redis::{Config, Pool, Runtime};
+use deadpool_redis::{Config, Runtime};
 use shuttle_runtime::SecretStore;
 use shuttle_runtime::__internals::tracing_subscriber;
 use sqlx::postgres::{PgPool, PgPoolOptions};
@@ -68,7 +69,7 @@ pub struct AppState {
   pub database: PgPool,
   pub r2: Client,
   pub jwt_manager: JwtManager,
-  pub redis: Pool,
+  pub cache: CacheManager,
 }
 
 impl AppState {
@@ -117,12 +118,13 @@ impl AppState {
     let redis_pool = Config::from_url(&env.redis_url)
       .create_pool(Some(Runtime::Tokio1))
       .expect("Failed to create Redis connection pool");
+    let cache = CacheManager::new(redis_pool);
 
     Ok(Self {
       database: pool,
       r2,
       jwt_manager,
-      redis: redis_pool,
+      cache,
     })
   }
 }

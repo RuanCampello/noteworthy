@@ -26,8 +26,8 @@ pub enum NoteError {
   Sqlx(#[from] SqlxError),
   #[error("Parsing error: {0}")]
   Parse(#[from] serde_json::Error),
-  #[error("Error during cache execution: {0}")]
-  Cache(#[from] redis::RedisError),
+  #[error("{0}")]
+  Cache(#[from] CacheError),
   #[error("Generate note request error: {0}.")]
   Generate(#[from] reqwest::Error),
 }
@@ -130,6 +130,32 @@ impl IntoResponse for DictionaryError {
     let status = match self {
       DictionaryError::NotFound { .. } => StatusCode::NOT_FOUND,
       DictionaryError::Http(_) => StatusCode::BAD_GATEWAY,
+    };
+
+    error!("{:#?}", self);
+
+    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      String::from("An internal server error occurred")
+    } else {
+      self.to_string()
+    };
+
+    (status, body).into_response()
+  }
+}
+
+#[derive(Error, Debug)]
+pub enum CacheError {
+  #[error("Unable to deserialize the cache value {0}")]
+  Deserialize(#[from] serde_json::Error),
+  #[error("Redis failure {0}")]
+  Redis(#[from] redis::RedisError),
+}
+
+impl IntoResponse for CacheError {
+  fn into_response(self) -> Response {
+    let status = match self {
+      CacheError::Deserialize(_) | CacheError::Redis(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
 
     error!("{:#?}", self);
