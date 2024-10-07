@@ -358,6 +358,8 @@ export async function getRespectiveNotes(main = false) {
   const fav = !main && pathname?.includes('/favourites');
   const arc = !main && pathname?.includes('/archived');
 
+  console.log('triggered');
+
   const response = await fetch(
     `${env.INK_HOSTNAME}/notes?is_fav=${fav}&is_arc=${arc}`,
     {
@@ -438,9 +440,11 @@ export async function login(
     });
     return { error: null };
   } catch (error) {
-    console.error(error);
     if (error instanceof AuthError) {
-      switch (error.type) {
+      let err = error?.cause?.err?.name;
+      if (!err) console.error(error);
+
+      switch (err) {
         case 'CredentialsSignin':
           return { error: t('inv_credentials') };
         case 'AccessDenied':
