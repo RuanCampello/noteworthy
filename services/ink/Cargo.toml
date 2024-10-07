@@ -23,13 +23,14 @@ aws-sdk-s3 = "1.49.0"
 sqlx = { version = "0.8.2", features = ["chrono", "macros", "postgres", "runtime-tokio", "tls-native-tls", "uuid"] }
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 reqwest = { version = "0.12.7", features = ["json"] }
-shuttle-runtime = "0.47.0"
+shuttle-runtime = { version = "0.47.0", default-features = false }
 shuttle-axum = "0.47.0"
 image = "0.25.2"
 resend-rs = "0.9.1"
 serde_json = "1.0.128"
 deadpool-redis = { version = "0.18.0", features = ["rt_tokio_1", "serde"] }
 redis = { version = "0.27.3", default-features = false, features = ["tokio-native-tls-comp"] }
+tracing-subscriber = "0.3.18"
 
 [dev-dependencies]
 axum-macros = "0.4.1"

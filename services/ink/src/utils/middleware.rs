@@ -4,7 +4,7 @@ use axum::{
   http::{request::Parts, StatusCode},
 };
 use crate::app_state::AppState;
-use super::jwt::{JwtManager, TokenExtractor};
+use super::jwt::TokenExtractor;
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {

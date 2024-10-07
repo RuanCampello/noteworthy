@@ -7,11 +7,9 @@ use aws_sdk_s3::{
 };
 use deadpool_redis::{Config, Runtime};
 use shuttle_runtime::SecretStore;
-use shuttle_runtime::__internals::tracing_subscriber;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;
 use std::time::Duration;
-use tracing::instrument::WithSubscriber;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -100,17 +98,12 @@ impl AppState {
 
     let r2 = Client::new(&s3_config);
 
-    let pool_subscriber = tracing_subscriber::fmt()
-      .with_max_level(tracing::Level::INFO)
-      .finish();
-
     let pool = PgPoolOptions::new()
       .max_connections(20)
       .max_lifetime(Duration::from_secs(120))
       .idle_timeout(Duration::from_secs(120))
       .acquire_timeout(Duration::from_secs(15))
       .connect(&env.database_url)
-      .with_subscriber(pool_subscriber)
       .await?;
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);

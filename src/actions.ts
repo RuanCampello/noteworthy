@@ -355,24 +355,22 @@ export async function getRespectiveNotes(main = false) {
   if (!user || !user?.accessToken) return null;
   const pathname = headers().get('pathname');
 
-  const fav = !main && pathname?.includes('/favourites');
-  const arc = !main && pathname?.includes('/archived');
+  let filter: string = '';
+  if (pathname?.includes('/archived')) filter = '?is_fav=true';
+  else if (pathname?.includes('/favourites')) filter = '?is_arc=true';
 
   console.log('triggered');
 
-  const response = await fetch(
-    `${env.INK_HOSTNAME}/notes?is_fav=${fav}&is_arc=${arc}`,
-    {
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      cache: 'force-cache',
-      next: {
-        tags: ['sidebar-notes'],
-      },
+  const response = await fetch(`${env.INK_HOSTNAME}/notes${filter}/cached`, {
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`,
     },
-  );
+    cache: 'force-cache',
+    next: {
+      tags: ['sidebar-notes'],
+    },
+  });
   if (!response.ok) return null;
   const notes: PartialNote[] = await response.json();
   return notes;

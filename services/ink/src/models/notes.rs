@@ -62,7 +62,7 @@ pub struct SearchResult {
   highlighted_content: String,
 }
 
-#[derive(Debug, Serialize, FromRow, TS)]
+#[derive(Debug, Serialize, Deserialize, FromRow, TS)]
 #[ts(export, rename = "PartialNote", export_to = "Note.ts")]
 #[serde(rename_all = "camelCase")]
 pub struct PartialNote {

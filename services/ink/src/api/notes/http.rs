@@ -31,6 +31,7 @@ pub fn router() -> Router {
 
   let notes_route = Router::new()
     .route("/", post(new_note).get(find_all_user_notes))
+    .route("/cached", get(find_all_user_notes_cached))
     .route("/count", get(count_user_notes))
     .route("/generate", post(generate_note))
     .route("/search", get(search_notes))
@@ -219,8 +220,57 @@ async fn find_note_by_id(
 
 #[derive(serde::Deserialize)]
 struct NoteParams {
-  is_fav: bool,
-  is_arc: bool,
+  is_fav: Option<bool>,
+  is_arc: Option<bool>,
+}
+
+const FIND_ALL_USER_NOTES_QUERY: &str = r#"
+  SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+  FROM notes
+  WHERE user_id = $1
+    AND is_favourite = $2
+    AND is_archived = $3
+  ORDER BY last_update DESC;
+"#;
+
+async fn find_all_user_notes_cached(
+  Extension(state): Extension<AppState>,
+  AuthUser(user): AuthUser,
+  Query(params): Query<NoteParams>,
+) -> Result<Json<Vec<PartialNote>>, NoteError> {
+  let is_fav = params.is_fav.unwrap_or(false);
+  let is_arc = params.is_arc.unwrap_or(false);
+
+  let cache_key = format!("notes:{}:{}:{}", user.id, is_fav, is_arc);
+  info!("cache key: {}", cache_key);
+  let cached_notes: Option<Vec<PartialNote>> = state.cache.get(&cache_key).await?;
+
+  if let Some(notes) = cached_notes {
+    info!("used cached value {}", notes.len());
+    return Ok(Json(notes));
+  }
+
+  info!("fetching all user notes on database");
+
+  let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
+    .bind(user.id)
+    .bind(is_fav)
+    .bind(is_arc)
+    .fetch_all(&state.database)
+    .await?;
+
+  let notes_json = serde_json::to_string(&notes).expect("Failed to serialize notes");
+
+  tokio::spawn(async move {
+    info!("caching notes");
+    state
+      .cache
+      .set(&cache_key, &notes_json, 60 * 60)
+      .await
+      .expect("Failed to cache notes");
+  });
+
+  Ok(Json(notes))
 }
 
 async fn find_all_user_notes(
@@ -228,19 +278,15 @@ async fn find_all_user_notes(
   AuthUser(user): AuthUser,
   Query(params): Query<NoteParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let query = r#"
-      SELECT LEFT(content, 250) AS content, id, title, colour, created_at
-      FROM notes
-      WHERE user_id = $1
-        AND is_favourite = $2
-        AND is_archived = $3
-      ORDER BY last_update DESC;
-    "#;
+  let is_fav = params.is_fav.unwrap_or(false);
+  let is_arc = params.is_arc.unwrap_or(false);
 
-  let notes = sqlx::query_as::<_, PartialNote>(query)
+  info!("fetching all user notes on database");
+
+  let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
-    .bind(params.is_fav)
-    .bind(params.is_arc)
+    .bind(is_fav)
+    .bind(is_arc)
     .fetch_all(&state.database)
     .await?;
 
