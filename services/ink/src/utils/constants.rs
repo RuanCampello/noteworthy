@@ -19,4 +19,9 @@ pub const HELLO_WORLD: &str = r#"
 <p>Why did the underline text become a fashion icon? <u>Because it always knew how to draw attention to the most important details, making every statement stand out in style!</u></p>
 "#;
 
-pub const RESET_EMAIL: &str = r#"<p>Click <a href="{reset_link}">here</a> to reset your password.</p>"#;
+pub const RESET_EMAIL: &str =
+  r#"<p>Click <a href="{reset_link}">here</a> to reset your password.</p>"#;
+
+// ------------ Redis Keys ------------
+
+pub const USER_PROFILE_KEY: &str = "profile-image";

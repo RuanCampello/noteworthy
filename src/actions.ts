@@ -350,7 +350,7 @@ export const searchNotes = cache(
 
 // Makes a `get` request to `/notes` endpoint and tries to get the current user notes depending on the page.
 // If `main` params if set to true, always returns all notes.
-export async function getRespectiveNotes(main = false) {
+export async function getRespectiveNotes() {
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
   const pathname = headers().get('pathname');
@@ -359,9 +359,7 @@ export async function getRespectiveNotes(main = false) {
   if (pathname?.includes('/archived')) filter = '?is_fav=true';
   else if (pathname?.includes('/favourites')) filter = '?is_arc=true';
 
-  console.log('triggered');
-
-  const response = await fetch(`${env.INK_HOSTNAME}/notes${filter}/cached`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes${filter}`, {
     method: 'get',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
@@ -401,22 +399,23 @@ export async function uploadUserImage(data: FormData) {
 }
 
 // Checks if the current user has an image, if not
-// fetch the current user at `users/profile/:id` endpoint with a `GET` method
+// fetch the current user at `users/profile` endpoint with a `GET` method
 // and search for a profile image in CF.
 export const getUserProfileImage = cache(async () => {
   const user = await currentUser();
   if (!user || !user.accessToken) return null;
 
   if (!user.image) {
-    const response = await fetch(
-      `${env.INK_HOSTNAME}/users/profile/${user.id}`,
-      {
-        method: 'get',
-        next: { tags: ['profile-image'], revalidate: 3600 },
+    const response = await fetch(`${env.INK_HOSTNAME}/users/profile`, {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
       },
-    );
+      next: { tags: ['profile-image'] },
+      cache: 'force-cache',
+    });
 
-    return await response.json();
+    return await response.text();
   }
   return user.image;
 });

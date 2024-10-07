@@ -3,15 +3,14 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::{cache::Cache, constants::HELLO_WORLD, middleware::AuthUser};
-use axum::routing::{delete, get, patch, post};
+use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
 use axum::{
   extract::{Json, Path, Query},
+  routing::{delete, get, patch, post},
   Extension, Router,
 };
 use chrono::Local;
 use serde::Deserialize;
-use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -31,7 +30,6 @@ pub fn router() -> Router {
 
   let notes_route = Router::new()
     .route("/", post(new_note).get(find_all_user_notes))
-    .route("/cached", get(find_all_user_notes_cached))
     .route("/count", get(count_user_notes))
     .route("/generate", post(generate_note))
     .route("/search", get(search_notes))
@@ -189,31 +187,11 @@ async fn find_note_by_id(
   AuthUser(user): AuthUser,
   Path(id): Path<Uuid>,
 ) -> Result<Json<NoteWithUserPrefs>, NoteError> {
-  let cache_key = format!("note:{}:user:{}", id, user.id);
-  let cached_note: Option<NoteWithUserPrefs> = state.cache.get(&cache_key).await?;
-
-  if let Some(note) = cached_note {
-    info!("used cached value");
-    return Ok(Json(note));
-  }
-
   let note = sqlx::query_as::<_, NoteWithUserPrefs>(FIND_NOTE_BY_ID_QUERY)
     .bind(id)
     .bind(user.id)
     .fetch_one(&state.database)
     .await?;
-
-  info!("fetched note from db");
-  let note_json = serde_json::to_string(&note).expect("Failed to serialize note");
-
-  tokio::spawn(async move {
-    info!("caching note");
-    state
-      .cache
-      .set(&cache_key, &note_json, 60 * 60)
-      .await
-      .expect("Failed to cache note");
-  });
 
   Ok(Json(note))
 }
@@ -233,46 +211,6 @@ const FIND_ALL_USER_NOTES_QUERY: &str = r#"
   ORDER BY last_update DESC;
 "#;
 
-async fn find_all_user_notes_cached(
-  Extension(state): Extension<AppState>,
-  AuthUser(user): AuthUser,
-  Query(params): Query<NoteParams>,
-) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let is_fav = params.is_fav.unwrap_or(false);
-  let is_arc = params.is_arc.unwrap_or(false);
-
-  let cache_key = format!("notes:{}:{}:{}", user.id, is_fav, is_arc);
-  info!("cache key: {}", cache_key);
-  let cached_notes: Option<Vec<PartialNote>> = state.cache.get(&cache_key).await?;
-
-  if let Some(notes) = cached_notes {
-    info!("used cached value {}", notes.len());
-    return Ok(Json(notes));
-  }
-
-  info!("fetching all user notes on database");
-
-  let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
-    .bind(user.id)
-    .bind(is_fav)
-    .bind(is_arc)
-    .fetch_all(&state.database)
-    .await?;
-
-  let notes_json = serde_json::to_string(&notes).expect("Failed to serialize notes");
-
-  tokio::spawn(async move {
-    info!("caching notes");
-    state
-      .cache
-      .set(&cache_key, &notes_json, 60 * 60)
-      .await
-      .expect("Failed to cache notes");
-  });
-
-  Ok(Json(notes))
-}
-
 async fn find_all_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
@@ -280,8 +218,6 @@ async fn find_all_user_notes(
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
   let is_fav = params.is_fav.unwrap_or(false);
   let is_arc = params.is_arc.unwrap_or(false);
-
-  info!("fetching all user notes on database");
 
   let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)

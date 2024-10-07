@@ -83,6 +83,8 @@ pub enum UserError {
   MyImageError(#[from] MyImageError),
   #[error("Failed to send user reset password email: {0}")]
   SendEmail(#[from] ResendError),
+  #[error("{0}")]
+  Cache(#[from] CacheError),
 }
 
 impl IntoResponse for UserError {
@@ -104,7 +106,8 @@ impl IntoResponse for UserError {
       | UserError::DatabaseError(_)
       | UserError::PresignedUrl(_)
       | UserError::ImageUploadError(_)
-      | UserError::SendEmail(_) => {
+      | UserError::SendEmail(_)
+      | UserError::Cache(_) => {
         error!("{:#?}", self);
         (
           StatusCode::INTERNAL_SERVER_ERROR,
