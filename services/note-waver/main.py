@@ -1,4 +1,5 @@
 import threading
+from json import dumps, loads
 from os import getenv
 from random import uniform, randint, choice
 from time import sleep
@@ -32,7 +33,7 @@ def get_random_model():
     return choice(models)
 
 
-MAX_QUEUE_SIZE = 15
+MAX_QUEUE_SIZE = 10
 QUEUE_KEY = "generated_text_queue"
 
 redis_client = Valkey.from_url(REDIS_URL)
@@ -49,7 +50,7 @@ def generate():
         if result is None:
             raise HTTPException(status_code=503, detail="Queue is empty.")
 
-        return result
+        return loads(result)
 
     except Exception as e:
         print(f"Error {e}")
@@ -128,9 +129,13 @@ def fill_queue():
             for _ in range(MAX_QUEUE_SIZE - queue_size):
                 try:
                     generated_text = generate_from_prompt()
+                    print(f"generated text: {generated_text}")
+
                     result = refine_response(generated_text)
+                    print(f"refined result: {result}")
+
                     if result is not None:
-                        redis_client.rpush(QUEUE_KEY, str(result))
+                        redis_client.rpush(QUEUE_KEY, dumps(result))
                         print(f"{result} stored in queue!")
                 except Exception as e:
                     print(f"Error: {e}")
