@@ -1,13 +1,13 @@
+//// This module contains the serialization/deserialization of the API requests and responses to JSON.
+
 import gleam/dynamic
-import gleam/io
-import gleam/json.{array, bool, float, int, string}
-import gleam/list
-import gleam/result
+import gleam/json.{bool, float, int, string}
 
 pub type GenerateText {
   GenerateText(text: String)
 }
 
+/// Decode the generate response from API.
 pub type GenerateTextResponse {
   GenerateTextResponse(List(GenerateText))
 }
@@ -26,20 +26,6 @@ pub fn decode_generated_text() {
 pub type GenerateResponse {
   GenerateResponse(title: String, content: String)
 }
-
-/// Decode the response from API.
-//pub fn decode_generate_response(
-//  json: String,
-//) -> Result(GenerateTextResponse, json.DecodeError) {
-//  let decoder =
-//    dynamic.decode1(
-//      GenerateTextResponse,
-//      dynamic.field("generated_text", dynamic.list),
-//    )
-//
-//  use res_list <- result.try(json.decode(from: json, using: decoder))
-//  list.first(res_list)
-//}
 
 pub fn decode_refine_response(
   json: String,
@@ -66,6 +52,14 @@ pub type Params {
   )
 }
 
+pub type RefineParams {
+  RefineParams(temperature: Float, top_p: Float, max_new_token: Int)
+}
+
+pub type RefineRequest {
+  RefineRequest(inputs: String, params: RefineParams)
+}
+
 /// Structure of Hugging face's API request.
 pub type Request {
   Request(inputs: String, params: Params)
@@ -80,6 +74,15 @@ pub fn encode_generate_request(req: Request) -> String {
   |> json.to_string()
 }
 
+/// Encodes the refine request to Hugging face's API to JSON.
+pub fn encode_refine_request(req: RefineRequest) -> String {
+  json.object([
+    #("inputs", string(req.inputs)),
+    #("parameters", encode_refine_params(req.params)),
+  ])
+  |> json.to_string()
+}
+
 pub fn encode_params(p: Params) -> json.Json {
   json.object([
     #("temperature", float(p.temperature)),
@@ -87,6 +90,14 @@ pub fn encode_params(p: Params) -> json.Json {
     #("top_p", float(p.top_p)),
     #("do_samp", bool(p.do_samp)),
     #("no_repeat_ngram_size", int(p.no_repeat_ngram_size)),
+    #("max_new_token", int(p.max_new_token)),
+  ])
+}
+
+pub fn encode_refine_params(p: RefineParams) -> json.Json {
+  json.object([
+    #("temperature", float(p.temperature)),
+    #("top_p", float(p.top_p)),
     #("max_new_token", int(p.max_new_token)),
   ])
 }
