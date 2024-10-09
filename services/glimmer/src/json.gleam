@@ -1,4 +1,5 @@
 import gleam/dynamic
+import gleam/io
 import gleam/json.{array, bool, float, int, string}
 import gleam/list
 import gleam/result
@@ -72,20 +73,20 @@ pub type Request {
 
 /// Encodes the request to Hugging face's API to JSON.
 pub fn encode_generate_request(req: Request) -> String {
-  let params = encode_params(req.params)
-
-  json.object([#("inputs", string(req.inputs))])
+  json.object([
+    #("inputs", string(req.inputs)),
+    #("parameters", encode_params(req.params)),
+  ])
   |> json.to_string()
 }
 
-pub fn encode_params(p: Params) -> String {
+pub fn encode_params(p: Params) -> json.Json {
   json.object([
     #("temperature", float(p.temperature)),
-    //    #("top_k", int(p.top_k)),
-  //    #("top_p", float(p.top_p)),
-  //    #("do_samp", bool(p.do_samp)),
-  //    #("no_repeat_ngram_size", int(p.no_repeat_ngram_size)),
-  //    #("max_new_token", int(p.max_new_token)),
+    #("top_k", int(p.top_k)),
+    #("top_p", float(p.top_p)),
+    #("do_samp", bool(p.do_samp)),
+    #("no_repeat_ngram_size", int(p.no_repeat_ngram_size)),
+    #("max_new_token", int(p.max_new_token)),
   ])
-  |> json.to_string()
 }

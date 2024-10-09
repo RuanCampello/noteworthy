@@ -26,7 +26,7 @@ fn create_request() -> String {
 
   let params = Params(temp, k, 0.95, True, 2, 350)
 
-  Request(inputs: prompt, params:) |> json.encode_generate_request
+  Request(inputs: prompt, params:) |> json.encode_generate_request()
 }
 
 pub fn generate_note() -> Result(String, String) {

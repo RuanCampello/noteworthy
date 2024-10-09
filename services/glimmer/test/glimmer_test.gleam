@@ -12,5 +12,5 @@ pub fn generate_note_test() {
   dotenv.config_with("../../.env")
 
   let assert Ok(res) = generate.generate_note()
-  io.debug("Response" <> res)
+  io.debug(res)
 }
