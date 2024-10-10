@@ -14,8 +14,9 @@ RUN cd /build \
 WORKDIR /app
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-#COPY .env /app/.env
+# Copy .env into the app directory
+COPY .env /app/.env
 
 EXPOSE 8000
 
-CMD ["shell"]
+CMD ["run"]
