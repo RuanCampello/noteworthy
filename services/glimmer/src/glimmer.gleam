@@ -10,7 +10,7 @@ pub fn main() {
   wisp.configure_logger()
 
   dot.new()
-  |> dot.set_path("../../.env")
+  |> dot.set_path("/app/.env")
   |> dot.set_debug(False)
   |> dot.load
 
@@ -19,6 +19,8 @@ pub fn main() {
     |> mist.new
     |> mist.port(8000)
     |> mist.start_http()
+
+  io.debug("hello from glimmer!")
 
   process.sleep_forever()
 }
