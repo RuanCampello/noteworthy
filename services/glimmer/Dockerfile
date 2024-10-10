@@ -14,7 +14,7 @@ RUN cd /build \
 WORKDIR /app
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-COPY .env /app/.env
+#COPY .env /app/.env
 
 EXPOSE 8000
 
