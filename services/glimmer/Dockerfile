@@ -1,17 +1,17 @@
-FROM ghcr.io/gleam-lang/gleam:v1.4.1-erlang
+FROM ghcr.io/gleam-lang/gleam:v1.4.1-erlang-alpine
 
 WORKDIR /build
+
 COPY . /build
 
-# compiles the project
+# compile the project
 RUN cd /build \
-    && gleam export erlang-shipment \
-    && mv build/erlang-shipment /app \
-    && rm -r /build
+  && gleam export erlang-shipment \
+  && mv build/erlang-shipment /app \
+  && rm -r /build
 
+# start the server
 WORKDIR /app
-ENTRYPOINT ["app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 
-EXPOSE 8000
-
-CMD["run"]
+CMD ["run"]
