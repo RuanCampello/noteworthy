@@ -13,13 +13,16 @@ licences = ["Apache-2.0"]
 # https://gleam.run/writing-gleam/gleam-toml/.
 
 [dependencies]
-gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-gleam_erlang = ">= 0.27.0 and < 1.0.0"
-prng = ">= 3.0.3 and < 4.0.0"
-gleam_httpc = ">= 3.0.0 and < 4.0.0"
-dotenv_gleam = ">= 1.0.5 and < 2.0.0"
-gleam_http = ">= 3.7.0 and < 4.0.0"
+gleam_erlang = ">= 0.25.0 and < 1.0.0"
+gleam_otp = ">= 0.11.2 and < 1.0.0"
+wisp = ">= 1.1.0 and < 2.0.0"
+gleam_httpc = ">= 2.2.0 and < 3.0.0"
+gleam_http = ">= 3.6.0 and < 4.0.0"
 gleam_json = ">= 1.0.1 and < 2.0.0"
+mist = ">= 2.0.0 and < 3.0.0"
+gleam_stdlib = ">= 0.40.0 and < 1.0.0"
+prng = ">= 3.0.3 and < 4.0.0"
+dot_env = ">= 1.2.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

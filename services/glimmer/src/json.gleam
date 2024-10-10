@@ -44,20 +44,10 @@ pub fn decode_refine_response(
 pub type Params {
   Params(
     temperature: Float,
-    top_k: Int,
-    top_p: Float,
-    do_samp: Bool,
+    max_new_tokens: Int,
     no_repeat_ngram_size: Int,
-    max_new_token: Int,
+    return_full_text: Bool,
   )
-}
-
-pub type RefineParams {
-  RefineParams(temperature: Float, top_p: Float, max_new_token: Int)
-}
-
-pub type RefineRequest {
-  RefineRequest(inputs: String, params: RefineParams)
 }
 
 /// Structure of Hugging face's API request.
@@ -74,30 +64,21 @@ pub fn encode_generate_request(req: Request) -> String {
   |> json.to_string()
 }
 
-/// Encodes the refine request to Hugging face's API to JSON.
-pub fn encode_refine_request(req: RefineRequest) -> String {
-  json.object([
-    #("inputs", string(req.inputs)),
-    #("parameters", encode_refine_params(req.params)),
-  ])
-  |> json.to_string()
-}
-
+/// Encodes the params of the request.
+/// See https://huggingface.co/docs/api-inference/en/tasks/text-generation for more details.
 pub fn encode_params(p: Params) -> json.Json {
   json.object([
     #("temperature", float(p.temperature)),
-    #("top_k", int(p.top_k)),
-    #("top_p", float(p.top_p)),
-    #("do_samp", bool(p.do_samp)),
+    #("max_new_tokens", int(p.max_new_tokens)),
     #("no_repeat_ngram_size", int(p.no_repeat_ngram_size)),
-    #("max_new_token", int(p.max_new_token)),
+    #("return_full_text", bool(p.return_full_text)),
   ])
 }
 
-pub fn encode_refine_params(p: RefineParams) -> json.Json {
-  json.object([
-    #("temperature", float(p.temperature)),
-    #("top_p", float(p.top_p)),
-    #("max_new_token", int(p.max_new_token)),
-  ])
+/// Encodes the already clean generated note to JSON.
+pub fn encode_generate_note_response(
+  title: String,
+  content: String,
+) -> json.Json {
+  json.object([#("title", string(title)), #("content", string(content))])
 }
