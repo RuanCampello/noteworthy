@@ -15,7 +15,7 @@ WORKDIR /app
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Copy .env into the app directory
-COPY .env /app/.env
+COPY .env .env
 
 EXPOSE 8000
 

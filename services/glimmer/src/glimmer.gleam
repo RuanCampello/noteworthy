@@ -1,7 +1,7 @@
 import api/handler
 import dot_env as dot
+import dot_env/env
 import gleam/erlang/process
-import gleam/io
 import mist
 import wisp
 import wisp/wisp_mist
@@ -14,13 +14,13 @@ pub fn main() {
   |> dot.set_debug(False)
   |> dot.load
 
+  let assert Ok(secret_key) = env.get_string("SECRET_KEY")
+
   let assert Ok(_) =
-    wisp_mist.handler(handler.handle_request, "xdding")
+    wisp_mist.handler(handler.handle_request, secret_key)
     |> mist.new
     |> mist.port(8000)
     |> mist.start_http()
-
-  io.debug("hello from glimmer!")
 
   process.sleep_forever()
 }

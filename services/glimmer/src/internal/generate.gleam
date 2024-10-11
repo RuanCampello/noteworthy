@@ -2,7 +2,6 @@ import dot_env/env
 import gleam/http.{Post}
 import gleam/http/request.{type Request}
 import gleam/httpc
-import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
