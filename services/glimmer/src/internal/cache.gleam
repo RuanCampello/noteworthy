@@ -23,6 +23,7 @@ pub type Message(value) {
   Get(reply_with: Subject(Result(value, Nil)), key: String)
   GetKeys(reply_with: Subject(List(String)))
   Delete(key: String)
+  Continue
   Shutdown
 }
 
@@ -42,6 +43,7 @@ fn handle_message(
       actor.continue(store)
     }
     Delete(key) -> store |> dict.delete(key) |> actor.continue()
+    Continue -> actor.continue(store)
     Shutdown -> actor.Stop(process.Normal)
   }
 }

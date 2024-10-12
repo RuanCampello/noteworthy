@@ -18,7 +18,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
 }
 
 fn fetch_generate_note(ctx: Context) {
-  case queue.get_first(ctx.queue_cache) {
+  case queue.get_last(ctx.queue_cache) {
     Ok(response) -> {
       let title_and_content = response |> string.split("###")
       let title = title_and_content |> list.first() |> result.unwrap("")

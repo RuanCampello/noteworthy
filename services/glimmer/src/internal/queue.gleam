@@ -9,46 +9,35 @@ import gleam/string
 import internal/cache.{type Cache}
 import internal/generate
 
+const queue_max_cap = 10
+
+const queue_delay = 5000
+
 /// Tries to add an element to the end of the queue stored in the cache.
 /// If the queue is full (i.e., already contains 10 elements), do nothing.
 pub fn insert(cache: Cache(String), element: String) {
   let keys = cache.get_keys(cache)
   case list.length(keys) {
-    //    10 -> process.send(cache, Nil)
-    // Do nothing if the queue is full
-    _ -> {
+    len if len < queue_max_cap -> {
       let new_key = list.length(keys) |> int.to_string()
       cache.set(cache, new_key, element)
     }
+    // Do nothing if the queue is full
+    _ -> process.send(cache, cache.Continue)
   }
 }
 
-/// Gets and removes the first element from the queue stored in the cache.
+/// Gets and removes the last element from the queue stored in the cache.
 /// If the queue is empty, return an error.
-pub fn get_first(cache: Cache(String)) -> Result(String, Nil) {
-  let keys = cache.get_keys(cache)
-  case keys {
-    [first, ..rest] -> {
-      let value = cache.get(cache, first)
+pub fn get_last(cache: Cache(String)) -> Result(String, Nil) {
+  let last = cache.get_keys(cache) |> list.last
+  case last {
+    Ok(last) -> {
+      let value = cache.get(cache, last)
       case value {
         Ok(element) -> {
-          io.print("got value" <> first)
-
-          // re-insert remaining elements with updated keys
-          rest
-          |> list.index_map(fn(_value, key) {
-            case cache.get(cache, int.to_string(key)) {
-              Ok(v) -> {
-                cache.delete(cache, int.to_string(key))
-                // remove old key
-                insert(cache, v)
-              }
-              _ -> {
-                Nil
-              }
-            }
-          })
-
+          io.print("got value" <> last)
+          cache.delete(cache, last)
           Ok(element)
         }
         _ -> Error(Nil)
@@ -71,7 +60,7 @@ fn fill_queue(cache: Cache(String)) {
   io.debug(list.length(keys))
 
   case list.length(keys) {
-    len if len < 3 -> {
+    len if len < queue_max_cap -> {
       // tries to generate a note
       case generate.generate_note() {
         Ok(note) -> {
@@ -105,11 +94,11 @@ fn fill_queue(cache: Cache(String)) {
       }
     }
     _ -> {
-      // io.debug("Queue is full...")
+      io.debug("Queue is full...")
       Nil
     }
   }
 
-  process.sleep(500)
+  process.sleep(queue_delay)
   fill_queue(cache)
 }
