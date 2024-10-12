@@ -45,7 +45,7 @@ export default function EditProfile() {
   useEffect(() => {
     startTransition(async () => {
       const image = await getUserProfileImage();
-      setImageUrl(image);
+      image && setImageUrl(image);
     });
   }, []);
 

@@ -1,34 +1,38 @@
 import gleam/io
 import gleam/json as gleam_json
+import gleam/list
 import gleam/result
-import internal/generate
+import gleam/string
+import internal/cache.{type Context}
+import internal/queue
 import json
 import wisp.{type Request, type Response}
 
 /// Route the request to their appropriate handler based on the path.
-pub fn handle_request(req: Request) -> Response {
+pub fn handle_request(req: Request, ctx: Context) -> Response {
   case wisp.path_segments(req) {
     [] -> wisp.ok()
-    ["generate"] -> generate_note_handler()
+    ["generate"] -> generate_note_handler(ctx)
     _ -> wisp.not_found()
   }
 }
 
-fn fetch_generate_note() {
-  use note <- result.try(generate.generate_note())
-
-  let title_and_content = generate.extract_title_and_content(note)
-
-  io.debug(title_and_content)
-
-  let response =
-    json.encode_generate_note_response(title_and_content.0, title_and_content.1)
-
-  Ok(response)
+fn fetch_generate_note(ctx: Context) {
+  case queue.get_first(ctx.queue_cache) {
+    Ok(response) -> {
+      let title_and_content = response |> string.split("###")
+      let title = title_and_content |> list.first() |> result.unwrap("")
+      let content = title_and_content |> list.last() |> result.unwrap("")
+      Ok(json.encode_generate_note_response(title, content))
+    }
+    Error(_) -> {
+      Error("Nothing in the queue")
+    }
+  }
 }
 
-fn generate_note_handler() {
-  case fetch_generate_note() {
+fn generate_note_handler(ctx: Context) {
+  case fetch_generate_note(ctx) {
     Ok(response) -> {
       response |> gleam_json.to_string_builder() |> wisp.json_response(200)
     }
