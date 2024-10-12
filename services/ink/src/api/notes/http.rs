@@ -3,13 +3,15 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
+use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser, sanitization::RULES};
 use axum::{
   extract::{Json, Path, Query},
   routing::{delete, get, patch, post},
   Extension, Router,
 };
 use chrono::Local;
+use regex::Regex;
+use sanitize_html::sanitize_str;
 use serde::Deserialize;
 use uuid::Uuid;
 use validator::Validate;
@@ -226,7 +228,17 @@ async fn find_all_user_notes(
     .fetch_all(&state.database)
     .await?;
 
-  Ok(Json(notes))
+  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
+
+  let stripped_notes = notes
+    .into_iter()
+    .map(|mut note| {
+      note.content = regex.replace_all(&note.content, "").to_string();
+      note
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Json(stripped_notes))
 }
 
 #[derive(Deserialize)]
@@ -352,6 +364,7 @@ async fn search_notes(
       FROM notes
       WHERE user_id = $1
       AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+      LIMIT 5
     "#.to_string();
 
   if params.is_fav {
@@ -366,7 +379,37 @@ async fn search_notes(
     .fetch_all(&state.database)
     .await?;
 
-  Ok(Json(notes_found))
+  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
+  let search_regex = Regex::new(r"<search>.*?</search>").expect("Invalid regex");
+
+  let stripped_notes_found = notes_found
+    .into_iter()
+    .map(|mut note| {
+      note.content = regex.replace_all(&note.content, "").to_string();
+      if search_regex.is_match(&note.highlighted_content) {
+        let cleaned_up = strip_html_except_search(&note.highlighted_content);
+        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML")
+      } else {
+        let cleaned_up = regex.replace_all(&note.content, "").to_string();
+        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML");
+      }
+      note
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Json(stripped_notes_found))
+}
+
+fn strip_html_except_search(input: &str) -> String {
+  let temp_input = input
+    .replace("<search>", "[[SEARCH_OPEN]]")
+    .replace("</search>", "[[SEARCH_CLOSE]]");
+  let regex = Regex::new(r"<[^>]+>|&nbsp;").unwrap();
+  let cleaned = regex.replace_all(&temp_input, "").to_string();
+
+  cleaned
+    .replace("[[SEARCH_OPEN]]", "<span class='text-slate'>")
+    .replace("[[SEARCH_CLOSE]]", "</span>")
 }
 
 async fn count_user_notes(

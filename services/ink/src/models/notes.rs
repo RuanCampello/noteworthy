@@ -58,8 +58,8 @@ pub struct SearchResult {
   #[ts(type = "string")]
   id: Uuid,
   title: String,
-  content: String,
-  highlighted_content: String,
+  pub(crate) content: String,
+  pub(crate) highlighted_content: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, TS)]

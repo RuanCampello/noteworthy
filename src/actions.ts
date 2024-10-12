@@ -337,7 +337,7 @@ export const searchNotes = cache(
       `${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`,
       {
         method: 'get',
-        cache: 'force-cache',
+        // cache: 'force-cache',
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
