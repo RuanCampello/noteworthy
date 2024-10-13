@@ -18,6 +18,7 @@
 /build
 /services/ink/target
 /services/note-waver/__pycache__
+/services/fog
 
 # misc
 .DS_Store
