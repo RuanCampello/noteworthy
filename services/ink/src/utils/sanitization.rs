@@ -53,3 +53,15 @@ fn untrusted() -> Rules {
     .space("section")
     .space("ul")
 }
+
+pub(crate) fn strip_html_except_search(input: &str) -> String {
+  let temp_input = input
+    .replace("<search>", "[[SEARCH_OPEN]]")
+    .replace("</search>", "[[SEARCH_CLOSE]]");
+  let regex = Regex::new(r"<[^>]+>|&nbsp;").unwrap();
+  let cleaned = regex.replace_all(&temp_input, "").to_string();
+
+  cleaned
+    .replace("[[SEARCH_OPEN]]", "<span class='text-slate'>")
+    .replace("[[SEARCH_CLOSE]]", "</span>")
+}

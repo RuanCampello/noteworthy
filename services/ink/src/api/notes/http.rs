@@ -3,7 +3,11 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser, sanitization::RULES};
+use crate::utils::{
+  constants::HELLO_WORLD,
+  middleware::AuthUser,
+  sanitization::{strip_html_except_search, RULES},
+};
 use axum::{
   extract::{Json, Path, Query},
   routing::{delete, get, patch, post},
@@ -398,18 +402,6 @@ async fn search_notes(
     .collect::<Vec<_>>();
 
   Ok(Json(stripped_notes_found))
-}
-
-fn strip_html_except_search(input: &str) -> String {
-  let temp_input = input
-    .replace("<search>", "[[SEARCH_OPEN]]")
-    .replace("</search>", "[[SEARCH_CLOSE]]");
-  let regex = Regex::new(r"<[^>]+>|&nbsp;").unwrap();
-  let cleaned = regex.replace_all(&temp_input, "").to_string();
-
-  cleaned
-    .replace("[[SEARCH_OPEN]]", "<span class='text-slate'>")
-    .replace("[[SEARCH_CLOSE]]", "</span>")
 }
 
 async fn count_user_notes(

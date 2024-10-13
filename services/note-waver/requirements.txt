@@ -1,5 +1,0 @@
-fastapi~=0.114.2
-uvicorn==0.22.0
-python-dotenv~=1.0.1
-requests~=2.31.0
-valkey~=6.0.2
