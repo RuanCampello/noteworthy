@@ -439,18 +439,27 @@ export async function login(
   } catch (error) {
     if (error instanceof AuthError) {
       let err = error?.cause?.err?.name;
-      if (!err) console.error(error);
-
-      switch (err) {
-        case 'CredentialsSignin':
-          return { error: t('inv_credentials') };
-        case 'AccessDenied':
-          return { error: t('email_not_found') };
-        default:
-          return { error: t('default_error') };
+      if (!err) {
+        // for some reason, this works on prod but not on dev
+        return handleErrors(error.type, t);
       }
+
+      // this is works on dev
+      return handleErrors(err, t);
     }
+    console.error(error);
     throw error;
+  }
+}
+
+function handleErrors(cause: string, t: any) {
+  switch (cause) {
+    case 'CredentialsSignin':
+      return { error: t('inv_credentials') };
+    case 'AccessDenied':
+      return { error: t('email_not_found') };
+    default:
+      return { error: t('default_error') };
   }
 }
 
