@@ -4,15 +4,16 @@ use crate::models::notes::NoteFormat;
 use crate::models::password_reset_tokens::PasswordResetToken;
 use crate::models::users::{SimpleUser, User};
 use crate::models::users_preferences::UserPreferences;
-use crate::utils::image::{resize_and_reduce_image, upload_image_to_r2};
+use crate::utils::image::resize_and_reduce_image;
 use crate::utils::mailer::Mailer;
 use crate::utils::middleware::AuthUser;
+use crate::utils::{cache::Cache, constants::USER_PROFILE_KEY};
+use crate::utils::r2::PreSignedUrl;
 
 use aws_sdk_s3::presigning::PresigningConfig;
-use axum::routing::put;
 use axum::{
   extract::{Json, Multipart, Path},
-  routing::{get, post},
+  routing::{get, post, put},
   Extension, Router,
 };
 use bcrypt::{hash, verify};
@@ -20,16 +21,22 @@ use chrono::Local;
 use serde::Deserialize;
 use sqlx::PgPool;
 use std::time::Duration;
+use tracing::info;
 use uuid::Uuid;
 use validator::{Validate, ValidateEmail, ValidationErrors};
 
 pub fn router() -> Router {
   let user_related_routes = Router::new()
-    .route("/profile", post(upload_user_profile_image))
-    .route("/profile/:id", get(find_user_profile_image))
+    .route(
+      "/profile",
+      post(upload_user_profile_image).get(find_user_profile_image),
+    )
     .route("/reset-password/:token", post(reset_user_password))
     .route("/new-password-token/:email", post(new_reset_token))
-    .route("/preferences", put(upsert_user_preferences).get(get_user_preferences));
+    .route(
+      "/preferences",
+      put(upsert_user_preferences).get(get_user_preferences),
+    );
 
   Router::new()
     .route("/login", post(log_user))
@@ -100,9 +107,9 @@ async fn create_user(
   let hash_password = hash(req.password, 10)?;
 
   let query = r#"
-        INSERT INTO users (id, email, name, password)
-        VALUES ($1, $2, $3, $4) RETURNING id;
-    "#;
+    INSERT INTO users (id, email, name, password)
+    VALUES ($1, $2, $3, $4) RETURNING id;
+   "#;
 
   let id: String = sqlx::query_scalar(query)
     .bind(Uuid::new_v4())
@@ -145,10 +152,10 @@ async fn authorize_user(
   req.validate()?;
 
   let query = r#"
-        SELECT id, email, name, image FROM users
-        LEFT JOIN accounts ON accounts.user_id = users.id
-        WHERE accounts.provider_account_id = $1 AND accounts.provider = $2
-    "#;
+    SELECT id, email, name, image FROM users
+    LEFT JOIN accounts ON accounts.user_id = users.id
+    WHERE accounts.provider_account_id = $1 AND accounts.provider = $2
+   "#;
 
   let user = sqlx::query_as::<_, SimpleUser>(query)
     .bind(&req.id)
@@ -169,10 +176,10 @@ async fn link_user_account(
   Path(id): Path<String>,
 ) -> Result<(), UserError> {
   let query = r#"
-        UPDATE users
-        SET email_verified = $2
-        WHERE id = $1
-    "#;
+    UPDATE users
+    SET email_verified = $2
+    WHERE id = $1
+  "#;
 
   let localtime = Local::now().naive_local();
 
@@ -302,10 +309,10 @@ async fn upsert_user_preferences(
   Json(req): Json<UpsertPreferencesReq>,
 ) -> Result<(), UserError> {
   let query = r#"
-        INSERT INTO users_preferences (user_id, note_format, full_note)
-        VALUES ($1, $2, $3) ON CONFLICT (user_id)
-        DO UPDATE SET note_format = EXCLUDED.note_format, full_note = EXCLUDED.full_note
-    "#;
+    INSERT INTO users_preferences (user_id, note_format, full_note)
+    VALUES ($1, $2, $3) ON CONFLICT (user_id)
+    DO UPDATE SET note_format = EXCLUDED.note_format, full_note = EXCLUDED.full_note
+  "#;
 
   sqlx::query(query)
     .bind(user.id)
@@ -324,12 +331,13 @@ async fn get_user_preferences(
   let query = "SELECT note_format, full_note FROM users_preferences WHERE user_id = $1";
 
   let preferences = sqlx::query_as::<_, UserPreferences>(query)
-      .bind(user.id)
-      .fetch_optional(&state.database)
-      .await?.unwrap_or_else(|| UserPreferences {
-    full_note: true,
-    note_format: NoteFormat::Full
-  });
+    .bind(user.id)
+    .fetch_optional(&state.database)
+    .await?
+    .unwrap_or_else(|| UserPreferences {
+      full_note: true,
+      note_format: NoteFormat::Full,
+    });
 
   Ok(Json(preferences))
 }
@@ -356,30 +364,37 @@ async fn upload_user_profile_image(
   }
 
   let compressed_image = resize_and_reduce_image(file_bytes)?;
+  let cache_key = format!("{}{}", USER_PROFILE_KEY, &user.id);
 
-  upload_image_to_r2(state.r2, BUCKET_NAME, &user.id, compressed_image).await?;
-  Ok(())
+  let (_cache_result, upload_result) = tokio::join!(
+    state.cache.del(&cache_key),
+    state
+      .r2
+      .create_presigned_url(BUCKET_NAME, &user.id, compressed_image)
+  );
+
+  upload_result
 }
 
 async fn find_user_profile_image(
   Extension(state): Extension<AppState>,
-  Path(id): Path<String>,
-) -> Result<Json<String>, UserError> {
-  let pre_signed_url = state
-    .r2
-    .get_object()
-    .bucket(BUCKET_NAME)
-    .key(&id)
-    .presigned(
-      PresigningConfig::builder()
-        .expires_in(Duration::from_secs(3600))
-        .build()
-        .unwrap(),
-    )
-    .await
-    .map_err(|e| UserError::PresignedUrl(e))?;
+  AuthUser(user): AuthUser,
+) -> Result<String, UserError> {
+  let cache_key = format!("{}{}", USER_PROFILE_KEY, &user.id);
 
-  Ok(Json(pre_signed_url.uri().to_string()))
+  let cached_image = state.cache.get(&cache_key).await?;
+  if let Some(image) = cached_image {
+    info!("Serving cached image for user {}", &user.id);
+    return Ok(image);
+  }
+
+  info!("Fetching image from R2 for user {}", &user.id);
+  let pre_signed_url = state.r2.get_presigned_url(BUCKET_NAME, &user.id).await?;
+  let image_url_clone = pre_signed_url.clone();
+
+  tokio::spawn(async move { state.cache.set(&cache_key, &image_url_clone, 60 * 55).await });
+
+  Ok(pre_signed_url)
 }
 
 async fn find_user_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, UserError> {

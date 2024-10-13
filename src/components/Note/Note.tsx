@@ -2,7 +2,6 @@
 
 import type { Colour } from '@/types/Enums';
 import { Colours, darkenColour } from '@/utils/colours';
-import { stripHTMLTags } from '@/utils/format';
 import { HTMLContent } from '@tiptap/react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -79,7 +78,6 @@ export default function Note({
   }
 
   const formattedName = getFormattedName(name);
-  const textWithoutHtml = stripHTMLTags(text);
 
   return (
     <Link
@@ -113,7 +111,7 @@ export default function Note({
           {new Date(date).toLocaleDateString('en-GB')}
         </span>
         <p className='truncate text-black/80 md:inline-block hidden group-data-[state=closed]/root:hidden'>
-          {textWithoutHtml}
+          {text}
         </p>
       </div>
     </Link>

@@ -1,6 +1,3 @@
-use crate::errors::UserError;
-use aws_sdk_s3::primitives::ByteStream;
-use aws_sdk_s3::Client;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use image::{imageops::FilterType, ImageError, ImageFormat};
@@ -17,27 +14,6 @@ pub fn resize_and_reduce_image(file_bytes: Vec<u8>) -> Result<Vec<u8>, MyImageEr
 
   Ok(output.into_inner())
 }
-
-pub async fn upload_image_to_r2(
-  r2: Client,
-  bucket_name: &str,
-  user_id: &str,
-  image: Vec<u8>,
-) -> Result<(), UserError> {
-  let stream = ByteStream::from(image);
-
-  let _ = r2
-    .put_object()
-    .bucket(bucket_name)
-    .key(user_id)
-    .body(stream)
-    .content_type("image/png")
-    .send()
-    .await?;
-
-  Ok(())
-}
-
 #[derive(Debug)]
 pub struct MyImageError {
   pub source: ImageError,

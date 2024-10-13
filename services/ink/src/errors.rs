@@ -24,6 +24,10 @@ pub enum NoteError {
   Validation(#[from] ValidationErrors),
   #[error("Error creating note: {0}.")]
   Sqlx(#[from] SqlxError),
+  #[error("Parsing error: {0}")]
+  Parse(#[from] serde_json::Error),
+  #[error("{0}")]
+  Cache(#[from] CacheError),
   #[error("Generate note request error: {0}.")]
   Generate(#[from] reqwest::Error),
 }
@@ -34,7 +38,9 @@ impl IntoResponse for NoteError {
       NoteError::NoteNotFound(_) => StatusCode::NOT_FOUND,
       NoteError::Validation(_) | NoteError::MissingColour => StatusCode::BAD_REQUEST,
       NoteError::InvalidColour(_) => StatusCode::UNPROCESSABLE_ENTITY,
-      NoteError::Sqlx(_) | NoteError::Generate(_) => StatusCode::INTERNAL_SERVER_ERROR,
+      NoteError::Sqlx(_) | NoteError::Generate(_) | NoteError::Cache(_) | NoteError::Parse(_) => {
+        StatusCode::INTERNAL_SERVER_ERROR
+      }
     };
 
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
@@ -77,6 +83,8 @@ pub enum UserError {
   MyImageError(#[from] MyImageError),
   #[error("Failed to send user reset password email: {0}")]
   SendEmail(#[from] ResendError),
+  #[error("{0}")]
+  Cache(#[from] CacheError),
 }
 
 impl IntoResponse for UserError {
@@ -98,7 +106,8 @@ impl IntoResponse for UserError {
       | UserError::DatabaseError(_)
       | UserError::PresignedUrl(_)
       | UserError::ImageUploadError(_)
-      | UserError::SendEmail(_) => {
+      | UserError::SendEmail(_)
+      | UserError::Cache(_) => {
         error!("{:#?}", self);
         (
           StatusCode::INTERNAL_SERVER_ERROR,
@@ -127,7 +136,33 @@ impl IntoResponse for DictionaryError {
     };
 
     error!("{:#?}", self);
-    
+
+    let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
+      String::from("An internal server error occurred")
+    } else {
+      self.to_string()
+    };
+
+    (status, body).into_response()
+  }
+}
+
+#[derive(Error, Debug)]
+pub enum CacheError {
+  #[error("Unable to deserialize the cache value {0}")]
+  Deserialize(#[from] serde_json::Error),
+  #[error("Redis failure {0}")]
+  Redis(#[from] redis::RedisError),
+}
+
+impl IntoResponse for CacheError {
+  fn into_response(self) -> Response {
+    let status = match self {
+      CacheError::Deserialize(_) | CacheError::Redis(_) => StatusCode::INTERNAL_SERVER_ERROR,
+    };
+
+    error!("{:#?}", self);
+
     let body = if status == StatusCode::INTERNAL_SERVER_ERROR {
       String::from("An internal server error occurred")
     } else {

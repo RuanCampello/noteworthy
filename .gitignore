@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/**/benches
 
 # next.js
 /.next/

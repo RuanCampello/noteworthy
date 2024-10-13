@@ -3,14 +3,19 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::constants::HELLO_WORLD;
-use crate::utils::middleware::AuthUser;
-use axum::routing::{delete, get, patch, post};
+use crate::utils::{
+  constants::HELLO_WORLD,
+  middleware::AuthUser,
+  sanitization::{strip_html_except_search, RULES},
+};
 use axum::{
   extract::{Json, Path, Query},
+  routing::{delete, get, patch, post},
   Extension, Router,
 };
 use chrono::Local;
+use regex::Regex;
+use sanitize_html::sanitize_str;
 use serde::Deserialize;
 use uuid::Uuid;
 use validator::Validate;
@@ -169,26 +174,26 @@ async fn edit_note(
   Ok(())
 }
 
+const FIND_NOTE_BY_ID_QUERY: &str = r#"
+  SELECT
+    notes.*,
+    notes.colour,
+    notes.user_id AS user_id,
+    users.name,
+    COALESCE(users_preferences.full_note, true) AS full_note,
+    COALESCE(users_preferences.note_format, 'full') AS note_format
+  FROM notes
+  JOIN users ON notes.user_id = users.id
+  LEFT JOIN users_preferences ON users_preferences.user_id = users.id
+  WHERE notes.id = $1 AND notes.user_id = $2;
+"#;
+
 async fn find_note_by_id(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   Path(id): Path<Uuid>,
 ) -> Result<Json<NoteWithUserPrefs>, NoteError> {
-  let query = r#"
-      SELECT
-        notes.*,
-        notes.colour,
-        notes.user_id AS user_id,
-        users.name,
-        COALESCE(users_preferences.full_note, true) AS full_note,
-        COALESCE(users_preferences.note_format, 'full') AS note_format
-      FROM notes
-      JOIN users ON notes.user_id = users.id
-      LEFT JOIN users_preferences ON users_preferences.user_id = users.id
-      WHERE notes.id = $1 AND notes.user_id = $2;
-    "#;
-
-  let note = sqlx::query_as::<_, NoteWithUserPrefs>(query)
+  let note = sqlx::query_as::<_, NoteWithUserPrefs>(FIND_NOTE_BY_ID_QUERY)
     .bind(id)
     .bind(user.id)
     .fetch_one(&state.database)
@@ -199,32 +204,45 @@ async fn find_note_by_id(
 
 #[derive(serde::Deserialize)]
 struct NoteParams {
-  is_fav: bool,
-  is_arc: bool,
+  is_fav: Option<bool>,
+  is_arc: Option<bool>,
 }
+
+const FIND_ALL_USER_NOTES_QUERY: &str = r#"
+  SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+  FROM notes
+  WHERE user_id = $1
+    AND is_favourite = $2
+    AND is_archived = $3
+  ORDER BY last_update DESC;
+"#;
 
 async fn find_all_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   Query(params): Query<NoteParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let query = r#"
-      SELECT LEFT(content, 250) AS content, id, title, colour, created_at
-      FROM notes
-      WHERE user_id = $1
-        AND is_favourite = $2
-        AND is_archived = $3
-      ORDER BY last_update DESC;
-    "#;
+  let is_fav = params.is_fav.unwrap_or(false);
+  let is_arc = params.is_arc.unwrap_or(false);
 
-  let notes = sqlx::query_as::<_, PartialNote>(query)
+  let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
-    .bind(params.is_fav)
-    .bind(params.is_arc)
+    .bind(is_fav)
+    .bind(is_arc)
     .fetch_all(&state.database)
     .await?;
 
-  Ok(Json(notes))
+  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
+
+  let stripped_notes = notes
+    .into_iter()
+    .map(|mut note| {
+      note.content = regex.replace_all(&note.content, "").to_string();
+      note
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Json(stripped_notes))
 }
 
 #[derive(Deserialize)]
@@ -350,6 +368,7 @@ async fn search_notes(
       FROM notes
       WHERE user_id = $1
       AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+      LIMIT 5
     "#.to_string();
 
   if params.is_fav {
@@ -364,7 +383,25 @@ async fn search_notes(
     .fetch_all(&state.database)
     .await?;
 
-  Ok(Json(notes_found))
+  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
+  let search_regex = Regex::new(r"<search>.*?</search>").expect("Invalid regex");
+
+  let stripped_notes_found = notes_found
+    .into_iter()
+    .map(|mut note| {
+      note.content = regex.replace_all(&note.content, "").to_string();
+      if search_regex.is_match(&note.highlighted_content) {
+        let cleaned_up = strip_html_except_search(&note.highlighted_content);
+        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML")
+      } else {
+        let cleaned_up = regex.replace_all(&note.content, "").to_string();
+        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML");
+      }
+      note
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Json(stripped_notes_found))
 }
 
 async fn count_user_notes(

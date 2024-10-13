@@ -20,7 +20,7 @@ export default async function Notes() {
   const searchString = search && formatSearchParams(search[1]);
 
   const [notes, filter, t] = await Promise.all([
-    getRespectiveNotes(true),
+    getRespectiveNotes(),
     getFilter(),
     getTranslations('Sidebar'),
   ]);

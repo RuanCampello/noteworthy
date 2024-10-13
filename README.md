@@ -1,44 +1,24 @@
-<div align="center">
-  <a href="https://noteworthy-ebon.vercel.app">
+<div align="center" style="text-align: center; display: flex; flex-direction: column; gap: 0; align-items: center; justify-content: center">
+  <a href="https://noteworthy-ebon.vercel.app" style="margin: 0; padding: 0">
     <img src="/public/assets/logo.svg" width="96px" alt="logo" />
   </a>
-  <h1 align="center">Noteworthy</h1>
+
+  <h1 align="center" style="margin: 0">Noteworthy</h1>
   <p align="center">
-    Noteworthy is a sleek and efficient note-taking web application built with Next.js, Tailwind CSS, and TypeScript. </br> It offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
+    Noteworthy is a sleek and efficient note-taking web application. </br> Powered by Next.js and Rust, it offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
   </p>
-  <div align="center">
-    <a href="https://nextjs.org/" target="_blank">
-      <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
-    </a>
-    <a href="https://ui.shadcn.com/" target="_blank">
-      <img src="https://img.shields.io/badge/shadcn-ui?style=flat-square&logo=shadcn%2Fui&color=000" alt="Shadcn" />
-    </a>
-    <a href="https://orm.drizzle.team/" target="_blank">
-      <img src="https://img.shields.io/badge/drizzle-0?style=flat-square&logo=drizzle&logoColor=%23C5F74F&color=121212" alt="Drizzle">
-    </a>
-    <a href="https://resend.com" target="_blank">
-      <img src="https://img.shields.io/badge/resend-0?style=flat-square&logo=resend&color=101010" alt="Resend" />
-    </a>
-    <a href="https://zod.dev" target="_blank">
-      <img src="https://img.shields.io/badge/zod-0?style=flat-square&logo=zod&logoColor=white&color=023e8a" alt="Zod" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-    </a>
-    <a href="https://tailwindcss.com/" target="_blank">
-      <img src="https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    </a>
-    <a href="https://www.cloudflare.com/" target="_blank">
-      <img src="https://img.shields.io/badge/Cloudflare-000?style=flat-square&logo=cloudflare&logoColor=fff&color=f77f00" alt="Cloudflare" />
-    </a>
-    <a href="https://noteworthy-ebon.vercel.app/" target="_blank">
-      <img src="https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet?style=flat-square" alt="Deployed on Vercel" />
-    </a>
-    <a href="https://choosealicense.com/licenses/mit/" target="_blank">
-      <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="MIT License" />
-    </a>
-  </div>
-  </br>
+ 
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Shadcn](https://img.shields.io/badge/shadcn-ui?style=flat-square&logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/)
+[![Drizzle](https://img.shields.io/badge/drizzle-0?style=flat-square&logo=drizzle&logoColor=%23C5F74F&color=121212)](https://orm.drizzle.team/)
+[![Resend](https://img.shields.io/badge/resend-0?style=flat-square&logo=resend&color=101010)](https://resend.com)
+[![Zod](https://img.shields.io/badge/zod-0?style=flat-square&logo=zod&logoColor=white&color=023e8a)](https://zod.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-000?style=flat-square&logo=cloudflare&logoColor=fff&color=f77f00)](https://www.cloudflare.com/)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet?style=flat-square)](https://noteworthy-ebon.vercel.app/)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://choosealicense.com/licenses/mit/)
+
 </div>
 
 ## Stack
@@ -81,7 +61,7 @@ Additionally, users' profile images are stored on Cloudflare R2, offering a secu
 ### 3. Note Management
 
 - **Create Note**: Create a new note using pre-created colours and providing a name.
-- **Generate Notes**: Users can generate notes directly from the quick actions in the search modal, leveraging the power of [NoteWaver](/services/note-waver/README.md), a Python-based microservice that uses various LLMs to generate note content based on user instructions.
+- **Generate Notes**: Users can generate notes directly from the quick actions in the search modal, leveraging the power of [Glimmer](/services/glimmer/README.md), a Gleam-based microservice that uses LLMs to generate note placeholder content.
 - **Favourite/Unfavourite Note**: Easily mark notes as favourites or remove them from favourites.
 - **Archive/Unarchive Note**: Archive notes to keep your workspace clutter-free, and unarchive them when needed.
 - **Search Notes**: Quickly find specific notes using the search functionality.
