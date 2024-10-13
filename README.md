@@ -1,10 +1,10 @@
-<div style="text-align: center; display: flex; flex-direction: column; gap: 0; align-items: center; justify-content: center">
+<div align="center" style="text-align: center; display: flex; flex-direction: column; gap: 0; align-items: center; justify-content: center">
   <a href="https://noteworthy-ebon.vercel.app" style="margin: 0; padding: 0">
     <img src="/public/assets/logo.svg" width="96px" alt="logo" />
   </a>
 
-  <h1 style="margin: 0">Noteworthy</h1>
-  <p>
+  <h1 align="center" style="margin: 0">Noteworthy</h1>
+  <p align="center">
     Noteworthy is a sleek and efficient note-taking web application. </br> Powered by Next.js and Rust, it offers users a simple yet powerful platform to organise their thoughts, ideas, and tasks.
   </p>
  
