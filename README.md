@@ -1,4 +1,4 @@
-<div style="text-align: center; display: flex; flex-direction: column; gap: 0;">
+<div style="text-align: center; display: flex; flex-direction: column; gap: 0; align-items: center; justify-content: center">
   <a href="https://noteworthy-ebon.vercel.app" style="margin: 0; padding: 0">
     <img src="/public/assets/logo.svg" width="96px" alt="logo" />
   </a>
