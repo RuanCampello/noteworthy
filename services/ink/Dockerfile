@@ -9,5 +9,5 @@ RUN cargo build --release
 FROM debian:bookworm-slim AS runner
 
 WORKDIR /app
-COPY --from=builder /app/target/release/example-rust /app/example-rust
+COPY --from=builder /app/target/release/ink /app/ink
 CMD ["/app/ink"]
