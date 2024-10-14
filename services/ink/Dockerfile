@@ -1,13 +1,17 @@
-# build stage
+# Build stage
 FROM rust:bookworm AS builder
 
 WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-# final run stage
+# Final run stage
 FROM debian:bookworm-slim AS runner
+RUN apt-get update && apt install -y openssl ca-certificates
 
 WORKDIR /app
 COPY --from=builder /app/target/release/ink /app/ink
+
+EXPOSE 8000
+
 CMD ["/app/ink"]
