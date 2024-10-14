@@ -4,5 +4,5 @@ pub mod errors;
 pub mod models;
 pub mod utils;
 
-pub use api::serve;
+pub use api::router;
 pub use app_state::EnvVariables;

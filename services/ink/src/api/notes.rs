@@ -20,7 +20,7 @@ use serde::Deserialize;
 use uuid::Uuid;
 use validator::Validate;
 
-pub fn router() -> Router {
+pub(crate) fn router() -> Router {
   let single_note_route = Router::new()
     .route(
       "/:id",
@@ -125,7 +125,7 @@ async fn delete_note(
   AuthUser(user): AuthUser,
   Path(id): Path<Uuid>,
 ) -> Result<(), NoteError> {
-  let query = r#" 
+  let query = r#"
       DELETE FROM notes
       WHERE id = $1 AND user_id = $2;
     "#;

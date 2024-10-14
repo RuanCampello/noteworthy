@@ -1,6 +1,6 @@
 use crate::utils::constants::RESET_EMAIL;
 use resend_rs::{types::CreateEmailBaseOptions, Error, Resend};
-
+use crate::EnvVariables;
 /*
   Mailer is a wrapper around the Resend API.
   It provides a simple interface to send emails using the Resend API.
@@ -14,11 +14,13 @@ pub struct Mailer {
 }
 
 impl Mailer {
-  pub fn new(api_key: &str, domain: &str, hostname: &str) -> Self {
+  pub fn new() -> Self {
+    let env = EnvVariables::from_env();
+    
     Self {
-      client: Resend::new(api_key),
-      domain: domain.to_string(),
-      hostname: hostname.to_string(),
+      client: Resend::new(&env.resend_api_key),
+      domain: env.resend_domain,
+      hostname: env.hostname,
     }
   }
 

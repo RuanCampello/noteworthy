@@ -1,4 +1,4 @@
-use crate::app_state::{AppState, EnvVariables};
+use crate::app_state::AppState;
 use crate::utils::mailer::Mailer;
 use axum::{
   http::{header, Method},
@@ -10,12 +10,11 @@ mod dictionary;
 mod notes;
 mod users;
 
-pub async fn serve(env: EnvVariables) -> shuttle_axum::ShuttleAxum {
-  let app_state = AppState::new(&env)
-    .await
-    .expect("Failed to create app state");
-
-  let mailer = Mailer::new(&env.resend_api_key, &env.resend_domain, &env.hostname);
+pub async fn router() -> Result<Router, Box<dyn std::error::Error>> {
+  tracing_subscriber::fmt::init();
+  
+  let app_state = AppState::new().await.expect("Failed to create app state");
+  let mailer = Mailer::new();
 
   let cors = CorsLayer::new()
     .allow_origin(Any)
@@ -23,8 +22,8 @@ pub async fn serve(env: EnvVariables) -> shuttle_axum::ShuttleAxum {
     .allow_methods(Method::GET);
 
   let router = Router::new()
-    .merge(users::http::router())
-    .merge(notes::http::router())
+    .merge(users::router())
+    .merge(notes::router())
     .merge(dictionary::router())
     .layer(Extension(app_state))
     .layer(Extension(mailer))

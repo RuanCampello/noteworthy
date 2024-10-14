@@ -1,11 +1,10 @@
 use crate::utils::cache::CacheManager;
 use crate::utils::jwt::JwtManager;
+use crate::utils::r2::R2;
 use deadpool_redis::{Config, Runtime};
-use shuttle_runtime::SecretStore;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;
 use std::time::Duration;
-use crate::utils::r2::R2;
 
 #[derive(Clone, Debug)]
 pub struct EnvVariables {
@@ -21,28 +20,21 @@ pub struct EnvVariables {
 }
 
 impl EnvVariables {
-  pub fn from_env(secrets: SecretStore) -> Self {
-    let database_url = secrets
-      .get("DATABASE_URL")
-      .expect("DATABASE_URL must be set");
-    let jwt_secret = secrets.get("AUTH_SECRET").expect("AUTH_SECRET must be set");
-    let cloudflare_account_id = secrets
-      .get("CLOUDFLARE_ACCOUNT_ID")
-      .expect("CLOUDFLARE_ACCOUNT_ID must be set");
-    let access_key_id = secrets
-      .get("CLOUDFLARE_ACCESS_KEY")
-      .expect("CLOUDFLARE_ACCESS_KEY must be set");
-    let secret_access_key = secrets
-      .get("CLOUDFLARE_SECRET_KEY")
-      .expect("CLOUDFLARE_SECRET_KEY must be set");
-    let resend_api_key = secrets
-      .get("RESEND_API_KEY")
-      .expect("RESEND_API_KEY must be set");
-    let resend_domain = secrets
-      .get("RESEND_DOMAIN")
-      .expect("RESEND_DOMAIN must be set");
-    let redis_url = secrets.get("REDIS_URL").expect("REDIS_URL must be set");
-    let hostname = secrets.get("HOSTNAME").expect("HOSTNAME must be set");
+  pub fn from_env() -> Self {
+    dotenv::dotenv().ok();
+
+    let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let jwt_secret = dotenv::var("AUTH_SECRET").expect("AUTH_SECRET must be set");
+    let cloudflare_account_id =
+      dotenv::var("CLOUDFLARE_ACCOUNT_ID").expect("CLOUDFLARE_ACCOUNT_ID must be set");
+    let access_key_id =
+      dotenv::var("CLOUDFLARE_ACCESS_KEY").expect("CLOUDFLARE_ACCESS_KEY must be set");
+    let secret_access_key =
+      dotenv::var("CLOUDFLARE_SECRET_KEY").expect("CLOUDFLARE_SECRET_KEY must be set");
+    let resend_api_key = dotenv::var("RESEND_API_KEY").expect("RESEND_API_KEY must be set");
+    let resend_domain = dotenv::var("RESEND_DOMAIN").expect("RESEND_DOMAIN must be set");
+    let redis_url = dotenv::var("REDIS_URL").expect("REDIS_URL must be set");
+    let hostname = dotenv::var("HOSTNAME").expect("HOSTNAME must be set");
 
     Self {
       database_url,
@@ -67,7 +59,8 @@ pub struct AppState {
 }
 
 impl AppState {
-  pub async fn new(env: &EnvVariables) -> Result<Self, Box<dyn error::Error>> {
+  pub(super) async fn new() -> Result<Self, Box<dyn error::Error>> {
+    let env = EnvVariables::from_env();
 
     let pool = PgPoolOptions::new()
       .max_connections(20)
@@ -78,7 +71,7 @@ impl AppState {
       .await?;
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);
-    
+
     let r2 = R2::new(
       &env.cloudflare_account_id,
       env.access_key_id.to_string(),

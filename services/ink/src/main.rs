@@ -1,9 +1,9 @@
-use ink::{serve, EnvVariables};
-use shuttle_runtime::SecretStore;
+use ink::router;
 
-#[shuttle_runtime::main]
-async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
-  let env = EnvVariables::from_env(secrets);
+#[tokio::main]
+async fn main() {
+  let app = router().await.expect("Failed to create router");
 
-  serve(env).await
+  let listener = tokio::net::TcpListener::bind("0.0.0.0:6969").await.unwrap();
+  axum::serve(listener, app).await.unwrap();
 }

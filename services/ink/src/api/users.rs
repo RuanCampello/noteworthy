@@ -7,8 +7,8 @@ use crate::models::users_preferences::UserPreferences;
 use crate::utils::image::resize_and_reduce_image;
 use crate::utils::mailer::Mailer;
 use crate::utils::middleware::AuthUser;
-use crate::utils::{cache::Cache, constants::USER_PROFILE_KEY};
 use crate::utils::r2::PreSignedUrl;
+use crate::utils::{cache::Cache, constants::USER_PROFILE_KEY};
 
 use aws_sdk_s3::presigning::PresigningConfig;
 use axum::{
@@ -25,7 +25,7 @@ use tracing::info;
 use uuid::Uuid;
 use validator::{Validate, ValidateEmail, ValidationErrors};
 
-pub fn router() -> Router {
+pub(crate) fn router() -> Router {
   let user_related_routes = Router::new()
     .route(
       "/profile",
