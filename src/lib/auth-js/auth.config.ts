@@ -38,6 +38,7 @@ export default {
             password: fields.data.password,
           }),
         });
+
         switch (response.status) {
           case 400:
             throw new CredentialsSignin('');
