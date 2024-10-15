@@ -1,6 +1,6 @@
 -- Add migration script here
 
-create table accounts
+create table if not exists accounts
 (
     user_id             text not null
         constraint "account_userId_users_id_fk"

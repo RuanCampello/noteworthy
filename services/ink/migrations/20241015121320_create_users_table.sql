@@ -1,6 +1,6 @@
 -- Add migration script here
 
-create table users
+create table if not exists users
 (
     id             text not null
         primary key,

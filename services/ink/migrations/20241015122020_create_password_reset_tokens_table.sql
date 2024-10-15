@@ -1,6 +1,6 @@
 -- Add migration script here
 
-create table password_reset_tokens
+create table if not exists password_reset_tokens
 (
     id      serial
         primary key,

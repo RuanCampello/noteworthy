@@ -1,6 +1,6 @@
 -- Add migration script here
 
-create table users_preferences
+create table if not exists users_preferences
 (
     id          serial
         primary key,

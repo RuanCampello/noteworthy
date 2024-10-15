@@ -70,7 +70,9 @@ impl AppState {
       .connect(&env.database_url)
       .await?;
 
-    sqlx::migrate!("./migrations").run(&pool).await?;
+    if cfg!(debug_assertions) {
+      sqlx::migrate!("./migrations").run(&pool).await?;
+    }
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);
 

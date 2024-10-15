@@ -2,7 +2,7 @@
 
 create extension if not exists "pgcrypto";
 
-create table notes
+create table if not exists notes
 (
     id           uuid         default gen_random_uuid() not null
         primary key,
