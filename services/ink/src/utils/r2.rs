@@ -22,7 +22,7 @@ impl R2 {
 
     let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28()).await;
     let s3 = aws_sdk_s3::config::Builder::from(&s3_config)
-      .force_path_style(true)
+      .force_path_style(cfg!(debug_assertions))
       .credentials_provider(shared_cred)
       .endpoint_url(endpoint)
       .timeout_config(timeout)
