@@ -21,6 +21,10 @@ const nextConfig = {
         protocol: 'https',
       },
       {
+        hostname: 'minio',
+        protocol: 'http',
+      },
+      {
         hostname: `${cf_hostname}.r2.cloudflarestorage.com`,
         protocol: 'https',
         pathname: '**',

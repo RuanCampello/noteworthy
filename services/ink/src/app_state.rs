@@ -10,7 +10,7 @@ use std::time::Duration;
 pub struct EnvVariables {
   pub database_url: String,
   pub jwt_secret: String,
-  pub cloudflare_account_id: String,
+  pub cloudflare_endpoint: String,
   pub access_key_id: String,
   pub secret_access_key: String,
   pub resend_api_key: String,
@@ -25,8 +25,8 @@ impl EnvVariables {
 
     let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let jwt_secret = dotenv::var("AUTH_SECRET").expect("AUTH_SECRET must be set");
-    let cloudflare_account_id =
-      dotenv::var("CLOUDFLARE_ACCOUNT_ID").expect("CLOUDFLARE_ACCOUNT_ID must be set");
+    let cloudflare_endpoint =
+      dotenv::var("CLOUDFLARE_ENDPOINT").expect("CLOUDFLARE_ENDPOINT must be set");
     let access_key_id =
       dotenv::var("CLOUDFLARE_ACCESS_KEY").expect("CLOUDFLARE_ACCESS_KEY must be set");
     let secret_access_key =
@@ -39,7 +39,7 @@ impl EnvVariables {
     Self {
       database_url,
       jwt_secret,
-      cloudflare_account_id,
+      cloudflare_endpoint,
       access_key_id,
       secret_access_key,
       resend_api_key,
@@ -66,16 +66,18 @@ impl AppState {
       .max_connections(20)
       .max_lifetime(Duration::from_secs(120))
       .idle_timeout(Duration::from_secs(120))
-      .acquire_timeout(Duration::from_secs(15))
+      .acquire_timeout(Duration::from_secs(30))
       .connect(&env.database_url)
       .await?;
+
+    sqlx::migrate!("./migrations").run(&pool).await?;
 
     let jwt_manager = JwtManager::new(&env.jwt_secret);
 
     let r2 = R2::new(
-      &env.cloudflare_account_id,
       env.access_key_id.to_string(),
       env.secret_access_key.to_string(),
+      env.cloudflare_endpoint,
     )
     .await;
 

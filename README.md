@@ -150,11 +150,14 @@ To run Noteworthy locally, follow these steps:
    ```sh
    docker-compose up --build # or docker compose up --build
    ```
+   
+5. Enjoy the Rust compilation time :D
 
-5. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
+
+6. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
 
 > [!IMPORTANT]
-> OAuth, Password Reset and Profile Image Uploads: In the development environment, OAuth authentication, password reset mailer and profile image updates are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment. Image uploads use Cloudflare environment variables, which are also not set in Docker. So do Resend.
+> OAuth and Password Reset: In the development environment, OAuth authentication and password reset mailer are disabled. OAuth requires GitHub and Google environment variables, which are not set in the Docker environment, so do Resend.
 
 ## Internationalisation (i18n) Support
 

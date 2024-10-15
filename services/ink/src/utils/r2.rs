@@ -12,23 +12,24 @@ pub struct R2 {
 }
 
 impl R2 {
-  pub async fn new(account_id: &str, access_key: String, secret_key: String) -> Self {
-    let endpoint = format!("https://{}.r2.cloudflarestorage.com", account_id);
-
+  pub async fn new(access_key: String, secret_key: String, endpoint: String) -> Self {
     let credentials = Credentials::new(access_key, secret_key, None, None, "custom");
-
+    let timeout = aws_config::timeout::TimeoutConfig::builder()
+      .connect_timeout(Duration::from_secs(30))
+      .build();
     let shared_cred = SharedCredentialsProvider::new(credentials);
     let region = Region::new("us-east-1");
 
-    let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28())
-      .await
-      .into_builder()
+    let s3_config = aws_config::load_defaults(BehaviorVersion::v2024_03_28()).await;
+    let s3 = aws_sdk_s3::config::Builder::from(&s3_config)
+      .force_path_style(true)
       .credentials_provider(shared_cred)
       .endpoint_url(endpoint)
+      .timeout_config(timeout)
       .region(region)
       .build();
 
-    let client = Client::new(&s3_config);
+    let client = Client::from_conf(s3);
 
     Self { client }
   }

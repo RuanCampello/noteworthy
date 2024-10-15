@@ -1,30 +1,103 @@
 services:
+  # Database
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  # Server
+  ink:
+    image: rust:bookworm
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/db
+      REDIS_URL: redis://redis:6379
+      AUTH_SECRET: 99gSMXUgjiByJ5Fy # base64 secret to jwt encoding/decoding
+      CLOUDFLARE_ENDPOINT: http://minio:9000
+      CLOUDFLARE_ACCESS_KEY: minioadmin
+      CLOUDFLARE_SECRET_KEY: minioadmin
+      RESEND_API_KEY: something
+      RESEND_DOMAIN: something
+      HOSTNAME: http://locahost:3000
+    volumes:
+      - ./services/ink:/app
+    working_dir: /app
+    command: cargo run
+    entrypoint:  sh -c "cargo build && cargo run"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - app_network
+
+  # S3 compatible API for dev
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DOMAIN: minio
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # web console
+    volumes:
+      - minio_data:/data
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  # Next.js
   nextjs:
-    image: node:18-alpine
+    image: node:latest
     working_dir: /app
     volumes:
       - .:/app
     ports:
-      - '3000:3000'
-    command: sh -c "npx drizzle-kit push && npm run dev"
+      - "3000:3000"
+    command: npm run dev
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - AUTH_SECRET=123456789
-      - NEXT_PUBLIC_HOSTNAME=http://localhost:3000
+      NEXT_PUBLIC_HOSTNAME: http://localhost:3000
+      INK_HOSTNAME: http://ink:8000
+      AUTH_SECRET: 99gSMXUgjiByJ5Fy # base64 secret to jwt encoding/decoding
     depends_on:
-      - postgres
+      - ink
     dns:
       - 8.8.8.8
       - 8.8.4.4
-  postgres:
-    image: 'postgres:15-alpine'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+networks:
+  app_network:
+
 volumes:
   postgres_data:
+  minio_data:

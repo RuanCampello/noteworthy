@@ -25,12 +25,13 @@ export default async function Profile() {
     await signOut();
   }
 
-  const image_url = await getUserProfileImage();
+  const imageUrl = await getUserProfileImage();
+  // TODO: imagUrl loading on a client component but not on the server component in dev
 
   return (
     <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
-        <Avatar source={image_url} fallback={user.name[0].toUpperCase()} />
+        <Avatar source={imageUrl} fallback={user.name[0].toUpperCase()} />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
           <h2 className='text-lg leading-none font-semibold trucate'>
             {user.name}
