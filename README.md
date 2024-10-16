@@ -9,15 +9,11 @@
   </p>
  
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Shadcn](https://img.shields.io/badge/shadcn-ui?style=flat-square&logo=shadcn%2Fui&color=000)](https://ui.shadcn.com/)
-[![Drizzle](https://img.shields.io/badge/drizzle-0?style=flat-square&logo=drizzle&logoColor=%23C5F74F&color=121212)](https://orm.drizzle.team/)
-[![Resend](https://img.shields.io/badge/resend-0?style=flat-square&logo=resend&color=101010)](https://resend.com)
-[![Zod](https://img.shields.io/badge/zod-0?style=flat-square&logo=zod&logoColor=white&color=023e8a)](https://zod.dev)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-0?style=flat-square&logo=postgresql&logoColor=white&color=023e8a)](https://www.postgresql.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-000?style=flat-square&logo=cloudflare&logoColor=fff&color=f77f00)](https://www.cloudflare.com/)
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-blueviolet?style=flat-square)](https://noteworthy-ebon.vercel.app/)
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://choosealicense.com/licenses/mit/)
+[![Rust](https://img.shields.io/badge/Rust-20?style=flat-square&logo=rust&color=%23fb5607)](https://www.rust-lang.org/)
 
 </div>
 
