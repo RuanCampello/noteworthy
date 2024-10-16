@@ -232,7 +232,7 @@ async fn find_all_user_notes(
     .fetch_all(&state.database)
     .await?;
 
-  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
+  let regex = Regex::new(r"<[^>]*>|&nbsp;").expect("Invalid regex");
 
   let stripped_notes = notes
     .into_iter()
@@ -392,10 +392,9 @@ async fn search_notes(
       note.content = regex.replace_all(&note.content, "").to_string();
       if search_regex.is_match(&note.highlighted_content) {
         let cleaned_up = strip_html_except_search(&note.highlighted_content);
-        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML")
-      } else {
-        let cleaned_up = regex.replace_all(&note.content, "").to_string();
         note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML");
+      } else {
+        note.highlighted_content = sanitize_str(&RULES(), &note.content).expect("Invalid HTML");
       }
       note
     })

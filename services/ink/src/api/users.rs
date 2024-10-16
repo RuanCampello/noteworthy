@@ -96,7 +96,7 @@ struct RegisterRequest {
 async fn create_user(
   Extension(state): Extension<AppState>,
   Json(req): Json<RegisterRequest>,
-) -> Result<String, UserError> {
+) -> Result<Json<String>, UserError> {
   req.validate()?;
 
   let user = find_user_by_email(&req.email, &state.database).await?;
@@ -119,7 +119,7 @@ async fn create_user(
     .fetch_one(&state.database)
     .await?;
 
-  Ok(id)
+  Ok(Json(id))
 }
 
 async fn refresh_user_token(
