@@ -2,6 +2,7 @@
 
 import { env } from '@/env';
 import { auth, signIn } from '@/lib/auth-js/auth';
+import { setUserLocale } from '@/lib/next-intl';
 import { Filter } from '@/lib/zustand/search-filter';
 import { DEFAULT_REDIRECT } from '@/routes';
 import {
@@ -565,15 +566,18 @@ export async function updateUserPreferences(
 
   const fields = userPreferencesSchema.safeParse(values);
   if (!fields.success) return { error: 'Invalid fields' };
-
-  await fetch(`${env.INK_HOSTNAME}/users/preferences`, {
-    method: 'put',
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${user.accessToken}`,
-    },
-    body: JSON.stringify(fields.data),
-  });
+ 
+  await Promise.all([
+    setUserLocale(fields.data.language),
+    fetch(`${env.INK_HOSTNAME}/users/preferences`, {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      body: JSON.stringify(fields.data),
+    }),
+  ]);
 
   revalidateTag('user-preferences');
 }
