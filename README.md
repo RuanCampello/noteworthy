@@ -146,9 +146,8 @@ To run Noteworthy locally, follow these steps:
    ```sh
    docker-compose up --build # or docker compose up --build
    ```
-   
-5. Enjoy the Rust compilation time :D
 
+5. Enjoy the Rust compilation time :D
 
 6. **Open your web browser** and visit [http://localhost:3000](http://localhost:3000).
 

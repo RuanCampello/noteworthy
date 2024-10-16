@@ -566,7 +566,7 @@ export async function updateUserPreferences(
 
   const fields = userPreferencesSchema.safeParse(values);
   if (!fields.success) return { error: 'Invalid fields' };
- 
+
   await Promise.all([
     setUserLocale(fields.data.language),
     fetch(`${env.INK_HOSTNAME}/users/preferences`, {
