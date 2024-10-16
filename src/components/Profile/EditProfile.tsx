@@ -1,6 +1,6 @@
 'use client';
 
-import { getUserProfileImage, uploadUserImage } from '@/actions';
+import { getUserProfileImage, currentUser, uploadUserImage } from '@/actions';
 import { CustomForm } from '@/components/Form';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
@@ -16,7 +16,7 @@ import {
 import { Input } from '@/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, X } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import type { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState, useTransition, type ChangeEvent, useEffect } from 'react';
@@ -36,15 +36,18 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [imageUrl, setImageUrl] = useState<string>();
   const [loading, startTransition] = useTransition();
-  const { data: session, update } = useSession();
   const { setOpen: setSettings } = useSettingsStore();
   const { setOpen: setSettingsDialog } = useSettingsDialogStore();
   const t = useTranslations('Profile');
-  const user = session?.user;
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     startTransition(async () => {
-      const image = await getUserProfileImage();
+      const [user, image] = await Promise.all([
+        currentUser(),
+        getUserProfileImage(),
+      ]);
+      setUser(user);
       image && setImageUrl(image);
     });
   }, []);
@@ -61,16 +64,9 @@ export default function EditProfile() {
     name: 'name',
   });
 
-  if (!user) return;
-
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      if (!user?.id || isOAuthImage) return;
-      // TODO: remove this update logic from client
-      if (name !== user.name) {
-        await update({ name: currentName });
-      }
-      if (image && image[0]) {
+      if (!isOAuthImage && image && image[0]) {
         const formData = new FormData();
         const file: File = image[0];
         formData.append('image', file);
@@ -90,6 +86,7 @@ export default function EditProfile() {
     }
   }
 
+  if (!user) return;
   const { name, image } = user;
 
   const isOAuthImage =
@@ -125,14 +122,19 @@ export default function EditProfile() {
                     <X size={16} />
                   </button>
                 )}
-
-                <Image
-                  className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-md text-4xl font-semibold text-center items-center w-28 h-28 shrink-0 object-cover flex justify-center'
-                  width={128}
-                  height={128}
-                  src={selectedImage || image || imageUrl || ''}
-                  alt={(name && name[0].toUpperCase()) || ''}
-                />
+                <div className='w-28 h-28 min-w-28 min-h-28 shrink-0 flex items-center justify-center border-red-400 border-2'>
+                  {!loading ? (
+                    <Image
+                      className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-md text-4xl font-semibold text-center items-center w-full h-full shrink-0 object-cover flex justify-center'
+                      width={128}
+                      height={128}
+                      src={selectedImage || image || imageUrl || ''}
+                      alt={(name && name[0].toUpperCase()) || ''}
+                    />
+                  ) : (
+                    <Loader2 size={32} className='animate-spin' />
+                  )}
+                </div>
               </FormLabel>
               <FormControl>
                 <CustomForm.Input
