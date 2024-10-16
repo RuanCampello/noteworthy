@@ -412,8 +412,7 @@ export const getUserProfileImage = cache(async () => {
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
       },
-      next: { tags: ['profile-image'] },
-      cache: 'force-cache',
+      next: { tags: ['profile-image'], revalidate: 3600 },
     });
 
     return await response.text();
