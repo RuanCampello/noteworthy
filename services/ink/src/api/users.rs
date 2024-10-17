@@ -10,7 +10,6 @@ use crate::utils::middleware::AuthUser;
 use crate::utils::r2::PreSignedUrl;
 use crate::utils::{cache::Cache, constants::USER_PROFILE_KEY};
 
-use aws_sdk_s3::presigning::PresigningConfig;
 use axum::{
   extract::{Json, Multipart, Path},
   routing::{get, post, put},
@@ -20,7 +19,6 @@ use bcrypt::{hash, verify};
 use chrono::Local;
 use serde::Deserialize;
 use sqlx::PgPool;
-use std::time::Duration;
 use tracing::info;
 use uuid::Uuid;
 use validator::{Validate, ValidateEmail, ValidationErrors};
@@ -29,7 +27,7 @@ pub(crate) fn router() -> Router {
   let user_related_routes = Router::new()
     .route(
       "/profile",
-      post(upload_user_profile_image).get(find_user_profile_image),
+      post(update_user_profile).get(find_user_profile_image),
     )
     .route("/reset-password/:token", post(reset_user_password))
     .route("/new-password-token/:email", post(new_reset_token))
@@ -334,7 +332,7 @@ async fn get_user_preferences(
     .bind(user.id)
     .fetch_optional(&state.database)
     .await?
-    .unwrap_or_else(|| UserPreferences {
+    .unwrap_or(UserPreferences {
       full_note: true,
       note_format: NoteFormat::Full,
     });
@@ -342,38 +340,69 @@ async fn get_user_preferences(
   Ok(Json(preferences))
 }
 
-async fn upload_user_profile_image(
+async fn update_user_profile(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   mut multipart: Multipart,
 ) -> Result<(), UserError> {
-  let mut field = multipart
+  let mut file_bytes = None;
+  let mut name = None;
+
+  while let Some(field) = multipart
     .next_field()
     .await
     .map_err(|_| UserError::MultipartRequired)?
-    .ok_or(UserError::MultipartRequired)?;
-
-  let mut file_bytes = Vec::new();
-
-  while let Some(chunk) = field
-    .chunk()
-    .await
-    .map_err(|_| UserError::MultipartRequired)?
   {
-    file_bytes.extend_from_slice(&chunk);
+    match field.name() {
+      Some("image") => {
+        file_bytes = Some(field.bytes().await.expect("Error reading file"));
+      }
+      Some("name") => {
+        name = Some(field.text().await.expect("Error reading text"));
+      }
+      _ => {}
+    }
   }
 
-  let compressed_image = resize_and_reduce_image(file_bytes)?;
+  let update_name_task = async {
+    if let Some(name) = name {
+      info!("Updating name for user {}", &user.id);
+      let query = "UPDATE users SET name = $2 WHERE id = $1";
+      sqlx::query(query)
+        .bind(&user.id)
+        .bind(name)
+        .execute(&state.database)
+        .await?;
+    }
+    Ok::<(), UserError>(())
+  };
+  let upload_task = async {
+    if let Some(bytes) = file_bytes {
+      info!("Uploading image for user {}", &user.id);
+      let compressed_image = resize_and_reduce_image(Vec::from(bytes))?;
+      state
+        .r2
+        .create_presigned_url(BUCKET_NAME, &user.id, compressed_image)
+        .await?;
+    }
+    Ok::<(), UserError>(())
+  };
+
   let cache_key = format!("{}{}", USER_PROFILE_KEY, &user.id);
 
-  let (_cache_result, upload_result) = tokio::join!(
-    state.cache.del(&cache_key),
-    state
-      .r2
-      .create_presigned_url(BUCKET_NAME, &user.id, compressed_image)
-  );
+  let cache_task = async {
+    info!("Deleting cache image for user {}", &user.id);
+    state.cache.del(&cache_key).await?;
+    Ok::<(), UserError>(())
+  };
 
-  upload_result
+  let (upload_task, update_name_task, cache_task) =
+    tokio::join!(upload_task, update_name_task, cache_task);
+
+  upload_task?;
+  update_name_task?;
+
+  Ok(())
 }
 
 async fn find_user_profile_image(

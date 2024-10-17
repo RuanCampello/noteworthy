@@ -379,6 +379,7 @@ export async function getRespectiveNotes() {
 // that then compacts and uploads the image to cloudflare using the
 // userId as a key. Also, revalidates the profile image in success case.
 export async function uploadUserImage(data: FormData) {
+  console.log('here');
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
 

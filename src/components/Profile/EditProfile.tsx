@@ -52,10 +52,16 @@ export default function EditProfile() {
     });
   }, []);
 
+  useEffect(() => {
+    if (user && user?.name) {
+      editProfileForm.setValue('name', user.name);
+    }
+  }, [user]);
+
   const editProfileForm = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: user?.name || '',
+      name: '',
     },
   });
 
@@ -66,10 +72,16 @@ export default function EditProfile() {
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      if (!isOAuthImage && image && image[0]) {
+      console.log('on transition');
+      if (!isOAuthImage) {
         const formData = new FormData();
-        const file: File = image[0];
-        formData.append('image', file);
+        if (image && image?.length > 0) {
+          const file: File = image[0];
+          formData.append('image', file);
+        }
+        formData.append('name', name);
+
+        console.log('On handle');
 
         await uploadUserImage(formData);
         setSettings(false);
@@ -122,7 +134,7 @@ export default function EditProfile() {
                     <X size={16} />
                   </button>
                 )}
-                <div className='w-28 h-28 min-w-28 min-h-28 shrink-0 flex items-center justify-center border-red-400 border-2'>
+                <div className='w-28 h-28 min-w-28 min-h-28 shrink-0 flex items-center justify-center'>
                   {!loading ? (
                     <Image
                       className='bg-slate hover:bg-slate/80 hover:text-silver transition-colors ease-in-out rounded-md text-4xl font-semibold text-center items-center w-full h-full shrink-0 object-cover flex justify-center'
@@ -166,6 +178,7 @@ export default function EditProfile() {
                   <Input
                     type='text'
                     className='bg-black dark col-span-3 focus:outline focus:ring-transparent'
+                    // defaultValue={user?.name!}
                     {...field}
                   />
                 </FormControl>
