@@ -396,7 +396,7 @@ async fn update_user_profile(
     Ok::<(), UserError>(())
   };
 
-  let (upload_task, update_name_task, cache_task) =
+  let (upload_task, update_name_task, _cache_task) =
     tokio::join!(upload_task, update_name_task, cache_task);
 
   upload_task?;

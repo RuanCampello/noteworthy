@@ -3,19 +3,14 @@ use crate::errors::NoteError;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::{
-  constants::HELLO_WORLD,
-  middleware::AuthUser,
-  sanitization::{strip_html_except_search, RULES},
-};
+use crate::utils::sanitization::Sanitize;
+use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
 use axum::{
   extract::{Json, Path, Query},
   routing::{delete, get, patch, post},
   Extension, Router,
 };
 use chrono::Local;
-use regex::Regex;
-use sanitize_html::sanitize_str;
 use serde::Deserialize;
 use uuid::Uuid;
 use validator::Validate;
@@ -225,24 +220,19 @@ async fn find_all_user_notes(
   let is_fav = params.is_fav.unwrap_or(false);
   let is_arc = params.is_arc.unwrap_or(false);
 
-  let notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
+  let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
     .bind(is_fav)
     .bind(is_arc)
     .fetch_all(&state.database)
     .await?;
 
-  let regex = Regex::new(r"<[^>]*>|&nbsp;").expect("Invalid regex");
+  // removes any extra html from the content to show it clean in the sidebar
+  notes.iter_mut().for_each(|note| {
+    note.content = note.content.sanitize_html();
+  });
 
-  let stripped_notes = notes
-    .into_iter()
-    .map(|mut note| {
-      note.content = regex.replace_all(&note.content, "").to_string();
-      note
-    })
-    .collect::<Vec<_>>();
-
-  Ok(Json(stripped_notes))
+  Ok(Json(notes))
 }
 
 #[derive(Deserialize)]
@@ -364,7 +354,7 @@ async fn search_notes(
 ) -> Result<Json<Vec<SearchResult>>, NoteError> {
   let mut query = r#"
       SELECT id, title, LEFT(content, 300) AS content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
-      'MaxWords=30, MinWords=20, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
+      'MaxWords=20, MinWords=10, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
       FROM notes
       WHERE user_id = $1
       AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
@@ -377,30 +367,18 @@ async fn search_notes(
     query.push_str(" AND is_archived = true")
   };
 
-  let notes_found = sqlx::query_as::<_, SearchResult>(query.as_str())
+  let mut notes_found = sqlx::query_as::<_, SearchResult>(query.as_str())
     .bind(user.id)
     .bind(params.q)
     .fetch_all(&state.database)
     .await?;
 
-  let regex = Regex::new(r"<[^>]*>").expect("Invalid regex");
-  let search_regex = Regex::new(r"<search>.*?</search>").expect("Invalid regex");
+  notes_found.iter_mut().for_each(|note| {
+    note.content = note.content.sanitize_html();
+    note.highlighted_content = note.highlighted_content.sanitize_html();
+  });
 
-  let stripped_notes_found = notes_found
-    .into_iter()
-    .map(|mut note| {
-      note.content = regex.replace_all(&note.content, "").to_string();
-      if search_regex.is_match(&note.highlighted_content) {
-        let cleaned_up = strip_html_except_search(&note.highlighted_content);
-        note.highlighted_content = sanitize_str(&RULES(), &cleaned_up).expect("Invalid HTML");
-      } else {
-        note.highlighted_content = sanitize_str(&RULES(), &note.content).expect("Invalid HTML");
-      }
-      note
-    })
-    .collect::<Vec<_>>();
-
-  Ok(Json(stripped_notes_found))
+  Ok(Json(notes_found))
 }
 
 async fn count_user_notes(

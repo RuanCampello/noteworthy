@@ -1,5 +1,3 @@
--- Add migration script here
-
 create extension if not exists "pgcrypto";
 
 create table if not exists notes

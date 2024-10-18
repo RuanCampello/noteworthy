@@ -1,5 +1,3 @@
--- Add migration script here
-
 create table if not exists accounts
 (
     user_id             text not null

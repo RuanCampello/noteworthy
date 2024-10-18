@@ -14,7 +14,7 @@ pub async fn router() -> Result<Router, Box<dyn std::error::Error>> {
   tracing_subscriber::fmt::init();
   
   let app_state = AppState::new().await.expect("Failed to create app state");
-  let mailer = Mailer::new();
+  let mailer = Mailer::default();
 
   let cors = CorsLayer::new()
     .allow_origin(Any)
@@ -29,5 +29,5 @@ pub async fn router() -> Result<Router, Box<dyn std::error::Error>> {
     .layer(Extension(mailer))
     .layer(cors);
 
-  Ok(router.into())
+  Ok(router)
 }

@@ -1,5 +1,3 @@
--- Add migration script here
-
 create table if not exists password_reset_tokens
 (
     id      serial

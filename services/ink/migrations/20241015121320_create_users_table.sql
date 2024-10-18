@@ -1,5 +1,3 @@
--- Add migration script here
-
 create table if not exists users
 (
     id             text not null
