@@ -1,12 +1,6 @@
-import type { Note } from '@/types/Note';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { allowedFilters, type Filters } from './constants/filters';
-
-export type FilteredResults = {
-  notes: Note[];
-  searchParam?: string;
-};
 
 function getSearchParams(): string | null {
   return headers().get('search-params');

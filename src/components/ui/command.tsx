@@ -1,6 +1,6 @@
 import { generateNote } from '@/actions';
 import NotFound from '@/assets/svg/oooscillate.svg';
-import { NoteItemWrapper } from '@/components/Search/Item';
+import { CommandItem } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
 import { type Action, useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
@@ -8,22 +8,22 @@ import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { DialogOverlay, DialogPortal } from '@/ui/dialog';
 import type { InputProps } from '@/ui/input';
+import { Input } from '@/ui/input';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
+  FilePlus2,
   Loader,
   NotebookText,
   NotepadTextDashed,
   Package,
   Search,
-  Sparkle,
-  FilePlus2,
   Settings,
+  Sparkle,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
-import { Input } from '@/ui/input';
 
 function RenderInputIcon() {
   const baseIcon =
@@ -163,7 +163,7 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
       content = <NotFoundFallback query={query} />;
     } else if (shouldRender) {
       content = searchResults.map((item, i) => (
-        <NoteItemWrapper
+        <CommandItem
           key={item.id}
           aria-selected={i === activeIndex}
           content={item.highlightedContent || item.content}
@@ -185,7 +185,7 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
         )}
         {...props}
       >
-        {!notFound && <CommandSeparator heading={t('search_res')} />}
+        {shouldRender && <CommandSeparator heading={t('search_res')} />}
         {content}
       </div>
     );
@@ -227,13 +227,13 @@ function CommandActions() {
   }, []);
 
   return (
-    <div className='flex flex-col m-1'>
+    <div className='flex flex-col m-1 select-none'>
       <CommandSeparator heading={t('quick_act')} />
       {actions.map((action, i) => {
         const actualI = i + searchResults.length;
 
         return (
-          <NoteItemWrapper
+          <CommandItem
             aria-selected={actualI === activeIndex}
             key={actualI}
             onMouseEnter={() => selectItem(actualI)}
@@ -275,7 +275,7 @@ function LoadingFallback() {
 function NotFoundFallback({ query }: { query: string }) {
   const t = useTranslations('Search');
   return (
-    <div className='w-full flex justify-center py-2'>
+    <div className='w-full flex justify-center py-2 select-none'>
       <div className='items-center flex flex-col'>
         <NotepadTextDashed className='w-6 h-6' />
         <h2 className='font-semibold text-base my-1.5'> {t('not_found_t')} </h2>

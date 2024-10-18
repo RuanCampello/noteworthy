@@ -17,13 +17,14 @@ services:
       retries: 5
     networks:
       - app_network
+    restart: unless-stopped
 
   # Server
   ink:
     image: rust:bookworm
     depends_on:
       db:
-        condition: service_healthy
+        condition: service_started
       minio:
         condition: service_started
       redis:
@@ -44,7 +45,7 @@ services:
       - ./services/ink:/app
     working_dir: /app
     command: cargo run
-    entrypoint:  sh -c "cargo build && cargo run"
+    entrypoint: sh -c "cargo build && cargo run"
     dns:
       - 8.8.8.8
       - 8.8.4.4

@@ -191,11 +191,11 @@
     "arc_placeholder": "Procure por notas arquivadas...",
     "quick_act": "Ações rápidas",
     "search_res": "Resultados da busca",
-    "new_note": "Crie uma nova nota",
+    "new_note": "Criar uma nota nova",
     "open_settings": "Abrir configurações",
     "not_found_t": "Nada encontrado",
     "not_found": "não correspondeu a nada.",
-    "try_again": "Por favor, tente novamente ou crie uma nova nota."
+    "try_again": "Por favor, tente novamente ou crie uma nota nova."
   },
   "SearchFooter": {
     "nav": "navegar",

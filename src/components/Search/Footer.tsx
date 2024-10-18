@@ -30,7 +30,7 @@ function FooterIconWrapper({ icon: Icon, text, ...props }: IconProps) {
 
 function FooterWrapper({ children }: Props) {
   return (
-    <footer className='p-1 border-t text-sm text-silver font-medium flex gap-4'>
+    <footer className='p-1 border-t text-sm text-silver font-medium flex gap-4 select-none'>
       {children}
     </footer>
   );

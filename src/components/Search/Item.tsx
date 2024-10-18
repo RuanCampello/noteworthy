@@ -7,7 +7,7 @@ interface ItemWrapper extends AnchorHTMLAttributes<HTMLAnchorElement> {
   title: string;
 }
 
-export const NoteItemWrapper = forwardRef<HTMLAnchorElement, ItemWrapper>(
+export const CommandItem = forwardRef<HTMLAnchorElement, ItemWrapper>(
   ({ icon, content, title, ...props }, ref) => (
     <a
       ref={ref}
