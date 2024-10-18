@@ -343,8 +343,8 @@ pub async fn find_note_public_state(
 #[derive(Deserialize)]
 struct SearchParams {
   pub q: String,
-  pub is_fav: bool,
-  pub is_arc: bool,
+  pub is_fav: Option<bool>,
+  pub is_arc: Option<bool>,
 }
 
 async fn search_notes(
@@ -352,24 +352,30 @@ async fn search_notes(
   Query(params): Query<SearchParams>,
   AuthUser(user): AuthUser,
 ) -> Result<Json<Vec<SearchResult>>, NoteError> {
-  let mut query = r#"
-      SELECT id, title, LEFT(content, 300) AS content, ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
-      'MaxWords=20, MinWords=10, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
+  let mut query = String::from(
+    r#"
+      SELECT id, title, LEFT(content, 300) AS content,
+      ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
+      'MaxWords=25, MinWords=15, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
       FROM notes
       WHERE user_id = $1
       AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
-      LIMIT 5
-    "#.to_string();
+    "#,
+  );
 
-  if params.is_fav {
-    query.push_str(" AND is_favourite = true")
-  } else if params.is_arc {
-    query.push_str(" AND is_archived = true")
+  if let Some(is_fav) = params.is_fav {
+    query.push_str(&format!(" AND is_favourite = {}", is_fav))
   };
 
-  let mut notes_found = sqlx::query_as::<_, SearchResult>(query.as_str())
+  if let Some(is_arc) = params.is_arc {
+    query.push_str(&format!(" AND is_archived = {}", is_arc))
+  };
+
+  query.push_str(" LIMIT 5");
+
+  let mut notes_found = sqlx::query_as::<_, SearchResult>(&query)
     .bind(user.id)
-    .bind(params.q)
+    .bind(&params.q)
     .fetch_all(&state.database)
     .await?;
 

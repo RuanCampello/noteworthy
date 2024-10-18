@@ -317,20 +317,15 @@ export const searchNotes = cache(
     const user = await currentUser();
     if (!user || !user?.accessToken) return null;
 
-    let search_filter: string;
+    let search_filter: string = '';
 
     switch (filter) {
       case 'Archived': {
-        search_filter = '&is_arc=true&is_fav=false';
+        search_filter = '&is_arc=true';
         break;
       }
       case 'Favourites': {
-        search_filter = '&is_arc=false&is_fav=true';
-        break;
-      }
-      default: {
-        search_filter = '&is_arc=false&is_fav=false';
-        break;
+        search_filter = '&is_fav=true';
       }
     }
 
@@ -338,7 +333,7 @@ export const searchNotes = cache(
       `${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`,
       {
         method: 'get',
-        // cache: 'force-cache',
+        cache: 'force-cache',
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
