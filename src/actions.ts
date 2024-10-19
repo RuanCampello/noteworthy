@@ -167,6 +167,8 @@ export async function toggleNoteFavourite(id: string) {
 
   revalidateTag('sidebar-notes');
   revalidateTag('note-page');
+  revalidateTag('favourite-notes-counter');
+  revalidateTag('all-notes-counter');
 
   if (basePath === 'favourites') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
@@ -195,6 +197,8 @@ export async function toggleNoteArchived(id: string) {
   });
   revalidateTag('sidebar-notes');
   revalidateTag('note-page');
+  revalidateTag('archived-notes-counter');
+  revalidateTag('all-notes-counter');
 
   if (basePath === 'archived') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
@@ -303,6 +307,7 @@ export async function generateNote() {
         Authorization: `Bearer ${user.accessToken}`,
       },
     });
+
     revalidateTag('sidebar-notes');
     return await response.json();
   } catch (error) {
@@ -375,7 +380,6 @@ export async function getNotes(main = false) {
 // that then compacts and uploads the image to cloudflare using the
 // userId as a key. Also, revalidates the profile image in success case.
 export async function uploadUserImage(data: FormData) {
-  console.log('here');
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
 
@@ -387,7 +391,6 @@ export async function uploadUserImage(data: FormData) {
       method: 'post',
       body: data,
     });
-
     console.debug(await response.text());
 
     if (response.ok) revalidateTag('profile-image');

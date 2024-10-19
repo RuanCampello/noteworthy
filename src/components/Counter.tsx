@@ -14,13 +14,13 @@ export default async function Counter({
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  const subdir = isFavourite
-    ? '?is_fav=true&is_arc=false'
-    : isArchived
-      ? '?is_fav=false&is_arc=true'
-      : '?is_fav=false&is_arc=false';
+  let subdir = '';
+  if (isFavourite) subdir = '?is_fav=true';
+  else if (isArchived) subdir = '?is_arc=true';
 
   const tag = isFavourite ? 'favourite' : isArchived ? 'archived' : 'all';
+
+  console.debug(`${env.INK_HOSTNAME}/notes/count${subdir}`);
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes/count${subdir}`, {
     method: 'get',

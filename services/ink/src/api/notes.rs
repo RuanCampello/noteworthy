@@ -197,8 +197,8 @@ async fn find_note_by_id(
   Ok(Json(note))
 }
 
-#[derive(serde::Deserialize)]
-struct NoteParams {
+#[derive(Deserialize)]
+struct NoteQueryParams {
   is_fav: Option<bool>,
   is_arc: Option<bool>,
 }
@@ -215,7 +215,7 @@ const FIND_ALL_USER_NOTES_QUERY: &str = r#"
 async fn find_all_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
-  Query(params): Query<NoteParams>,
+  Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
   let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
@@ -387,7 +387,7 @@ async fn search_notes(
 async fn count_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
-  Query(params): Query<NoteParams>,
+  Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<i64>, NoteError> {
   let query = r#"
       SELECT COUNT (title) FROM notes
@@ -398,8 +398,8 @@ async fn count_user_notes(
 
   let number_of_notes = sqlx::query_scalar::<_, i64>(query)
     .bind(user.id)
-    .bind(params.is_fav)
-    .bind(params.is_arc)
+    .bind(params.is_fav.unwrap_or(false))
+    .bind(params.is_arc.unwrap_or(false))
     .fetch_one(&state.database)
     .await?;
 
