@@ -218,7 +218,6 @@ async fn find_all_user_notes(
   AuthUser(user): AuthUser,
   Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  info!("ENDPOINT HIT {}", user.id);
   
   let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
@@ -367,7 +366,6 @@ async fn search_notes(
     FROM notes, search_query
     WHERE user_id = $1
     AND (setweight(to_tsvector('english', "title"), 'A') || setweight(to_tsvector('english', "content"), 'B')) @@ query
-    ORDER BY rank DESC
     "#,
   );
 
@@ -379,7 +377,7 @@ async fn search_notes(
     query.push_str(&format!(" AND is_archived = {}", is_arc))
   };
 
-  query.push_str(" LIMIT 5");
+  query.push_str(" ORDER BY rank DESC LIMIT 5");
 
   let mut notes_found = sqlx::query_as::<_, SearchResult>(&query)
     .bind(user.id)
