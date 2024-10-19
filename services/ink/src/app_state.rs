@@ -7,20 +7,38 @@ use std::error;
 use std::time::Duration;
 
 #[derive(Clone, Debug)]
-pub struct EnvVariables {
+pub struct EnvVariables;
+
+pub struct MailerVariables {
+  pub domain: String,
+  pub api_key: String,
+  pub hostname: String,
+}
+
+pub struct CoreVariables {
   pub database_url: String,
   pub jwt_secret: String,
   pub cloudflare_endpoint: String,
   pub access_key_id: String,
   pub secret_access_key: String,
-  pub resend_api_key: String,
-  pub resend_domain: String,
   pub redis_url: String,
-  pub hostname: String,
 }
 
 impl EnvVariables {
-  pub fn from_env() -> Self {
+  pub(crate) fn mailer() -> MailerVariables {
+    dotenv::dotenv().ok();
+    let resend_api_key = dotenv::var("RESEND_API_KEY").expect("RESEND_API_KEY must be set");
+    let resend_domain = dotenv::var("RESEND_DOMAIN").expect("RESEND_DOMAIN must be set");
+    let hostname = dotenv::var("HOSTNAME").expect("HOSTNAME must be set");
+
+    MailerVariables {
+      api_key: resend_api_key,
+      domain: resend_domain,
+      hostname,
+    }
+  }
+
+  fn core() -> CoreVariables {
     dotenv::dotenv().ok();
 
     let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -31,21 +49,15 @@ impl EnvVariables {
       dotenv::var("CLOUDFLARE_ACCESS_KEY").expect("CLOUDFLARE_ACCESS_KEY must be set");
     let secret_access_key =
       dotenv::var("CLOUDFLARE_SECRET_KEY").expect("CLOUDFLARE_SECRET_KEY must be set");
-    let resend_api_key = dotenv::var("RESEND_API_KEY").expect("RESEND_API_KEY must be set");
-    let resend_domain = dotenv::var("RESEND_DOMAIN").expect("RESEND_DOMAIN must be set");
     let redis_url = dotenv::var("REDIS_URL").expect("REDIS_URL must be set");
-    let hostname = dotenv::var("HOSTNAME").expect("HOSTNAME must be set");
 
-    Self {
+    CoreVariables {
       database_url,
-      jwt_secret,
       cloudflare_endpoint,
       access_key_id,
       secret_access_key,
-      resend_api_key,
-      resend_domain,
+      jwt_secret,
       redis_url,
-      hostname,
     }
   }
 }
@@ -60,7 +72,7 @@ pub struct AppState {
 
 impl AppState {
   pub(super) async fn new() -> Result<Self, Box<dyn error::Error>> {
-    let env = EnvVariables::from_env();
+    let env = EnvVariables::core();
 
     let pool = PgPoolOptions::new()
       .max_connections(20)
