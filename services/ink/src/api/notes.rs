@@ -217,13 +217,10 @@ async fn find_all_user_notes(
   AuthUser(user): AuthUser,
   Query(params): Query<NoteParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let is_fav = params.is_fav.unwrap_or(false);
-  let is_arc = params.is_arc.unwrap_or(false);
-
   let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
-    .bind(is_fav)
-    .bind(is_arc)
+    .bind(params.is_fav.unwrap_or(false))
+    .bind(params.is_arc.unwrap_or(false))
     .fetch_all(&state.database)
     .await?;
 

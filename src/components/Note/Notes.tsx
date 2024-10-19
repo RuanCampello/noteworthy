@@ -1,10 +1,9 @@
-import { getRespectiveNotes } from '@/actions';
+import { currentUser, getNotes } from '@/actions';
 import Counter from '@/components/Counter';
 import Note from '@/components/Note/Note';
 import SearchNote from '@/components/Note/SearchNote';
 import SectionTitle from '@/components/SectionTitle';
 import SortDropdown from '@/components/SortDropdown';
-import { currentUser } from '@/actions';
 import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';
@@ -20,7 +19,7 @@ export default async function Notes() {
   const searchString = search && formatSearchParams(search[1]);
 
   const [notes, filter, t] = await Promise.all([
-    getRespectiveNotes(),
+    getNotes(true),
     getFilter(),
     getTranslations('Sidebar'),
   ]);

@@ -1,8 +1,7 @@
+import { getNotes } from '@/actions';
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/SubSidebar';
-import { env } from '@/env';
-import { currentUser } from '@/actions';
 import { Sparkles, StarOff } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
@@ -12,22 +11,7 @@ export default async function FavouriteLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const user = await currentUser();
-  if (!user?.id) return;
-
-  const response = await fetch(
-    `${env.INK_HOSTNAME}/notes?is_fav=true&is_arc=false`,
-    {
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      cache: 'force-cache',
-      next: { tags: ['note-page'] },
-    },
-  );
-
-  const favouriteNotes = await response.json();
+  const favouriteNotes = await getNotes();
 
   const t = await getTranslations('FavouritePlaceholder');
   const st = await getTranslations('SubsidebarTitles');

@@ -346,14 +346,15 @@ export const searchNotes = cache(
 
 // Makes a `get` request to `/notes` endpoint and tries to get the current user notes depending on the page.
 // If `main` params if set to true, always returns all notes.
-export async function getRespectiveNotes() {
+export async function getNotes(main = false) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return null;
   const pathname = headers().get('pathname');
 
   let filter: string = '';
-  if (pathname?.includes('/archived')) filter = '?is_fav=true';
-  else if (pathname?.includes('/favourites')) filter = '?is_arc=true';
+  if (main) filter = '';
+  else if (pathname?.includes('/archived')) filter = '?is_arc=true';
+  else if (pathname?.includes('/favourites')) filter = '?is_fav=true';
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes${filter}`, {
     method: 'get',
