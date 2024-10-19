@@ -12,7 +12,6 @@ use axum::{
 };
 use chrono::Local;
 use serde::Deserialize;
-use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -218,7 +217,6 @@ async fn find_all_user_notes(
   AuthUser(user): AuthUser,
   Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  
   let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
     .bind(user.id)
     .bind(params.is_fav.unwrap_or(false))
@@ -354,7 +352,7 @@ async fn search_notes(
   let mut query = String::from(
     r#"
     WITH search_query AS (
-      SELECT to_tsquery('english', $2 || ':*') AS query
+      SELECT plainto_tsquery('english', $2) AS query
     )
     SELECT id, title, LEFT(content, 300) AS content,
     ts_headline('english', "content", query,

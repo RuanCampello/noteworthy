@@ -326,7 +326,7 @@ export async function generateNote() {
 // Call the notes/search endpoint with q as query and an optional filter.
 export const searchNotes = cache(
   async (query: string, filter: Filter | null) => {
-    query = query.replace(/(\S) (\S)/g, '$1 & $2').trim();
+    query = query.trim();
     const user = await currentUser();
     if (!user || !user?.accessToken) return null;
 
