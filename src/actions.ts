@@ -18,6 +18,7 @@ import type { PartialNote } from '@/types/Note';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
 import { SearchResult } from '@/types/SearchResult';
 import type { UserPreferences } from '@/types/UserPreferences';
+import { Tag } from '@/utils/constants/filters';
 import { getPathnameParams } from '@/utils/format-notes';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
@@ -27,6 +28,15 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { z } from 'zod';
 
+type Tag = (typeof Tag)[keyof typeof Tag];
+
+// Helper function for revalidating the next-js cache with some types.
+function revalidate(tags: readonly Tag[]): void {
+  tags.forEach((tag) => {
+    revalidateTag(tag.toString());
+  });
+}
+
 // Look for the current logged-in user in the session.
 export const currentUser = cache(async () => {
   const session = await auth();
@@ -34,7 +44,7 @@ export const currentUser = cache(async () => {
 });
 
 // createNote calls the `notes` endpoint with a `POST` method, validate the form params
-// and revalidate the sidebar with the new created note.
+// and revalidate the sidebar, the counter and the search results with the new created note.
 export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const fields = noteDialogSchema.safeParse(values);
 
@@ -45,7 +55,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   if (!user || !user.accessToken) return;
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes`, {
-    method: 'post',
+    method: 'POST',
     headers: {
       'Content-type': 'application/json',
       Authorization: `Bearer ${user.accessToken}`,
@@ -59,7 +69,8 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
   const id = await response.json();
   const { origin, basePath } = getPathnameParams();
 
-  revalidateTag('sidebar-notes');
+  revalidate([Tag.Notes, Tag.Search, Tag.Counter.All]);
+
   if (!basePath || basePath === 'favourites' || basePath === 'archived') {
     redirect(`${origin}/notes/${id}`);
   }
@@ -70,7 +81,7 @@ export async function createNote(values: z.infer<typeof noteDialogSchema>) {
 // Makes a `POST` request to `/notes/placeholder/:userId` endpoint to create a placeholder note for the user.
 export async function createPlaceholderNote(userId: string) {
   await fetch(`${env.INK_HOSTNAME}/notes/placeholder/${userId}`, {
-    method: 'post',
+    method: 'POST',
     headers: { 'content-type': 'application/json' },
   });
 }
@@ -104,8 +115,8 @@ export async function editNote(
   } catch (error) {
     console.error(error);
   }
-  revalidateTag('sidebar-notes');
-  revalidateTag('note-page');
+
+  revalidate([Tag.Page, Tag.Notes]);
 }
 
 // deleteNote calls a `DELETE` method on the `notes/:id` endpoint,
@@ -115,14 +126,14 @@ export async function deleteNote(id: string) {
   if (!user || !user.accessToken) return;
 
   await fetch(`${env.INK_HOSTNAME}/notes/${id}`, {
-    method: 'delete',
+    method: 'DELETE',
     headers: {
       'Content-type': 'application/json',
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
-  revalidateTag('sidebar-notes');
-  redirect('/');
+
+  revalidate([Tag.Notes, Tag.Search]);
 }
 
 // updateNoteContent calls a `PATCH` on the `notes/:id/content` endpoint
@@ -142,8 +153,8 @@ export async function updateNoteContent(id: string, content: string) {
       },
       method: 'PATCH',
     });
-    revalidateTag('note-page');
-    revalidateTag('sidebar-notes');
+
+    revalidate([Tag.Notes, Tag.Page]);
   } catch (error) {
     console.error(error);
     return;
@@ -152,7 +163,7 @@ export async function updateNoteContent(id: string, content: string) {
 
 // Make a fetch with a `PATCH` method to the selected `notes/:id/favourite` endpoint
 // and redirect the user based on note `isFavourite` (boolean) attribute.
-// Also, revalidates the note with its new status and the sidebar.
+// Also, revalidates the note with its new status, the sidebar and the counters.
 export async function toggleNoteFavourite(id: string) {
   const { basePath, origin } = getPathnameParams();
   const user = await currentUser();
@@ -165,10 +176,7 @@ export async function toggleNoteFavourite(id: string) {
     },
   });
 
-  revalidateTag('sidebar-notes');
-  revalidateTag('note-page');
-  revalidateTag('favourite-notes-counter');
-  revalidateTag('all-notes-counter');
+  revalidate([Tag.Notes, Tag.Page, Tag.Counter.Favourites, Tag.Counter.All]);
 
   if (basePath === 'favourites') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
@@ -183,7 +191,7 @@ export async function toggleNoteFavourite(id: string) {
 
 // Make a fetch with a `PATCH` method to the selected `notes/:id/archive` endpoint
 // and redirect the user based on note `isArchived` (boolean) attribute.
-// Also, revalidates the note with its new status and the sidebar.
+// Also, revalidates the note with its new status, the sidebar and the counters.
 export async function toggleNoteArchived(id: string) {
   const { basePath, origin } = getPathnameParams();
   const user = await currentUser();
@@ -195,10 +203,8 @@ export async function toggleNoteArchived(id: string) {
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
-  revalidateTag('sidebar-notes');
-  revalidateTag('note-page');
-  revalidateTag('archived-notes-counter');
-  revalidateTag('all-notes-counter');
+
+  revalidate([Tag.Notes, Tag.Page, Tag.Counter.Archived, Tag.Counter.All]);
 
   if (basePath === 'archived') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
@@ -221,7 +227,8 @@ export async function togglePublishState(id: string) {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${user.accessToken}` },
     });
-    revalidateTag('note-public-state');
+
+    revalidate([Tag.Publicity]);
   } catch (error) {
     console.error(error);
     return null;
@@ -234,9 +241,9 @@ export async function getNoteIsPublic(id: string) {
   if (!user || !user.accessToken) return;
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes/${id}/public`, {
-    method: 'get',
+    method: 'GET',
     headers: { Authorization: `Bearer ${user.accessToken}` },
-    next: { tags: ['note-public-state'] },
+    next: { tags: [Tag.Publicity] },
     cache: 'force-cache',
   });
 
@@ -259,7 +266,7 @@ export async function register(
   const { email, password, username } = fields.data;
 
   const response = await fetch(`${env.INK_HOSTNAME}/register`, {
-    method: 'post',
+    method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       email,
@@ -294,21 +301,22 @@ export async function register(
 
 // Make a request to notes/generate endpoint
 // that will try to generate a note content and title to the current user
-// with NoteHover. Will also redirect the user to the created note and revalidate the sidebar notes.
+// with Glimmer. Will also redirect the user to the created note
+// and revalidate the sidebar notes and the search results.
 export async function generateNote() {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
   try {
     const response = await fetch(`${env.INK_HOSTNAME}/notes/generate`, {
-      method: 'post',
+      method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${user.accessToken}`,
       },
     });
 
-    revalidateTag('sidebar-notes');
+    revalidate([Tag.Notes, Tag.Search]);
     return await response.json();
   } catch (error) {
     return null;
@@ -337,8 +345,11 @@ export const searchNotes = cache(
     const response = await fetch(
       `${env.INK_HOSTNAME}/notes/search?q=${query}${search_filter}`,
       {
-        method: 'get',
+        method: 'GET',
         cache: 'force-cache',
+        next: {
+          tags: [Tag.Search],
+        },
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
@@ -362,13 +373,13 @@ export async function getNotes(main = false) {
   else if (pathname?.includes('/favourites')) filter = '?is_fav=true';
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes${filter}`, {
-    method: 'get',
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
     },
     cache: 'force-cache',
     next: {
-      tags: ['sidebar-notes'],
+      tags: [Tag.Notes],
     },
   });
   if (!response.ok) return null;
@@ -388,12 +399,12 @@ export async function uploadUserImage(data: FormData) {
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
       },
-      method: 'post',
+      method: 'POST',
       body: data,
     });
     console.debug(await response.text());
 
-    if (response.ok) revalidateTag('profile-image');
+    if (response.ok) revalidate([Tag.Profile]);
   } catch (error) {
     console.error('error uploading user profile image', error);
   }
@@ -408,11 +419,11 @@ export const getUserProfileImage = cache(async () => {
 
   if (!user.image) {
     const response = await fetch(`${env.INK_HOSTNAME}/users/profile`, {
-      method: 'get',
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
       },
-      next: { tags: ['profile-image'], revalidate: 3600 },
+      next: { tags: [Tag.Profile], revalidate: 3600 },
     });
 
     return await response.text();
@@ -474,7 +485,7 @@ export async function newPassword(
   const response = await fetch(
     `${env.INK_HOSTNAME}/users/reset-password/${token}`,
     {
-      method: 'post',
+      method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ password }),
     },
@@ -501,7 +512,7 @@ export async function generatePasswordResetToken(email: string): Promise<{
   const response = await fetch(
     `${env.INK_HOSTNAME}/users/new-password-token/${email}`,
     {
-      method: 'post',
+      method: 'POST',
     },
   );
 
@@ -538,11 +549,11 @@ export async function getUserWithPreferences() {
   if (!user || !user.accessToken) return { user: null, preferences: null };
 
   const response = await fetch(`${env.INK_HOSTNAME}/users/preferences`, {
-    method: 'get',
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
     },
-    next: { tags: ['user-preferences'] },
+    next: { tags: [Tag.Preferences] },
     cache: 'force-cache',
   });
 
@@ -578,7 +589,7 @@ export async function updateUserPreferences(
     }),
   ]);
 
-  revalidateTag('user-preferences');
+  revalidate([Tag.Preferences]);
 }
 
 // Fetch the API with a `GET` request to `dictionary/:word` seeking for word's definition.
@@ -587,7 +598,7 @@ export async function getDefinition(word: string) {
     `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
     {
       method: 'GET',
-      next: { tags: ['update-definition'] },
+      next: { tags: [Tag.Definition] },
     },
   );
   try {

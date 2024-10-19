@@ -1,5 +1,6 @@
 import { currentUser } from '@/actions';
 import { env } from '@/env';
+import { Tag } from '@/utils/constants/filters';
 import AnimatedCounter from './AnimatedCounter';
 
 interface CounterProps {
@@ -18,14 +19,18 @@ export default async function Counter({
   if (isFavourite) subdir = '?is_fav=true';
   else if (isArchived) subdir = '?is_arc=true';
 
-  const tag = isFavourite ? 'favourite' : isArchived ? 'archived' : 'all';
-
-  console.debug(`${env.INK_HOSTNAME}/notes/count${subdir}`);
+  const tag = isFavourite
+    ? Tag.Counter.Favourites
+    : isArchived
+      ? Tag.Counter.Archived
+      : Tag.Counter.All;
 
   const response = await fetch(`${env.INK_HOSTNAME}/notes/count${subdir}`, {
     method: 'get',
     headers: { Authorization: `Bearer ${user.accessToken}` },
-    next: { tags: [`${tag}-notes-counter`] },
+    next: {
+      tags: [tag],
+    },
     cache: 'force-cache',
   });
 
