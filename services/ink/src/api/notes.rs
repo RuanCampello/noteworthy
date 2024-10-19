@@ -351,12 +351,20 @@ async fn search_notes(
 ) -> Result<Json<Vec<SearchResult>>, NoteError> {
   let mut query = String::from(
     r#"
-      SELECT id, title, LEFT(content, 300) AS content,
-      ts_headline('english', "content", to_tsquery('english', $2 || ':*'),
-      'MaxWords=25, MinWords=15, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content
-      FROM notes
-      WHERE user_id = $1
-      AND (to_tsvector('english', "title" || ' ' || "content") @@ to_tsquery('english', $2 || ':*'))
+    WITH search_query AS (
+      SELECT to_tsquery('english', $2 || ':*') AS query
+    )
+    SELECT id, title, LEFT(content, 300) AS content,
+    ts_headline('english', "content", query,
+    'MaxWords=25, MinWords=15, MaxFragments=3, HighlightAll=true, StartSel=<search>, StopSel=</search>') AS highlighted_content,
+    ts_rank(
+      setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', content), 'B'),
+      query
+    ) AS rank
+    FROM notes, search_query
+    WHERE user_id = $1
+    AND (setweight(to_tsvector('english', "title"), 'A') || setweight(to_tsvector('english', "content"), 'B')) @@ query
+    ORDER BY rank DESC
     "#,
   );
 
