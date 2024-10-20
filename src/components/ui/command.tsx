@@ -62,7 +62,7 @@ function RenderInputIcon() {
 const CommandInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
     const t = useTranslations('Search');
-    const { placeholder } = useFilter();
+    const placeholder = useFilter((s) => s.placeholder);
 
     return (
       <div className='flex items-center border-b px-3 z-10 bg-transparent'>
@@ -86,16 +86,16 @@ const CommandDialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
-  const { filter, toggleFilter } = useFilter();
-  const {
-    decreaseIndex,
-    increaseIndex,
-    loading,
-    searchResults,
-    actions,
-    activeIndex,
-    setOpen,
-  } = useSearch();
+  const filter = useFilter((s) => s.filter);
+  const toggleFilter = useFilter((s) => s.toggleFilter);
+
+  const decreaseIndex = useSearch((s) => s.decreaseIndex);
+  const increaseIndex = useSearch((s) => s.increaseIndex);
+  const setOpen = useSearch((s) => s.setOpen);
+  const loading = useSearch((s) => s.loading);
+  const searchResults = useSearch((s) => s.searchResults);
+  const actions = useSearch((s) => s.actions);
+  const activeIndex = useSearch((s) => s.activeIndex);
 
   const router = useRouter();
 
@@ -147,8 +147,12 @@ type CommandListProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
   ({ className, ...props }, ref) => {
-    const { searchResults, activeIndex, selectItem, loading, query } =
-      useSearch();
+    const selectItem = useSearch((s) => s.selectItem);
+    const searchResults = useSearch((s) => s.searchResults);
+    const activeIndex = useSearch((s) => s.activeIndex);
+    const loading = useSearch((s) => s.loading);
+    const query = useSearch((s) => s.query);
+
     const t = useTranslations('Search');
 
     let content;
@@ -195,10 +199,15 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
 CommandList.displayName = 'CommandList';
 
 function CommandActions() {
-  const { setOpen: setSettingsDialogOpen } = useSettingsDialogStore();
-  const { setOpen: setSettingsOpen } = useSettingsStore();
-  const { setOpen, selectItem, setActions, searchResults, activeIndex } =
-    useSearch();
+  const setSettingsDialogOpen = useSettingsDialogStore((s) => s.setOpen);
+  const setSettingsOpen = useSettingsStore((state) => state.setOpen);
+
+  const setOpen = useSearch((s) => s.setOpen);
+  const setActions = useSearch((s) => s.setActions);
+  const selectItem = useSearch((s) => s.selectItem);
+  const activeIndex = useSearch((s) => s.activeIndex);
+  const searchResults = useSearch((s) => s.searchResults);
+
   const router = useRouter();
   const t = useTranslations('Search');
 

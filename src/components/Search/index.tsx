@@ -1,22 +1,26 @@
 'use client';
 
-import { useFilter } from '@/lib/zustand/search-filter';
-import { useSearch } from '@/lib/zustand/search';
 import { searchNotes } from '@/actions';
-import { Dialog } from '@/ui/dialog';
+import { useSearch } from '@/lib/zustand/search';
+import { useFilter } from '@/lib/zustand/search-filter';
 import { Command } from '@/ui/command';
+import { Dialog } from '@/ui/dialog';
 import { ArrowDown, ArrowUp, Undo2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useTransition, useEffect } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CommandFooter } from './Footer';
 
 export default function Search() {
-  const { open, setOpen } = useSearch();
-
   const [loading, startTransition] = useTransition();
-  const { filter } = useFilter();
-  const { query, setSearchResults, setLoading, setQuery } = useSearch();
+  const filter = useFilter((s) => s.filter);
+
+  const open = useSearch((s) => s.open);
+  const setOpen = useSearch((s) => s.setOpen);
+  const query = useSearch((s) => s.query);
+  const setSearchResults = useSearch((s) => s.setSearchResults);
+  const setLoading = useSearch((s) => s.setLoading);
+  const setQuery = useSearch((s) => s.setQuery);
 
   const tf = useTranslations('SearchFooter');
 
