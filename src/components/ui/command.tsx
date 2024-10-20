@@ -10,6 +10,7 @@ import { DialogOverlay, DialogPortal } from '@/ui/dialog';
 import type { InputProps } from '@/ui/input';
 import { Input } from '@/ui/input';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import {
   FilePlus2,
   Loader,
@@ -128,6 +129,7 @@ const CommandDialogContent = React.forwardRef<
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
+        aria-describedby={'search modal content'}
         data-loading={loading}
         data-filter={filter}
         onKeyDown={handleKeyPressed}
@@ -138,6 +140,9 @@ const CommandDialogContent = React.forwardRef<
         )}
         {...props}
       >
+        <VisuallyHidden>
+          <DialogPrimitive.Title>Search Dialog Content</DialogPrimitive.Title>
+        </VisuallyHidden>
         {children}
       </DialogPrimitive.Content>
     </DialogPortal>
