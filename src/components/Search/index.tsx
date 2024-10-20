@@ -24,7 +24,7 @@ export default function Search() {
 
   const tf = useTranslations('SearchFooter');
 
-  useHotkeys('ctrl+k', () => setOpen(true), {
+  useHotkeys('ctrl+k', () => setOpen(!open), {
     enableOnContentEditable: true,
     preventDefault: true,
     enableOnFormTags: true,

@@ -63,12 +63,14 @@ const CommandInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
     const t = useTranslations('Search');
     const placeholder = useFilter((s) => s.placeholder);
+    const query = useSearch((s) => s.query);
 
     return (
       <div className='flex items-center border-b px-3 z-10 bg-transparent'>
         <RenderInputIcon />
         <Input
           ref={ref}
+          defaultValue={query}
           placeholder={t(placeholder)}
           className={cn(
             'flex h-11 w-full rounded-md bg-transparent py-3 px-0 text-sm outline-none focus-visible:ring-0 border-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 selection:bg-slate selection:text-white',
