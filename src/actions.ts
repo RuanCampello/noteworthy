@@ -169,14 +169,16 @@ export async function toggleNoteFavourite(id: string) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  await fetch(`${env.INK_HOSTNAME}/notes/${id}/favourite`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/${id}/favourite`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
 
-  revalidate([Tag.Notes, Tag.Page, Tag.Counter.Favourites, Tag.Counter.All]);
+  if (response.ok) {
+    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Favourites, Tag.Counter.All]);
+  }
 
   if (basePath === 'favourites') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
@@ -197,14 +199,16 @@ export async function toggleNoteArchived(id: string) {
   const user = await currentUser();
   if (!user || !user?.accessToken) return;
 
-  await fetch(`${env.INK_HOSTNAME}/notes/${id}/archive`, {
+  const response = await fetch(`${env.INK_HOSTNAME}/notes/${id}/archive`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${user.accessToken}`,
     },
   });
 
-  revalidate([Tag.Notes, Tag.Page, Tag.Counter.Archived, Tag.Counter.All]);
+  if (response.ok) {
+    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Archived, Tag.Counter.All]);
+  }
 
   if (basePath === 'archived') {
     const redirectUrl = new URL(`${origin}/notes/${id}`);
