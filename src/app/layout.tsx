@@ -1,5 +1,6 @@
 import Search from '@/components/Search';
 import { Toaster } from '@/components/ui/toaster';
+import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
@@ -50,6 +51,7 @@ export default async function RootLayout({
           </NextIntlClientProvider>
         </SessionProvider>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
