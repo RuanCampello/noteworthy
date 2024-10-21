@@ -1,7 +1,7 @@
 import { getNotes } from '@/actions';
 import NoNotes from '@/components/Note/NoNotes';
 import Sidebar from '@/components/Sidebar';
-import SubSidebar from '@/components/SubSidebar';
+import SubSidebar from '@/components/Sidebar/SubSidebar';
 import { Sparkles, StarOff } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
