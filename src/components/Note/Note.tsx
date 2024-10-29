@@ -89,7 +89,7 @@ export default function Note({
           ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2 group-data-[format=slim]/format:py-2 group-data-[format=slim]/format:px-3'
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2 transition-all duration-1000 group-data-[format=slim]/format:py-2 group-data-[format=slim]/format:px-3'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered

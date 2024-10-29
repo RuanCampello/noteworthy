@@ -30,7 +30,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { z } from 'zod';
 import type { Colour } from '@/types/Enums';
-import ColourSelect from '../ColourSelect';
+import ColourSelect from '@/components/ColourSelect';
 
 interface AddNoteDialogProps {
   children: ReactNode;
