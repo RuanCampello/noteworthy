@@ -11,7 +11,6 @@ import { getTranslations } from 'next-intl/server';
 import { Avatar } from './Avatar';
 import KeyboardDialog from './KeyboardDialog';
 import Menu from './Menu';
-import SettingsDialog from './SettingsDialog';
 
 export default async function Profile() {
   const t = await getTranslations('ProfileDropdown');

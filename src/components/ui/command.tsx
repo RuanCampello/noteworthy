@@ -4,8 +4,7 @@ import { CommandItem } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
 import { type Action, useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { useSettings } from '@/lib/zustand/settings';
 import { DialogOverlay, DialogPortal } from '@/ui/dialog';
 import type { InputProps } from '@/ui/input';
 import { Input } from '@/ui/input';
@@ -206,7 +205,7 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
 CommandList.displayName = 'CommandList';
 
 function CommandActions() {
-  const setSettingsDialogOpen = useSettingsDialogStore((s) => s.setOpen);
+  const setSettingsDialogOpen = useSettings((s) => s.setOpen);
 
   const setOpen = useSearch((s) => s.setOpen);
   const setActions = useSearch((s) => s.setActions);

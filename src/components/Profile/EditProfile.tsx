@@ -1,9 +1,8 @@
 'use client';
 
-import { getUserProfileImage, currentUser, uploadUserImage } from '@/actions';
+import { currentUser, getUserProfileImage, uploadUserImage } from '@/actions';
 import { CustomForm } from '@/components/Form';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { useSettings } from '@/lib/zustand/settings';
 import { Button } from '@/ui/button';
 import {
   Form,
@@ -19,7 +18,7 @@ import { Loader2, X } from 'lucide-react';
 import type { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useState, useTransition, type ChangeEvent, useEffect } from 'react';
+import { type ChangeEvent, useEffect, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -36,8 +35,7 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [imageUrl, setImageUrl] = useState<string>();
   const [loading, startTransition] = useTransition();
-  const { setOpen: setSettings } = useSettingsStore();
-  const { setOpen: setSettingsDialog } = useSettingsDialogStore();
+  const setDropdownOpen = useSettings((s) => s.setDropdownOpen);
   const t = useTranslations('Profile');
   const [user, setUser] = useState<User>();
 
@@ -72,7 +70,6 @@ export default function EditProfile() {
 
   async function handleEditProfile({ name, image }: FormSchema) {
     startTransition(async () => {
-      console.log('on transition');
       if (!isOAuthImage) {
         const formData = new FormData();
         if (image && image?.length > 0) {
@@ -81,11 +78,8 @@ export default function EditProfile() {
         }
         formData.append('name', name);
 
-        console.log('On handle');
-
         await uploadUserImage(formData);
-        setSettings(false);
-        setSettingsDialog(false);
+        setDropdownOpen(false);
       }
       setSelectedImage(undefined);
     });

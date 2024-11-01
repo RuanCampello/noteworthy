@@ -593,6 +593,8 @@ export async function updateUserPreferences(
     }),
   ]);
 
+  console.log(fields.data);
+
   revalidate([Tag.Preferences]);
 }
 

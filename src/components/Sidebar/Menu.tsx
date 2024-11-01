@@ -18,6 +18,7 @@ export default async function Menu() {
   const pathname = headers().get('pathname');
 
   const { preferences } = await getUserWithPreferences();
+  console.log('preferences: ', preferences);
 
   return (
     <section className='group/root'>

@@ -2,8 +2,7 @@
 
 import { updateUserPreferences } from '@/actions';
 import type { Locale } from '@/lib/next-intl';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { useSettings } from '@/lib/zustand/settings';
 import { userPreferencesSchema } from '@/schemas';
 import type { NoteFormat } from '@/types/Enums';
 import type { UserPreferences } from '@/types/UserPreferences';
@@ -43,8 +42,9 @@ export default function SettingsDialog({
   children,
 }: SettingsProps) {
   const [loading, startTransition] = useTransition();
-  const { isOpen, setOpen } = useSettingsDialogStore();
-  const { setOpen: setSettingsOpen } = useSettingsStore();
+  const isOpen = useSettings((s) => s.isOpen);
+  const setOpen = useSettings((s) => s.setOpen);
+
   const t = useTranslations('Settings');
   const locale = useLocale();
 
@@ -62,7 +62,6 @@ export default function SettingsDialog({
     startTransition(async () => {
       await updateUserPreferences(values);
       setOpen(false);
-      setSettingsOpen(false);
     });
   } // TODO: correct note full width revalidation after change
 
