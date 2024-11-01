@@ -1,9 +1,7 @@
 import { currentUser, getNotes } from '@/actions';
 import Counter from '@/components/Counter';
 import Note from '@/components/Note/Note';
-import SearchNote from '@/components/Note/SearchNote';
 import SectionTitle from '@/components/SectionTitle';
-import SortDropdown from '@/components/SortDropdown';
 import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';
@@ -44,10 +42,6 @@ export default async function Notes() {
       <SectionTitle title={t('notes')}>
         <Counter />
       </SectionTitle>
-      <div className='px-5 flex gap-2 items-center group-data-[state=closed]/root:hidden'>
-        <SearchNote />
-        <SortDropdown />
-      </div>
       <div
         data-firefox={isFirefox}
         className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-w-1 scrollbar scrollbar-thumb-rounded-full scrollbar-thumb-silver xl:max-h-[396px] lg:max-h-[300px] max-h-[230px] px-5 pe-4 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden data-[firefox=true]:scrollbar-thin data-[firefox=true]:scrollbar-track-black'

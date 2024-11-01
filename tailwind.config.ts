@@ -38,6 +38,9 @@ const config = {
       spacing: {
         '2.5': '10px',
       },
+      transitionDuration: {
+        sidebar: '250ms',
+      },
       colors: {
         black: '#181818',
         midnight: '#252525',

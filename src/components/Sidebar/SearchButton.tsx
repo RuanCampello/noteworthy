@@ -1,11 +1,17 @@
 'use client';
 
 import { Search } from 'lucide-react';
+import { useSearch } from '@/lib/zustand/search';
 
 export default function SearchButton() {
+  const setOpen = useSearch((s) => s.setOpen);
+
   return (
-    <button className='w-12 h-full flex group-data-[state=closed]/root:hidden items-center justify-center rounded-sm bg-midnight hover:bg-white/10 transition-colors'>
-      <Search size={20} />
+    <button
+      onClick={() => setOpen(true)}
+      className='w-12 h-full flex group-data-[state=closed]/root:hidden items-center justify-center rounded-sm bg-midnight hover:bg-white/10 duration-200 transition-colors'
+    >
+      <Search size={20} strokeWidth={2} />
     </button>
   );
 }
