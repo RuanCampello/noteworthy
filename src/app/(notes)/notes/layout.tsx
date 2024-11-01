@@ -11,7 +11,7 @@ export default function NoteLayout({
   return (
     <div className='flex w-screen overflow-x-hidden'>
       <Sidebar />
-      <div className='flex flex-col h-full overflow-y-clip flex-1 w-fit'>
+      <div className='flex flex-col h-full overflow-y-clip overflow-x-hidden flex-1 w-fit'>
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>
     </div>

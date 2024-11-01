@@ -32,7 +32,7 @@ export default async function NotePage({ params }: Props) {
     <article
       data-view={isSubView}
       data-dict={isDictOpen}
-      className='mx-40 data-[view=true]:mx-28 data-[dict=true]:mx-12'
+      className='mx-1 md:mx-10 xl:mx-40 data-[view=true]:mx-28 data-[dict=true]:mx-12'
     >
       <NoteEditor
         fullNote={fullNote}

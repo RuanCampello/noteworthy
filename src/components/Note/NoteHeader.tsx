@@ -40,7 +40,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
     <header className='sticky xl:px-0 px-6 xl:pt-16 pt-8'>
       <div className='flex justify-between items-center xl:mb-8 mb-8'>
         <h1
-          className='text-3xl font-semibold line-clamp-1 w-[90%] font-garamound'
+          className='text-3xl font-semibold leading-snug line-clamp-1 w-[90%] font-garamound'
           title={title}
         >
           {title}
