@@ -2,7 +2,6 @@ import { LucideProps } from 'lucide-react';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 import dynamic from 'next/dynamic';
 import { headers } from 'next/headers';
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 interface IconProps extends LucideProps {
@@ -10,41 +9,44 @@ interface IconProps extends LucideProps {
 }
 
 interface MoreItemProps {
-  href: string;
   name: string;
   icon: keyof typeof dynamicIconImports;
   colour: string;
-  children: ReactNode;
+  active?: boolean;
+  children?: ReactNode;
 }
 
 export default function MoreItem({
-  href,
   name,
   icon,
   colour,
+  active,
   children,
 }: MoreItemProps) {
-  const active = headers().get('pathname')?.includes(href);
+  const iconStroke = active ? colour : '#A3A3A3';
+  const iconFill = active ? '#333333' : '#181818';
 
   return (
-    <Link
-      href={href}
-      className={`py-2.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group focus:outline-none group-data-[state=closed]/root:justify-center`}
+    <div
+      role='button'
+      data-active={!!active}
+      className='py-1.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group focus:outline-none group-data-[state=closed]/root:justify-center group-data-[state=closed]/root:data-[active=true]:bg-midnight'
     >
-      <div className='flex gap-4'>
+      <div className='flex gap-2 items-center'>
         <Icon
           name={icon}
-          size={24}
+          size={20}
           className='shrink-0'
-          stroke={active ? colour : '#fff'}
-          fill={active ? '#333333' : '#181818'}
+          strokeWidth={2.5}
+          stroke={iconStroke}
+          fill={iconFill}
         />
-        <span className='sm:inline truncate hidden group-data-[state=closed]/root:hidden'>
+        <span className='sm:inline truncate hidden text-base group-data-[state=closed]/root:hidden text-silver select-none'>
           {name}
         </span>
       </div>
       {children}
-    </Link>
+    </div>
   );
 }
 

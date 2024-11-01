@@ -1,7 +1,7 @@
 import { currentUser, getNotes } from '@/actions';
-import Counter from '@/components/Counter';
+import Counter from '@/components/Sidebar/Counter';
 import Note from '@/components/Note/Note';
-import SectionTitle from '@/components/SectionTitle';
+import SectionTitle from '@/components/Sidebar/SectionTitle';
 import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';

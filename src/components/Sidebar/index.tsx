@@ -1,6 +1,6 @@
 import { getUserWithPreferences } from '@/actions';
 import Logo from '@/components/Logo';
-import More from '@/components/More';
+import Menu from '@/components/Sidebar/Menu';
 import AddNoteButton from '@/components/Sidebar/AddNoteButton';
 import Notes from '@/components/Note/Notes';
 import Profile from '@/components/Profile';
@@ -19,7 +19,7 @@ export default async function Sidebar() {
         <ToggleSidebarButton />
       </header>
       <section
-        className='justify-center flex flex-col gap-7 w-full group/format'
+        className='justify-center flex flex-col gap-5 w-full group/format'
         data-format={preferences?.noteFormat ?? 'full'}
       >
         <div className='group-data-[state=closed]/root:flex-col flex w-full gap-2 px-5'>
@@ -27,7 +27,7 @@ export default async function Sidebar() {
           <SearchButton />
         </div>
         <Notes />
-        <More />
+        <Menu />
       </section>
       <Profile />
     </Root>

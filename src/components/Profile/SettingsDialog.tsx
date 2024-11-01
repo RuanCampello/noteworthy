@@ -1,9 +1,12 @@
 'use client';
 
+import { updateUserPreferences } from '@/actions';
+import type { Locale } from '@/lib/next-intl';
 import { useSettingsStore } from '@/lib/zustand/settings';
 import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
 import { userPreferencesSchema } from '@/schemas';
-import { updateUserPreferences } from '@/actions';
+import type { NoteFormat } from '@/types/Enums';
+import type { UserPreferences } from '@/types/UserPreferences';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -17,15 +20,11 @@ import { Separator } from '@/ui/separator';
 import { Switch } from '@/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTitle, TabsTrigger } from '@/ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from '@/ui/toggle-group';
-import type { Locale } from '@/lib/next-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Bolt } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useTransition, type ReactNode } from 'react';
+import { type ReactNode, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { NoteFormat } from '@/types/Enums';
-import type { UserPreferences } from '@/types/UserPreferences';
 import EditProfile from './EditProfile';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -33,12 +32,16 @@ type UserPreferencesSchema = z.infer<typeof userPreferencesSchema>;
 
 interface SettingsProps {
   preferences: UserPreferences | null;
+  children: ReactNode;
 }
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function SettingsDialog({ preferences }: SettingsProps) {
+export default function SettingsDialog({
+  preferences,
+  children,
+}: SettingsProps) {
   const [loading, startTransition] = useTransition();
   const { isOpen, setOpen } = useSettingsDialogStore();
   const { setOpen: setSettingsOpen } = useSettingsStore();
@@ -67,12 +70,7 @@ export default function SettingsDialog({ preferences }: SettingsProps) {
     'h-20 w-full bg-white/10 outline outline-2 outline-offset-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button type='button' variant='dropdown' size='xs'>
-          {t('title')}
-          <Bolt size={16} />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-[524px] max-w-screen'>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>

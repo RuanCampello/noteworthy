@@ -207,7 +207,6 @@ CommandList.displayName = 'CommandList';
 
 function CommandActions() {
   const setSettingsDialogOpen = useSettingsDialogStore((s) => s.setOpen);
-  const setSettingsOpen = useSettingsStore((state) => state.setOpen);
 
   const setOpen = useSearch((s) => s.setOpen);
   const setActions = useSearch((s) => s.setActions);
@@ -230,7 +229,6 @@ function CommandActions() {
     {
       displayName: t('open_settings'),
       onSelect: () => {
-        setSettingsOpen(true);
         setSettingsDialogOpen(true);
         setOpen(false);
       },

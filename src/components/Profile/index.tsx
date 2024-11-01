@@ -1,6 +1,5 @@
+import { currentUser, getUserProfileImage } from '@/actions';
 import { signOut } from '@/lib/auth-js/auth';
-import { getUserWithPreferences } from '@/actions';
-import { getUserProfileImage } from '@/actions';
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,
@@ -17,7 +16,7 @@ import SettingsDialog from './SettingsDialog';
 export default async function Profile() {
   const t = await getTranslations('ProfileDropdown');
 
-  const { user, preferences } = await getUserWithPreferences();
+  const user = await currentUser();
   if (!user || !user?.name) return null;
 
   async function handleLogout() {
@@ -44,7 +43,6 @@ export default async function Profile() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
-              <SettingsDialog preferences={preferences} />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />
