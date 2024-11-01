@@ -22,7 +22,7 @@ export default async function Sidebar() {
         className='justify-center flex flex-col gap-7 w-full group/format'
         data-format={preferences?.noteFormat ?? 'full'}
       >
-        <div className='flex w-full gap-2 px-5'>
+        <div className='group-data-[state=closed]/root:flex-col flex w-full gap-2 px-5'>
           <AddNoteButton />
           <SearchButton />
         </div>
