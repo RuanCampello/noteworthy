@@ -30,7 +30,8 @@
     "more": "Menu",
     "favourites": "Favourites",
     "archived": "Archived Notes",
-    "settings": "Settings"
+    "settings": "Settings",
+    "hub": "Hub"
   },
   "AddNote": {
     "title": "Add New Note",

@@ -203,24 +203,31 @@ struct NoteQueryParams {
   is_arc: Option<bool>,
 }
 
-const FIND_ALL_USER_NOTES_QUERY: &str = r#"
-  SELECT LEFT(content, 250) AS content, id, title, colour, created_at
-  FROM notes
-  WHERE user_id = $1
-    AND is_favourite = $2
-    AND is_archived = $3
-  ORDER BY last_update DESC;
-"#;
-
 async fn find_all_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
+  let mut query = String::from(
+    r#"
+    SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+    FROM notes
+    WHERE user_id = $1
+  "#,
+  );
+
+  params
+    .is_fav
+    .map(|is_fav| query.push_str(&format!("AND is_favourite = {}", is_fav)));
+
+  params
+    .is_arc
+    .map(|is_arc| query.push_str(&format!(" AND is_archived = {}", is_arc)));
+
+  query.push_str(" ORDER BY created_at DESC");
+
+  let mut notes = sqlx::query_as::<_, PartialNote>(&query)
     .bind(user.id)
-    .bind(params.is_fav.unwrap_or(false))
-    .bind(params.is_arc.unwrap_or(false))
     .fetch_all(&state.database)
     .await?;
 

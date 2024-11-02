@@ -372,7 +372,7 @@ export async function getNotes(main = false) {
   const pathname = headers().get('pathname');
 
   let filter: string = '';
-  if (main) filter = '';
+  if (main) filter = '?is_fav=false&is_arc=false';
   else if (pathname?.includes('/archived')) filter = '?is_arc=true';
   else if (pathname?.includes('/favourites')) filter = '?is_fav=true';
 

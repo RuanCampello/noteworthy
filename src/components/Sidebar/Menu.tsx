@@ -4,7 +4,7 @@ import Counter from '@/components/Sidebar/Counter';
 import MenuItem from '@/components/Sidebar/MenuItem';
 import SectionTitle from '@/components/Sidebar/SectionTitle';
 import { Colours } from '@/utils/colours';
-import { Archive, Settings, Star } from 'lucide-react';
+import { Archive, Settings, Star, LayoutDashboard } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -22,6 +22,14 @@ export default async function Menu() {
     <section className='group/root'>
       <SectionTitle title={t('more')} />
       <div className='font-semibold flex flex-col'>
+        <Link href='/hub' className='focus:outline-none'>
+          <MenuItem
+            colour={Colours['slate']}
+            name={t('hub')}
+            path='hub'
+            icon={<LayoutDashboard />}
+          />
+        </Link>
         <Link href='/favourites' className='focus:outline-none'>
           <MenuItem
             colour={favouriteColour}
