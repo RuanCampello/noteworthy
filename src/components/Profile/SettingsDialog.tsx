@@ -34,9 +34,6 @@ interface SettingsProps {
   children: ReactNode;
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default function SettingsDialog({
   preferences,
   children,
@@ -69,7 +66,7 @@ export default function SettingsDialog({
     'h-20 w-full bg-white/10 outline outline-2 outline-offset-2 data-[active=true]:outline-white data-[active=false]:outline-transparent';
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger className='focus:outline-none'>{children}</DialogTrigger>
       <DialogContent className='dark bg-black w-[524px] max-w-screen'>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
