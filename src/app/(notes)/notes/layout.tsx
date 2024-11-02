@@ -1,4 +1,5 @@
 import { Loading } from '@/components/Loading';
+import Sidebar from '@/components/Sidebar';
 import { Suspense } from 'react';
 import { type ReactNode } from 'react';
 

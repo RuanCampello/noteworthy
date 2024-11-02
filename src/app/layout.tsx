@@ -10,7 +10,7 @@ import { type ReactNode } from 'react';
 import './globals.css';
 
 import ProgressBar from '@/components/ProgressBar';
- 
+
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
   preload: true,

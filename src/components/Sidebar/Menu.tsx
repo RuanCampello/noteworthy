@@ -1,11 +1,11 @@
 import { getUserWithPreferences } from '@/actions';
+import SettingsDialog from '@/components/Profile/SettingsDialog';
 import Counter from '@/components/Sidebar/Counter';
 import MenuItem from '@/components/Sidebar/MenuItem';
 import SectionTitle from '@/components/Sidebar/SectionTitle';
-import SettingsDialog from '@/components/Profile/SettingsDialog';
 import { Colours } from '@/utils/colours';
+import { Archive, Settings, Star } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { headers } from 'next/headers';
 import Link from 'next/link';
 
 export default async function Menu() {
@@ -14,8 +14,6 @@ export default async function Menu() {
   const settingsColour = Colours['cambridge'];
 
   const t = await getTranslations('Sidebar');
-
-  const pathname = headers().get('pathname');
 
   const { preferences } = await getUserWithPreferences();
   console.log('preferences: ', preferences);
@@ -27,9 +25,9 @@ export default async function Menu() {
         <Link href='/favourites' className='focus:outline-none'>
           <MenuItem
             colour={favouriteColour}
-            active={!!pathname?.includes('/favourites')}
+            path={'favourites'}
             name={t('favourites')}
-            icon={'star'}
+            icon={<Star />}
           >
             <Counter isFavourite />
           </MenuItem>
@@ -37,9 +35,9 @@ export default async function Menu() {
         <Link href='/archived' className='focus:outline-none'>
           <MenuItem
             colour={archiveColour}
-            active={!!pathname?.includes('/archived')}
+            path={'archived'}
             name={t('archived')}
-            icon={'archive'}
+            icon={<Archive />}
           >
             <Counter isArchived />
           </MenuItem>
@@ -48,7 +46,7 @@ export default async function Menu() {
           <MenuItem
             colour={settingsColour}
             name={t('settings')}
-            icon={'settings'}
+            icon={<Settings />}
           />
         </SettingsDialog>
       </div>
