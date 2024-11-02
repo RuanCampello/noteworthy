@@ -9,6 +9,8 @@ import { EB_Garamond, Source_Sans_3 } from 'next/font/google';
 import { type ReactNode } from 'react';
 import './globals.css';
 
+import ProgressBar from '@/components/ProgressBar';
+ 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
   preload: true,
@@ -52,6 +54,7 @@ export default async function RootLayout({
         </SessionProvider>
         <Toaster />
         <Analytics />
+        <ProgressBar />
       </body>
     </html>
   );
