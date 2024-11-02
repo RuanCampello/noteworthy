@@ -1,7 +1,6 @@
 import { LucideProps } from 'lucide-react';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 import dynamic from 'next/dynamic';
-import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 
 interface IconProps extends LucideProps {
@@ -25,6 +24,8 @@ export default function MoreItem({
 }: MoreItemProps) {
   const iconStroke = active ? colour : '#A3A3A3';
   const iconFill = active ? '#333333' : '#181818';
+
+  console.log(active);
 
   return (
     <div

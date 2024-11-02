@@ -1,6 +1,5 @@
 import { currentUser, getNotes } from '@/actions';
 import NoNotes from '@/components/Note/NoNotes';
-import Sidebar from '@/components/Sidebar';
 import SubSidebar from '@/components/Sidebar/SubSidebar';
 import { ArchiveRestore, ArchiveX } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -20,8 +19,7 @@ export default async function FavouriteLayout({
   const st = await getTranslations('SubsidebarTitles');
 
   return (
-    <div className='flex h-screen w-full'>
-      <Sidebar />
+    <>
       <SubSidebar notes={archivedNotes!} title={st('arc')} href='archived'>
         <NoNotes
           headerIcon={<ArchiveX size={80} strokeWidth={1} />}
@@ -31,6 +29,6 @@ export default async function FavouriteLayout({
         />
       </SubSidebar>
       {archivedNotes && archivedNotes.length > 0 && children}
-    </div>
+    </>
   );
 }
