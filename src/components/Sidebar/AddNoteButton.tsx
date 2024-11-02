@@ -8,7 +8,7 @@ export default async function AddNoteButton() {
   return (
     <div
       role='button'
-      className='group-data-[state=closed]/root:px-0 group-data-[state=closed]/root:self-center group/root w-full'
+      className='group-data-[state=closed]/root:px-0 group-data-[state=closed]/root:w-fit group/root w-full'
     >
       <AddNoteDialog>
         <button

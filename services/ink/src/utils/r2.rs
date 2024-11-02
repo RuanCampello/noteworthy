@@ -5,7 +5,6 @@ use aws_sdk_s3::primitives::ByteStream;
 use aws_sdk_s3::Client;
 use axum::async_trait;
 use std::time::Duration;
-use tracing::info;
 
 #[derive(Clone)]
 pub struct R2 {
