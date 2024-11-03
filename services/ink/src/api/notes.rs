@@ -1,7 +1,7 @@
 use crate::app_state::AppState;
 use crate::errors::NoteError;
 use crate::models::notes::{
-  Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
+  Colour, GeneratedNoteResponse, Note, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
 use crate::utils::sanitization::Sanitize;
 use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
@@ -12,6 +12,7 @@ use axum::{
 };
 use chrono::Local;
 use serde::Deserialize;
+use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -31,6 +32,7 @@ pub(crate) fn router() -> Router {
 
   let notes_route = Router::new()
     .route("/", post(new_note).get(find_all_user_notes))
+    .route("/hub", get(find_user_hub_notes))
     .route("/count", get(count_user_notes))
     .route("/generate", post(generate_note))
     .route("/search", get(search_notes))
@@ -208,26 +210,19 @@ async fn find_all_user_notes(
   AuthUser(user): AuthUser,
   Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let mut query = String::from(
-    r#"
+  const QUERY: &str = r#"
     SELECT LEFT(content, 250) AS content, id, title, colour, created_at
     FROM notes
     WHERE user_id = $1
-  "#,
-  );
+      AND is_favourite = $2
+      AND is_archived = $3
+    ORDER BY last_update DESC;
+  "#;
 
-  params
-    .is_fav
-    .map(|is_fav| query.push_str(&format!("AND is_favourite = {}", is_fav)));
-
-  params
-    .is_arc
-    .map(|is_arc| query.push_str(&format!(" AND is_archived = {}", is_arc)));
-
-  query.push_str(" ORDER BY created_at DESC");
-
-  let mut notes = sqlx::query_as::<_, PartialNote>(&query)
+  let mut notes = sqlx::query_as::<_, PartialNote>(QUERY)
     .bind(user.id)
+    .bind(params.is_fav.unwrap_or(false))
+    .bind(params.is_arc.unwrap_or(false))
     .fetch_all(&state.database)
     .await?;
 
@@ -235,6 +230,30 @@ async fn find_all_user_notes(
   notes.iter_mut().for_each(|note| {
     note.content = note.content.sanitize_html();
   });
+
+  Ok(Json(notes))
+}
+
+async fn find_user_hub_notes(
+  AuthUser(user): AuthUser,
+  Extension(state): Extension<AppState>,
+) -> Result<Json<Vec<Note>>, NoteError> {
+  let query = r#"
+    SELECT * FROM notes
+    WHERE user_id = $1
+  "#;
+
+  let mut notes = sqlx::query_as::<_, Note>(query)
+    .bind(&user.id)
+    .fetch_all(&state.database)
+    .await?;
+
+  // removes html
+  notes.iter_mut().for_each(|note| {
+    note.content = note.content.sanitize_html();
+  });
+
+  info!("Found {:#?} notes for user {}", &notes, &user.id);
 
   Ok(Json(notes))
 }

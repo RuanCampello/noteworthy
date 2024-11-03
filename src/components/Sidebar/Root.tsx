@@ -18,7 +18,7 @@ export default function Root({ children }: { children: ReactNode }) {
   return (
     <aside
       data-state={state}
-      className='2xl:w-[18vw] w-[20vw] shrink-0 grow-0 flex flex-col pt-7 gap-7 h-screen border-r border-r-midnight data-[state=closed]:w-[4vw] overflow-x-hidden data-[state=closed]:items-center group/root transition-all duration-sidebar'
+      className='2xl:w-[18vw] w-[20vw] shrink-0 grow-0 flex flex-col pt-7 gap-7 h-screen border-r border-r-midnight data-[state=closed]:w-[4vw] overflow-x-hidden data-[state=closed]:items-center group/root transition-all duration-sidebar overflow-y-hidden'
     >
       {children}
     </aside>

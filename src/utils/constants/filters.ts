@@ -11,6 +11,8 @@ export const allowedFilters: Filters[] = [
 export const Tag = {
   // The notes that appears on the sidebar.
   Notes: 'sidebar-notes',
+  // The notes that appears in hub page.
+  Hub: 'hub-notes',
   // Whether the note is public or not.
   Publicity: 'note-public-state',
   // The user's profile image.
