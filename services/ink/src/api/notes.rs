@@ -235,15 +235,19 @@ async fn find_all_user_notes(
 }
 
 async fn find_user_hub_notes(
-  AuthUser(user): AuthUser,
   Extension(state): Extension<AppState>,
+  AuthUser(user): AuthUser,
 ) -> Result<Json<Vec<Note>>, NoteError> {
-  let query = r#"
-    SELECT * FROM notes
+  info!("id {}", &user.id);
+
+  const QUERY: &str = r#"
+    SELECT *, LEFT(content, 500) AS content
+    FROM notes
     WHERE user_id = $1
+    ORDER BY last_update DESC;
   "#;
 
-  let mut notes = sqlx::query_as::<_, Note>(query)
+  let mut notes = sqlx::query_as::<_, Note>(QUERY)
     .bind(&user.id)
     .fetch_all(&state.database)
     .await?;

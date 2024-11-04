@@ -14,7 +14,7 @@ export default async function Sidebar() {
 
   return (
     <Root>
-      <header className='flex items-center group-data-[state=open]/root:justify-between group-data-[state=open]/root:pe-5 justify-center w-full'>
+      <header className='flex items-center group-data-[state=open]/root:lg:justify-between group-data-[state=open]/root:lg:pe-5 justify-center w-full'>
         <Logo />
         <ToggleSidebarButton />
       </header>

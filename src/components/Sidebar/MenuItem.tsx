@@ -30,14 +30,14 @@ export default function MoreItem({
       role='button'
       className='py-1.5 px-5 hover:bg-midnight w-full flex items-center sm:justify-between justify-center group focus:outline-none group-data-[state=closed]/root:justify-center group-data-[state=closed]/root:data-[active=true]:bg-midnight'
     >
-      <div className='flex gap-2 items-center'>
+      <div className='flex gap-1 lg:gap-2 items-center'>
         {cloneElement(icon, {
           className: 'shrink-0 w-5 h-5',
           strokeWidth: 2.5,
           stroke: iconStroke,
           fill: iconFill,
         })}
-        <span className='sm:inline truncate hidden text-base group-data-[state=closed]/root:hidden text-silver select-none'>
+        <span className='sm:inline truncate hidden group-data-[state=closed]/root:hidden text-silver text-sm lg:text-base select-none'>
           {name}
         </span>
       </div>

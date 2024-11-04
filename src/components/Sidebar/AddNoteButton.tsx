@@ -20,7 +20,7 @@ export default async function AddNoteButton() {
             strokeWidth={2}
             className='text-white group-active/button:scale-105 group-active/button:rotate-90 group-focus/button:rotate-90 group-focus/button:scale-105 group-hover/button:rotate-90 group-hover/button:scale-105 transition-transform duration-200'
           />
-          <span className='md:inline hidden group-data-[state=closed]/root:hidden'>
+          <span className='lg:inline hidden group-data-[state=closed]/root:hidden'>
             {t('new_note')}
           </span>
         </button>

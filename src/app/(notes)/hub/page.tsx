@@ -19,7 +19,7 @@ export type Note = {
   name: string;
 };
 
-async function getNotes() {
+async function getHubNotes() {
   const user = await currentUser();
   if (!user || !user.accessToken) return;
 
@@ -39,7 +39,7 @@ async function getNotes() {
 }
 
 export default async function HubPage() {
-  const notes = await getNotes();
+  const notes = await getHubNotes();
 
   return (
     <main className='px-5 xl:px-10 overflow-x-hidden overflow-y-scroll h-full'>
