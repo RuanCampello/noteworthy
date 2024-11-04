@@ -1,7 +1,10 @@
 'use client';
 
 import { createNote } from '@/actions';
+import ColourSelect from '@/components/ColourSelect';
+import { useAddNoteDialog } from '@/lib/zustand/add-note-dialog';
 import { noteDialogSchema } from '@/schemas';
+import type { Colour } from '@/types/Enums';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -25,12 +28,10 @@ import { Colours } from '@/utils/colours';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { type ReactNode, useState, useTransition } from 'react';
+import { type ReactNode, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { z } from 'zod';
-import type { Colour } from '@/types/Enums';
-import ColourSelect from '@/components/ColourSelect';
 
 interface AddNoteDialogProps {
   children: ReactNode;
@@ -39,8 +40,10 @@ interface AddNoteDialogProps {
 export type NoteDialog = z.infer<typeof noteDialogSchema>;
 
 export default function AddNoteDialog({ children }: AddNoteDialogProps) {
+  const open = useAddNoteDialog((s) => s.isOpen);
+  const setOpen = useAddNoteDialog((s) => s.setOpen);
+
   const [loading, startTransition] = useTransition();
-  const [open, setOpen] = useState<boolean>(false);
   const t = useTranslations('AddNote');
 
   useHotkeys(['ctrl+e'], () => setOpen(true), {
