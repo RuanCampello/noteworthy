@@ -1,3 +1,5 @@
+import MobileNav from '@/components/MobileNav';
+import ProgressBar from '@/components/ProgressBar';
 import Search from '@/components/Search';
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
@@ -6,10 +8,8 @@ import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { EB_Garamond, Source_Sans_3 } from 'next/font/google';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import './globals.css';
-
-import ProgressBar from '@/components/ProgressBar';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -50,6 +50,7 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             {children}
             <Search />
+            <MobileNav />
           </NextIntlClientProvider>
         </SessionProvider>
         <Toaster />

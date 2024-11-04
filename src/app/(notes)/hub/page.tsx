@@ -46,7 +46,7 @@ export default async function HubPage() {
       <h1 className='font-semibold text-2xl py-8 sticky top-0 z-20 bg-black px-3'>
         Hub
       </h1>
-      <div className='grid 2xl:grid-cols-6 xl:grid-cols-5 md:grid-cols-4 grid-cols-2 gap-2 pt-1'>
+      <div className='grid 2xl:grid-cols-6 xl:grid-cols-5 md:grid-cols-4 grid-cols-2 gap-2 py-1'>
         {notes?.map((note) => <NoteCard note={note} key={note.id} />)}
       </div>
     </main>
