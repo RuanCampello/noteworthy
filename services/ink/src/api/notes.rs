@@ -1,10 +1,10 @@
 use crate::app_state::AppState;
 use crate::errors::NoteError;
+use crate::internal::middleware::AuthUser;
 use crate::models::notes::{
   Colour, GeneratedNoteResponse, Note, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::sanitization::Sanitize;
-use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
+use crate::utils::{constants::HELLO_WORLD, sanitization::Sanitize};
 use axum::{
   extract::{Json, Path, Query},
   routing::{delete, get, patch, post},
@@ -256,8 +256,6 @@ async fn find_user_hub_notes(
   notes.iter_mut().for_each(|note| {
     note.content = note.content.sanitize_html();
   });
-
-  info!("Found {:#?} notes for user {}", &notes, &user.id);
 
   Ok(Json(notes))
 }

@@ -1,14 +1,13 @@
 use crate::app_state::AppState;
 use crate::errors::UserError;
-use crate::models::notes::NoteFormat;
-use crate::models::password_reset_tokens::PasswordResetToken;
-use crate::models::users::{SimpleUser, User};
-use crate::models::users_preferences::UserPreferences;
-use crate::utils::image::resize_and_reduce_image;
-use crate::utils::mailer::Mailer;
-use crate::utils::middleware::AuthUser;
-use crate::utils::r2::PreSignedUrl;
-use crate::utils::{cache::Cache, constants::USER_PROFILE_KEY};
+use crate::internal::{cache::Cache, mailer::Mailer, middleware::AuthUser, r2::PreSignedUrl};
+use crate::models::{
+  notes::NoteFormat,
+  password_reset_tokens::PasswordResetToken,
+  users::{SimpleUser, User},
+  users_preferences::UserPreferences,
+};
+use crate::utils::{constants::USER_PROFILE_KEY, image::resize_and_reduce_image};
 
 use axum::{
   extract::{Json, Multipart, Path},

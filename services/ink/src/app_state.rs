@@ -1,6 +1,4 @@
-use crate::utils::cache::CacheManager;
-use crate::utils::jwt::JwtManager;
-use crate::utils::r2::R2;
+use crate::internal::{cache::CacheManager, jwt::JwtManager, r2::R2};
 use deadpool_redis::{Config, Runtime};
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;

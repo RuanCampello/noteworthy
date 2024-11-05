@@ -1,6 +1,7 @@
 pub mod api;
 pub mod app_state;
 pub mod errors;
+pub mod internal;
 pub mod models;
 pub mod utils;
 

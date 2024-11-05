@@ -3,7 +3,6 @@ use regex::Regex;
 use sanitize_html::rules::pattern::Pattern;
 use sanitize_html::rules::{Element, Rules};
 use sanitize_html::sanitize_str;
-use tracing::info;
 
 lazy_static! {
   static ref RULES: Rules = untrusted();
@@ -62,12 +61,6 @@ fn untrusted() -> Rules {
     .space("section")
     .space("ul")
 }
-/// Replaces the custom `<search>` tags with highlighted spans
-fn replace_search_tags(input: &str) -> String {
-  input
-    .replace("<search>", "<span class='text-slate'>")
-    .replace("</search>", "</span>")
-}
 
 pub trait Sanitize {
   fn sanitize_html(&self) -> String;
@@ -77,8 +70,11 @@ impl Sanitize for String {
   fn sanitize_html(&self) -> String {
     let mut stripped_content = TAG_REGEX.replace_all(self, "").into_owned();
 
+    // Replaces the custom `<search>` tags with highlighted spans
     if SEARCH_REGEX.is_match(self) {
-      stripped_content = replace_search_tags(self);
+      stripped_content = self
+        .replace("<search>", "<span class='text-slate'>")
+        .replace("</search>", "</span>");
     }
 
     sanitize_str(&RULES, &stripped_content).expect("Invalid HTML")

@@ -1,5 +1,5 @@
 use crate::app_state::AppState;
-use crate::utils::mailer::Mailer;
+use crate::internal::mailer::Mailer;
 use axum::{
   http::{header, Method},
   Extension, Router,
@@ -12,7 +12,7 @@ mod users;
 
 pub async fn router() -> Result<Router, Box<dyn std::error::Error>> {
   tracing_subscriber::fmt::init();
-  
+
   let app_state = AppState::new().await.expect("Failed to create app state");
   let mailer = Mailer::new();
 
