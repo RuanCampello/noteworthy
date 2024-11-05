@@ -71,14 +71,6 @@ export default function Note({
 
   const backgroundColour = Colours[colour];
 
-  function getFormattedName(name: string): string {
-    const shortenName = name[0].toUpperCase();
-    if (isMobile && orientation === 'portrait') return shortenName;
-    else return name;
-  }
-
-  const formattedName = getFormattedName(name);
-
   return (
     <Link
       href={
@@ -103,8 +95,8 @@ export default function Note({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
-        {formattedName}
+      <h3 className='lg:text-lg text-base font-semibold truncate text-black text-start'>
+        {name}
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm group-data-[format=slim]/format:hidden'>
         <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>
