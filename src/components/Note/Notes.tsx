@@ -1,8 +1,7 @@
 import { currentUser, getNotes } from '@/actions';
-import Counter from '@/components/Sidebar/Counter';
 import Note from '@/components/Note/Note';
+import Counter from '@/components/Sidebar/Counter';
 import SectionTitle from '@/components/Sidebar/SectionTitle';
-import { formatSearchParams } from '@/utils/format';
 import { getFilter } from '@/utils/format-notes';
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
@@ -12,9 +11,6 @@ export default async function Notes() {
   const user = await currentUser();
   if (!user || !user.id) return;
   const isFirefox = headers().get('user-agent')?.includes('Firefox');
-  const searchParams = headers().get('search-params');
-  const search = searchParams?.match(/name=([^&]*)/);
-  const searchString = search && formatSearchParams(search[1]);
 
   const [notes, filter, t] = await Promise.all([
     getNotes(true),
@@ -46,14 +42,7 @@ export default async function Notes() {
         data-firefox={isFirefox}
         className='flex flex-col gap-1.5 overflow-y-scroll scrollbar-w-1 scrollbar scrollbar-thumb-rounded-full scrollbar-thumb-silver xl:max-h-[396px] lg:max-h-[300px] max-h-[230px] px-5 pe-4 pb-1 group-data-[state=closed]/root:items-center group-data-[state=closed]/root:overflow-x-hidden data-[firefox=true]:scrollbar-thin data-[firefox=true]:scrollbar-track-black'
       >
-        {notes.length === 0 && searchString ? (
-          <PlaceholderWrapper>
-            <h1>
-              No note with such name as{' '}
-              <span className='italic font-medium'>{searchString}</span>
-            </h1>
-          </PlaceholderWrapper>
-        ) : notes.length > 0 ? (
+        {notes.length > 0 ? (
           notes.map((note) => {
             const { id, title, colour, content, createdAt } = note;
             return (

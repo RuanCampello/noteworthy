@@ -1,5 +1,6 @@
 import { currentUser } from '@/actions';
 import type { Note } from '@/types/Note';
+import { Separator } from '@/ui/separator';
 import { toLocaleDateLong } from '@/utils/date';
 import {
   CalendarClock,
@@ -11,7 +12,6 @@ import {
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import StatusTooltip from '../StatusTooltip';
-import { Separator } from '../ui/separator';
 import WordCounter from '../WordCounter';
 import Dropdown from './NoteDropdown';
 import NoteHeaderItem from './NoteHeaderItem';

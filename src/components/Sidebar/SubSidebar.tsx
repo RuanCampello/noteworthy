@@ -25,7 +25,7 @@ export default function SubSidebar({
   return (
     <aside
       data-note-open={!!id}
-      className='lg:w-64 w-full data-[note-open=true]:hidden bg-black shrink-0 h-full flex flex-col border-r border-midnight relative'
+      className='lg:w-64 w-full hidden bg-black shrink-0 h-full data-[note-open=false]:flex lg:flex flex-col border-r border-midnight relative'
     >
       <h1 className='font-semibold text-2xl py-10 sticky top-0 z-20 bg-black px-3'>
         {title}
