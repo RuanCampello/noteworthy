@@ -16,7 +16,7 @@ import {
 import type { Definition } from '@/types/Definition';
 import type { PartialNote } from '@/types/Note';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
-import { SearchResult } from '@/types/SearchResult';
+import type { SearchResult } from '@/types/SearchResult';
 import type { UserPreferences } from '@/types/UserPreferences';
 import { Tag } from '@/utils/constants/filters';
 import { getPathnameParams } from '@/utils/format-notes';
@@ -453,8 +453,8 @@ export async function login(
     return { error: null };
   } catch (error) {
     if (error instanceof AuthError) {
-      let errorType =
-        // @ts-ignore
+      const errorType =
+        // @ts-expect-error sus type
         (error?.cause?.err.type as AuthError['type']) || error.type;
       console.error('Error during login: ', errorType);
 

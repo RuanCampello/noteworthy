@@ -241,7 +241,7 @@ async fn find_user_hub_notes(
   info!("id {}", &user.id);
 
   const QUERY: &str = r#"
-    SELECT *, LEFT(content, 500) AS content
+    SELECT *, LEFT(content, 750) AS content
     FROM notes
     WHERE user_id = $1
     ORDER BY last_update DESC;
