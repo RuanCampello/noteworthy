@@ -154,7 +154,7 @@ export async function updateNoteContent(id: string, content: string) {
       method: 'PATCH',
     });
 
-    revalidate([Tag.Notes, Tag.Page]);
+    revalidate([Tag.Notes, Tag.Page, Tag.Hub]);
   } catch (error) {
     console.error(error);
     return;
@@ -177,7 +177,13 @@ export async function toggleNoteFavourite(id: string) {
   });
 
   if (response.ok) {
-    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Favourites, Tag.Counter.All]);
+    revalidate([
+      Tag.Notes,
+      Tag.Page,
+      Tag.Counter.Favourites,
+      Tag.Counter.All,
+      Tag.Hub,
+    ]);
   }
 
   if (basePath === 'favourites') {
@@ -207,7 +213,13 @@ export async function toggleNoteArchived(id: string) {
   });
 
   if (response.ok) {
-    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Archived, Tag.Counter.All]);
+    revalidate([
+      Tag.Notes,
+      Tag.Page,
+      Tag.Counter.Archived,
+      Tag.Counter.All,
+      Tag.Hub,
+    ]);
   }
 
   if (basePath === 'archived') {

@@ -1,10 +1,18 @@
-import type { Colour } from '@/types/Enums';
-import { Tag } from '@/utils/constants/filters';
-import { env } from '@/env';
-import { Colours } from '@/utils/colours';
-import { CalendarClock, CalendarDays, type LucideProps } from 'lucide-react';
-import Link from 'next/link';
 import { currentUser } from '@/actions';
+import { env } from '@/env';
+import type { Colour } from '@/types/Enums';
+import { Colours } from '@/utils/colours';
+import { Tag } from '@/utils/constants/filters';
+import {
+  Archive,
+  Globe,
+  type LucideIcon,
+  type LucideProps,
+  NotebookText,
+  Star,
+} from 'lucide-react';
+import Link from 'next/link';
+import { createElement } from 'react';
 
 export type Note = {
   id: string;
@@ -58,9 +66,15 @@ function NoteCard({ note }: { note: Note }) {
   const colour = Colours[note.colour];
 
   const props: LucideProps = {
-    size: 14,
-    strokeWidth: 2,
+    size: 16,
+    strokeWidth: 2.25,
   };
+
+  let icon: LucideIcon = NotebookText;
+
+  if (note.isFavourite) icon = Star;
+  else if (note.isArchived) icon = Archive;
+  else if (note.isPublic) icon = Globe;
 
   return (
     <Link
@@ -75,10 +89,11 @@ function NoteCard({ note }: { note: Note }) {
         <p className='text-sm leading-snug overflow-x-clip xl:line-clamp-5 md:line-clamp-4 line-clamp-3'>
           {note.content}
         </p>
-        <div className='text-black/60 leading-tight text-sm flex justify-between'>
-          <div className='flex space-x-1 items-center leading-none'>
-            <span>{formatDateString(note.createdAt)}</span>
-          </div>
+        <div className='text-black/60 leading-tight text-sm flex justify-between items-center'>
+          <span className='leading-none'>
+            {formatDateString(note.createdAt)}
+          </span>
+          <div>{createElement(icon, { ...props })}</div>
         </div>
       </div>
     </Link>
