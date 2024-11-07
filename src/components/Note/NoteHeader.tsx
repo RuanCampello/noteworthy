@@ -37,7 +37,7 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
   const isEditor = user.id === note.userId;
 
   return (
-    <header className='sticky xl:px-0 px-6 xl:pt-16 pt-8'>
+    <header className='sticky top-3 lg:top-0 xl:px-0 px-6 xl:pt-16 pt-8'>
       <div className='flex justify-between items-center xl:mb-8 mb-8'>
         <h1
           className='text-3xl font-semibold leading-snug line-clamp-1 w-[90%] font-garamound'
