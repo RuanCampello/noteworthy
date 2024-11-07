@@ -19,7 +19,7 @@ export default function MobileBreadcrumb() {
   if (paths.length < 2) return;
 
   return (
-    <Breadcrumb className='fixed top-0 dark px-6 py-2 z-40 lg:hidden'>
+    <Breadcrumb className='dark z-40 lg:hidden pt-2'>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>

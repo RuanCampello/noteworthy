@@ -72,7 +72,7 @@ export default function EditorMenuBar() {
   }
 
   return (
-    <div className='flex flex-col gap-1 pt-3 lg:pt-0 xl:px-0 px-4'>
+    <div className='flex flex-col gap-1 xl:px-0 px-4'>
       <div className='flex items-center gap-1'>
         <Select value={selectedValue}>
           <MenuTooltip content={t('style')} sideOffset={6}>
