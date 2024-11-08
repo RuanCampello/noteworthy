@@ -90,24 +90,24 @@ pub enum UserError {
 impl IntoResponse for UserError {
   fn into_response(self) -> Response {
     let (status, body) = match self {
-      UserError::MyImageError(err) => {
+      Self::MyImageError(err) => {
         return err.into_response();
       }
-      UserError::UserNotFound | UserError::TokenNotFound => {
+      Self::UserNotFound | Self::TokenNotFound => {
         (StatusCode::NOT_FOUND, self.to_string())
       }
-      UserError::Validation(_) => (StatusCode::UNPROCESSABLE_ENTITY, self.to_string()),
-      UserError::InvalidCredentials | UserError::MultipartRequired | UserError::TokenInvalid => {
+      Self::Validation(_) => (StatusCode::UNPROCESSABLE_ENTITY, self.to_string()),
+      Self::InvalidCredentials | Self::MultipartRequired | Self::TokenInvalid => {
         (StatusCode::BAD_REQUEST, self.to_string())
       }
-      UserError::UserAlreadyExist => (StatusCode::CONFLICT, self.to_string()),
-      UserError::TokenExpired => (StatusCode::FORBIDDEN, self.to_string()),
-      UserError::DecryptError(_)
-      | UserError::DatabaseError(_)
-      | UserError::PresignedUrl(_)
-      | UserError::ImageUploadError(_)
-      | UserError::SendEmail(_)
-      | UserError::Cache(_) => {
+      Self::UserAlreadyExist => (StatusCode::CONFLICT, self.to_string()),
+      Self::TokenExpired => (StatusCode::FORBIDDEN, self.to_string()),
+      Self::DecryptError(_)
+      | Self::DatabaseError(_)
+      | Self::PresignedUrl(_)
+      | Self::ImageUploadError(_)
+      | Self::SendEmail(_)
+      | Self::Cache(_) => {
         error!("{:#?}", self);
         (
           StatusCode::INTERNAL_SERVER_ERROR,

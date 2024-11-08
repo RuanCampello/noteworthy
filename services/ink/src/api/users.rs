@@ -1,6 +1,6 @@
 use crate::app_state::AppState;
 use crate::errors::UserError;
-use crate::internal::{cache::Cache, mailer::Mailer, middleware::AuthUser, r2::PreSignedUrl};
+use crate::internal::{mailer::Mailer, middleware::AuthUser};
 use crate::models::{
   notes::NoteFormat,
   password_reset_tokens::PasswordResetToken,
@@ -8,7 +8,6 @@ use crate::models::{
   users_preferences::UserPreferences,
 };
 use crate::utils::{constants::USER_PROFILE_KEY, image::resize_and_reduce_image};
-
 use axum::{
   extract::{Json, Multipart, Path},
   routing::{get, post, put},
@@ -18,6 +17,8 @@ use bcrypt::{hash, verify};
 use chrono::Local;
 use serde::Deserialize;
 use sqlx::PgPool;
+use std::ops::Deref;
+use std::sync::Arc;
 use tracing::info;
 use uuid::Uuid;
 use validator::{Validate, ValidateEmail, ValidationErrors};
@@ -43,8 +44,6 @@ pub(crate) fn router() -> Router {
     .route("/refresh-token/:token", get(refresh_user_token))
     .nest("/users", user_related_routes)
 }
-
-const BUCKET_NAME: &str = "noteworthy-images-bucket";
 
 #[derive(Deserialize, Validate)]
 struct LoginRequest {
@@ -379,10 +378,7 @@ async fn update_user_profile(
     if let Some(bytes) = file_bytes {
       info!("Uploading image for user {}", &user.id);
       let compressed_image = resize_and_reduce_image(Vec::from(bytes))?;
-      state
-        .r2
-        .create_presigned_url(BUCKET_NAME, &user.id, compressed_image)
-        .await?;
+      state.r2.create_object(&user.id, compressed_image).await?;
     }
     Ok::<(), UserError>(())
   };
@@ -410,19 +406,21 @@ async fn find_user_profile_image(
 ) -> Result<String, UserError> {
   let cache_key = format!("{}{}", USER_PROFILE_KEY, &user.id);
 
-  let cached_image = state.cache.get(&cache_key).await?;
+  let cached_image: Option<String> = state.cache.get(&cache_key).await?;
   if let Some(image) = cached_image {
     info!("Serving cached image for user {}", &user.id);
     return Ok(image);
   }
 
   info!("Fetching image from R2 for user {}", &user.id);
-  let pre_signed_url = state.r2.get_presigned_url(BUCKET_NAME, &user.id).await?;
-  let image_url_clone = pre_signed_url.clone();
+  let image_url = state.r2.get_object(&user.id).await?;
+  let image_url_clone = image_url.clone();
 
-  tokio::spawn(async move { state.cache.set(&cache_key, &image_url_clone, 60 * 55).await });
+  tokio::spawn(async move {
+    state.cache.set(&cache_key, &image_url_clone, 60 * 55).await
+  });
 
-  Ok(pre_signed_url)
+  Ok(image_url)
 }
 
 async fn find_user_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, UserError> {

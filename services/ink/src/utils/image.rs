@@ -14,6 +14,7 @@ pub fn resize_and_reduce_image(file_bytes: Vec<u8>) -> Result<Vec<u8>, MyImageEr
 
   Ok(output.into_inner())
 }
+
 #[derive(Debug)]
 pub struct MyImageError {
   pub source: ImageError,

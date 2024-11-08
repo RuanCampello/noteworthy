@@ -35,7 +35,7 @@ export default function EditProfile() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [imageUrl, setImageUrl] = useState<string>();
   const [loading, startTransition] = useTransition();
-  const setDropdownOpen = useSettings((s) => s.setDropdownOpen);
+  const setOpen = useSettings((s) => s.setOpen);
   const t = useTranslations('Profile');
   const [user, setUser] = useState<User>();
 
@@ -79,7 +79,7 @@ export default function EditProfile() {
         formData.append('name', name);
 
         await uploadUserImage(formData);
-        setDropdownOpen(false);
+        setOpen(false);
       }
       setSelectedImage(undefined);
     });

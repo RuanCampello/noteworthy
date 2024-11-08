@@ -439,10 +439,11 @@ export const getUserProfileImage = cache(async () => {
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
       },
-      next: { tags: [Tag.Profile], revalidate: 3600 },
+      cache: 'force-cache',
+      next: { tags: [Tag.Profile] },
     });
 
-    return await response.text();
+    return response.text();
   }
   return user.image;
 });
