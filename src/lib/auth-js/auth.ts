@@ -36,6 +36,10 @@ export const {
     },
   },
   callbacks: {
+    async signIn({ account, profile }) {
+      console.debug('on sign...', account, profile);
+      return true;
+    },
     async session({ token, session }) {
       // @ts-expect-error undeclared type
       if (session.user && token.user.id) {
@@ -60,7 +64,9 @@ export const {
             provider: account.provider,
           }),
         });
+
         const accessToken = await response.text();
+        console.debug('Access token acquired with successAAAAAAAA');
         const claims: User = jwtDecode(accessToken);
         // @ts-expect-error undeclared type
         claims.accessToken = accessToken;

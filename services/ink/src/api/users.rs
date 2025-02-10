@@ -15,10 +15,8 @@ use axum::{
 };
 use bcrypt::{hash, verify};
 use chrono::Local;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use std::ops::Deref;
-use std::sync::Arc;
 use tracing::info;
 use uuid::Uuid;
 use validator::{Validate, ValidateEmail, ValidationErrors};
@@ -39,6 +37,7 @@ pub(crate) fn router() -> Router {
   Router::new()
     .route("/login", post(log_user))
     .route("/register", post(create_user))
+    .route("/register-with-provider", post(create_user_account))
     .route("/authorize", post(authorize_user))
     .route("/link-account", post(link_user_account))
     .route("/refresh-token/:token", get(refresh_user_token))
@@ -58,6 +57,8 @@ async fn log_user(
   Json(req): Json<LoginRequest>,
 ) -> Result<Json<String>, UserError> {
   req.validate()?;
+
+  tracing::info!("Loging user with email {}...", req.email);
 
   let user = match find_user_by_email(&req.email, &state.database).await? {
     Some(user) => user,
@@ -113,6 +114,90 @@ async fn create_user(
     .bind(req.name)
     .bind(hash_password)
     .fetch_one(&state.database)
+    .await?;
+
+  Ok(Json(id))
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+enum Provider {
+  Google,
+  Github,
+}
+
+impl Provider {
+  fn encode(&self) -> &str {
+    match self {
+      Self::Github => "github",
+      Self::Google => "google",
+    }
+  }
+}
+
+#[derive(Deserialize, Validate)]
+// #[serde(rename_all = "snake_case")]
+struct AccountRequest {
+  provider: Provider,
+  provider_account_id: i32,
+  access_token: String,
+  expires_at: Option<u32>,
+  scope: String,
+  id_token: Option<String>,
+  #[validate(email)]
+  email: String,
+  name: String,
+}
+
+async fn create_user_account(
+  Extension(state): Extension<AppState>,
+  Json(req): Json<AccountRequest>,
+) -> Result<Json<String>, UserError> {
+  req.validate()?;
+
+  // check if the account isn't already in the database
+  let query = "SELECT * FROM accounts WHERE provider_account_id = $1";
+  if sqlx::query_as::<_, User>(query)
+    .bind(req.provider_account_id)
+    .fetch_optional(&state.database)
+    .await?
+    .is_some()
+  {
+    return Err(UserError::UserAlreadyExist);
+  }
+
+  // create the user provider account
+  let query = r#"
+    INSERT INTO accounts
+    (user_id, type, provider, provider_account_id, access_token, expires_at, scope, id_token, token_type)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING user_id
+  "#;
+  let id: String = sqlx::query_scalar(query)
+    .bind(Uuid::new_v4())
+    .bind(match req.provider {
+      Provider::Github => "oauth",
+      Provider::Google => "oidc",
+    })
+    .bind(req.provider.encode())
+    .bind(req.provider_account_id)
+    .bind(req.access_token)
+    .bind(req.scope)
+    .bind(req.id_token)
+    .bind("bearer")
+    .fetch_one(&state.database)
+    .await?;
+
+  // create the user itself
+  let query = r#"
+    INSERT INTO users (user_id, name, email)
+    VALUES ($1, $2, $3)
+  "#;
+  sqlx::query(query)
+    .bind(&id)
+    .bind(req.name)
+    .bind(req.email)
+    .execute(&state.database)
     .await?;
 
   Ok(Json(id))
@@ -416,9 +501,7 @@ async fn find_user_profile_image(
   let image_url = state.r2.get_object(&user.id).await?;
   let image_url_clone = image_url.clone();
 
-  tokio::spawn(async move {
-    state.cache.set(&cache_key, &image_url_clone, 60 * 55).await
-  });
+  tokio::spawn(async move { state.cache.set(&cache_key, &image_url_clone, 60 * 55).await });
 
   Ok(image_url)
 }
