@@ -10,6 +10,7 @@ import {
   newPasswordSchema,
   noteDialogSchema,
   registerFormSchema,
+  registerWithProviderSchema,
   resetPasswordSchema,
   userPreferencesSchema,
 } from '@/schemas';
@@ -313,6 +314,43 @@ export async function register(
     }
     throw error;
   }
+}
+
+// Same as `register` but to create an account and user based on a provider.
+export async function registerWithProvider(
+  values: z.infer<typeof registerWithProviderSchema>,
+) {
+  const fields = registerWithProviderSchema.safeParse(values);
+  if (!fields.success) return;
+  const {
+    email,
+    idToken,
+    provider,
+    accessToken,
+    providerAccountId,
+    name,
+    scope,
+    expiresAt,
+  } = fields.data;
+
+  const response = await fetch(`${env.INK_HOSTNAME}/register-with-provider`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      idToken,
+      provider,
+      accessToken,
+      providerAccountId,
+      scope,
+      expiresAt,
+      name,
+    }),
+  });
+
+  const id: string = await response.text();
+  console.debug('Id gotten', id);
+  return id;
 }
 
 // Make a request to notes/generate endpoint

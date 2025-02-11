@@ -23,25 +23,25 @@ use validator::{Validate, ValidateEmail, ValidationErrors};
 
 pub(crate) fn router() -> Router {
   let user_related_routes = Router::new()
-    .route(
-      "/profile",
-      post(update_user_profile).get(find_user_profile_image),
-    )
-    .route("/reset-password/:token", post(reset_user_password))
-    .route("/new-password-token/:email", post(new_reset_token))
-    .route(
-      "/preferences",
-      put(upsert_user_preferences).get(get_user_preferences),
-    );
+      .route(
+        "/profile",
+        post(update_user_profile).get(find_user_profile_image),
+      )
+      .route("/reset-password/:token", post(reset_user_password))
+      .route("/new-password-token/:email", post(new_reset_token))
+      .route(
+        "/preferences",
+        put(upsert_user_preferences).get(get_user_preferences),
+      );
 
   Router::new()
-    .route("/login", post(log_user))
-    .route("/register", post(create_user))
-    .route("/register-with-provider", post(create_user_account))
-    .route("/authorize", post(authorize_user))
-    .route("/link-account", post(link_user_account))
-    .route("/refresh-token/:token", get(refresh_user_token))
-    .nest("/users", user_related_routes)
+      .route("/login", post(log_user))
+      .route("/register", post(create_user))
+      .route("/register-with-provider", post(create_user_account))
+      .route("/authorize", post(authorize_user))
+      .route("/link-account", post(link_user_account))
+      .route("/refresh-token/:token", get(refresh_user_token))
+      .nest("/users", user_related_routes)
 }
 
 #[derive(Deserialize, Validate)]
@@ -58,7 +58,7 @@ async fn log_user(
 ) -> Result<Json<String>, UserError> {
   req.validate()?;
 
-  tracing::info!("Loging user with email {}...", req.email);
+  info!("Loging user with email {}...", req.email);
 
   let user = match find_user_by_email(&req.email, &state.database).await? {
     Some(user) => user,
@@ -66,16 +66,16 @@ async fn log_user(
   };
 
   let correct_password =
-    verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
+      verify(&req.password, &user.password.unwrap()).map_err(UserError::DecryptError)?;
 
   if !correct_password {
     return Err(UserError::InvalidCredentials);
   }
 
   let token = state
-    .jwt_manager
-    .generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
-    .expect("Error generating JWT token");
+      .jwt_manager
+      .generate_jwt(user.id, user.email.unwrap(), user.name, user.image)
+      .expect("Error generating JWT token");
 
   Ok(Json(token))
 }
@@ -109,12 +109,12 @@ async fn create_user(
    "#;
 
   let id: String = sqlx::query_scalar(query)
-    .bind(Uuid::new_v4())
-    .bind(req.email)
-    .bind(req.name)
-    .bind(hash_password)
-    .fetch_one(&state.database)
-    .await?;
+      .bind(Uuid::new_v4())
+      .bind(req.email)
+      .bind(req.name)
+      .bind(hash_password)
+      .fetch_one(&state.database)
+      .await?;
 
   Ok(Json(id))
 }
@@ -136,12 +136,12 @@ impl Provider {
 }
 
 #[derive(Deserialize, Validate)]
-// #[serde(rename_all = "snake_case")]
+#[serde(rename_all = "camelCase")]
 struct AccountRequest {
   provider: Provider,
-  provider_account_id: i32,
+  provider_account_id: String,
   access_token: String,
-  expires_at: Option<u32>,
+  expires_at: Option<i32>,
   scope: String,
   id_token: Option<String>,
   #[validate(email)]
@@ -153,54 +153,60 @@ async fn create_user_account(
   Extension(state): Extension<AppState>,
   Json(req): Json<AccountRequest>,
 ) -> Result<Json<String>, UserError> {
+  info!("validating...");
   req.validate()?;
 
   // check if the account isn't already in the database
   let query = "SELECT * FROM accounts WHERE provider_account_id = $1";
   if sqlx::query_as::<_, User>(query)
-    .bind(req.provider_account_id)
-    .fetch_optional(&state.database)
-    .await?
-    .is_some()
+      .bind(&req.provider_account_id)
+      .fetch_optional(&state.database)
+      .await?
+      .is_some()
   {
     return Err(UserError::UserAlreadyExist);
   }
+
+  let id = Uuid::new_v4();
+
+  // create the user itself
+  let query = r#"
+    INSERT INTO users (id, name, email)
+    VALUES ($1, $2, $3)
+  "#;
+  sqlx::query(query)
+      .bind(&id)
+      .bind(&req.name)
+      .bind(req.email)
+      .execute(&state.database)
+      .await?;
 
   // create the user provider account
   let query = r#"
     INSERT INTO accounts
     (user_id, type, provider, provider_account_id, access_token, expires_at, scope, id_token, token_type)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    RETURNING user_id
   "#;
-  let id: String = sqlx::query_scalar(query)
-    .bind(Uuid::new_v4())
-    .bind(match req.provider {
-      Provider::Github => "oauth",
-      Provider::Google => "oidc",
-    })
-    .bind(req.provider.encode())
-    .bind(req.provider_account_id)
-    .bind(req.access_token)
-    .bind(req.scope)
-    .bind(req.id_token)
-    .bind("bearer")
-    .fetch_one(&state.database)
-    .await?;
+  info!("querying the id for {}", &req.name);
+  sqlx::query_scalar(query)
+      .bind(&id)
+      .bind(match req.provider {
+        Provider::Github => "oauth",
+        Provider::Google => "oidc",
+      })
+      .bind(req.provider.encode())
+      .bind(&req.provider_account_id)
+      .bind(req.access_token)
+      .bind(req.expires_at)
+      .bind(req.scope)
+      .bind(req.id_token)
+      .bind("bearer")
+      .fetch_one(&state.database)
+      .await?;
 
-  // create the user itself
-  let query = r#"
-    INSERT INTO users (user_id, name, email)
-    VALUES ($1, $2, $3)
-  "#;
-  sqlx::query(query)
-    .bind(&id)
-    .bind(req.name)
-    .bind(req.email)
-    .execute(&state.database)
-    .await?;
+  info!("Id inserted {id}");
 
-  Ok(Json(id))
+  Ok(Json(id.into()))
 }
 
 async fn refresh_user_token(
@@ -239,15 +245,15 @@ async fn authorize_user(
    "#;
 
   let user = sqlx::query_as::<_, SimpleUser>(query)
-    .bind(&req.id)
-    .bind(&req.provider)
-    .fetch_one(&state.database)
-    .await?;
+      .bind(&req.id)
+      .bind(&req.provider)
+      .fetch_one(&state.database)
+      .await?;
 
   let token = state
-    .jwt_manager
-    .generate_jwt(user.id, user.email, Some(user.name), user.image)
-    .expect("Generated JWT");
+      .jwt_manager
+      .generate_jwt(user.id, user.email, Some(user.name), user.image)
+      .expect("Generated JWT");
 
   Ok(token)
 }
@@ -265,10 +271,10 @@ async fn link_user_account(
   let localtime = Local::now().naive_local();
 
   sqlx::query(query)
-    .bind(id)
-    .bind(localtime)
-    .execute(&state.database)
-    .await?;
+      .bind(id)
+      .bind(localtime)
+      .execute(&state.database)
+      .await?;
 
   Ok(())
 }
@@ -291,9 +297,9 @@ async fn new_reset_token(
 
   let query = "SELECT * FROM password_reset_tokens WHERE email = $1";
   let password_token = sqlx::query_as::<_, PasswordResetToken>(query)
-    .bind(&email)
-    .fetch_optional(&state.database)
-    .await?;
+      .bind(&email)
+      .fetch_optional(&state.database)
+      .await?;
 
   if let Some(mut token) = password_token {
     if token.expires > Local::now().naive_local() {
@@ -311,17 +317,17 @@ async fn new_reset_token(
     "#;
 
   let mut new_reset_token = sqlx::query_as::<_, PasswordResetToken>(insert_query)
-    .bind(email)
-    .bind(new_token)
-    .bind(expires_in)
-    .fetch_one(&state.database)
-    .await?;
+      .bind(email)
+      .bind(new_token)
+      .bind(expires_in)
+      .fetch_one(&state.database)
+      .await?;
 
   new_reset_token.is_new = true;
 
   mailer
-    .send_user_confirmation_email(&new_reset_token.token, &new_reset_token.email)
-    .await?;
+      .send_user_confirmation_email(&new_reset_token.token, &new_reset_token.email)
+      .await?;
 
   Ok(Json(new_reset_token))
 }
@@ -336,9 +342,9 @@ async fn reset_user_password(
   let query = "SELECT * FROM password_reset_tokens WHERE token = $1";
 
   let password_reset_token = match sqlx::query_as::<_, PasswordResetToken>(query)
-    .bind(token)
-    .fetch_optional(&state.database)
-    .await?
+      .bind(token)
+      .fetch_optional(&state.database)
+      .await?
   {
     Some(reset_token) => reset_token,
     None => return Err(UserError::TokenNotFound),
@@ -357,20 +363,20 @@ async fn reset_user_password(
   let mut transaction = state.database.begin().await?;
 
   let user = sqlx::query_as::<_, User>(get_user_query)
-    .bind(password_reset_token.email)
-    .fetch_one(&mut *transaction)
-    .await?;
+      .bind(password_reset_token.email)
+      .fetch_one(&mut *transaction)
+      .await?;
 
   sqlx::query(update_password_query)
-    .bind(user.id)
-    .bind(hash_password)
-    .execute(&mut *transaction)
-    .await?;
+      .bind(user.id)
+      .bind(hash_password)
+      .execute(&mut *transaction)
+      .await?;
 
   sqlx::query(delete_token_query)
-    .bind(password_reset_token.id)
-    .execute(&mut *transaction)
-    .await?;
+      .bind(password_reset_token.id)
+      .execute(&mut *transaction)
+      .await?;
 
   transaction.commit().await?;
 
@@ -396,11 +402,11 @@ async fn upsert_user_preferences(
   "#;
 
   sqlx::query(query)
-    .bind(user.id)
-    .bind(req.note_format)
-    .bind(req.full_note)
-    .execute(&state.database)
-    .await?;
+      .bind(user.id)
+      .bind(req.note_format)
+      .bind(req.full_note)
+      .execute(&state.database)
+      .await?;
 
   Ok(())
 }
@@ -412,13 +418,13 @@ async fn get_user_preferences(
   let query = "SELECT note_format, full_note FROM users_preferences WHERE user_id = $1";
 
   let preferences = sqlx::query_as::<_, UserPreferences>(query)
-    .bind(user.id)
-    .fetch_optional(&state.database)
-    .await?
-    .unwrap_or(UserPreferences {
-      full_note: true,
-      note_format: NoteFormat::Full,
-    });
+      .bind(user.id)
+      .fetch_optional(&state.database)
+      .await?
+      .unwrap_or(UserPreferences {
+        full_note: true,
+        note_format: NoteFormat::Full,
+      });
 
   Ok(Json(preferences))
 }
@@ -432,9 +438,9 @@ async fn update_user_profile(
   let mut name = None;
 
   while let Some(field) = multipart
-    .next_field()
-    .await
-    .map_err(|_| UserError::MultipartRequired)?
+      .next_field()
+      .await
+      .map_err(|_| UserError::MultipartRequired)?
   {
     match field.name() {
       Some("image") => {
@@ -452,10 +458,10 @@ async fn update_user_profile(
       info!("Updating name for user {}", &user.id);
       let query = "UPDATE users SET name = $2 WHERE id = $1";
       sqlx::query(query)
-        .bind(&user.id)
-        .bind(name)
-        .execute(&state.database)
-        .await?;
+          .bind(&user.id)
+          .bind(name)
+          .execute(&state.database)
+          .await?;
     }
     Ok::<(), UserError>(())
   };
@@ -477,7 +483,7 @@ async fn update_user_profile(
   };
 
   let (upload_task, update_name_task, _cache_task) =
-    tokio::join!(upload_task, update_name_task, cache_task);
+      tokio::join!(upload_task, update_name_task, cache_task);
 
   upload_task?;
   update_name_task?;
@@ -510,9 +516,9 @@ async fn find_user_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, 
   let query = "SELECT * FROM users WHERE email = $1";
 
   let user = sqlx::query_as::<_, User>(query)
-    .bind(email)
-    .fetch_optional(pool)
-    .await?;
+      .bind(email)
+      .fetch_optional(pool)
+      .await?;
 
   Ok(user)
 }
