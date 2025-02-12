@@ -41,6 +41,7 @@ function revalidate(tags: readonly Tag[]): void {
 // Look for the current logged-in user in the session.
 export const currentUser = cache(async () => {
   const session = await auth();
+  console.debug('Session: ', session);
   return session?.user;
 });
 

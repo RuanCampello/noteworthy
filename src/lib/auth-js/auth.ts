@@ -83,13 +83,12 @@ export const {
         });
 
         const accessToken = await response.text();
-        console.debug('Access token acquired with successAAAAAAAA');
+        console.debug('Access token', accessToken);
         const claims: User = jwtDecode(accessToken);
         // @ts-expect-error undeclared type
         claims.accessToken = accessToken;
-        token.user = claims;
 
-        return { ...token, user: user };
+        return { ...token, user: claims };
       }
 
       // @ts-expect-error undeclared type
