@@ -1,14 +1,18 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Input } from '../ui/input';
+import { useEffect, useState } from 'react';
+import { Input } from '@/ui/input';
 import { Search } from 'lucide-react';
 
 export default function DictionarySearch() {
   const searchParams = useSearchParams();
+  const [word, setWord] = useState<string | null>(searchParams.get('dfn-word'));
   const router = useRouter();
 
-  const word = searchParams.get('dfn-word');
+  useEffect(() => {
+    setWord(searchParams.get('dfn-word'));
+  }, [searchParams]);
 
   async function searchWord(formData: FormData) {
     const word = formData.get('word') as string;

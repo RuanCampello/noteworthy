@@ -71,14 +71,6 @@ export default function Note({
 
   const backgroundColour = Colours[colour];
 
-  function getFormattedName(name: string): string {
-    const shortenName = name[0].toUpperCase();
-    if (isMobile && orientation === 'portrait') return shortenName;
-    else return name;
-  }
-
-  const formattedName = getFormattedName(name);
-
   return (
     <Link
       href={
@@ -89,7 +81,7 @@ export default function Note({
           ? redirectUrl.replace(href, '')
           : redirectUrl
       }
-      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2 group-data-[format=slim]/format:py-2 group-data-[format=slim]/format:px-3'
+      className='rounded-sm md:p-3 lg:p-5 p-2 w-full first:lg:mt-1 focus:outline-none z-10 select-none group-data-[state=closed]/root:h-10 group-data-[state=closed]/root:w-10 group-data-[state=closed]/root:p-2 transition-all duration-1000 group-data-[format=slim]/format:py-2 group-data-[format=slim]/format:px-3'
       style={{
         transition: 'background-color 0.5s ease',
         background: hovered
@@ -103,8 +95,8 @@ export default function Note({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <h3 className='lg:text-lg text-base font-semibold truncate text-black sm:text-start text-center'>
-        {formattedName}
+      <h3 className='lg:text-lg text-base font-semibold truncate text-black text-start'>
+        {name}
       </h3>
       <div className='flex gap-2.5 lg:text-base text-sm group-data-[format=slim]/format:hidden'>
         <span className='text-black/60 md:inline-block hidden group-data-[state=closed]/root:hidden'>

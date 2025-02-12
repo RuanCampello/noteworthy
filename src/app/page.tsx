@@ -7,7 +7,7 @@ export default async function Home() {
   const t = await getTranslations('HomePlaceholder');
 
   return (
-    <div className='flex w-full relative h-screen'>
+    <div className='flex w-full relative h-screen overflow-hidden'>
       <Sidebar />
       <Placeholder paragraph={t('description')} text={t('title')}>
         <FileText size={80} strokeWidth={1} />

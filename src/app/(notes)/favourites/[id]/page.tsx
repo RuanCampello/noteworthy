@@ -4,7 +4,7 @@ type Props = { params: { id: string } };
 
 export default async function Favourite({ params }: Props) {
   return (
-    <div className='w-full pb-6 overflow-y-clip flex flex-col'>
+    <div className='w-full pb-6 overflow-y-clip overflow-x-hidden flex flex-col'>
       <NotePage params={params} />
     </div>
   );

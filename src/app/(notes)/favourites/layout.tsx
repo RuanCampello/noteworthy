@@ -17,8 +17,7 @@ export default async function FavouriteLayout({
   const st = await getTranslations('SubsidebarTitles');
 
   return (
-    <div className='flex h-screen w-full'>
-      <Sidebar />
+    <>
       <SubSidebar notes={favouriteNotes!} title={st('fav')} href={'favourites'}>
         <NoNotes
           headerIcon={<StarOff size={80} strokeWidth={1} />}
@@ -28,6 +27,6 @@ export default async function FavouriteLayout({
         />
       </SubSidebar>
       {favouriteNotes && favouriteNotes.length > 0 && children}
-    </div>
+    </>
   );
 }

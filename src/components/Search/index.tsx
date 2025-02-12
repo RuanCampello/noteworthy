@@ -57,15 +57,15 @@ export default function Search() {
           </CommandFooter.Group>
           <CommandFooter.Group>
             <CommandFooter.Icon icon={Undo2} className='-scale-y-100' />
-            <p>{tf('open')}</p>
+            <CommandFooter.Span>{tf('open')}</CommandFooter.Span>
           </CommandFooter.Group>
           <CommandFooter.Group>
             <CommandFooter.Icon text='esc' />
-            <p>{tf('close')}</p>
+            <CommandFooter.Span>{tf('close')}</CommandFooter.Span>
           </CommandFooter.Group>
           <CommandFooter.Group>
             <CommandFooter.Icon text='tab' />
-            <p>{tf('chg-filter')}</p>
+            <CommandFooter.Span>{tf('chg-filter')}</CommandFooter.Span>
           </CommandFooter.Group>
         </CommandFooter.Root>
       </Command.Content>

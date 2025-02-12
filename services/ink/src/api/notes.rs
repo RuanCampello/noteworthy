@@ -1,10 +1,10 @@
 use crate::app_state::AppState;
 use crate::errors::NoteError;
+use crate::internal::middleware::AuthUser;
 use crate::models::notes::{
-  Colour, GeneratedNoteResponse, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
+  Colour, GeneratedNoteResponse, Note, NoteWithUserPrefs, PartialNote, RandomColour, SearchResult,
 };
-use crate::utils::sanitization::Sanitize;
-use crate::utils::{constants::HELLO_WORLD, middleware::AuthUser};
+use crate::utils::{constants::HELLO_WORLD, sanitization::Sanitize};
 use axum::{
   extract::{Json, Path, Query},
   routing::{delete, get, patch, post},
@@ -12,6 +12,7 @@ use axum::{
 };
 use chrono::Local;
 use serde::Deserialize;
+use tracing::info;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -31,6 +32,7 @@ pub(crate) fn router() -> Router {
 
   let notes_route = Router::new()
     .route("/", post(new_note).get(find_all_user_notes))
+    .route("/hub", get(find_user_hub_notes))
     .route("/count", get(count_user_notes))
     .route("/generate", post(generate_note))
     .route("/search", get(search_notes))
@@ -203,21 +205,21 @@ struct NoteQueryParams {
   is_arc: Option<bool>,
 }
 
-const FIND_ALL_USER_NOTES_QUERY: &str = r#"
-  SELECT LEFT(content, 250) AS content, id, title, colour, created_at
-  FROM notes
-  WHERE user_id = $1
-    AND is_favourite = $2
-    AND is_archived = $3
-  ORDER BY last_update DESC;
-"#;
-
 async fn find_all_user_notes(
   Extension(state): Extension<AppState>,
   AuthUser(user): AuthUser,
   Query(params): Query<NoteQueryParams>,
 ) -> Result<Json<Vec<PartialNote>>, NoteError> {
-  let mut notes = sqlx::query_as::<_, PartialNote>(FIND_ALL_USER_NOTES_QUERY)
+  const QUERY: &str = r#"
+    SELECT LEFT(content, 250) AS content, id, title, colour, created_at
+    FROM notes
+    WHERE user_id = $1
+      AND is_favourite = $2
+      AND is_archived = $3
+    ORDER BY last_update DESC;
+  "#;
+
+  let mut notes = sqlx::query_as::<_, PartialNote>(QUERY)
     .bind(user.id)
     .bind(params.is_fav.unwrap_or(false))
     .bind(params.is_arc.unwrap_or(false))
@@ -225,6 +227,32 @@ async fn find_all_user_notes(
     .await?;
 
   // removes any extra html from the content to show it clean in the sidebar
+  notes.iter_mut().for_each(|note| {
+    note.content = note.content.sanitize_html();
+  });
+
+  Ok(Json(notes))
+}
+
+async fn find_user_hub_notes(
+  Extension(state): Extension<AppState>,
+  AuthUser(user): AuthUser,
+) -> Result<Json<Vec<Note>>, NoteError> {
+  info!("id {}", &user.id);
+
+  const QUERY: &str = r#"
+    SELECT *, LEFT(content, 750) AS content
+    FROM notes
+    WHERE user_id = $1
+    ORDER BY last_update DESC;
+  "#;
+
+  let mut notes = sqlx::query_as::<_, Note>(QUERY)
+    .bind(&user.id)
+    .fetch_all(&state.database)
+    .await?;
+
+  // removes html
   notes.iter_mut().for_each(|note| {
     note.content = note.content.sanitize_html();
   });

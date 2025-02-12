@@ -36,6 +36,7 @@ export default function EditorMenuBar() {
 
   useEffect(() => {
     if (!editor) return;
+
     function handleEditorChange() {
       if (!editor) return;
       const headingLevels = [1, 2, 3, 4];
@@ -49,6 +50,7 @@ export default function EditorMenuBar() {
         setSelectedValue(t('p'));
       }
     }
+
     editor.on('transaction', handleEditorChange);
     return () => {
       editor.off('transaction', handleEditorChange);
@@ -62,11 +64,13 @@ export default function EditorMenuBar() {
     editor.chain().focus().toggleHeading({ level: level }).run();
     setSelectedValue(`${t('h')} ${level}`);
   }
+
   function handleParagraph() {
     if (!editor) return;
     editor.chain().focus().setParagraph().run();
     setSelectedValue(t('p'));
   }
+
   return (
     <div className='flex flex-col gap-1 xl:px-0 px-4'>
       <div className='flex items-center gap-1'>

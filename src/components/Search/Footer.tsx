@@ -2,6 +2,7 @@ import { LucideProps } from 'lucide-react';
 import { ComponentType, type ReactNode } from 'react';
 
 export const CommandFooter = {
+  Span: FooterTextWrapper,
   Icon: FooterIconWrapper,
   Root: FooterWrapper,
   Group: FooterGroup,
@@ -26,6 +27,10 @@ function FooterIconWrapper({ icon: Icon, text, ...props }: IconProps) {
       {text}
     </span>
   );
+}
+
+function FooterTextWrapper({ children }: Props) {
+  return <span className='select-none line-clamp-1'>{children}</span>;
 }
 
 function FooterWrapper({ children }: Props) {

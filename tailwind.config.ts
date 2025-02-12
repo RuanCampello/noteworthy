@@ -29,7 +29,6 @@ const config = {
         DEFAULT: {
           css: {
             overflowY: 'scroll',
-            height: '75vh',
             paddingBottom: '24px',
             textUnderlineOffset: '2px',
           },
@@ -37,6 +36,9 @@ const config = {
       },
       spacing: {
         '2.5': '10px',
+      },
+      transitionDuration: {
+        sidebar: '250ms',
       },
       colors: {
         black: '#181818',

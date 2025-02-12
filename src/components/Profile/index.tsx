@@ -1,23 +1,21 @@
+import { currentUser, getUserProfileImage } from '@/actions';
 import { signOut } from '@/lib/auth-js/auth';
-import { getUserWithPreferences } from '@/actions';
-import { getUserProfileImage } from '@/actions';
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
-import { Bolt, LogOut } from 'lucide-react';
+import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Avatar } from './Avatar';
 import KeyboardDialog from './KeyboardDialog';
 import Menu from './Menu';
-import SettingsDialog from './SettingsDialog';
 
 export default async function Profile() {
   const t = await getTranslations('ProfileDropdown');
 
-  const { user, preferences } = await getUserWithPreferences();
+  const user = await currentUser();
   if (!user || !user?.name) return null;
 
   async function handleLogout() {
@@ -29,7 +27,7 @@ export default async function Profile() {
   // TODO: imagUrl loading on a client component but not on the server component in dev
 
   return (
-    <div className='mt-auto group-data-[state=closed]/root:p-2 p-5 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
+    <div className='mt-auto group-data-[state=closed]/root:p-2 group-data-[state=open]/root:delay-75 duration-300 p-4 md:ps-4 group-data-[state=open]/root:bg-midnight relative rounded-md m-1 select-none'>
       <div className='flex justify-center xl:gap-4 md:gap-2 items-center w-full'>
         <Avatar source={imageUrl} fallback={user.name[0].toUpperCase()} />
         <div className='overflow-hidden md:inline hidden group-data-[state=closed]/root:hidden'>
@@ -40,11 +38,10 @@ export default async function Profile() {
         </div>
         <Menu>
           <DropdownMenuTrigger asChild>
-            <Bolt className='text-silver shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden' />
+            <ChevronsUpDown className='text-silver ease-in shrink-0 ms-auto cursor-pointer lg:inline hidden group-data-[state=closed]/root:hidden' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dark bg-black w-44'>
             <div className='flex flex-col gap-1'>
-              <SettingsDialog preferences={preferences} />
               <KeyboardDialog />
             </div>
             <DropdownMenuSeparator />

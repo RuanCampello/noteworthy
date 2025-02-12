@@ -4,8 +4,7 @@ import { CommandItem } from '@/components/Search/Item';
 import { cn } from '@/lib/utils';
 import { type Action, useSearch } from '@/lib/zustand/search';
 import { useFilter } from '@/lib/zustand/search-filter';
-import { useSettingsStore } from '@/lib/zustand/settings';
-import { useSettingsDialogStore } from '@/lib/zustand/settings-dialog';
+import { useSettings } from '@/lib/zustand/settings';
 import { DialogOverlay, DialogPortal } from '@/ui/dialog';
 import type { InputProps } from '@/ui/input';
 import { Input } from '@/ui/input';
@@ -135,7 +134,7 @@ const CommandDialogContent = React.forwardRef<
         onKeyDown={handleKeyPressed}
         ref={ref}
         className={cn(
-          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg bg-black/40 backdrop-blur dark focus:outline-none overflow-hidden group/dialog',
+          'fixed left-[50%] top-[50%] z-50 grid w-[95vw] lg:w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg bg-black/70 lg:bg-black/40 backdrop-blur dark focus:outline-none overflow-hidden group/dialog',
           className,
         )}
         {...props}
@@ -206,8 +205,7 @@ const CommandList = React.forwardRef<HTMLDivElement, CommandListProps>(
 CommandList.displayName = 'CommandList';
 
 function CommandActions() {
-  const setSettingsDialogOpen = useSettingsDialogStore((s) => s.setOpen);
-  const setSettingsOpen = useSettingsStore((state) => state.setOpen);
+  const setSettingsDialogOpen = useSettings((s) => s.setOpen);
 
   const setOpen = useSearch((s) => s.setOpen);
   const setActions = useSearch((s) => s.setActions);
@@ -230,7 +228,6 @@ function CommandActions() {
     {
       displayName: t('open_settings'),
       onSelect: () => {
-        setSettingsOpen(true);
         setSettingsDialogOpen(true);
         setOpen(false);
       },

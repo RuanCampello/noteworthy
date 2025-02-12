@@ -1,6 +1,4 @@
-use crate::utils::cache::CacheManager;
-use crate::utils::jwt::JwtManager;
-use crate::utils::r2::R2;
+use crate::internal::{cache::Cache, jwt::JwtManager, r2::R2};
 use deadpool_redis::{Config, Runtime};
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::error;
@@ -67,7 +65,7 @@ pub struct AppState {
   pub database: PgPool,
   pub r2: R2,
   pub jwt_manager: JwtManager,
-  pub cache: CacheManager,
+  pub cache: Cache,
 }
 
 impl AppState {
@@ -89,16 +87,17 @@ impl AppState {
     let jwt_manager = JwtManager::new(&env.jwt_secret);
 
     let r2 = R2::new(
-      env.access_key_id.to_string(),
-      env.secret_access_key.to_string(),
+      env.access_key_id.into(),
+      env.secret_access_key.into(),
       env.cloudflare_endpoint,
+      "noteworthy-images-bucket".into(),
     )
     .await;
 
     let redis_pool = Config::from_url(&env.redis_url)
       .create_pool(Some(Runtime::Tokio1))
       .expect("Failed to create Redis connection pool");
-    let cache = CacheManager::new(redis_pool);
+    let cache = Cache::new(redis_pool);
 
     Ok(Self {
       database: pool,

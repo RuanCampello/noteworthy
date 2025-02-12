@@ -1,6 +1,7 @@
-import { createPlaceholderNote } from '@/actions';
+import { createPlaceholderNote, registerWithProvider } from '@/actions';
 import { env } from '@/env';
 import authConfig from '@/lib/auth-js/auth.config';
+import { registerWithProviderSchema } from '@/schemas';
 import { jwtDecode } from 'jwt-decode';
 import NextAuth, { type DefaultSession, User } from 'next-auth';
 
@@ -36,6 +37,26 @@ export const {
     },
   },
   callbacks: {
+    async signIn({ account, user }) {
+      const provider = account?.provider;
+      if (account && (provider === 'google' || provider === 'github')) {
+        const values = registerWithProviderSchema.parse({
+          provider,
+          providerAccountId: account.providerAccountId,
+          expiresAt: account.expires_at,
+          accessToken: account.access_token,
+          scope: account.scope,
+          idToken: account.id_token,
+          email: user.email,
+          name: user.name,
+        });
+
+        const id = await registerWithProvider(values);
+        return Boolean(id);
+      }
+
+      return provider === 'credentials';
+    },
     async session({ token, session }) {
       // @ts-expect-error undeclared type
       if (session.user && token.user.id) {
@@ -60,13 +81,14 @@ export const {
             provider: account.provider,
           }),
         });
+
         const accessToken = await response.text();
+        console.debug('Access token', accessToken);
         const claims: User = jwtDecode(accessToken);
         // @ts-expect-error undeclared type
         claims.accessToken = accessToken;
-        token.user = claims;
 
-        return { ...token, user: user };
+        return { ...token, user: claims };
       }
 
       // @ts-expect-error undeclared type

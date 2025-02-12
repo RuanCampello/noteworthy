@@ -10,13 +10,14 @@ import {
   newPasswordSchema,
   noteDialogSchema,
   registerFormSchema,
+  registerWithProviderSchema,
   resetPasswordSchema,
   userPreferencesSchema,
 } from '@/schemas';
 import type { Definition } from '@/types/Definition';
 import type { PartialNote } from '@/types/Note';
 import type { PasswordResetToken } from '@/types/PasswordResetToken';
-import { SearchResult } from '@/types/SearchResult';
+import type { SearchResult } from '@/types/SearchResult';
 import type { UserPreferences } from '@/types/UserPreferences';
 import { Tag } from '@/utils/constants/filters';
 import { getPathnameParams } from '@/utils/format-notes';
@@ -40,6 +41,7 @@ function revalidate(tags: readonly Tag[]): void {
 // Look for the current logged-in user in the session.
 export const currentUser = cache(async () => {
   const session = await auth();
+  console.debug('Session: ', session);
   return session?.user;
 });
 
@@ -154,7 +156,7 @@ export async function updateNoteContent(id: string, content: string) {
       method: 'PATCH',
     });
 
-    revalidate([Tag.Notes, Tag.Page]);
+    revalidate([Tag.Notes, Tag.Page, Tag.Hub]);
   } catch (error) {
     console.error(error);
     return;
@@ -177,7 +179,13 @@ export async function toggleNoteFavourite(id: string) {
   });
 
   if (response.ok) {
-    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Favourites, Tag.Counter.All]);
+    revalidate([
+      Tag.Notes,
+      Tag.Page,
+      Tag.Counter.Favourites,
+      Tag.Counter.All,
+      Tag.Hub,
+    ]);
   }
 
   if (basePath === 'favourites') {
@@ -207,7 +215,13 @@ export async function toggleNoteArchived(id: string) {
   });
 
   if (response.ok) {
-    revalidate([Tag.Notes, Tag.Page, Tag.Counter.Archived, Tag.Counter.All]);
+    revalidate([
+      Tag.Notes,
+      Tag.Page,
+      Tag.Counter.Archived,
+      Tag.Counter.All,
+      Tag.Hub,
+    ]);
   }
 
   if (basePath === 'archived') {
@@ -301,6 +315,43 @@ export async function register(
     }
     throw error;
   }
+}
+
+// Same as `register` but to create an account and user based on a provider.
+export async function registerWithProvider(
+  values: z.infer<typeof registerWithProviderSchema>,
+) {
+  const fields = registerWithProviderSchema.safeParse(values);
+  if (!fields.success) return;
+  const {
+    email,
+    idToken,
+    provider,
+    accessToken,
+    providerAccountId,
+    name,
+    scope,
+    expiresAt,
+  } = fields.data;
+
+  const response = await fetch(`${env.INK_HOSTNAME}/register-with-provider`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      idToken,
+      provider,
+      accessToken,
+      providerAccountId,
+      scope,
+      expiresAt,
+      name,
+    }),
+  });
+
+  const id: string = await response.text();
+  console.debug('Id gotten', id);
+  return id;
 }
 
 // Make a request to notes/generate endpoint
@@ -427,10 +478,11 @@ export const getUserProfileImage = cache(async () => {
       headers: {
         Authorization: `Bearer ${user.accessToken}`,
       },
-      next: { tags: [Tag.Profile], revalidate: 3600 },
+      cache: 'force-cache',
+      next: { tags: [Tag.Profile] },
     });
 
-    return await response.text();
+    return response.text();
   }
   return user.image;
 });
@@ -453,8 +505,8 @@ export async function login(
     return { error: null };
   } catch (error) {
     if (error instanceof AuthError) {
-      let errorType =
-        // @ts-ignore
+      const errorType =
+        // @ts-expect-error sus type
         (error?.cause?.err.type as AuthError['type']) || error.type;
       console.error('Error during login: ', errorType);
 
@@ -592,6 +644,8 @@ export async function updateUserPreferences(
       body: JSON.stringify(fields.data),
     }),
   ]);
+
+  console.log(fields.data);
 
   revalidate([Tag.Preferences]);
 }

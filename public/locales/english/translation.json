@@ -27,9 +27,11 @@
     "new_note": "New Note",
     "notes": "Notes",
     "search_note": "Search for a note",
-    "more": "More",
+    "more": "Menu",
     "favourites": "Favourites",
-    "archived": "Archived Notes"
+    "archived": "Archived Notes",
+    "settings": "Settings",
+    "hub": "Hub"
   },
   "AddNote": {
     "title": "Add New Note",

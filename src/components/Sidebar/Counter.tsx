@@ -1,7 +1,7 @@
 import { currentUser } from '@/actions';
 import { env } from '@/env';
 import { Tag } from '@/utils/constants/filters';
-import AnimatedCounter from './AnimatedCounter';
+import AnimatedCounter from '@/components/Sidebar/AnimatedCounter';
 
 interface CounterProps {
   isFavourite?: boolean;
@@ -38,7 +38,7 @@ export default async function Counter({
 
   return (
     <div
-      className={`bg-midnight text-silver overflow-hidden select-none px-2 h-6 text-center items-center md:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent group-data-[state=closed]/root:hidden ${
+      className={`bg-midnight text-silver overflow-hidden select-none px-1.5 h-fit leading-tight text-center items-center lg:flex hidden rounded-sm group-hover:border-silver border-2 border-transparent group-data-[state=closed]/root:hidden ${
         notesNumber <= 0 && 'md:hidden hidden'
       }`}
     >

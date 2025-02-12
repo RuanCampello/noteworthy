@@ -30,7 +30,7 @@ export default function ToggleSidebarButton() {
     <Button
       size='icon'
       variant='secondary'
-      className='dark'
+      className='dark xl:flex hidden'
       onClick={() => toggleSidebarState()}
     >
       {state === 'open' ? (

@@ -1,7 +1,9 @@
 'use client';
 
 import { editNote } from '@/actions';
+import { NoteDialog } from '@/components/Sidebar/AddNoteDialog';
 import { noteDialogSchema } from '@/schemas';
+import type { Colour } from '@/types/Enums';
 import { Button } from '@/ui/button';
 import {
   Dialog,
@@ -26,9 +28,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import type { Colour } from '@/types/Enums';
 import ColourSelect from '../ColourSelect';
-import { NoteDialog } from './AddNoteDialog';
 
 interface EditNoteDialogProps {
   children: ReactNode;

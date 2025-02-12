@@ -1,5 +1,7 @@
 import { currentUser } from '@/actions';
+import MobileBreadcrumb from '@/components/MobileBreadcrumb';
 import type { Note } from '@/types/Note';
+import { Separator } from '@/ui/separator';
 import { toLocaleDateLong } from '@/utils/date';
 import {
   CalendarClock,
@@ -11,7 +13,6 @@ import {
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import StatusTooltip from '../StatusTooltip';
-import { Separator } from '../ui/separator';
 import WordCounter from '../WordCounter';
 import Dropdown from './NoteDropdown';
 import NoteHeaderItem from './NoteHeaderItem';
@@ -37,10 +38,11 @@ export default async function NoteHeader({ note }: NoteHeaderProps) {
   const isEditor = user.id === note.userId;
 
   return (
-    <header className='sticky xl:px-0 px-6 xl:pt-16 pt-8'>
-      <div className='flex justify-between items-center xl:mb-8 mb-8'>
+    <header className='sticky px-3 xl:px-0 md:px-6 space-y-4'>
+      <MobileBreadcrumb />
+      <div className='flex justify-between items-center xl:mb-8 mb-8 lg:pt-8 lg:pb-4'>
         <h1
-          className='text-3xl font-semibold line-clamp-1 w-[90%] font-garamound'
+          className='lg:text-3xl text-2xl font-semibold leading-snug line-clamp-1 w-[90%] font-garamound'
           title={title}
         >
           {title}

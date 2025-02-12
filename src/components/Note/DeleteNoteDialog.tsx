@@ -1,5 +1,6 @@
 'use client';
 
+import { deleteNote } from '@/actions';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,12 +11,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/ui/alert-dialog';
-import { type ReactNode, useTransition } from 'react';
-
-import { deleteNote } from '@/actions';
 import { Button } from '@/ui/button';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { type ReactNode, useTransition } from 'react';
 
 interface DeleteNoteDialogProps {
   children: ReactNode;
@@ -23,12 +22,14 @@ interface DeleteNoteDialogProps {
 
 export default function DeleteNoteDialog({ children }: DeleteNoteDialogProps) {
   const [loading, startTransition] = useTransition();
+  const router = useRouter();
   const t = useTranslations('Delete');
   const id = useParams<{ id: string }>().id;
 
   function handleDeleteNote() {
     startTransition(async () => {
       await deleteNote(id);
+      router.replace('/');
     });
   }
 
